@@ -3,21 +3,21 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-new \App\Models\Api\User;
+use App\Models\Api\UserModel;
 
-class User extends ResourceController 
+class UserController extends ResourceController 
 {
     use ResponseTrait;
 
     protected $userModel;
     protected $data;
 
-    public function __construct() {
-        $this->userModel = new User();
+    public function __construct(){
+        $this->userModel = model(UserModel::class);
     }
 
-    public function index() {
-        // return $this->show();
+    public function index(){
+        return view('users/userList');
     }
 /*
     public function _remap(...$params) {

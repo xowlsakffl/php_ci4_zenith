@@ -30,8 +30,20 @@ service('auth')->routes($routes);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/home', 'Home::index');
-$routes->get('/advertisement/(:any)', 'Advertisement\Api::$1');
-$routes->resource('api/user');
+$routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
+
+
+// 회원 관리
+$routes->group('api', ['namespace' => 'App\Controllers\Api'], static function($routes){
+    $routes->group('user', static function($routes){
+        $routes->get('', 'ApiUserController::get');
+        $routes->get('(:num)', 'ApiUserController::get/$1');
+    });
+});
+$routes->group('users', static function($routes){
+    $routes->get('', 'UserController::index');
+});
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

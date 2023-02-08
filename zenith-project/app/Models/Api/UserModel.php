@@ -3,7 +3,7 @@ namespace App\Models\Api;
 
 use CodeIgniter\Model;
 
-class User extends Model
+class UserModel extends Model
 {
     protected $table = 'users';
     protected $primaryKey = 'id';

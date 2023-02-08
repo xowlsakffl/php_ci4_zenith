@@ -2,8 +2,9 @@
 namespace App\Controllers\Api;
 
 use CodeIgniter\API\ResponseTrait;
+use App\Models\Api\UserModel;
 
-class User extends \CodeIgniter\Controller 
+class ApiUserController extends \CodeIgniter\Controller 
 {
     use ResponseTrait;
 
@@ -11,7 +12,7 @@ class User extends \CodeIgniter\Controller
     protected $data;
 
     public function __construct() {
-        $this->userModel = new \App\Models\Api\User();
+        $this->userModel = model(UserModel::class);
     }
 
     protected function get($id = false) {

@@ -2,7 +2,7 @@
 namespace App\Controllers\Advertisement;
 use App\Controllers\BaseController;
 
-class api extends BaseController
+class ApiController extends BaseController
 {
     protected $chainsaw;
 /*
