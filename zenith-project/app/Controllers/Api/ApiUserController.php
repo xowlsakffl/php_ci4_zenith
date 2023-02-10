@@ -3,7 +3,7 @@ namespace App\Controllers\Api;
 
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\Shield\Models\UserModel;
-
+use CodeIgniter\Shield\Entities\User;
 
 class ApiUserController extends \CodeIgniter\Controller 
 {
@@ -56,8 +56,17 @@ class ApiUserController extends \CodeIgniter\Controller
     protected function post() {
         $ret = false;
         if (!empty($this->data)) {
+
+            $user = new User([
+                'username' => $this->request->getPost('username'),
+                'email'    => $this->request->getPost('email'),
+                'password' => $this->request->getPost('password'),
+            ]);
+
+            $this->userModel->save($user);
+            $user = $this->userModel->findById($this->userModel->getInsertID());
+            $this->userModel->addToDefaultGroup($user);
             $ret = true;
-            $this->userModel->insert($this->data);
         }
 
         return $this->respond($ret);

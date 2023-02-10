@@ -2,7 +2,7 @@
 
 <?=$this->section('content');?>
     <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal2">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">회원</h5>
@@ -10,17 +10,31 @@
             </div>
             <div class="modal-body">
                 <form id="frm" method="post">
-                    <input type="hidden" name="_method" value="PUT" />
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="text" name="email" class="form-control email">
+                        <span id="error_email" class="text-danger ms-3"></span>
+                    </div>
                     <div class="form-group">
                         <label for="username">이름</label>
                         <input type="text" name="username" class="form-control username">
                         <span id="error_username" class="text-danger ms-3"></span>
                     </div>
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input type="text" name="password" class="form-control password">
+                        <span id="error_password" class="text-danger ms-3"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password_confirm">비밀번호 확인</label>
+                        <input type="text" name="password_confirm" class="form-control password_confirm">
+                        <span id="error_password_confirm" class="text-danger ms-3"></span>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-dark userUpdateBtn">수정</button>
+                
             </div>
             </div>
         </div>
@@ -52,7 +66,7 @@
                 <?php //$pager->links() ?>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
-                test
+                <button class="btn btn-primary" id="userAddBtn"  data-bs-toggle="modal" data-bs-target="#Modal">회원 추가</button>
             </div>
         </div>
     </div>
@@ -65,6 +79,9 @@ $(document).ready(function(){
 
 getUserList();
 getUser();
+userUpdate();
+userDelete();
+
 function getUserList(){
     $.ajax({
         type: "get",
@@ -107,59 +124,96 @@ function userList(xhr){
 
 function userModal(xhr){
     $('#frm')[0].reset();
-
     $('#frm').append($("<input type='hidden' name='id' id='hidden_id'>").val(xhr.id))
+    $('.modal2 .modal-footer').append('<button type="button" class="btn btn-dark userUpdateBtn">수정</button>')
     $('input:text[name=username]').val(xhr.username);
 };
 
-$('body').on('click', '.userUpdateBtn', function(){
-    let id = $("input:hidden[name=id]").val();
-    data = {
-        ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
-        username: $('input:text[name=username]').val(),
-    };
+function userAdd(){
+    $('body').on('click', '.userAddBtn', function(){
+        data = {
+            ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
+            username: $('input:text[name=username]').val(),
+            email: $('input:text[name=email]').val(),
+            password: $('input:text[name=password]').val(),
+        };
 
-    $.ajax({
-        type: "put",
-        url: "<?=base_url()?>/users/"+id,
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        success: function(response){
-            console.log(response);
-            $('#Modal').modal('hide');
-            $('#Modal').find('input').val('');  
-            getUserList();
-        },
-        error: function(error, status, msg){
-            console.log("에러코드: " + status + " 메시지: " + msg );
-        }
-    });
-})
-
-$('body').on('click', '#userDelete', function(){
-    let id = $(this).attr('data-id');
-
-    if(confirm('정말 삭제하시겠습니까?')){
         $.ajax({
-            type: "delete",
-            url: "<?=base_url()?>/users/"+id,
+            type: "post",
+            url: "<?=base_url()?>/users",
+            data: data,
             dataType: "json",
+            contentType: 'application/json; charset=utf-8',
             headers:{'X-Requested-With':'XMLHttpRequest'},
             success: function(response){
+                console.log(response);
+                $('#Modal').modal('hide');
+                $('#Modal').find('input').val('');  
                 getUserList();
-                location.reload();
+            },
+            error: function(error, status, msg){
+                console.log("에러코드: " + status + " 메시지: " + msg );
             }
         });
-    }
+    })
+}
 
-    
-})
+function userUpdate(){
+    $('body').on('click', '.userUpdateBtn', function(){
+        let id = $("input:hidden[name=id]").val();
+        data = {
+            ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
+            username: $('input:text[name=username]').val(),
+        };
+
+        $.ajax({
+            type: "put",
+            url: "<?=base_url()?>/users/"+id,
+            data: data,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            headers:{'X-Requested-With':'XMLHttpRequest'},
+            success: function(response){
+                console.log(response);
+                $('#Modal').modal('hide');
+                $('#Modal').find('input').val('');  
+                getUserList();
+            },
+            error: function(error, status, msg){
+                console.log("에러코드: " + status + " 메시지: " + msg );
+            }
+        });
+    })
+}
+
+function userDelete(){
+    $('body').on('click', '#userDelete', function(){
+        let id = $(this).attr('data-id');
+
+        if(confirm('정말 삭제하시겠습니까?')){
+            $.ajax({
+                type: "delete",
+                url: "<?=base_url()?>/users/"+id,
+                dataType: "json",
+                headers:{'X-Requested-With':'XMLHttpRequest'},
+                success: function(response){
+                    getUserList();
+                    location.reload();
+                }
+            });
+        } 
+    })
+}
+
 
 $("#Modal").on("hidden.bs.modal", function () {
     $('#frm')[0].reset();
+    $('.modal-footer .userUpdateBtn').hide();
 });
+
+$('#userAddBtn').on('click', function(){
+    $('#modal1 .modal-footer').append('<button type="button" class="btn btn-dark userAddBtn">추가</button>')
+})
 });
 
 </script>
