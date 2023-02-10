@@ -1,5 +1,30 @@
 <?=$this->extend('templates/front.php');?>
+
 <?=$this->section('content');?>
+    <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">회원</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frm" method="post">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <div class="form-group">
+                        <label for="username">이름</label>
+                        <input type="text" name="username" class="form-control username">
+                        <span id="error_username" class="text-danger ms-3"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-dark userUpdateBtn">수정</button>
+            </div>
+            </div>
+        </div>
+    </div>
     <!--content-->
     <div class="container-md">
         <div class="row">
@@ -37,7 +62,9 @@
 <script>
 $(document).ready(function(){
 
+
 getUserList();
+getUser();
 function getUserList(){
     $.ajax({
         type: "get",
@@ -45,23 +72,94 @@ function getUserList(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: userList,
-        error: function(response){
-
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
+}
+
+function getUser(){
+    $('body').on('click', '#userView', function(){
+        let id = $(this).attr('data-id');
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/users/"+id,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: userModal,
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    })
 }
 
 function userList(xhr){
     $('#userTable tbody').empty();
     $.each(xhr, function(index, item){
-        $('<tr>').append('<td>'+index+'</td>')
+        $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
-        .append('<td>'+item.status+'</td>')
+        .append('<td><button class="btn btn-primary" id="userView" data-id="'+item.id+'" data-bs-toggle="modal" data-bs-target="#Modal">수정</button><button class="btn btn-danger" id="userDelete" data-id="'+item.id+'">삭제</button></td>')
         .appendTo('#userTable');
     });
 }
 
+function userModal(xhr){
+    $('#frm')[0].reset();
+
+    $('#frm').append($("<input type='hidden' name='id' id='hidden_id'>").val(xhr.id))
+    $('input:text[name=username]').val(xhr.username);
+};
+
+$('body').on('click', '.userUpdateBtn', function(){
+    let id = $("input:hidden[name=id]").val();
+    data = {
+        ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
+        username: $('input:text[name=username]').val(),
+    };
+
+    $.ajax({
+        type: "put",
+        url: "<?=base_url()?>/users/"+id,
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        headers:{'X-Requested-With':'XMLHttpRequest'},
+        success: function(response){
+            console.log(response);
+            $('#Modal').modal('hide');
+            $('#Modal').find('input').val('');  
+            getUserList();
+        },
+        error: function(error, status, msg){
+            console.log("에러코드: " + status + " 메시지: " + msg );
+        }
+    });
+})
+
+$('body').on('click', '#userDelete', function(){
+    let id = $(this).attr('data-id');
+
+    if(confirm('정말 삭제하시겠습니까?')){
+        $.ajax({
+            type: "delete",
+            url: "<?=base_url()?>/users/"+id,
+            dataType: "json",
+            headers:{'X-Requested-With':'XMLHttpRequest'},
+            success: function(response){
+                getUserList();
+                location.reload();
+            }
+        });
+    }
+
+    
+})
+
+$("#Modal").on("hidden.bs.modal", function () {
+    $('#frm')[0].reset();
+});
 });
 
 </script>
