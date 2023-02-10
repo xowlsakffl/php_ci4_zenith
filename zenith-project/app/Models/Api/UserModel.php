@@ -2,8 +2,9 @@
 namespace App\Models\Api;
 
 use CodeIgniter\Model;
+use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
 
-class UserModel extends Model
+class UserModel extends ShieldUserModel
 {
     protected $table = 'users';
     protected $primaryKey = 'id';

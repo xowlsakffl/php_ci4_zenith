@@ -14,8 +14,8 @@ class ApiUserController extends \CodeIgniter\Controller
     public function __construct() {
         $this->userModel = model(UserModel::class);
     }
-
-    protected function get($id = false) {
+    
+    public function get($id = false) {
         if ($id) {
             $data = $this->userModel->find($id);
         } else {
@@ -58,7 +58,7 @@ class ApiUserController extends \CodeIgniter\Controller
 
     public function _remap(...$params) {
         $method = $this->request->getMethod();
-        $params = [($params[0] !== 'index' ? $params[0] : false)];
+        $params = [($params[0] !== 'get' ? $params[0] : false)];
         $this->data = $this->request->getJSON();
 
         if (method_exists($this, $method)) {

@@ -32,15 +32,12 @@ service('auth')->routes($routes);
 $routes->get('/home', 'Home::index');
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 
-
 // 회원 관리
-$routes->group('api', ['namespace' => 'App\Controllers\Api'], static function($routes){
-    $routes->group('user', static function($routes){
-        $routes->get('', 'ApiUserController::get');
-        $routes->get('(:num)', 'ApiUserController::get/$1');
-    });
+$routes->group('users', ['namespace' => 'App\Controllers\Api'], static function($routes){
+    $routes->get('', 'ApiUserController::get');
+    $routes->get('(:any)', 'ApiUserController::$1');
 });
-$routes->group('users', static function($routes){
+$routes->group('users-list', static function($routes){
     $routes->get('', 'UserController::index');
 });
 

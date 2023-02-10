@@ -11,30 +11,23 @@
             </div>
         </div>
         <div class="row">
-            <table class="table">
+            <table class="table" id="userTable">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Image</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Body</th>
-                        <th scope="col">Slug</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">이름</th>
+                        <th scope="col">상태</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-
-                    </tr>
                 </tbody>
             </table>
             <div class="row">
                 <?php //$pager->links() ?>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Add Post
-                </button>
+                test
             </div>
         </div>
     </div>
@@ -48,14 +41,24 @@ getUserList();
 function getUserList(){
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/api/user",
+        url: "<?=base_url()?>/users",
         dataType: "json",
-        success: function (response) {
-            console.log(response);
-        },
+        contentType: 'application/json; charset=utf-8',
+        success: userList,
         error: function(response){
 
         }
+    });
+}
+
+function userList(xhr){
+    $('#userTable tbody').empty();
+    $.each(xhr, function(index, item){
+        $('<tr>').append('<td>'+index+'</td>')
+        .append('<td>'+item.username+'</td>')
+        .append('<td>'+item.status+'</td>')
+        .append('<td>'+item.status+'</td>')
+        .appendTo('#userTable');
     });
 }
 
