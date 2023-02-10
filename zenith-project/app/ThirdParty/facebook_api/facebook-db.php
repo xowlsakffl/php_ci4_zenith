@@ -157,10 +157,10 @@ class FBDB
     {
         $this->db->query("UPDATE fb_ad_account SET status = 0, perm = 0 WHERE business_id = '{$list[0][0]}'");
         foreach ($list as $key => $row) {
-            $sql = "INSERT INTO fb_ad_account (business_id, ad_account_id, name, funding_source, status, pixel_id, update_time)
-					VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', {$row[4]}, {$row[5]}, NOW())
+            $sql = "INSERT INTO fb_ad_account (business_id, ad_account_id, name, funding_source, status, pixel_id, perm, update_time)
+					VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', {$row[4]}, {$row[5]}, 1, NOW())
 					ON DUPLICATE KEY
-					UPDATE name = '{$row[2]}', funding_source = '{$row[3]}', status = {$row[4]}, pixel_id = {$row[5]}, update_time = NOW();";
+					UPDATE name = '{$row[2]}', funding_source = '{$row[3]}', status = {$row[4]}, pixel_id = {$row[5]}, perm = 1, update_time = NOW();";
             $result = $this->db_query($sql);
         }
     }

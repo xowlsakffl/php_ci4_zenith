@@ -276,7 +276,8 @@ class ChainsawFB
     public function getFBAdAccountList()
     {
         $account_ids = $this->db->getAccountIdsFromCampaign();
-        foreach ($account_ids->getResultArray() as $row) {
+        $data = $account_ids->getResultArray();
+        foreach ($data as $row) {
             echo $row['account_id'] . '<br>';
         }
     }
