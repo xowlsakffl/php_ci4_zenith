@@ -32,7 +32,6 @@ class ApiUserController extends \CodeIgniter\Controller
 
     protected function put($id = false) {
         $ret = false;
-
         if (strtolower($this->request->getMethod()) === 'put') {
             if ($id && !empty($this->data)) {
 
@@ -40,9 +39,9 @@ class ApiUserController extends \CodeIgniter\Controller
                 $this->validation->setRules([
                     'username' => 'required|is_unique[users.username]',
                 ]);
-                if($this->validation->run($this->data)){
-                    $ret = true;
+                if($this->validation->run($this->data)){              
                     $this->userModel->update($id, $this->data);
+                    $ret = true;
                 }else{
                     return $this->failValidationErrors("유효성 검사 에러");
                 }
@@ -56,17 +55,25 @@ class ApiUserController extends \CodeIgniter\Controller
     protected function post() {
         $ret = false;
         if (!empty($this->data)) {
-
-            $user = new User([
-                'username' => $this->request->getPost('username'),
-                'email'    => $this->request->getPost('email'),
-                'password' => $this->request->getPost('password'),
+            $this->validation = \Config\Services::validation();
+            $this->validation->setRules([
+                'username' => 'required|is_unique[users.username]',
             ]);
 
-            $this->userModel->save($user);
-            $user = $this->userModel->findById($this->userModel->getInsertID());
-            $this->userModel->addToDefaultGroup($user);
-            $ret = true;
+            if($this->validation->run($this->data)){
+                $user = new User([
+                    'username' => $this->request->getPost('username'),
+                    'email'    => $this->request->getPost('email'),
+                    'password' => $this->request->getPost('password'),
+                ]);
+                
+                $this->userModel->save($user);
+                $user = $this->userModel->findById($this->userModel->getInsertID());
+                $this->userModel->addToDefaultGroup($user);
+                $ret = true;
+            }else{
+                return $this->failValidationErrors("유효성 검사 에러");
+            }
         }
 
         return $this->respond($ret);
