@@ -2,39 +2,31 @@
 
 <?=$this->section('content');?>
     <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal2">
+        <div class="modal-dialog modal-dialog-centered modal">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">회원</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">회원 수정</h5>
             </div>
             <div class="modal-body">
-                <form id="frm" method="post">
+                <form id="frm">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="id" id="hidden_id">
                     <div class="form-group">
-                        <label for="email">이메일</label>
-                        <input type="text" name="email" class="form-control email">
-                        <span id="error_email" class="text-danger ms-3"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="username">이름</label>
-                        <input type="text" name="username" class="form-control username">
-                        <span id="error_username" class="text-danger ms-3"></span>
+                        <label for="username">아이디</label>
+                        <input type="text" name="username" id="username" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="password">비밀번호</label>
-                        <input type="password" name="password" class="form-control password">
-                        <span id="error_password" class="text-danger ms-3"></span>
+                        <input type="password" name="password" class="form-control" id="username">
                     </div>
                     <div class="form-group">
                         <label for="password_confirm">비밀번호 확인</label>
-                        <input type="password" name="password_confirm" class="form-control password_confirm">
-                        <span id="error_password_confirm" class="text-danger ms-3"></span>
+                        <input type="password" name="password_confirm" class="form-control" id="password_confirm">
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                
+            <div class="modal-footer">            
+                <button type="button" class="btn btn-primary userUpdateBtn">저장</button>
             </div>
             </div>
         </div>
@@ -66,7 +58,7 @@
                 <?php //$pager->links() ?>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
-                <button class="btn btn-primary" id="userAddBtn"  data-bs-toggle="modal" data-bs-target="#Modal">회원 추가</button>
+                <a class="btn btn-primary" href="/users-add">회원 추가</a>
             </div>
         </div>
     </div>
@@ -124,46 +116,21 @@ function userList(xhr){
 
 function userModal(xhr){
     $('#frm')[0].reset();
-    $('#frm').append($("<input type='hidden' name='id' id='hidden_id'>").val(xhr.id))
-    $('.modal2 .modal-footer').append('<button type="button" class="btn btn-dark userUpdateBtn">수정</button>')
-    $('input:text[name=username]').val(xhr.username);
+    $('#formMethod').val("PUT");
+    $('#hidden_id').val(xhr.id);
+    $('#username').val(xhr.username);
 };
 
-function userAdd(){
-    $('body').on('click', '.userAddBtn', function(){
-        data = {
-            ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
-            username: $('input:text[name=username]').val(),
-            email: $('input:text[name=email]').val(),
-            password: $('input:text[name=password]').val(),
-        };
-
-        $.ajax({
-            type: "post",
-            url: "<?=base_url()?>/users",
-            data: data,
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            headers:{'X-Requested-With':'XMLHttpRequest'},
-            success: function(response){
-                console.log(response);
-                $('#Modal').modal('hide');
-                $('#Modal').find('input').val('');  
-                getUserList();
-            },
-            error: function(error, status, msg){
-                console.log("에러코드: " + status + " 메시지: " + msg );
-            }
-        });
-    })
-}
 
 function userUpdate(){
     $('body').on('click', '.userUpdateBtn', function(){
         let id = $("input:hidden[name=id]").val();
+
         data = {
             ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
             username: $('input:text[name=username]').val(),
+            password: $('input:password[name=password]').val(),
+            password_confirm: $('input:password[name=password_confirm]').val(),
         };
 
         $.ajax({
@@ -174,13 +141,12 @@ function userUpdate(){
             contentType: 'application/json; charset=utf-8',
             headers:{'X-Requested-With':'XMLHttpRequest'},
             success: function(response){
-                console.log(response);
                 $('#Modal').modal('hide');
                 $('#Modal').find('input').val('');  
                 getUserList();
             },
             error: function(error, status, msg){
-                console.log("에러코드: " + status + " 메시지: " + msg );
+                alert("에러코드: " + status + " 메시지: " + msg );
             }
         });
     })
@@ -208,12 +174,8 @@ function userDelete(){
 
 $("#Modal").on("hidden.bs.modal", function () {
     $('#frm')[0].reset();
-    $('.modal-footer .userUpdateBtn').hide();
 });
 
-$('#userAddBtn').on('click', function(){
-    $('#modal1 .modal-footer').append('<button type="button" class="btn btn-dark userAddBtn">추가</button>')
-})
 });
 
 </script>

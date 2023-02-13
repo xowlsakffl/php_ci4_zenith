@@ -36,14 +36,13 @@ $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 $routes->group('users', ['namespace' => 'App\Controllers\Api'], static function($routes){
     $routes->get('', 'ApiUserController::get');
     $routes->get('(:any)', 'ApiUserController::$1');
-    $routes->post('(:any)', 'ApiUserController::$1');
+    $routes->post('', 'ApiUserController::$1');
     $routes->put('(:any)', 'ApiUserController::$1');
     $routes->delete('(:any)', 'ApiUserController::$1');
 });
-$routes->group('users-list', static function($routes){
-    $routes->get('', 'UserController::index');
-});
 
+$routes->get('users-list', 'UserController::index');
+$routes->get('users-add', 'UserController::create');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

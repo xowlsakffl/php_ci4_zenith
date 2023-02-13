@@ -19,6 +19,10 @@ class UserController extends ResourceController
     public function index(){
         return view('users/userList');
     }
+
+    public function create(){
+        return view('users/userAdd');
+    }
 /*
     public function _remap(...$params) {
         $method = $this->request->getMethod();

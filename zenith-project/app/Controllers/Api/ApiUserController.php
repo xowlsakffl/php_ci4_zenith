@@ -32,18 +32,25 @@ class ApiUserController extends \CodeIgniter\Controller
 
     protected function put($id = false) {
         $ret = false;
+
         if (strtolower($this->request->getMethod()) === 'put') {
             if ($id && !empty($this->data)) {
-
                 $this->validation = \Config\Services::validation();
                 $this->validation->setRules([
-                    'username' => 'required|is_unique[users.username]',
+                    'username' => 'required',
+                    'password' => 'required',
+                    'password_confirm' => 'required|matches[password]',
                 ]);
-                if($this->validation->run($this->data)){              
-                    $this->userModel->update($id, $this->data);
+                if($this->validation->run($this->data)){  
+                    $user = $this->userModel->findById($id);      
+                    $user->fill([
+                        'username' => $this->data['username'],
+                        'password' => $this->data['password'],
+                    ]);     
+                    $this->userModel->save($user);
                     $ret = true;
                 }else{
-                    return $this->failValidationErrors("유효성 검사 에러");
+                    return $this->failValidationErrors("error");
                 }
             }else{
                 return $this->fail("잘못된 요청");
@@ -57,14 +64,17 @@ class ApiUserController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                'username' => 'required|is_unique[users.username]',
+                'username' => 'required',
+                'email' => 'required',
+                'password' => 'required',
+                'password_confirm' => 'required|matches[password]',
             ]);
 
             if($this->validation->run($this->data)){
                 $user = new User([
-                    'username' => $this->request->getPost('username'),
-                    'email'    => $this->request->getPost('email'),
-                    'password' => $this->request->getPost('password'),
+                    'username' => $this->data['username'],
+                    'email'    => $this->data['email'],
+                    'password' => $this->data['password'],
                 ]);
                 
                 $this->userModel->save($user);
@@ -72,7 +82,7 @@ class ApiUserController extends \CodeIgniter\Controller
                 $this->userModel->addToDefaultGroup($user);
                 $ret = true;
             }else{
-                return $this->failValidationErrors("유효성 검사 에러");
+                return $this->failValidationErrors("error");
             }
         }
 
