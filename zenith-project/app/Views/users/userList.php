@@ -118,6 +118,7 @@ function userList(xhr){
 }
 
 function userModal(xhr){
+    console.log(xhr);
     $('#frm')[0].reset();
     $('#formMethod').val("PUT");
     $('#hidden_id').val(xhr.id);
@@ -147,6 +148,7 @@ function userUpdate(){
                 $('#Modal').modal('hide');
                 $('#Modal').find('input').val('');  
                 getUserList();
+                console.log(response);
             },
             error: function(xhr){
                 alert(xhr.responseJSON.messages.error);
