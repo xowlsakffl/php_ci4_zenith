@@ -12,7 +12,7 @@
                     <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="id" id="hidden_id">
                     <div class="form-group">
-                        <label for="username">아이디</label>
+                        <label for="username">이름</label>
                         <input type="text" name="username" id="username" class="form-control">
                     </div>
                     <div class="form-group">
@@ -104,8 +104,11 @@ function getUser(){
 }
 
 function userList(xhr){
+    console.log(xhr.result);
+    console.log(xhr.pager);
     $('#userTable tbody').empty();
-    $.each(xhr, function(index, item){
+    $.each(xhr.result, function(index, item){
+        
         $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
@@ -145,8 +148,8 @@ function userUpdate(){
                 $('#Modal').find('input').val('');  
                 getUserList();
             },
-            error: function(error, status, msg){
-                alert("에러코드: " + status + " 메시지: " + msg );
+            error: function(xhr){
+                alert(xhr.responseJSON.messages.error);
             }
         });
     })

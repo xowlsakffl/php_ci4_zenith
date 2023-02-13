@@ -21,7 +21,8 @@ class ApiUserController extends \CodeIgniter\Controller
             if ($id) {
                 $data = $this->userModel->find($id);
             } else {
-                $data = $this->userModel->findAll();
+                $data['result'] = $this->userModel->paginate(5);
+                $data['pager'] = $this->userModel->pager;
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -40,6 +41,18 @@ class ApiUserController extends \CodeIgniter\Controller
                     'username' => 'required',
                     'password' => 'required',
                     'password_confirm' => 'required|matches[password]',
+                ],
+                [   // Errors
+                    'username' => [
+                        'required' => '이름은 필수 입력사항입니다.',
+                    ],
+                    'password' => [
+                        'required' => '비밀번호는 필수 입력사항입니다.',
+                    ],
+                    'password_confirm' => [
+                        'required' => '비밀번호는 필수 입력사항입니다.',
+                        'matches' => '비밀번호가 일치하지 않습니다.',
+                    ],
                 ]);
                 if($this->validation->run($this->data)){  
                     $user = $this->userModel->findById($id);      
@@ -50,7 +63,15 @@ class ApiUserController extends \CodeIgniter\Controller
                     $this->userModel->save($user);
                     $ret = true;
                 }else{
-                    return $this->failValidationErrors("error");
+                    if($this->validation->hasError('username')){
+                        $error = $this->validation->getError('username');
+                    }else if($this->validation->hasError('password')){
+                        $error = $this->validation->getError('password');
+                    }else if($this->validation->hasError('password_confirm')){
+                        $error = $this->validation->getError('password_confirm');
+                    }
+    
+                    return $this->failValidationErrors($error);
                 }
             }else{
                 return $this->fail("잘못된 요청");
@@ -64,16 +85,31 @@ class ApiUserController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                'username' => 'required',
                 'email' => 'required',
+                'username' => 'required',
                 'password' => 'required',
                 'password_confirm' => 'required|matches[password]',
+            ],
+            [   // Errors
+                'email' => [
+                    'required' => '이메일은 필수 입력사항입니다.',
+                ],
+                'username' => [
+                    'required' => '이름은 필수 입력사항입니다.',
+                ],
+                'password' => [
+                    'required' => '비밀번호는 필수 입력사항입니다.',
+                ],
+                'password_confirm' => [
+                    'required' => '비밀번호는 필수 입력사항입니다.',
+                    'matches' => '비밀번호가 일치하지 않습니다.',
+                ],
             ]);
 
             if($this->validation->run($this->data)){
                 $user = new User([
-                    'username' => $this->data['username'],
                     'email'    => $this->data['email'],
+                    'username' => $this->data['username'],
                     'password' => $this->data['password'],
                 ]);
                 
@@ -82,7 +118,17 @@ class ApiUserController extends \CodeIgniter\Controller
                 $this->userModel->addToDefaultGroup($user);
                 $ret = true;
             }else{
-                return $this->failValidationErrors("error");
+                if($this->validation->hasError('email')){
+                    $error = $this->validation->getError('email');
+                }else if($this->validation->hasError('username')){
+                    $error = $this->validation->getError('username');
+                }else if($this->validation->hasError('password')){
+                    $error = $this->validation->getError('password');
+                }else if($this->validation->hasError('password_confirm')){
+                    $error = $this->validation->getError('password_confirm');
+                }
+
+                return $this->failValidationErrors($error);
             }
         }
 

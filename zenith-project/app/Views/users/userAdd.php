@@ -12,7 +12,7 @@
                         <input type="email" name="email" class="form-control email">
                     </div>
                     <div class="form-group">
-                        <label for="password">아이디</label>
+                        <label for="password">이름</label>
                         <input type="text" name="username" class="form-control username">
                     </div>
                     <div class="form-group">
@@ -31,8 +31,6 @@
         </div>
     </div>
 </div>
-
-
             
 
 <?=$this->endSection();?>
@@ -64,8 +62,9 @@ function userAdd(){
                 $('#Modal').find('input').val('');  
                 window.location.href='/users-list';
             },
-            error: function(error, status, msg){
-                alert("에러코드: " + status + " 메시지: " + msg );
+            error: function(xhr){
+                alert(xhr.responseJSON.messages.error);
+                //alert("에러코드: " + xhr.status + " 메시지: " + xhr.responseText );
             }
         });
     })
