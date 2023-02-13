@@ -61,6 +61,7 @@ function userAdd(){
                 $('#Modal').modal('hide');
                 $('#Modal').find('input').val('');  
                 window.location.href='/users-list';
+                console.log(response);
             },
             error: function(xhr){
                 alert(xhr.responseJSON.messages.error);
