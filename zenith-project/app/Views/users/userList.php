@@ -35,10 +35,10 @@
     <div class="container-md">
         <div class="row">
             <div class="col">
-                <form action="/posts" id="frm" method="get" class="d-flex mb-3">
+                <!-- <form action="/posts" id="frm" method="get" class="d-flex mb-3">
                     <input type="text" name="searchData" class="form-control mx-3" id="searchText">
                     <input type="submit" value="Search" class="btn btn-primary">                  
-                </form>
+                </form> -->
             </div>
         </div>
         <div class="row">
