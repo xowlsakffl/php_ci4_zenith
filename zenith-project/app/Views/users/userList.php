@@ -22,12 +22,12 @@
                     </div>
                     <div class="form-group">
                         <label for="password">비밀번호</label>
-                        <input type="text" name="password" class="form-control password">
+                        <input type="password" name="password" class="form-control password">
                         <span id="error_password" class="text-danger ms-3"></span>
                     </div>
                     <div class="form-group">
                         <label for="password_confirm">비밀번호 확인</label>
-                        <input type="text" name="password_confirm" class="form-control password_confirm">
+                        <input type="password" name="password_confirm" class="form-control password_confirm">
                         <span id="error_password_confirm" class="text-danger ms-3"></span>
                     </div>
                 </form>
