@@ -23,6 +23,16 @@
                         <label for="password_confirm">비밀번호 확인</label>
                         <input type="password" name="password_confirm" class="form-control" id="password_confirm">
                     </div>
+                    <div class="form-group">
+                        <label for="group">권한</label>
+                        <select name="group" class="form-control" multiple>
+                            <option value="superadmin">최고관리자</option>
+                            <option value="admin">관리자</option>
+                            <option value="developer">개발자</option>
+                            <option value="user">사용자</option>
+                            <option value="guest">미인증 사용자</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">            
@@ -48,6 +58,7 @@
                         <th scope="col">#</th>
                         <th scope="col">이름</th>
                         <th scope="col">상태</th>
+                        <th scope="col">권한</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -112,6 +123,7 @@ function userList(xhr){
         $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
+        .append('<td>'+item.group+'</td>')
         .append('<td><button class="btn btn-primary" id="userView" data-id="'+item.id+'" data-bs-toggle="modal" data-bs-target="#Modal">수정</button><button class="btn btn-danger" id="userDelete" data-id="'+item.id+'">삭제</button></td>')
         .appendTo('#userTable');
     });

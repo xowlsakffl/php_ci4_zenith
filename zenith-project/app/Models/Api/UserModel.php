@@ -13,5 +13,20 @@ class UserModel extends ShieldUserModel
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
-    protected $allowedFields = ['user_id', 'user_pw', 'name'];
+    protected $allowedFields  = [
+        'username',
+        'status',
+        'status_message',
+        'active',
+        'last_active',
+        'deleted_at',
+    ];
+
+    public function getUsersGroups()
+    {
+        $builder = $this->table('users');
+        $builder->select('*');
+        $builder->join('auth_groups_users', 'users.id = auth_groups_users.user_id');
+        return $builder;
+    }
 }

@@ -2,7 +2,7 @@
 namespace App\Controllers\Api;
 
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Shield\Models\UserModel;
+use App\Models\Api\UserModel;
 use CodeIgniter\Shield\Entities\User;
 
 class ApiUserController extends \CodeIgniter\Controller 
@@ -19,9 +19,10 @@ class ApiUserController extends \CodeIgniter\Controller
     public function get($id = false) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data = $this->userModel->find($id);
+                $data['result'] = $this->userModel->find($id);
+                $data['group'] = $this->userModel->find($id)->getGroups();
             } else {
-                $data['result'] = $this->userModel->paginate(5);
+                $data['result'] = $this->userModel->getUsersGroups()->paginate(15);
                 $data['pager'] = $this->userModel->pager;
             }
         }else{

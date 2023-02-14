@@ -30,7 +30,7 @@ service('auth')->routes($routes);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
-//게스트 승인대기중 페이지
+//게스트 - 승인대기중 페이지
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
