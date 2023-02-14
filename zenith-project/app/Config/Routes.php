@@ -29,20 +29,35 @@ $routes->setAutoRoute(false);
 service('auth')->routes($routes);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/home', 'Home::index');
-$routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 
-// 회원 관리
-$routes->group('users', ['namespace' => 'App\Controllers\Api'], static function($routes){
-    $routes->get('', 'ApiUserController::get');
-    $routes->get('(:any)', 'ApiUserController::$1');
-    $routes->post('', 'ApiUserController::$1');
-    $routes->put('(:any)', 'ApiUserController::$1');
-    $routes->delete('(:any)', 'ApiUserController::$1');
+//게스트 승인대기중 페이지
+$routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
+    $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
+});
+//관리자, 최고관리자, 개발자, 일반사용자
+$routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static function($routes){
+    $routes->get('/', 'Home::index');
+    $routes->get('/home', 'Home::index');
+
+    // 회원 관리
+    $routes->group('users', static function($routes){
+        $routes->get('', 'Api\ApiUserController::get');
+        $routes->get('(:any)', 'Api\ApiUserController::$1');
+        $routes->post('', 'Api\ApiUserController::$1');
+        $routes->put('(:any)', 'Api\ApiUserController::$1');
+        $routes->delete('(:any)', 'Api\ApiUserController::$1');
+    });
+    $routes->get('users-list', 'UserController::index');
+    $routes->get('users-add', 'UserController::create');
 });
 
-$routes->get('users-list', 'UserController::index');
-$routes->get('users-add', 'UserController::create');
+$routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
+
+
+
+
+
+
 /*
  * --------------------------------------------------------------------
  * Additional Routing

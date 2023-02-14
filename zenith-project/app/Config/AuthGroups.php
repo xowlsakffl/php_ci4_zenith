@@ -14,7 +14,7 @@ class AuthGroups extends ShieldAuthGroups
      * --------------------------------------------------------------------
      * The group that a newly registered user is added to.
      */
-    public string $defaultGroup = 'user';
+    public string $defaultGroup = 'guest';
 
     /**
      * --------------------------------------------------------------------
@@ -32,25 +32,35 @@ class AuthGroups extends ShieldAuthGroups
      */
     public array $groups = [
         'superadmin' => [
-            'title'       => 'Super Admin',
-            'description' => 'Complete control of the site.',
+            'title'       => '최고관리자',
+            'description' => '제니스 최고관리자',
         ],
         'admin' => [
-            'title'       => 'Admin',
-            'description' => 'Day to day administrators of the site.',
+            'title'       => '관리자',
+            'description' => '제니스 일반관리자',
         ],
         'developer' => [
-            'title'       => 'Developer',
-            'description' => 'Site programmers.',
+            'title'       => '제니스 개발자',
+            'description' => '제니스 개발자',
         ],
         'user' => [
-            'title'       => 'User',
-            'description' => 'General users of the site. Often customers.',
+            'title'       => '제니스 사용자',
+            'description' => '제니스 사용자',
+            /* [
+                'advertiser1' => [
+                    'title' => '광고주1',
+                    'description' => '테스트 광고주1',
+                ],
+                'advertiser2' => [
+                    'title' => '광고주2',
+                    'description' => '테스트 광고주2',
+                ]
+            ], */
         ],
-        'beta' => [
-            'title'       => 'Beta User',
-            'description' => 'Has access to beta-level features.',
-        ],
+        'guest' => [
+            'title'       => '게스트',
+            'description' => '게스트 권한'
+        ]
     ];
 
     /**
@@ -62,14 +72,15 @@ class AuthGroups extends ShieldAuthGroups
      *
      * If a permission is not listed here it cannot be used.
      */
+    //일부 그룹에 특정 관리에 대한 명시적 권한을 부여
     public array $permissions = [
-        'admin.access'        => 'Can access the sites admin area',
-        'admin.settings'      => 'Can access the main site settings',
-        'users.manage-admins' => 'Can manage other admins',
-        'users.create'        => 'Can create new non-admin users',
-        'users.edit'          => 'Can edit existing non-admin users',
-        'users.delete'        => 'Can delete existing non-admin users',
-        'beta.access'         => 'Can access beta-level features',
+        'admin.access'        => '관리자만 가능한 페이지 접근 가능',
+        'admin.settings'      => '관리자만 가능한 설정 접근 가능',
+        'users.create'        => '회원 생성',
+        'users.edit'          => '회원 수정',
+        'users.delete'        => '회원 삭제',
+        
+        'users.advertiser1'   => '광고주1',
     ];
 
     /**
@@ -78,29 +89,27 @@ class AuthGroups extends ShieldAuthGroups
      * --------------------------------------------------------------------
      * Maps permissions to groups.
      */
+    //그룹과 권한 맵핑
     public array $matrix = [
         'superadmin' => [
-            'admin.*',
+            'admin.access',
             'users.*',
-            'beta.*',
         ],
         'admin' => [
             'admin.access',
             'users.create',
             'users.edit',
             'users.delete',
-            'beta.access',
         ],
         'developer' => [
             'admin.access',
             'admin.settings',
             'users.create',
             'users.edit',
-            'beta.access',
         ],
         'user' => [],
-        'beta' => [
-            'beta.access',
+        'guest' => [
+            'guest.access'
         ],
     ];
 }

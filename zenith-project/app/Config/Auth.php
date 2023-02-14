@@ -351,6 +351,9 @@ class Auth extends ShieldAuth
      */
     public function loginRedirect(): string
     {
+        if(auth()->user()->inGroup('guest')){
+            return '/guest';
+        }
         $url = setting('Auth.redirects')['login'];
 
         return $this->getUrl($url);
@@ -373,6 +376,9 @@ class Auth extends ShieldAuth
      */
     public function registerRedirect(): string
     {
+        if(auth()->user()->inGroup('guest')){
+            return '/guest';
+        }
         $url = setting('Auth.redirects')['register'];
 
         return $this->getUrl($url);

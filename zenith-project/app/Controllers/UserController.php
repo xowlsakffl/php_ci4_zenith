@@ -3,7 +3,8 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\Api\UserModel;
+use CodeIgniter\Shield\Models\UserModel;
+use CodeIgniter\Shield\Entities\User;
 
 class UserController extends ResourceController 
 {
