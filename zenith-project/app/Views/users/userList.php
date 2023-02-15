@@ -23,6 +23,16 @@
                         <label for="password_confirm">비밀번호 확인</label>
                         <input type="password" name="password_confirm" class="form-control" id="password_confirm">
                     </div>
+                    <div class="form-group">
+                        <label for="group">권한</label>
+                        <select name="group" class="form-control userGroup" multiple="multiple">
+                            <option value="superadmin">최고관리자</option>
+                            <option value="admin">관리자</option>
+                            <option value="developer">개발자</option>
+                            <option value="user">사용자</option>
+                            <option value="guest">미인증 사용자</option>
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">            
@@ -123,6 +133,7 @@ function userModal(xhr){
     $('#formMethod').val("PUT");
     $('#hidden_id').val(xhr.id);
     $('#username').val(xhr.username);
+    $('.userGroup').val(xhr.groups);
 };
 
 
@@ -135,6 +146,7 @@ function userUpdate(){
             username: $('input:text[name=username]').val(),
             password: $('input:password[name=password]').val(),
             password_confirm: $('input:password[name=password_confirm]').val(),
+            groups: $('input:password[name=password_confirm]').val(),
         };
 
         $.ajax({

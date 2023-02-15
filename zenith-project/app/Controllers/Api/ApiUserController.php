@@ -19,10 +19,10 @@ class ApiUserController extends \CodeIgniter\Controller
     public function get($id = false) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data = $this->userModel->find($id);
+                $data['result'] = $this->userModel->getUserGroups();
             } else {
-                $data['result'] = $this->userModel->paginate(5);
-                $data['pager'] = $this->userModel->pager;
+                $data['result'] = $this->userModel->getUserGroups();
+
             }
         }else{
             return $this->fail("잘못된 요청");
