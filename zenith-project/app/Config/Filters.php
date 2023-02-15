@@ -35,7 +35,7 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'session' => ['except' => ['login*', 'register', 'auth/a/*']],
-            'guest' => ['except' => ['logout', 'guest']]
+            'guest' => ['except' => ['logout', 'login*', 'auth/a/*', 'guest',]]
         ],
         'after' => [
             'toolbar',
