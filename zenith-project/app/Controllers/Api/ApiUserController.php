@@ -41,7 +41,7 @@ class ApiUserController extends \CodeIgniter\Controller
                     'username' => 'required',
                     'password' => 'required',
                     'password_confirm' => 'required|matches[password]',
-                    'groups' => 'required|in_list["guest", "user", "developer", "admin", "superadmin"]'
+                    'groups' => 'required'
                 ],
                 [   // Errors
                     'username' => [
@@ -56,7 +56,6 @@ class ApiUserController extends \CodeIgniter\Controller
                     ],
                     'groups' => [
                         'required' => '권한은 필수 입력사항입니다.',
-                        'in_list' => '입력값 오류.',
                     ],
                 ]);
                 if($this->validation->run($this->data)){  
@@ -67,7 +66,10 @@ class ApiUserController extends \CodeIgniter\Controller
                         'password' => $this->data['password'],
                     ]);     
                     $this->userModel->save($user);
-                    $this->userModel->syncGroups($this->data['groups']);
+                    $groups = implode("','", $this->data['groups']);
+                    $groups = "\'$groups\'";
+                    dd($groups); 
+                    $user->syncGroups($groups);
 
                     $ret = true;
                 }else{
