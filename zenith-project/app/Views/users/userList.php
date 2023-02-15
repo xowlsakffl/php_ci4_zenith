@@ -58,6 +58,7 @@
                         <th scope="col">#</th>
                         <th scope="col">이름</th>
                         <th scope="col">상태</th>
+                        <th scope="col">권한</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -122,6 +123,7 @@ function userList(xhr){
         $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
+        .append('<td>'+item.groups+'</td>')
         .append('<td><button class="btn btn-primary" id="userView" data-id="'+item.id+'" data-bs-toggle="modal" data-bs-target="#Modal">수정</button><button class="btn btn-danger" id="userDelete" data-id="'+item.id+'">삭제</button></td>')
         .appendTo('#userTable');
     });
@@ -131,9 +133,13 @@ function userModal(xhr){
     console.log(xhr);
     $('#frm')[0].reset();
     $('#formMethod').val("PUT");
-    $('#hidden_id').val(xhr.id);
-    $('#username').val(xhr.username);
-    $('.userGroup').val(xhr.groups);
+    $('input:hidden[name=id]').val(xhr.result[0].id);
+    $('input:text[name=username]').val(xhr.result[0].username);
+
+    for (let i = 0; i < xhr.result[0].groups.length; i++) {
+        $('.userGroup option[value="' + xhr.result[0].groups[i] + '"]').prop('selected', true);
+    }
+    
 };
 
 
@@ -146,7 +152,7 @@ function userUpdate(){
             username: $('input:text[name=username]').val(),
             password: $('input:password[name=password]').val(),
             password_confirm: $('input:password[name=password_confirm]').val(),
-            groups: $('input:password[name=password_confirm]').val(),
+            groups: $('.userGroup').val(),
         };
 
         $.ajax({
