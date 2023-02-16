@@ -13,7 +13,7 @@ class UserModel extends ShieldUserModel
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
-    protected $allowedFields  = [
+    protected $allowedFields = [
         'username',
         'status',
         'status_message',
@@ -22,11 +22,19 @@ class UserModel extends ShieldUserModel
         'deleted_at',
     ];
 
-    public function getUsersGroups()
+    public function getUserGroups($id = NULL)
     {
-        $builder = $this->table('users');
-        $builder->select('*');
-        $builder->join('auth_groups_users', 'users.id = auth_groups_users.user_id');
-        return $builder;
+        $sql = "SELECT u.*, GROUP_CONCAT(agu.group) as groups FROM users AS u           
+        LEFT OUTER JOIN auth_groups_users agu                  
+            ON u.id = agu.user_id";                              
+
+        if($id){
+            $sql .= " WHERE u.id = $id";
+        }
+        $sql .= " GROUP BY u.id";
+
+        $query = $this->db->query($sql);
+        $result = $query->getResult();
+        return $result;
     }
 }

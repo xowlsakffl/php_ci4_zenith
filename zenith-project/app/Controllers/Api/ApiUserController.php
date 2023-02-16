@@ -19,11 +19,10 @@ class ApiUserController extends \CodeIgniter\Controller
     public function get($id = false) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data['result'] = $this->userModel->find($id);
-                $data['group'] = $this->userModel->find($id)->getGroups();
+                $data['result'] = $this->userModel->getUserGroups($id);
+                $data['result'][0]->groups = explode(',', $data['result'][0]->groups);
             } else {
-                $data['result'] = $this->userModel->getUsersGroups()->paginate(15);
-                $data['pager'] = $this->userModel->pager;
+                $data['result'] = $this->userModel->getUserGroups();
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -36,12 +35,13 @@ class ApiUserController extends \CodeIgniter\Controller
         $ret = false;
 
         if (strtolower($this->request->getMethod()) === 'put') {
-            if ($id && !empty($this->data)) {
+            if ($id && !empty($this->data)) {         
                 $this->validation = \Config\Services::validation();
                 $this->validation->setRules([
                     'username' => 'required',
-                    'password' => 'required',
-                    'password_confirm' => 'required|matches[password]',
+                    //'password' => 'required',
+                    //'password_confirm' => 'required|matches[password]',
+                    'groups' => 'required'
                 ],
                 [   // Errors
                     'username' => [
@@ -50,26 +50,35 @@ class ApiUserController extends \CodeIgniter\Controller
                     'password' => [
                         'required' => '비밀번호는 필수 입력사항입니다.',
                     ],
-                    'password_confirm' => [
+                    /* 'password_confirm' => [
                         'required' => '비밀번호는 필수 입력사항입니다.',
                         'matches' => '비밀번호가 일치하지 않습니다.',
                     ],
+                    'groups' => [
+                        'required' => '권한은 필수 입력사항입니다.',
+                    ], */
                 ]);
                 if($this->validation->run($this->data)){  
-                    $user = $this->userModel->findById($id);      
+                    $user = $this->userModel->findById($id);  
+                       
                     $user->fill([
                         'username' => $this->data['username'],
-                        'password' => $this->data['password'],
+                        //'password' => $this->data['password'],
                     ]);     
                     $this->userModel->save($user);
+                    $groups = $this->data['groups'];
+                    $user->syncGroups(...$this->data['groups']);
+
                     $ret = true;
                 }else{
                     if($this->validation->hasError('username')){
                         $error = $this->validation->getError('username');
-                    }else if($this->validation->hasError('password')){
+                    }/* else if($this->validation->hasError('password')){
                         $error = $this->validation->getError('password');
-                    }else if($this->validation->hasError('password_confirm')){
+                    } */else if($this->validation->hasError('password_confirm')){
                         $error = $this->validation->getError('password_confirm');
+                    }else if($this->validation->hasError('groups')){
+                        $error = $this->validation->getError('groups');
                     }
     
                     return $this->failValidationErrors($error);

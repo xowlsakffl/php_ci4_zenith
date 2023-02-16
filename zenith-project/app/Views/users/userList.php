@@ -15,13 +15,23 @@
                         <label for="username">이름</label>
                         <input type="text" name="username" id="username" class="form-control">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="password">비밀번호</label>
                         <input type="password" name="password" class="form-control" id="username">
                     </div>
                     <div class="form-group">
                         <label for="password_confirm">비밀번호 확인</label>
                         <input type="password" name="password_confirm" class="form-control" id="password_confirm">
+                    </div> -->
+                    <div class="form-group">
+                        <label for="group">권한</label>
+                        <select name="group" class="form-control userGroup" multiple="multiple">
+                            <option value="superadmin">최고관리자</option>
+                            <option value="admin">관리자</option>
+                            <option value="developer">개발자</option>
+                            <option value="user">사용자</option>
+                            <option value="guest">미인증 사용자</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="group">권한</label>
@@ -123,7 +133,7 @@ function userList(xhr){
         $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
-        .append('<td>'+item.group+'</td>')
+        .append('<td>'+item.groups+'</td>')
         .append('<td><button class="btn btn-primary" id="userView" data-id="'+item.id+'" data-bs-toggle="modal" data-bs-target="#Modal">수정</button><button class="btn btn-danger" id="userDelete" data-id="'+item.id+'">삭제</button></td>')
         .appendTo('#userTable');
     });
@@ -133,8 +143,13 @@ function userModal(xhr){
     console.log(xhr);
     $('#frm')[0].reset();
     $('#formMethod').val("PUT");
-    $('#hidden_id').val(xhr.id);
-    $('#username').val(xhr.username);
+    $('input:hidden[name=id]').val(xhr.result[0].id);
+    $('input:text[name=username]').val(xhr.result[0].username);
+
+    for (let i = 0; i < xhr.result[0].groups.length; i++) {
+        $('.userGroup option[value="' + xhr.result[0].groups[i] + '"]').prop('selected', true);
+    }
+    
 };
 
 
@@ -145,8 +160,9 @@ function userUpdate(){
         data = {
             ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
             username: $('input:text[name=username]').val(),
-            password: $('input:password[name=password]').val(),
-            password_confirm: $('input:password[name=password_confirm]').val(),
+            //password: $('input:password[name=password]').val(),
+            //password_confirm: $('input:password[name=password_confirm]').val(),
+            groups: $('.userGroup').val(),
         };
 
         $.ajax({
