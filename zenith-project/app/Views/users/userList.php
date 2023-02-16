@@ -33,16 +33,6 @@
                             <option value="guest">미인증 사용자</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="group">권한</label>
-                        <select name="group" class="form-control" multiple>
-                            <option value="superadmin">최고관리자</option>
-                            <option value="admin">관리자</option>
-                            <option value="developer">개발자</option>
-                            <option value="user">사용자</option>
-                            <option value="guest">미인증 사용자</option>
-                        </select>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">            
