@@ -38,7 +38,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static function($routes){
     $routes->get('/', 'Home::index');
     $routes->get('/home', 'Home::index');
-
+    $routes->get('pages/(:any)', 'Pages::view/$1');
     // 회원 관리
     $routes->group('users', static function($routes){
         $routes->get('', 'Api\ApiUserController::get');
