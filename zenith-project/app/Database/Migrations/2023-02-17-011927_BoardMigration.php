@@ -29,13 +29,9 @@ class BoardMigration extends Migration
             'updated_at' => [
                 'type'       => ' TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
                 'null' => false,
-            ],
-            'deleted_at' => [
-                'type'       => ' TIMESTAMP',
-                'null' => true,
-            ],
+            ]
         ]);
-        $this->forge->addPrimaryKey('bdx', true);
+        $this->forge->addKey('bdx', true);
         $this->forge->createTable('boards');
     }
 

@@ -25,10 +25,13 @@ class GuestFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $userGroup = auth()->user()->inGroup('guest');
-        if($userGroup){
-            return redirect()->to('/guest');
-        };
+        $auth = service('auth');
+        if ($auth->isLoggedIn()){
+            $userGroup = auth()->user()->inGroup('guest');
+            if($userGroup){
+                return redirect()->to('/guest');
+            };
+        }
     }
 
     /**
