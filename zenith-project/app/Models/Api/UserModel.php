@@ -24,17 +24,16 @@ class UserModel extends ShieldUserModel
 
     public function getUserGroups($id = NULL)
     {
-        $sql = "SELECT u.*, GROUP_CONCAT(agu.group) as groups FROM users AS u           
-        LEFT OUTER JOIN auth_groups_users agu                  
-            ON u.id = agu.user_id";                              
-
+        $builder = $this->db->table('users');
+        $builder->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups', false);
+        $builder->from('users as u');
+        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
         if($id){
-            $sql .= " WHERE u.id = $id";
+            $builder->where('u.id', $id);
         }
-        $sql .= " GROUP BY u.id";
+        $builder->groupBy('u.id');
 
-        $query = $this->db->query($sql);
-        $result = $query->getResult();
-        return $result;
+        $result = $builder->get()->getResult();
+        return $result; 
     }
 }

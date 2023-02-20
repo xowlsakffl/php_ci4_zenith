@@ -115,11 +115,9 @@ function getUser(){
 }
 
 function userList(xhr){
-    console.log(xhr.result);
-    console.log(xhr.pager);
+    console.log(xhr);
     $('#userTable tbody').empty();
-    $.each(xhr.result, function(index, item){
-        
+    $.each(xhr, function(index, item){
         $('<tr id="userSelect" data-id="'+item.id+'">').append('<td>'+index+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.status+'</td>')
@@ -130,14 +128,14 @@ function userList(xhr){
 }
 
 function userModal(xhr){
-    console.log(xhr);
+    console.log(xhr[0].groups.length);
     $('#frm')[0].reset();
     $('#formMethod').val("PUT");
-    $('input:hidden[name=id]').val(xhr.result[0].id);
-    $('input:text[name=username]').val(xhr.result[0].username);
+    $('input:hidden[name=id]').val(xhr[0].id);
+    $('input:text[name=username]').val(xhr[0].username);
 
-    for (let i = 0; i < xhr.result[0].groups.length; i++) {
-        $('.userGroup option[value="' + xhr.result[0].groups[i] + '"]').prop('selected', true);
+    for (let i = 0; i < xhr[0].groups.length; i++) {
+        $('.userGroup option[value="' + xhr[0].groups[i] + '"]').prop('selected', true);
     }
     
 };

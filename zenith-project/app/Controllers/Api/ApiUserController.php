@@ -15,14 +15,13 @@ class ApiUserController extends \CodeIgniter\Controller
     public function __construct() {
         $this->userModel = model(UserModel::class);
     }
-    
+
     public function get($id = false) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data['result'] = $this->userModel->getUserGroups($id);
-                $data['result'][0]->groups = explode(',', $data['result'][0]->groups);
+                $data = $this->userModel->getUserGroups($id);
             } else {
-                $data['result'] = $this->userModel->getUserGroups();
+                $data = $this->userModel->getUserGroups();
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -73,10 +72,6 @@ class ApiUserController extends \CodeIgniter\Controller
                 }else{
                     if($this->validation->hasError('username')){
                         $error = $this->validation->getError('username');
-                    }/* else if($this->validation->hasError('password')){
-                        $error = $this->validation->getError('password');
-                    } */else if($this->validation->hasError('password_confirm')){
-                        $error = $this->validation->getError('password_confirm');
                     }else if($this->validation->hasError('groups')){
                         $error = $this->validation->getError('groups');
                     }

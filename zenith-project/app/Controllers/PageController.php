@@ -1,11 +1,11 @@
 <?php
 namespace App\Controllers;
 
-class Pages extends BaseController
+class PageController extends BaseController
 {
     public function index()
     {
-        return Pages::view();
+        return PageController::view();
     }
 
     public function view($page = 'home')

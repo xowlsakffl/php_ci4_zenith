@@ -36,19 +36,29 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
 });
 //관리자, 최고관리자, 개발자, 일반사용자
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static function($routes){
-    $routes->get('/', 'Home::index');
-    $routes->get('/home', 'Home::index');
-    $routes->get('pages/(:any)', 'Pages::view/$1');
+    $routes->get('/', 'HomeController::index');
+    $routes->get('/home', 'HomeController::index');
+    $routes->get('pages/(:any)', 'PageController::view/$1');
     // 회원 관리
     $routes->group('users', static function($routes){
         $routes->get('', 'Api\ApiUserController::get');
-        $routes->get('(:any)', 'Api\ApiUserController::$1');
+        $routes->get('(:num)', 'Api\ApiUserController::$1');
         $routes->post('', 'Api\ApiUserController::$1');
-        $routes->put('(:any)', 'Api\ApiUserController::$1');
-        $routes->delete('(:any)', 'Api\ApiUserController::$1');
+        $routes->put('(:num)', 'Api\ApiUserController::$1');
+        $routes->delete('(:num)', 'Api\ApiUserController::$1');
     });
     $routes->get('users-list', 'UserController::index');
-    $routes->get('users-add', 'UserController::create');
+
+    // 게시판
+    $routes->group('boards', static function($routes){     
+        $routes->get('', 'Api\ApiBoardController::get');
+        $routes->get('(:num)', 'Api\ApiBoardController::$1');
+        $routes->post('', 'Api\ApiBoardController::$1');
+        $routes->put('(:num)', 'Api\ApiBoardController::$1');
+        $routes->delete('(:num)', 'Api\ApiBoardController::$1');
+    });   
+
+    $routes->get('boards-list', 'BoardController::index');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
