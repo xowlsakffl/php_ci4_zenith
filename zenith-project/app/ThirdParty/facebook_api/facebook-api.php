@@ -115,7 +115,7 @@ class ChainsawFB
                 'app_id' => $this->app_id,
                 'app_secret' => $this->app_secret,
                 'default_access_token' => $this->access_token,
-                // 'default_graph_version' => 'v16.0'
+                'default_graph_version' => 'v16.0'
             ]);
             $this->fb_app = new FacebookApp($this->app_id, $this->app_secret);
             if ($bs_id) $this->business_id = $bs_id;
@@ -540,7 +540,7 @@ class ChainsawFB
             $insights = $getSelf->getInsights();
             $getResponse = $insights->getResponse();
             $response = $getResponse->getContent();
-            echo '<pre>'.print_r($response,1).'</pre>'; exit;
+            // echo '<pre>'.print_r($response,1).'</pre>'; exit;
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
                 $url = @$response['paging']['next'];
@@ -666,7 +666,7 @@ class ChainsawFB
             )
         );
         if ($data == null) {
-            $ad_ids = $this->db->getAdsWithAccount();
+            $ad_ids = $this->db->getAds();
             $data = $ad_ids->getResultArray();
         }
         $result = array();
@@ -1267,6 +1267,7 @@ class ChainsawFB
             LeadFields::CREATED_TIME,
             LeadFields::CUSTOM_DISCLAIMER_RESPONSES
         );
+        
         $ad_ids = $this->db->getAdsByAdAccountId($from_date, $to_date); //from DB
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
             // $this->grid($row); continue;

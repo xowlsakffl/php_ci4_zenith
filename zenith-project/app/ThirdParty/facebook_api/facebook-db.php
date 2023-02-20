@@ -247,40 +247,16 @@ class FBDB
 
     public function insertAsyncInsights($data)
     {
-
-
         foreach ($data as $key => $report) {
             if (!$report['impressions']) $report['impressions'] = 0;
             if (!$report['clicks']) $report['clicks'] = 0;
             if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
             if (!$report['spend']) $report['spend'] = 0;
-            $sql = "INSERT INTO fb_ad_insight (
-						ad_id,
-						impressions,
-						clicks,
-						inline_link_clicks,
-						spend,
-						create_date
-					)
-					VALUES (
-						'{$report['ad_id']}',
-						 {$report['impressions']},
-						 {$report['clicks']},
-						 {$report['inline_link_clicks']},
-						 {$report['spend']},
-						 NOW()
-					)
-					ON DUPLICATE KEY UPDATE
-						impressions = {$report['impressions']},
-						clicks = {$report['clicks']},
-						inline_link_clicks = {$report['inline_link_clicks']},
-						spend = {$report['spend']},
-						update_date = NOW();";
-            $this->db_query($sql);
             if ($report['date_start'] == $report['date_stop']) {
                 $sql = "INSERT INTO fb_ad_insight_history (
 							ad_id,
 							date,
+                            hour,
 							impressions,
 							clicks,
 							inline_link_clicks,
@@ -290,6 +266,7 @@ class FBDB
 						VALUES (
 							'{$report['ad_id']}',
 							'{$report['date_start']}',
+                            HOUR(NOW()),
 							 {$report['impressions']},
 							 {$report['clicks']},
 							 {$report['inline_link_clicks']},
@@ -302,11 +279,12 @@ class FBDB
 							inline_link_clicks = {$report['inline_link_clicks']},
 							spend = {$report['spend']},
 							update_date = NOW();";
-                //echo $sql.'<br>';
+                // echo $sql.'<br>';
                 $this->db_query($sql);
             }
             // 캠페인 저장
-            $campaign_name = mysqli_real_escape_string($this->db, $report['campaign_name']);
+            $campaign_name = $this->db->escape($report['campaign_name']);
+            // echo $campaign_name; exit;
             $sql = "INSERT INTO fb_campaign (
 						campaign_id,
 						campaign_name,
@@ -314,15 +292,15 @@ class FBDB
 						create_date
 					) VALUES (
 						'{$report['campaign_id']}',
-						'{$campaign_name}',
+						{$campaign_name},
 						'{$report['account_id']}',
 						NOW()
 					) ON DUPLICATE KEY UPDATE
-						campaign_name = '{$campaign_name}',
+						campaign_name = {$campaign_name},
 						update_date = NOW();";
             $this->db_query($sql);
             // 광고세트 저장
-            $adset_name = mysqli_real_escape_string($this->db, $report['adset_name']);
+            $adset_name = $this->db->escape($report['adset_name']);
             $sql = "INSERT INTO fb_adset (
 						adset_id,
 						adset_name,
@@ -330,15 +308,15 @@ class FBDB
 						create_date
 					) VALUES (
 						'{$report['adset_id']}',
-						'{$adset_name}',
+						{$adset_name},
 						'{$report['campaign_id']}',
 						NOW()
 					) ON DUPLICATE KEY UPDATE
-						adset_name = '{$adset_name}',
+						adset_name = {$adset_name},
 						update_date = NOW();";
             $this->db_query($sql);
             // 광고 저장
-            $ad_name = mysqli_real_escape_string($this->db, $report['ad_name']);
+            $ad_name = $this->db->escape($report['ad_name']);
             $use_landing = 0;
             if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $ad_name)) {
                 $use_landing = 1;
@@ -351,12 +329,12 @@ class FBDB
 						create_date
 					) VALUES (
 						'{$report['ad_id']}',
-						'{$ad_name}',
+						{$ad_name},
 						'{$report['adset_id']}',
 						'{$use_landing}',
 						NOW()
 					) ON DUPLICATE KEY UPDATE
-						ad_name = '{$ad_name}',
+						ad_name = {$ad_name},
 						update_date = NOW();";
             $this->db_query($sql);
         }
@@ -424,7 +402,7 @@ class FBDB
 
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
-            $name = mysqli_real_escape_string($this->db, $report['name']);
+            $name = $this->db->escape($report['name']);
             //          $name = addslashes($report['name']);
             $use_landing = 0;
             if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $name)) {
@@ -441,7 +419,7 @@ class FBDB
                         create_date
                     ) VALUES (
                         '{$report['id']}',
-                        '{$name}',
+                        {$name},
                         '{$report['effective_status']}',
                         '{$report['status']}',
                         '{$report['adset_id']}',
@@ -449,7 +427,7 @@ class FBDB
                         '{$report['leadgen']}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
-						ad_name = '{$name}',
+						ad_name = {$name},
 						effective_status = '{$report['effective_status']}',
 						status = '{$report['status']}',
 						fb_pixel = '{$report['fb_pixel']}',
@@ -502,7 +480,7 @@ class FBDB
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
-            $name = mysqli_real_escape_string($this->db, $report['name']);
+            $name = $this->db->escape($report['name']);
             if ($report['lifetime_budget']) {
                 $budget_type = 'lifetime';
                 $budget = $report['lifetime_budget'];
@@ -523,13 +501,13 @@ class FBDB
                         create_date
                     ) VALUES (
                         '{$report['id']}',
-                        '{$name}',
+                        {$name},
                         '{$report['campaign_id']}',
                         '{$report['effective_status']}',
                         '{$report['status']}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
-						adset_name = '{$name}',
+						adset_name = {$name},
 						budget_type = '{$budget_type}',
 						budget = {$budget},
 						budget_remaining = {$report['budget_remaining']},
@@ -584,7 +562,7 @@ class FBDB
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
-            $name = mysqli_real_escape_string($this->db, $report['name']);
+            $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
             $spend_cap = $report['spend_cap'] ? $report['spend_cap'] : 'NULL';
@@ -608,13 +586,13 @@ class FBDB
                         create_date
                     ) VALUES (
                         '{$report['id']}',
-                        '{$name}',
+                        {$name},
                         '{$report['account_id']}',
                         '{$report['effective_status']}',
                         '{$report['status']}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
-						campaign_name = '{$name}',
+						campaign_name = {$name},
                         budget_type = '{$budget_type}',
                         budget = {$budget},
                         budget_remaining = {$report['budget_remaining']},
@@ -1126,9 +1104,9 @@ class FBDB
                 $result = $this->g5db->query($sql);
                 $is_added = $result->num_rows;
                 if (!$is_added) {
-                    $row['full_name'] = $this->g5db->real_escape_string($row['full_name']);
+                    $row['full_name'] = $this->db->escape($row['full_name']);
                     if (preg_match('/^evt_/', $row['group_id'])) $query = ", event_seq='{$row['event_id']}'";
-                    $sql = "INSERT INTO app_subscribe SET group_id='{$row['group_id']}'{$query}, site='{$row['site']}', name='{$row['full_name']}', gender='{$row['gender']}', age='{$row['age']}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', add6='{$row['add6']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', deleted=0, fb_ad_lead_id='{$row['ad_id']}', enc_status=1";
+                    $sql = "INSERT INTO app_subscribe SET group_id='{$row['group_id']}'{$query}, site='{$row['site']}', name={$row['full_name']}, gender='{$row['gender']}', age='{$row['age']}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', add6='{$row['add6']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', deleted=0, fb_ad_lead_id='{$row['ad_id']}', enc_status=1";
 
                     $result = $this->g5db->query($sql);
                     // echo $sql."<br/>";
@@ -1792,7 +1770,8 @@ class FBDB
         $this->sltDB->transStart();
         $result = $this->sltDB->query($sql);
         if (!$result && $error) {
-            exit($this->sltDB->error());
+            $err = $this->sltDB->error();
+            exit($err['code'] .' : '. $err['message'] .' - '. $sql);
         }
         $this->sltDB->transComplete();
         return $result;
@@ -1850,8 +1829,8 @@ class FBDB
 
     public function addMemo($data)
     {
-        $data['memo'] = $this->db->real_escape_string($data['memo']);
-        $sql = "INSERT INTO fb_memo (`id`, `type`, `memo`, `mb_name`, `datetime`) VALUES({$data['id']}, '{$data['type']}', '{$data['memo']}', '{$data['mb_name']}', NOW())";
+        $data['memo'] = $this->db->escape($data['memo']);
+        $sql = "INSERT INTO fb_memo (`id`, `type`, `memo`, `mb_name`, `datetime`) VALUES({$data['id']}, '{$data['type']}', {$data['memo']}, '{$data['mb_name']}', NOW())";
         if ($this->db_query($sql))
             return $data['id'];
     }
@@ -1865,10 +1844,5 @@ class FBDB
         $sql = "UPDATE fb_memo SET is_done = '{$data['is_done']}'{$query} WHERE seq = {$data['seq']}";
         if ($this->db_query($sql))
             return $data['seq'];
-    }
-
-    public function real_escape_string($val)
-    {
-        return $this->db->real_escape_string($val);
     }
 }
