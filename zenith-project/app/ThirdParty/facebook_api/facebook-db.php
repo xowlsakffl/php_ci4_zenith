@@ -253,6 +253,9 @@ class FBDB
             if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
             if (!$report['spend']) $report['spend'] = 0;
             if ($report['date_start'] == $report['date_stop']) {
+                if($report['date_start'] != date('Y-m-d')) {
+
+                }
                 $sql = "INSERT INTO fb_ad_insight_history (
 							ad_id,
 							date,
@@ -266,7 +269,7 @@ class FBDB
 						VALUES (
 							'{$report['ad_id']}',
 							'{$report['date_start']}',
-                            HOUR(NOW()),
+                            IF(DATE(NOW()) = '{$report['date_start']}', HOUR(NOW()), 23),
 							 {$report['impressions']},
 							 {$report['clicks']},
 							 {$report['inline_link_clicks']},

@@ -156,29 +156,6 @@ class ChainsawFB
         101 = CLOSED */
     public function getFBAccounts()
     {
-        /*
-        try {
-            // Returns a `Facebook\FacebookResponse` object
-            $response = $this->fb->get(
-                '/'.$this->business_id.'/owned_ad_accounts?fields=account_id,name,account_status,funding_source_details,adspixels{id,name}&limit=500',
-                $this->access_token
-            );
-        } catch(Facebook\Exceptions\FacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
-        } catch(Facebook\Exceptions\FacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
-        }
-        echo '<pre>'.print_r($response,1).'</pre>'; exit;
-        $graphNode = $response->getGraphNode();
-        */
-        // $request = new FacebookRequest(
-        //     $this->fb_app,
-        //     $this->access_token,
-        //     'GET',
-        //     '/'.$this->business_id.'/owned_ad_accounts?fields=account_id,name,account_status,funding_source_details,adspixels{id,name}&limit=500' //3.0 에 role 사라짐
-        // );
         $response = $this->fb->get(
             '/' . $this->business_id . '/owned_ad_accounts?fields=account_id,name,account_status,funding_source_details,adspixels{id,name}&limit=20',
             $this->access_token

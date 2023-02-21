@@ -46,16 +46,10 @@ class AuthGroups extends ShieldAuthGroups
         'user' => [
             'title'       => '제니스 사용자',
             'description' => '제니스 사용자',
-            /* [
-                'advertiser1' => [
-                    'title' => '광고주1',
-                    'description' => '테스트 광고주1',
-                ],
-                'advertiser2' => [
-                    'title' => '광고주2',
-                    'description' => '테스트 광고주2',
-                ]
-            ], */
+        ],
+        'advertiser' => [
+            'title' => '광고주',
+            'description' => '광고주 사용자',
         ],
         'guest' => [
             'title'       => '게스트',
@@ -80,7 +74,8 @@ class AuthGroups extends ShieldAuthGroups
         'users.edit'          => '회원 수정',
         'users.delete'        => '회원 삭제',
         
-        'users.advertiser1'   => '광고주1',
+        'advertiser.agency'   => '대행사',
+        'advertiser.owner'    => '광고주',
     ];
 
     /**
@@ -106,6 +101,10 @@ class AuthGroups extends ShieldAuthGroups
             'admin.settings',
             'users.create',
             'users.edit',
+        ],
+        'advertiser' => [
+            'advertiser.agency',
+            'advertiser.owner'
         ],
         'user' => [],
         'guest' => [
