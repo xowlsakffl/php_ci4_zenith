@@ -34,7 +34,7 @@ class Facebook extends Controller
     public function getAdLead($from = null, $to = null) {
         CLI::clearScreen();
         if($from == null)
-            $from = CLI::prompt("잠재고객 업데이트 할 시작날짜를 입력해주세요.");
+            $from = CLI::prompt("잠재고객 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
         if($to == null)
             $to = CLI::prompt("잠재고객 업데이트 할 종료날짜를 입력해주세요.", date('Y-m-d'));
         $run = CLI::prompt("{$from}~{$to}일자의 잠재고객을 업데이트 합니다.",["y","n"]);
@@ -47,34 +47,33 @@ class Facebook extends Controller
     public function getLeadgens($from = null, $to = null) {
         CLI::clearScreen();
         if($from == null)
-            $from = CLI::prompt("잠재고객 작성정보를 업데이트 할 시작날짜를 입력해주세요.");
+            $from = CLI::prompt("잠재고객 작성정보를 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
         if($to == null)
-            $to = CLI::prompt("잠재고객 작성정보를 업데이트 할 종료날짜를 입력해주세요.", date('Y-m-d 00:00:00'));
+            $to = CLI::prompt("잠재고객 작성정보를 업데이트 할 종료날짜를 입력해주세요.", date('Y-m-d'));
         $run = CLI::prompt("잠재고객 작성정보를 업데이트 합니다.",["y","n"]);
         if($run != 'y') return false;
         CLI::write("잠재고객 작성정보를 업데이트 합니다.", "light_red");
 
         $this->chainsaw->getLeadgens($from, $to);
     }
-
-    public function updateAdCreativesAdsetsCampaigns() {
+    
+    public function updateCampaignsAdsetsAds() {
         CLI::clearScreen();
-        $run = CLI::prompt("광고 결과 기준으로 광고, 소재, 광고그룹, 캠페인을 업데이트 합니다.",["y","n"]);
+        $run = CLI::prompt("캠페인을 업데이트 합니다.\n(시간이 오래 걸릴 수 있습니다.)",["y","n"]);
         if($run != 'y') return false;
-        CLI::write("광고, 소재, 광고그룹, 캠페인을 업데이트 합니다.", "light_red");
+        CLI::write("캠페인을 업데이트 합니다.", "light_red");
 
         $getAds = $this->chainsaw->getAds();
-        $updateAdCreatives = $this->chainsaw->updateAdCreatives($getAds);
-        $updateAdsets = $this->$chainsaw->updateAdsets($getAds);
-        $updateCampaigns = $this->$chainsaw->updateCampaigns($updateAdsets);
+        $updateAdsets = $this->chainsaw->updateAdsets($getAds);
+        $updateCampaigns = $this->chainsaw->updateCampaigns($updateAdsets);
     }
 
-    public function updateAdAccounts() {
+    public function updateAds() {
         CLI::clearScreen();
-        $run = CLI::prompt("광고계정을 업데이트 합니다.",["y","n"]);
+        $run = CLI::prompt("광고를 업데이트 합니다.\n(시간이 오래 걸릴 수 있습니다.)",["y","n"]);
         if($run != 'y') return false;
-        CLI::write("광고계정을 업데이트 합니다.", "light_red");
+        CLI::write("광고를 업데이트 합니다.", "light_red");
 
-        $this->chainsaw->updateAdAccounts();
+        $this->chainsaw->updateAds();
     }
 }
