@@ -14,13 +14,9 @@ class ApiBoardController extends \CodeIgniter\Controller
         $this->board = model(BoardModel::class);
     }
 
-    public function boardView(){
-        return view('boards/board');
-    }
-
     public function get($id = NULL)
     {
-        if (strtolower($this->request->getMethod()) === 'get' /* && $this->request->isAJAX() */) {
+        if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
                 $data = $this->board->find($id);
             } else {

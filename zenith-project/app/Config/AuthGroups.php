@@ -47,8 +47,12 @@ class AuthGroups extends ShieldAuthGroups
             'title'       => '제니스 사용자',
             'description' => '제니스 사용자',
         ],
+        'agency' => [
+            'title'       => '광고대행사',
+            'description' => '광고대행사 사용자',
+        ],
         'advertiser' => [
-            'title' => '광고주',
+            'title'       => '광고주',
             'description' => '광고주 사용자',
         ],
         'guest' => [
@@ -73,9 +77,17 @@ class AuthGroups extends ShieldAuthGroups
         'users.create'        => '회원 생성',
         'users.edit'          => '회원 수정',
         'users.delete'        => '회원 삭제',
+
+        'agency.access'       => '대행사 목록 페이지',
+        'agency.advertisers'  => '대행사 하위 광고주 관리',
+        'agency.create'       => '대행사 생성',
+        'agency.edit'         => '대행사 수정',
+        'agency.delete'       => '대행사 삭제',
         
-        'advertiser.agency'   => '대행사',
-        'advertiser.owner'    => '광고주',
+        'advertiser.access'   => '광고주 목록 페이지',
+        'advertiser.create'   => '광고주 생성',
+        'advertiser.edit'     => '광고주 수정',
+        'advertiser.delete'   => '광고주 삭제',
     ];
 
     /**
@@ -89,12 +101,16 @@ class AuthGroups extends ShieldAuthGroups
         'superadmin' => [
             'admin.access',
             'users.*',
+            'agency.*',
+            'advertiser.*',
         ],
         'admin' => [
             'admin.access',
             'users.create',
             'users.edit',
             'users.delete',
+            'agency.*',
+            'advertiser.*',
         ],
         'developer' => [
             'admin.access',
@@ -102,11 +118,14 @@ class AuthGroups extends ShieldAuthGroups
             'users.create',
             'users.edit',
         ],
-        'advertiser' => [
-            'advertiser.agency',
-            'advertiser.owner'
+        'agency' => [
+            'agency.advertisers',
         ],
-        'user' => [],
+        'advertiser' => [],
+        'user' => [
+            'agency.*',
+            'advertiser.*',
+        ],
         'guest' => [
             'guest.access'
         ],

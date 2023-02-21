@@ -59,6 +59,17 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
     });   
 
     $routes->get('boards-list', 'BoardController::index');
+
+    // 게시판
+    $routes->group('companies', static function($routes){     
+        $routes->get('', 'Api\ApiCompanyController::get');
+        $routes->get('(:num)', 'Api\ApiCompanyController::$1');
+        $routes->post('', 'Api\ApiCompanyController::$1');
+        $routes->put('(:num)', 'Api\ApiCompanyController::$1');
+        $routes->delete('(:num)', 'Api\ApiCompanyController::$1');
+    });   
+
+    $routes->get('boards-list', 'BoardController::index');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
