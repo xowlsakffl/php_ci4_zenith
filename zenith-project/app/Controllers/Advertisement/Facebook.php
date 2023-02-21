@@ -64,7 +64,7 @@ class Facebook extends Controller
         CLI::write("광고, 소재, 광고그룹, 캠페인을 업데이트 합니다.", "light_red");
 
         $getAds = $this->chainsaw->getAds();
-        $updateAdCreatives = $chainsaw->updateAdCreatives($getAds);
+        $updateAdCreatives = $this->chainsaw->updateAdCreatives($getAds);
         $updateAdsets = $this->$chainsaw->updateAdsets($getAds);
         $updateCampaigns = $this->$chainsaw->updateCampaigns($updateAdsets);
     }
