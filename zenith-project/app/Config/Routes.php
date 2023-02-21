@@ -59,6 +59,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
     });   
 
     $routes->get('boards-list', 'BoardController::index');
+    $routes->get('boards-list/getList', 'BoardController::getList');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');

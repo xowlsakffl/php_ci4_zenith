@@ -22,10 +22,14 @@ class ApiBoardController extends \CodeIgniter\Controller
     {
         if (strtolower($this->request->getMethod()) === 'get' /* && $this->request->isAJAX() */) {
             if ($id) {
-                $data = $this->board->find($id);
+                $data['result'] = $this->board->find($id);
             } else {
-                $getData = $this->request->getGet();
-                $data = $this->board->getBoards($getData);
+                $data['result'] = $this->board->paginate(10);
+                $data['pager']['total'] = $this->board->pager->getTotal();
+                $data['pager']['pageCount'] = $this->board->pager->getPageCount();
+                $data['pager']['currentPage'] = $this->board->pager->getCurrentPage();
+                $data['pager']['firstPage'] = $this->board->pager->getFirstPage();
+                $data['pager']['lastPage'] = $this->board->pager->getLastPage();
             }
         }else{
             return $this->fail("잘못된 요청");

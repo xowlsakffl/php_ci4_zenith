@@ -1,9 +1,6 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('content');?>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
-
     <!--content-->
     <div class="container-md">
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
@@ -108,40 +105,72 @@
 <script>
 $(document).ready(function(){
 
-/* $.ajaxSetup({
-    headers: {
-        ['<?=csrf_token()?>']: '<?=csrf_hash()?>',
-    }
-}); */
 getBoardList();
 function getBoardList(){
-    $('#board').DataTable({
-            'pageLength': 10,
-            'processing': true,
-            'serverSide': true,
-            'serverMethod': 'get',
-            'ajax': {
-                'url': '<?=base_url();?>/boards',
-            },
-            'columns': [
-                {
-                    data: 'bdx'
-                },
-                {
-                    data: 'board_title'
-                },
-                {
-                    data: 'board_description'
-                },
-                {
-                    data: 'created_at'
-                },
-            ],
-            'fnCreatedRow': function (nRow, aData, iDataIndex) {
-                $(nRow).attr('data-id', aData.bdx);
-                $(nRow).attr('id', 'boardView');
-            },
-        });
+    data = [
+        
+    ];
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>/boards",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: boardList,
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function boardList(xhr){
+    boardPagination(xhr);
+    $('#board tbody').empty();
+    $.each(xhr.result, function(index, item){   
+        index++
+        $('<tr id="boardSelect" data-id="'+item.bdx+'">').append('<td>'+item.bdx+'</td>')
+        .append('<td>'+item.board_title+'</td>')
+        .append('<td>'+item.created_at+'</td>')
+        .appendTo('#board'); 
+    });
+}
+
+function boardPagination(xhr){
+    let pagingHtml = $('#board').parent(); //append시킬 부모 요소
+
+    const pageBlock = parseInt(xhr.pager.pageCount / 3);//페이지 버튼 수
+    console.log(pageBlock);
+    let pages = [];
+    let curBlockNum = parseInt((xhr.pager.currentPage - 1) / 3);//페이지 버튼 숫자
+
+    if(xhr.pager.total > 0){
+        for(let i = xhr.pager.firstPage; i <= xhr.pager.lastPage; i++){
+            pages.push(i);
+        }
+    }
+    
+    let html = '<div class="pagination">';
+
+    if(xhr.pager.current !== 1){
+        html += '<a href="#" id="fiest">처음</a>';
+        html += '<a href="#" id="prev">이전글</a>';
+    }
+
+    if (pages.length > 0) {
+		for (let i = 0; i < pages.length; i++) {
+			html += "<a href='#' id=" + (pages[i] + 1) + ">" + (pages[i] + 1) + "</a>";
+		}
+	}
+
+    if (xhr.pager.pageCount > 1 && xhr.pager.current !== xhr.pager.pageCount) {
+		html += '<a href=# id="next">다음글</a>';
+		html += '<a href=# id="last">마지막</a>';
+	}
+    html += '</div>';
+
+    $(pagingHtml).append(html);
+    $(".pagination a").css("color", "black");
+	$(".pagination a#" + xhr.pager.current).css({ "text-decoration": "none", "font-weight": "bold" }); 
 }
 
 //글쓰기 버튼
