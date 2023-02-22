@@ -80,6 +80,16 @@
         </div>
         <h1 class="font-weight-bold">게시판</h1>
         <div class="row">
+            <div class="col-3">
+                <select name="pageLimit" id="pageLimit" class="form-control">
+                    <option value="10">10개</option>
+                    <option value="50">50개</option>
+                    <option value="100">100개</option>
+                </select>
+            </div>
+            <div class="col-5">
+                <input type="text" class="form-control" id="search" name="search" placeholder="검색">
+            </div>
             <table class="table" id="board">
                 <thead class="table-dark">
                     <tr>
@@ -109,12 +119,17 @@
 $(document).ready(function(){
 
 getBoardList(1);
-function getBoardList(page = false){
-    page = page ? page : 1;
-
+function getBoardList(page, limit, search){
+    data = {
+        'page': page ? page : 10,
+        'limit': limit ? limit : 10,
+        'search': search ? search : '',
+    };
+    
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/boards?page="+page,
+        url: "<?=base_url()?>/boards",
+        data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(xhr){
@@ -128,10 +143,11 @@ function getBoardList(page = false){
 }
 
 function setPaging(xhr){
+    $('.pagination').twbsPagination('destroy');
     $('.pagination').twbsPagination({
         totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
-        visiblePages: 10,	// 하단에서 한번에 보여지는 페이지 번호 수
-        startPage : 1, // 시작시 표시되는 현재 페이지
+        visiblePages: 20,	// 하단에서 한번에 보여지는 페이지 번호 수
+        startPage : xhr.pager.currentPage, // 시작시 표시되는 현재 페이지
         initiateStartPageClick: false,	// 플러그인이 시작시 페이지 버튼 클릭 여부 (default : true)
         first : "첫 페이지",	// 페이지네이션 버튼중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
         prev : "이전 페이지",	// 이전 페이지 버튼에 쓰여있는 텍스트
@@ -147,7 +163,8 @@ function setPaging(xhr){
         anchorClass : "page-link",	//버튼 안의 앵커에 대한 CSS class
         
         onPageClick: function (event, page) {
-            getBoardList(page)
+            console.log(xhr.pager.limit);
+            getBoardList(page, xhr.pager.limit)
         }
     });
 }
@@ -162,6 +179,11 @@ function setTable(xhr){
         .appendTo('#board'); 
     });
 }
+
+//검색
+$('body').on('keyup', '#search', function(){
+    getBoardList(1, 50,$(this).val());
+})
 
 //페이지 게시글 갯수
 $('body').on('change', '#pageLimit', function(){

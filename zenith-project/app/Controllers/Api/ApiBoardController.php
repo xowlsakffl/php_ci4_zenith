@@ -20,8 +20,24 @@ class ApiBoardController extends \CodeIgniter\Controller
             if ($id) {
                 $data['result'] = $this->board->find($id);
             } else {
-                $data['result'] = $this->board->paginate(10);
+                $param = $this->request->getGet();
 
+                $builder = $this->board;
+
+                if(isset($param['limit'])){
+                    $limit = $param['limit'];
+                }
+
+                if(isset($param['search'])){
+                    $searchText = $param['search'];
+                    $builder = $builder->select('*')
+                    ->orLike('board_title', $searchText)
+                    ->orLike('board_description', $searchText);
+                }
+
+                $data['result'] = $builder->paginate($limit);
+
+                $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $this->board->pager->getTotal();
                 $data['pager']['pageCount'] = $this->board->pager->getPageCount();
                 $data['pager']['currentPage'] = $this->board->pager->getCurrentPage();
