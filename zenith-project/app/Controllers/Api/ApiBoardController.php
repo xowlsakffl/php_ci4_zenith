@@ -26,6 +26,8 @@ class ApiBoardController extends \CodeIgniter\Controller
 
                 if(isset($param['limit'])){
                     $limit = $param['limit'];
+                }else{
+                    $limit = 10;
                 }
 
                 if(isset($param['search'])){
