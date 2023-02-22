@@ -1,6 +1,7 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('content');?>
+
     <!--content-->
     <div class="container-md">
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
@@ -84,15 +85,16 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">제목</th>
-                        <th scope="col">본문</th>
                         <th scope="col">생성일</th>
                     </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
-            <div class="row pageNum">
+            <div class="row pagination-container">
+                <ul class="pagination">
 
+                </ul>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
                 <button class="btn btn-primary" id="boardNewBtn">글쓰기</button>
@@ -102,76 +104,70 @@
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
+<script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
 
-getBoardList();
-function getBoardList(){
-    data = [
-        
-    ];
+getBoardList(1);
+function getBoardList(page = false){
+    page = page ? page : 1;
+
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/boards",
-        data: data,
+        url: "<?=base_url()?>/boards?page="+page,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
-        success: boardList,
+        success: function(xhr){
+            setTable(xhr);       
+            setPaging(xhr);
+        },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
 }
 
-function boardList(xhr){
-    boardPagination(xhr);
+function setPaging(xhr){
+    $('.pagination').twbsPagination({
+        totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
+        visiblePages: 10,	// 하단에서 한번에 보여지는 페이지 번호 수
+        startPage : 1, // 시작시 표시되는 현재 페이지
+        initiateStartPageClick: false,	// 플러그인이 시작시 페이지 버튼 클릭 여부 (default : true)
+        first : "첫 페이지",	// 페이지네이션 버튼중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
+        prev : "이전 페이지",	// 이전 페이지 버튼에 쓰여있는 텍스트
+        next : "다음 페이지",	// 다음 페이지 버튼에 쓰여있는 텍스트
+        last : "마지막 페이지",	// 페이지네이션 버튼중 마지막으로 가는 버튼에 쓰여있는 텍스트
+        nextClass : "page-item next",	// 이전 페이지 CSS class
+        prevClass : "page-item prev",	// 다음 페이지 CSS class
+        lastClass : "page-item last",	// 마지막 페이지 CSS calss
+        firstClass : "page-item first",	// 첫 페이지 CSS class
+        pageClass : "page-item",	// 페이지 버튼의 CSS class
+        activeClass : "active",	// 클릭된 페이지 버튼의 CSS class
+        disabledClass : "disabled",	// 클릭 안된 페이지 버튼의 CSS class
+        anchorClass : "page-link",	//버튼 안의 앵커에 대한 CSS class
+        
+        onPageClick: function (event, page) {
+            getBoardList(page)
+        }
+    });
+}
+
+function setTable(xhr){
     $('#board tbody').empty();
     $.each(xhr.result, function(index, item){   
         index++
-        $('<tr id="boardSelect" data-id="'+item.bdx+'">').append('<td>'+item.bdx+'</td>')
+        $('<tr id="boardView" data-id="'+item.bdx+'">').append('<td>'+item.bdx+'</td>')
         .append('<td>'+item.board_title+'</td>')
         .append('<td>'+item.created_at+'</td>')
         .appendTo('#board'); 
     });
 }
 
-function boardPagination(xhr){
-    let pagingHtml = $('#board').parent(); //append시킬 부모 요소
+//페이지 게시글 갯수
+$('body').on('change', '#pageLimit', function(){
+    getBoardList(1, $(this).val());
+})
 
-    const pageBlock = parseInt(xhr.pager.pageCount / 3);//페이지 버튼 수
-    console.log(pageBlock);
-    let pages = [];
-    let curBlockNum = parseInt((xhr.pager.currentPage - 1) / 3);//페이지 버튼 숫자
-
-    if(xhr.pager.total > 0){
-        for(let i = xhr.pager.firstPage; i <= xhr.pager.lastPage; i++){
-            pages.push(i);
-        }
-    }
-    
-    let html = '<div class="pagination">';
-
-    if(xhr.pager.current !== 1){
-        html += '<a href="#" id="fiest">처음</a>';
-        html += '<a href="#" id="prev">이전글</a>';
-    }
-
-    if (pages.length > 0) {
-		for (let i = 0; i < pages.length; i++) {
-			html += "<a href='#' id=" + (pages[i] + 1) + ">" + (pages[i] + 1) + "</a>";
-		}
-	}
-
-    if (xhr.pager.pageCount > 1 && xhr.pager.current !== xhr.pager.pageCount) {
-		html += '<a href=# id="next">다음글</a>';
-		html += '<a href=# id="last">마지막</a>';
-	}
-    html += '</div>';
-
-    $(pagingHtml).append(html);
-    $(".pagination a").css("color", "black");
-	$(".pagination a#" + xhr.pager.current).css({ "text-decoration": "none", "font-weight": "bold" }); 
-}
 
 //글쓰기 버튼
 $('body').on('click', '#boardNewBtn', function(){
@@ -217,10 +213,10 @@ $('body').on('click', '#boardView', function(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
-            $('#modalView .modal-title').html(data.board_title);
-            $('#modalView .modal-body').html(data.board_description);
-            $('#modalView #boardUpdateModal').attr('data-id', data.bdx);
-            $('#modalView #boardDelete').attr('data-id', data.bdx);
+            $('#modalView .modal-title').html(data.result.board_title);
+            $('#modalView .modal-body').html(data.result.board_description);
+            $('#modalView #boardUpdateModal').attr('data-id', data.result.bdx);
+            $('#modalView #boardDelete').attr('data-id', data.result.bdx);
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
             myModal.show()
         },
@@ -241,9 +237,9 @@ $('body').on('click', '#boardUpdateModal', function(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
-            $('#modalUpdate #board_title').val(data.board_title);
-            $('#modalUpdate #board_description').val(data.board_description);
-            $('#modalUpdate #hidden_id').val(data.bdx);
+            $('#modalUpdate #board_title').val(data.result.board_title);
+            $('#modalUpdate #board_description').val(data.result.board_description);
+            $('#modalUpdate #hidden_id').val(data.result.bdx);
             var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
             myModal.show()
         },
@@ -272,7 +268,7 @@ $('body').on('click', '#boardUpdateBtn', function(){
         success: function(response){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
-            $('#board').DataTable().ajax.reload();
+            getBoardList(1);
             console.log(response);
         },
         error: function(error){
@@ -293,7 +289,7 @@ $('body').on('click', '#boardDelete', function(){
             contentType: 'application/json; charset=utf-8',
             success: function(data){
                 $('#modalView').modal('hide');
-                $('#board').DataTable().ajax.reload();
+                getBoardList(1);
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );

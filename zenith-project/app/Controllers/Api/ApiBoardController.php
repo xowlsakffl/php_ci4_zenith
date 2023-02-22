@@ -14,10 +14,6 @@ class ApiBoardController extends \CodeIgniter\Controller
         $this->board = model(BoardModel::class);
     }
 
-    public function boardView(){
-        return view('boards/board');
-    }
-
     public function get($id = NULL)
     {
         if (strtolower($this->request->getMethod()) === 'get' /* && $this->request->isAJAX() */) {
@@ -25,6 +21,7 @@ class ApiBoardController extends \CodeIgniter\Controller
                 $data['result'] = $this->board->find($id);
             } else {
                 $data['result'] = $this->board->paginate(10);
+
                 $data['pager']['total'] = $this->board->pager->getTotal();
                 $data['pager']['pageCount'] = $this->board->pager->getPageCount();
                 $data['pager']['currentPage'] = $this->board->pager->getCurrentPage();
@@ -44,16 +41,10 @@ class ApiBoardController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                //'file' => 'uploaded[file]|is_image[file]|max_size[file, 1024]',
                 'board_title' => 'required',
                 'board_description' => 'required',
             ],
             [   // Errors
-                /* 'file' => [
-                    'uploaded' => '업로드 에러.',
-                    'is_image' => '이미지 타입 에러.',
-                    'max_size' => '사이즈 에러.'
-                ], */
                 'board_title' => [
                     'required' => '제목은 필수 입력사항입니다.',
                 ],
@@ -90,16 +81,10 @@ class ApiBoardController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                //'file' => 'uploaded[file]|is_image[file]|max_size[file, 1024]',
                 'board_title' => 'required',
                 'board_description' => 'required',
             ],
             [   // Errors
-                /* 'file' => [
-                    'uploaded' => '업로드 에러.',
-                    'is_image' => '이미지 타입 에러.',
-                    'max_size' => '사이즈 에러.'
-                ], */
                 'board_title' => [
                     'required' => '제목은 필수 입력사항입니다.',
                 ],
