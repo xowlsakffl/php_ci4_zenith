@@ -69,7 +69,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
         $routes->delete('(:num)', 'Api\ApiCompanyController::$1');
     });   
 
-    $routes->get('boards-list', 'BoardController::index');
+    $routes->get('companies-list', 'CompanyController::index');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
