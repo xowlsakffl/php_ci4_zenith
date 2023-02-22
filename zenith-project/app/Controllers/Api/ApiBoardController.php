@@ -18,10 +18,15 @@ class ApiBoardController extends \CodeIgniter\Controller
     {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data = $this->board->find($id);
+                $data['result'] = $this->board->find($id);
             } else {
-                $getData = $this->request->getGet();
-                $data = $this->board->getBoards($getData);
+                $data['result'] = $this->board->paginate(10);
+
+                $data['pager']['total'] = $this->board->pager->getTotal();
+                $data['pager']['pageCount'] = $this->board->pager->getPageCount();
+                $data['pager']['currentPage'] = $this->board->pager->getCurrentPage();
+                $data['pager']['firstPage'] = $this->board->pager->getFirstPage();
+                $data['pager']['lastPage'] = $this->board->pager->getLastPage();
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -36,16 +41,10 @@ class ApiBoardController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                //'file' => 'uploaded[file]|is_image[file]|max_size[file, 1024]',
                 'board_title' => 'required',
                 'board_description' => 'required',
             ],
             [   // Errors
-                /* 'file' => [
-                    'uploaded' => '업로드 에러.',
-                    'is_image' => '이미지 타입 에러.',
-                    'max_size' => '사이즈 에러.'
-                ], */
                 'board_title' => [
                     'required' => '제목은 필수 입력사항입니다.',
                 ],
@@ -82,16 +81,10 @@ class ApiBoardController extends \CodeIgniter\Controller
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
             $this->validation->setRules([
-                //'file' => 'uploaded[file]|is_image[file]|max_size[file, 1024]',
                 'board_title' => 'required',
                 'board_description' => 'required',
             ],
             [   // Errors
-                /* 'file' => [
-                    'uploaded' => '업로드 에러.',
-                    'is_image' => '이미지 타입 에러.',
-                    'max_size' => '사이즈 에러.'
-                ], */
                 'board_title' => [
                     'required' => '제목은 필수 입력사항입니다.',
                 ],
