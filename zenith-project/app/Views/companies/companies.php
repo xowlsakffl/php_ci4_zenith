@@ -40,7 +40,18 @@
                     <h5 class="modal-title"></h5>
                 </div>
                 <div class="modal-body">
-                    
+                    <dl>
+                        <dt>타입</dt>
+                        <dd id="companyType"></dd>
+                    </dl>
+                    <dl>
+                        <dt>이름</dt>
+                        <dd id="companyName"></dd>
+                    </dl>
+                    <dl>
+                        <dt>전화번호</dt>
+                        <dd id="companyTel"></dd>
+                    </dl>
                 </div>
                 <div class="modal-footer">            
                     <button type="button" class="btn btn-primary" id="boardUpdateModal">수정</button>
@@ -59,21 +70,25 @@
                     <form id="frm">
                         <input type="hidden" name="id" id="hidden_id">
                         <div class="form-group">
-                            <label for="file">이미지</label>
-                            <input type="file" name="file[]" class="form-control file" multiple>
+                            <label for="companyName">타입</label>
+                            <select name="companyType" id="companyType" class="form-control">
+                                <option value="" hidden selected>선택</option>
+                                <option value="agency">광고대행사</option>
+                                <option value="advertiser">광고주</option>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="board_title">제목</label>
-                            <input type="text" name="board_title" class="form-control board_title">
+                            <label for="companyName">이름</label>
+                            <input type="text" name="companyName" class="form-control companyName">
                         </div>
                         <div class="form-group">
-                            <label for="board_description">본문</label>
-                            <textarea name="board_description" class="form-control board_description"></textarea>
+                            <label for="companyTel">전화번호</label>
+                            <input type="text" name="companyTel" class="form-control companyTel">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">            
-                    <button type="button" class="btn btn-primary" id="boardInsertBtn">저장</button>
+                    <button type="button" class="btn btn-primary" id="companyInsertBtn">저장</button>
                 </div>
                 </div>
             </div>
@@ -90,12 +105,13 @@
             <div class="col-5">
                 <input type="text" class="form-control" id="search" name="search" placeholder="검색">
             </div>
-            <table class="table" id="board">
+            <table class="table" id="companies">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">제목</th>
-                        <th scope="col">생성일</th>
+                        <th scope="col">타입</th>
+                        <th scope="col">이름</th>
+                        <th scope="col">전화번호</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -107,7 +123,7 @@
                 </ul>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
-                <button class="btn btn-primary" id="boardNewBtn">글쓰기</button>
+                <button class="btn btn-primary" id="companyNewBtn">글쓰기</button>
             </div>
         </div>
     </div>
@@ -121,14 +137,14 @@ $(document).ready(function(){
 getBoardList(1);
 function getBoardList(page, limit, search){
     data = {
-        'page': page ? page : 10,
+        'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
     };
     
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/boards",
+        url: "<?=base_url()?>/companies",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -170,13 +186,14 @@ function setPaging(xhr){
 }
 
 function setTable(xhr){
-    $('#board tbody').empty();
+    $('#companies tbody').empty();
     $.each(xhr.result, function(index, item){   
         index++
-        $('<tr id="boardView" data-id="'+item.bdx+'">').append('<td>'+item.bdx+'</td>')
-        .append('<td>'+item.board_title+'</td>')
-        .append('<td>'+item.created_at+'</td>')
-        .appendTo('#board'); 
+        $('<tr id="companyView" data-id="'+item.cdx+'">').append('<td>'+item.cdx+'</td>')
+        .append('<td>'+item.companyType+'</td>')
+        .append('<td>'+item.companyName+'</td>')
+        .append('<td>'+item.companyTel+'</td>')
+        .appendTo('#companies'); 
     });
 }
 
@@ -192,23 +209,23 @@ $('body').on('change', '#pageLimit', function(){
 
 
 //글쓰기 버튼
-$('body').on('click', '#boardNewBtn', function(){
+$('body').on('click', '#companyNewBtn', function(){
     $('#modalWrite #frm').trigger("reset");
     var myModal = new bootstrap.Modal(document.getElementById('modalWrite'))
     myModal.show()
 })
 
 //저장 버튼
-$('body').on('click', '#boardInsertBtn', function(){
+$('body').on('click', '#companyInsertBtn', function(){
     data = {
-        file: $('.file').val(),
-        board_title: $('input:text[name=board_title]').val(),
-        board_description: $('textarea[name=board_description]').val(),
+        companyType: $('#companyType').val(),
+        companyName: $('input:text[name=companyName]').val(),
+        companyTel: $('input:text[name=companyTel]').val(),
     };
     console.log(data);
     $.ajax({
         type: "post",
-        url: "<?=base_url()?>/boards",
+        url: "<?=base_url()?>/companies",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -216,29 +233,31 @@ $('body').on('click', '#boardInsertBtn', function(){
         success: function(response){
             $('#modalWrite').modal('hide');
             $('#modalWrite').find('input').val('');  
-            $('#board').DataTable().ajax.reload();
+            getBoardList();
             console.log(response);
         },
         error: function(error){
-            alert(error.responseJSON.messages.error);
-            //alert("에러코드: " + xhr.status + " 메시지: " + xhr.responseText );
+            console.log(error);
+            alert(error.responseJSON.messages);
         }
     });
 })
 
 //글보기
-$('body').on('click', '#boardView', function(){
+$('body').on('click', '#companyView', function(){
     let id = $(this).attr('data-id');
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/boards/"+id,
+        url: "<?=base_url()?>/companies/"+id,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
-            $('#modalView .modal-title').html(data.result.board_title);
-            $('#modalView .modal-body').html(data.result.board_description);
-            $('#modalView #boardUpdateModal').attr('data-id', data.result.bdx);
-            $('#modalView #boardDelete').attr('data-id', data.result.bdx);
+            $('#modalView .modal-title').html(data.result.companyName);
+            $('#modalView .modal-body #companyType').html(data.result.companyType);
+            $('#modalView .modal-body #companyName').html(data.result.companyName);
+            $('#modalView .modal-body #companyTel').html(data.result.companyTel);
+            $('#modalView #boardUpdateModal').attr('data-id', data.result.cdx);
+            $('#modalView #boardDelete').attr('data-id', data.result.cdx);
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
             myModal.show()
         },

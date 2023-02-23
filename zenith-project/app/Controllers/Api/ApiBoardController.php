@@ -38,13 +38,13 @@ class ApiBoardController extends \CodeIgniter\Controller
                 }
 
                 $data['result'] = $builder->paginate($limit);
-
+                
                 $data['pager']['limit'] = intval($limit);
-                $data['pager']['total'] = $this->board->pager->getTotal();
-                $data['pager']['pageCount'] = $this->board->pager->getPageCount();
-                $data['pager']['currentPage'] = $this->board->pager->getCurrentPage();
-                $data['pager']['firstPage'] = $this->board->pager->getFirstPage();
-                $data['pager']['lastPage'] = $this->board->pager->getLastPage();
+                $data['pager']['total'] = $builder->pager->getTotal();
+                $data['pager']['pageCount'] = $builder->pager->getPageCount();
+                $data['pager']['currentPage'] = $builder->pager->getCurrentPage();
+                $data['pager']['firstPage'] = $builder->pager->getFirstPage();
+                $data['pager']['lastPage'] = $builder->pager->getLastPage();
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -58,36 +58,18 @@ class ApiBoardController extends \CodeIgniter\Controller
         $ret = false;
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
-            $this->validation->setRules([
-                'board_title' => 'required',
-                'board_description' => 'required',
-            ],
-            [   // Errors
-                'board_title' => [
-                    'required' => '제목은 필수 입력사항입니다.',
-                ],
-                'board_description' => [
-                    'required' => '본문은 필수 입력사항입니다.',
-                ],
-            ]);
-            if($this->validation->run($this->data)){
-                $data = [
-                    'board_title' => $this->data['board_title'],
-                    'board_description' => $this->data['board_description'],
-                ];
-                $this->board->update($id, $data);
-                $ret = true;
-            }else{
-                if($this->validation->hasError('file')){
-                    $error = $this->validation->getError('file');
-                }else if($this->validation->hasError('board_title')){
-                    $error = $this->validation->getError('board_title');
-                }else if($this->validation->hasError('board_description')){
-                    $error = $this->validation->getError('board_description');
-                }
-
-                return $this->failValidationErrors($error);
+            $this->validation->setRules($this->board->validationRules);
+            if (!$this->validation->run($this->data)) {
+                $errors = $this->validation->getErrors();
+                return $this->failValidationErrors($errors);
             }
+
+            $data = [
+                'board_title' => $this->data['board_title'],
+                'board_description' => $this->data['board_description'],
+            ];
+            $this->board->update($id, $data);
+            $ret = true;
         };
 
         return $this->respond($ret);
@@ -98,36 +80,17 @@ class ApiBoardController extends \CodeIgniter\Controller
         $ret = false;
         if (!empty($this->data)) {
             $this->validation = \Config\Services::validation();
-            $this->validation->setRules([
-                'board_title' => 'required',
-                'board_description' => 'required',
-            ],
-            [   // Errors
-                'board_title' => [
-                    'required' => '제목은 필수 입력사항입니다.',
-                ],
-                'board_description' => [
-                    'required' => '본문은 필수 입력사항입니다.',
-                ],
-            ]);
-            if($this->validation->run($this->data)){
+            $this->validation->setRules($this->board->validationRules);
+            if (!$this->validation->run($this->data)) {
+                $errors = $this->validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
                 $data = [
                     'board_title' => $this->data['board_title'],
                     'board_description' => $this->data['board_description'],
                 ];
                 $this->board->save($data);
                 $ret = true;
-            }else{
-                if($this->validation->hasError('file')){
-                    $error = $this->validation->getError('file');
-                }else if($this->validation->hasError('board_title')){
-                    $error = $this->validation->getError('board_title');
-                }else if($this->validation->hasError('board_description')){
-                    $error = $this->validation->getError('board_description');
-                }
-
-                return $this->failValidationErrors($error);
-            }
         };
 
         return $this->respond($ret);

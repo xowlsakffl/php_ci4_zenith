@@ -121,7 +121,7 @@ $(document).ready(function(){
 getBoardList(1);
 function getBoardList(page, limit, search){
     data = {
-        'page': page ? page : 10,
+        'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
     };

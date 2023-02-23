@@ -8,7 +8,7 @@ class CompanyModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'companies';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'cdx';
     protected $useAutoIncrement = true;
     protected $insertID         = 0;
     protected $returnType       = 'array';
@@ -24,8 +24,22 @@ class CompanyModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules      = [
+        'companyType' => 'required',
+        'companyName' => 'required',
+        'companyTel' => 'required',
+    ];
+    protected $validationMessages   = [
+        'companyType' => [
+            'required' => '타입은 필수 입력사항입니다.',
+        ],
+        'companyName' => [
+            'required' => '이름은 필수 입력사항입니다.',
+        ],
+        'companyTel' => [
+            'required' => '전화번호는 필수 입력사항입니다.',
+        ],
+    ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 

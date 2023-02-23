@@ -24,8 +24,18 @@ class BoardModel extends Model
     protected $deletedField  = 'deleted_at';
 
     // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
+    protected $validationRules      = [
+        'board_title' => 'required',
+        'board_description' => 'required',
+    ];
+    protected $validationMessages   = [
+        'board_title' => [
+            'required' => '제목은 필수 입력사항입니다.',
+        ],
+        'board_description' => [
+            'required' => '본문은 필수 입력사항입니다.',
+        ],
+    ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
@@ -40,7 +50,7 @@ class BoardModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getBoards($getData = NULL){
+    /* public function getBoards($getData = NULL){
         $response = array();
         $table_name = 'boards';
         $builder = $this->db->table($table_name);
@@ -55,13 +65,13 @@ class BoardModel extends Model
         
         ## 검색   
         $searchQuery = '';   
-        /*전체 게시글 수*/ 
+        //전체 게시글 수
         $builder->select('count(*) as allcount');
         $records = $builder->get()->getResult();
         $recordsCount = $builder->countAllResults();
 
         
-        /*필터된 게시글 수*/
+        //필터된 게시글 수
         $builder->select('count(*) as allcount');
         if($searchValue != ''){
             $builder->like('board_title', $searchValue);
@@ -69,7 +79,7 @@ class BoardModel extends Model
         }
         $filteredRecordsCount = $builder->countAllResults();
 
-        /*게시글*/
+        //게시글
         $builder->select('*');
         if($searchValue != ''){
             $builder->like('board_title', $searchValue);
@@ -99,5 +109,5 @@ class BoardModel extends Model
         ];
 
         return $response;
-    }
+    } */
 }

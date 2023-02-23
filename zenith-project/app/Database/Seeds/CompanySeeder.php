@@ -16,7 +16,7 @@ class CompanySeeder extends Seeder
         for ($i = 0; $i < 20; $i++) {
           $company->save(
                 [
-                    'companyType' =>    $faker->randomElement(['advertiser', 'agency']),
+                    'companyType' =>    $faker->randomElement(['광고주', '광고대행사']),
                     'companyName' =>    $faker->company(),
                     'companyTel'  =>    $faker->phoneNumber(),
                     'created_at'  =>    Time::createFromTimestamp($faker->unixTime()),
