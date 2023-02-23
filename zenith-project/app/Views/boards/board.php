@@ -74,8 +74,23 @@
                 </div>
             </div>
         </div>
-        <h1 class="font-weight-bold">게시판</h1>
-        <div class="row">
+        <h1 class="font-weight-bold mb-5">게시판</h1>
+        <div class="row mb-2 flex justify-content-end">
+            <div class="col-2">
+                <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택">
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col" id="allCount"></div>
+            <div class="col">
+                <select name="sort" id="sort" class="form-control">
+                    <option value="recent">최근순</option>
+                    <option value="old">오래된 순</option>
+                </select>
+            </div>
             <div class="col-3">
                 <select name="pageLimit" id="pageLimit" class="form-control">
                     <option value="10">10개</option>
@@ -83,9 +98,11 @@
                     <option value="100">100개</option>
                 </select>
             </div>
-            <div class="col-5">
+            <div class="col-3">
                 <input type="text" class="form-control" id="search" name="search" placeholder="검색">
             </div>
+        </div>
+        <div class="row">
             <table class="table" id="board">
                 <thead class="table-dark">
                     <tr>
@@ -110,18 +127,20 @@
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 <script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
 
 getBoardList(1);
-function getBoardList(page, limit, search){
+function getBoardList(page, limit, search, sort){
     data = {
         'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
+        'sort': sort ? sort : 'recent',
     };
-    
+    console.log(data);
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/boards",
@@ -131,6 +150,7 @@ function getBoardList(page, limit, search){
         success: function(xhr){
             setTable(xhr);       
             setPaging(xhr);
+            setAllCount(xhr);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -139,6 +159,9 @@ function getBoardList(page, limit, search){
 }
 
 function setPaging(xhr){
+    if(xhr.pager.pageCount == 0){
+        xhr.pager.pageCount = 1;
+    }
     $('.pagination').twbsPagination('destroy');
     $('.pagination').twbsPagination({
         totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
@@ -160,7 +183,7 @@ function setPaging(xhr){
         
         onPageClick: function (event, page) {
             console.log(xhr.pager.limit);
-            getBoardList(page, xhr.pager.limit)
+            getBoardList(page, xhr.pager.limit, xhr.pager.search, xhr.pager.sort)
         }
     });
 }
@@ -176,16 +199,30 @@ function setTable(xhr){
     });
 }
 
-//검색
-$('body').on('keyup', '#search', function(){
-    getBoardList(1, 10,$(this).val());
-})
+function setAllCount(xhr){
+    console.log(xhr.pager.total);
+    if(xhr.pager.total == 0){
+        $total = 0;
+    }else{
+        $total = xhr.pager.total;
+    }
+    $('#allCount').text("총 "+$total+"개");
+}
 
 //페이지 게시글 갯수
 $('body').on('change', '#pageLimit', function(){
-    getBoardList(1, $(this).val());
+    getBoardList(1, $(this).val(), $('#search').val(), $('#sort').val());
 })
 
+//검색
+$('body').on('keyup', '#search', function(){
+    getBoardList(1, $('#pageLimit').val(), $(this).val());
+})
+
+//분류
+$('body').on('change', '#sort', function(){
+    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $(this).val());
+})
 
 //글쓰기 버튼
 $('body').on('click', '#boardNewBtn', function(){
@@ -329,7 +366,39 @@ $('body').on('keyup', '.board_title', function(){
 $('body').on('keyup', '.board_description', function(){
     $(this).siblings('span').text("");
 });
+
+var dateFormat = "yy/mm/dd",
+    from = $( "#fromDate" )
+    .datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 3
+    })
+    .on( "change", function() {
+        to.datepicker( "option", "minDate", getDate( this ) );
+    }),
+    to = $( "#toDate" ).datepicker({
+        defaultDate: "+1w",
+        changeMonth: true,
+        numberOfMonths: 3
+    })
+    .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+    });
+
+function getDate( element ) {
+    var date;
+    try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+    } catch( error ) {
+        date = null;
+    }
+
+    return date;
+}
+
 });
+
 
 </script>
 <?=$this->endSection();?>

@@ -37,9 +37,19 @@ class ApiBoardController extends \CodeIgniter\Controller
                     ->orLike('board_description', $searchText);
                 }
 
-                $data['result'] = $builder->orderBy('bdx', 'desc')->paginate($limit);
+                if(isset($param['sort'])){
+                    if($param['sort'] == 'old'){
+                        $builder->orderBy('created_at', 'asc');
+                    }else{
+                        $builder->orderBy('created_at', 'desc');
+                    }
+                }
+
+                $data['result'] = $builder->paginate($limit);
                 
                 $data['pager']['limit'] = intval($limit);
+                $data['pager']['search'] = $param['search'];
+                $data['pager']['sort'] = $param['sort'];
                 $data['pager']['total'] = $builder->pager->getTotal();
                 $data['pager']['pageCount'] = $builder->pager->getPageCount();
                 $data['pager']['currentPage'] = $builder->pager->getCurrentPage();
