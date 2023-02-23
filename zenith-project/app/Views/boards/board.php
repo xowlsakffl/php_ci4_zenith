@@ -14,16 +14,14 @@
                     <form id="frm">
                         <input type="hidden" name="id" id="hidden_id">
                         <div class="form-group">
-                            <label for="file">이미지</label>
-                            <input type="file" name="file[]" class="form-control" id="board_file" multiple>
-                        </div>
-                        <div class="form-group">
                             <label for="board_title">제목</label>
                             <input type="text" name="board_title" class="form-control" id="board_title">
+                            <span id="board_title_error" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="board_description">본문</label>
                             <textarea name="board_description" class="form-control" id="board_description" style="min-height:300px"></textarea>
+                            <span id="board_description_error" class="text-danger"></span>
                         </div>
                     </form>
                 </div>
@@ -59,16 +57,14 @@
                     <form id="frm">
                         <input type="hidden" name="id" id="hidden_id">
                         <div class="form-group">
-                            <label for="file">이미지</label>
-                            <input type="file" name="file[]" class="form-control file" multiple>
-                        </div>
-                        <div class="form-group">
                             <label for="board_title">제목</label>
                             <input type="text" name="board_title" class="form-control board_title">
+                            <span id="board_title_error" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="board_description">본문</label>
                             <textarea name="board_description" class="form-control board_description"></textarea>
+                            <span id="board_description_error" class="text-danger"></span>
                         </div>
                     </form>
                 </div>
@@ -146,7 +142,7 @@ function setPaging(xhr){
     $('.pagination').twbsPagination('destroy');
     $('.pagination').twbsPagination({
         totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
-        visiblePages: 20,	// 하단에서 한번에 보여지는 페이지 번호 수
+        visiblePages: 5,	// 하단에서 한번에 보여지는 페이지 번호 수
         startPage : xhr.pager.currentPage, // 시작시 표시되는 현재 페이지
         initiateStartPageClick: false,	// 플러그인이 시작시 페이지 버튼 클릭 여부 (default : true)
         first : "첫 페이지",	// 페이지네이션 버튼중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
@@ -182,7 +178,7 @@ function setTable(xhr){
 
 //검색
 $('body').on('keyup', '#search', function(){
-    getBoardList(1, 50,$(this).val());
+    getBoardList(1, 10,$(this).val());
 })
 
 //페이지 게시글 갯수
@@ -201,9 +197,8 @@ $('body').on('click', '#boardNewBtn', function(){
 //저장 버튼
 $('body').on('click', '#boardInsertBtn', function(){
     data = {
-        file: $('.file').val(),
-        board_title: $('input:text[name=board_title]').val(),
-        board_description: $('textarea[name=board_description]').val(),
+        board_title: $('#modalWrite input:text[name=board_title]').val(),
+        board_description: $('#modalWrite textarea[name=board_description]').val(),
     };
     console.log(data);
     $.ajax({
@@ -215,13 +210,16 @@ $('body').on('click', '#boardInsertBtn', function(){
         headers:{'X-Requested-With':'XMLHttpRequest'},
         success: function(response){
             $('#modalWrite').modal('hide');
-            $('#modalWrite').find('input').val('');  
-            $('#board').DataTable().ajax.reload();
+            $('#modalWrite').find('input').val(''); 
+            $('#modalWrite #frm span').text('');  
+            getBoardList(1);
             console.log(response);
         },
         error: function(error){
-            alert(error.responseJSON.messages.error);
-            //alert("에러코드: " + xhr.status + " 메시지: " + xhr.responseText );
+            var errorText = error.responseJSON.messages;
+            $.each(errorText, function(key, val){
+                $("#modalWrite #" + key + "_error").text(val);
+            })
         }
     });
 })
@@ -262,6 +260,7 @@ $('body').on('click', '#boardUpdateModal', function(){
             $('#modalUpdate #board_title').val(data.result.board_title);
             $('#modalUpdate #board_description').val(data.result.board_description);
             $('#modalUpdate #hidden_id').val(data.result.bdx);
+            $('#modalUpdate #frm span').text(''); 
             var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
             myModal.show()
         },
@@ -276,8 +275,8 @@ $('body').on('click', '#boardUpdateBtn', function(){
     let id = $("#modalUpdate input:hidden[name=id]").val();
     data = {
         //file: $('.file').val(),
-        board_title: $('input:text[name=board_title]').val(),
-        board_description: $('textarea[name=board_description]').val(),
+        board_title: $('#modalUpdate input:text[name=board_title]').val(),
+        board_description: $('#modalUpdate textarea[name=board_description]').val(),
     };
     console.log(data);
     $.ajax({
@@ -290,12 +289,15 @@ $('body').on('click', '#boardUpdateBtn', function(){
         success: function(response){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
+            $('#modalUpdate #frm span').text(''); 
             getBoardList(1);
             console.log(response);
         },
         error: function(error){
-            alert(error.responseJSON.messages.error);
-            //alert("에러코드: " + xhr.status + " 메시지: " + xhr.responseText );
+            var errorText = error.responseJSON.messages;
+            $.each(errorText, function(key, val){
+                $("#modalWrite #" + key + "_error").text(val);
+            })
         }
     });
 })
@@ -320,6 +322,13 @@ $('body').on('click', '#boardDelete', function(){
     }
 })
 
+$('body').on('keyup', '.board_title', function(){
+    $(this).siblings('span').text("");
+});
+
+$('body').on('keyup', '.board_description', function(){
+    $(this).siblings('span').text("");
+});
 });
 
 </script>

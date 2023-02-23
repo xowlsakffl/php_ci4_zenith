@@ -39,7 +39,7 @@ class ApiCompanyController extends \CodeIgniter\Controller
                 }
 
                 
-                $data['result'] = $builder->paginate($limit);
+                $data['result'] = $builder->orderBy('cdx', 'desc')->paginate($limit);
 
                 $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $builder->pager->getTotal();
@@ -58,44 +58,70 @@ class ApiCompanyController extends \CodeIgniter\Controller
     public function put($id = false)
     {
         $ret = false;
-        if (!empty($this->data)) {
-            $data = [
-                'board_title' => $this->data['board_title'],
-                'board_description' => $this->data['board_description'],
-            ];
-            $this->board->update($id, $data);
-            $ret = true;
-        };
-
+        if (strtolower($this->request->getMethod()) === 'put') {
+            if (!empty($this->data)) {
+                $this->validation = \Config\Services::validation();
+                $this->validation->setRules($this->company->validationRules, $this->company->validationMessages);
+                if (!$this->validation->run($this->data)) {
+                    $errors = $this->validation->getErrors();
+                    return $this->failValidationErrors($errors);
+                }
+    
+                $data = [
+                    'companyType' => $this->data['companyType'],
+                    'companyName' => $this->data['companyName'],
+                    'companyTel' => $this->data['companyTel'],
+                ];
+    
+                $this->company->update($id, $data);
+                $ret = true;
+            };
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    
         return $this->respond($ret);
     }
 
-    public function post($id = NULL)
+    public function post()
     {
         $ret = false;
-        if (!empty($this->data)) {
-            $this->validation = \Config\Services::validation();
-            $this->validation->setRules($this->company->validationRules);
-            if (!$this->validation->run($this->data)) {
-                $errors = $this->validation->getErrors();
-                return $this->failValidationErrors($errors);
-            }
-            $data = [
-                'companyType' => $this->data['companyType'],
-                'companyName' => $this->data['companyName'],
-                'companyTel' => $this->data['companyTel'],
-            ];
-            $this->company->save($data);
-            $ret = true;
-        };
-
+        if (strtolower($this->request->getMethod()) === 'post') {
+            if (!empty($this->data)) {
+                $this->validation = \Config\Services::validation();
+                $this->validation->setRules($this->company->validationRules, $this->company->validationMessages);
+                if (!$this->validation->run($this->data)) {
+                    $errors = $this->validation->getErrors();
+                    return $this->failValidationErrors($errors);
+                }
+    
+                $data = [
+                    'companyType' => $this->data['companyType'],
+                    'companyName' => $this->data['companyName'],
+                    'companyTel' => $this->data['companyTel'],
+                ];
+    
+                $this->company->save($data);
+                $ret = true;
+            };
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+        
         return $this->respond($ret);
     }
 
     protected function delete($id = false)
     {
         $ret = false;
-
+        if (strtolower($this->request->getMethod()) === 'delete') {
+            if ($id) {
+                $ret = true;
+                $this->company->delete($id);
+            }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
         
         return $this->respond($ret);
     }

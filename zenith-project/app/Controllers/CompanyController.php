@@ -8,6 +8,6 @@ class CompanyController extends BaseController
 {
     public function index()
     {
-        return view('companies/companies');
+        return view('companies/company');
     }
 }

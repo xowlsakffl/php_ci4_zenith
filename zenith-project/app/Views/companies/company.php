@@ -14,21 +14,28 @@
                     <form id="frm">
                         <input type="hidden" name="id" id="hidden_id">
                         <div class="form-group">
-                            <label for="file">이미지</label>
-                            <input type="file" name="file[]" class="form-control" id="board_file" multiple>
+                            <label for="companyType">타입</label>
+                            <select name="companyType" id="companyType" class="form-control">
+                                <option value="" hidden selected disabled>선택</option>
+                                <option value="광고대행사">광고대행사</option>
+                                <option value="광고주">광고주</option>
+                            </select>
+                            <span id="companyTypeError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label for="board_title">제목</label>
-                            <input type="text" name="board_title" class="form-control" id="board_title">
+                            <label for="companyName">이름</label>
+                            <input type="text" name="companyName" class="form-control companyName" id="companyName">
+                            <span id="companyNameError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label for="board_description">본문</label>
-                            <textarea name="board_description" class="form-control" id="board_description" style="min-height:300px"></textarea>
+                            <label for="companyTel">전화번호</label>
+                            <input type="text" name="companyTel" class="form-control companyTel" id="companyTel">
+                            <span id="companyTelError" class="text-danger"></span>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">            
-                    <button type="button" class="btn btn-primary" id="boardUpdateBtn">저장</button>
+                    <button type="button" class="btn btn-primary" id="companyUpdateBtn">저장</button>
                 </div>
                 </div>
             </div>
@@ -54,8 +61,8 @@
                     </dl>
                 </div>
                 <div class="modal-footer">            
-                    <button type="button" class="btn btn-primary" id="boardUpdateModal">수정</button>
-                    <button type="button" class="btn btn-danger" id="boardDelete">삭제</button>
+                    <button type="button" class="btn btn-primary" id="companyUpdateModal">수정</button>
+                    <button type="button" class="btn btn-danger" id="companyDelete">삭제</button>
                 </div>
                 </div>
             </div>
@@ -68,22 +75,24 @@
                 </div>
                 <div class="modal-body">
                     <form id="frm">
-                        <input type="hidden" name="id" id="hidden_id">
                         <div class="form-group">
-                            <label for="companyName">타입</label>
+                            <label for="companyType">타입</label>
                             <select name="companyType" id="companyType" class="form-control">
-                                <option value="" hidden selected>선택</option>
-                                <option value="agency">광고대행사</option>
-                                <option value="advertiser">광고주</option>
+                                <option value="" hidden selected disabled>선택</option>
+                                <option value="광고대행사">광고대행사</option>
+                                <option value="광고주">광고주</option>
                             </select>
+                            <span id="companyTypeError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="companyName">이름</label>
-                            <input type="text" name="companyName" class="form-control companyName">
+                            <input type="text" name="companyName" class="form-control companyName" id="companyName">
+                            <span id="companyNameError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="companyTel">전화번호</label>
-                            <input type="text" name="companyTel" class="form-control companyTel">
+                            <input type="text" name="companyTel" class="form-control companyTel" id="companyTel">
+                            <span id="companyTelError" class="text-danger"></span>
                         </div>
                     </form>
                 </div>
@@ -162,7 +171,7 @@ function setPaging(xhr){
     $('.pagination').twbsPagination('destroy');
     $('.pagination').twbsPagination({
         totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
-        visiblePages: 20,	// 하단에서 한번에 보여지는 페이지 번호 수
+        visiblePages: 5,	// 하단에서 한번에 보여지는 페이지 번호 수
         startPage : xhr.pager.currentPage, // 시작시 표시되는 현재 페이지
         initiateStartPageClick: false,	// 플러그인이 시작시 페이지 버튼 클릭 여부 (default : true)
         first : "첫 페이지",	// 페이지네이션 버튼중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
@@ -199,7 +208,7 @@ function setTable(xhr){
 
 //검색
 $('body').on('keyup', '#search', function(){
-    getBoardList(1, 50,$(this).val());
+    getBoardList(1, 10,$(this).val());
 })
 
 //페이지 게시글 갯수
@@ -218,9 +227,9 @@ $('body').on('click', '#companyNewBtn', function(){
 //저장 버튼
 $('body').on('click', '#companyInsertBtn', function(){
     data = {
-        companyType: $('#companyType').val(),
-        companyName: $('input:text[name=companyName]').val(),
-        companyTel: $('input:text[name=companyTel]').val(),
+        companyType: $('#modalWrite select[name=companyType] option').filter(':selected').val(),
+        companyName: $('#modalWrite input:text[name=companyName]').val(),
+        companyTel: $('#modalWrite input:text[name=companyTel]').val(),
     };
     console.log(data);
     $.ajax({
@@ -233,12 +242,15 @@ $('body').on('click', '#companyInsertBtn', function(){
         success: function(response){
             $('#modalWrite').modal('hide');
             $('#modalWrite').find('input').val('');  
-            getBoardList();
+            $('#modalWrite #frm span').text('');  
+            getBoardList(1);
             console.log(response);
         },
         error: function(error){
-            console.log(error);
-            alert(error.responseJSON.messages);
+            var errorText = error.responseJSON.messages;
+            $.each(errorText, function(key, val){
+                $("#modalWrite #" + key + "Error").text(val);
+            })
         }
     });
 })
@@ -256,8 +268,8 @@ $('body').on('click', '#companyView', function(){
             $('#modalView .modal-body #companyType').html(data.result.companyType);
             $('#modalView .modal-body #companyName').html(data.result.companyName);
             $('#modalView .modal-body #companyTel').html(data.result.companyTel);
-            $('#modalView #boardUpdateModal').attr('data-id', data.result.cdx);
-            $('#modalView #boardDelete').attr('data-id', data.result.cdx);
+            $('#modalView #companyUpdateModal').attr('data-id', data.result.cdx);
+            $('#modalView #companyDelete').attr('data-id', data.result.cdx);
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
             myModal.show()
         },
@@ -268,19 +280,21 @@ $('body').on('click', '#companyView', function(){
 })
 
 //글수정
-$('body').on('click', '#boardUpdateModal', function(){
+$('body').on('click', '#companyUpdateModal', function(){
     $('#modalView').modal('hide');
 
     let id = $(this).attr('data-id');
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/boards/"+id,
+        url: "<?=base_url()?>/companies/"+id,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
-            $('#modalUpdate #board_title').val(data.result.board_title);
-            $('#modalUpdate #board_description').val(data.result.board_description);
-            $('#modalUpdate #hidden_id').val(data.result.bdx);
+            $('#modalUpdate #companyType option[value="'+data.result.companyType+'"]').prop('selected', true);  
+            $('#modalUpdate #companyName').val(data.result.companyName);
+            $('#modalUpdate #companyTel').val(data.result.companyTel);
+            $('#modalUpdate #hidden_id').val(data.result.cdx);
+            $('#modalUpdate #frm span').text('');  
             var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
             myModal.show()
         },
@@ -291,17 +305,17 @@ $('body').on('click', '#boardUpdateModal', function(){
 })
 
 //글수정
-$('body').on('click', '#boardUpdateBtn', function(){
+$('body').on('click', '#companyUpdateBtn', function(){
     let id = $("#modalUpdate input:hidden[name=id]").val();
     data = {
-        //file: $('.file').val(),
-        board_title: $('input:text[name=board_title]').val(),
-        board_description: $('textarea[name=board_description]').val(),
+        companyType: $('#modalUpdate select[name=companyType] option').filter(':selected').val(),
+        companyName: $('#modalUpdate input:text[name=companyName]').val(),
+        companyTel: $('#modalUpdate input:text[name=companyTel]').val(),
     };
     console.log(data);
     $.ajax({
         type: "put",
-        url: "<?=base_url()?>/boards/"+id,
+        url: "<?=base_url()?>/companies/"+id,
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -309,23 +323,26 @@ $('body').on('click', '#boardUpdateBtn', function(){
         success: function(response){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
+            $('#modalUpdate #frm span').text(''); 
             getBoardList(1);
             console.log(response);
         },
         error: function(error){
-            alert(error.responseJSON.messages.error);
-            //alert("에러코드: " + xhr.status + " 메시지: " + xhr.responseText );
+            var errorText = error.responseJSON.messages;
+            $.each(errorText, function(key, val){
+                $("#modalWrite #" + key + "Error").text(val);
+            })
         }
     });
 })
 
 //글삭제
-$('body').on('click', '#boardDelete', function(){
+$('body').on('click', '#companyDelete', function(){
     let id = $(this).attr('data-id');
     if(confirm('정말 삭제하시겠습니까?')){
         $.ajax({
             type: "delete",
-            url: "<?=base_url()?>/boards/"+id,
+            url: "<?=base_url()?>/companies/"+id,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){
@@ -338,6 +355,18 @@ $('body').on('click', '#boardDelete', function(){
         });
     }
 })
+
+$('body').on('change', '#companyType', function(){
+    $(this).siblings('span').text("");
+});
+
+$('body').on('keyup', '#companyName', function(){
+    $(this).siblings('span').text("");
+});
+
+$('body').on('keyup', '#companyTel', function(){
+    $(this).siblings('span').text("");
+});
 
 });
 

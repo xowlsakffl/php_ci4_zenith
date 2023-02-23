@@ -37,7 +37,7 @@ class ApiBoardController extends \CodeIgniter\Controller
                     ->orLike('board_description', $searchText);
                 }
 
-                $data['result'] = $builder->paginate($limit);
+                $data['result'] = $builder->orderBy('bdx', 'desc')->paginate($limit);
                 
                 $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $builder->pager->getTotal();
@@ -56,21 +56,25 @@ class ApiBoardController extends \CodeIgniter\Controller
     public function put($id = false)
     {
         $ret = false;
-        if (!empty($this->data)) {
-            $this->validation = \Config\Services::validation();
-            $this->validation->setRules($this->board->validationRules);
-            if (!$this->validation->run($this->data)) {
-                $errors = $this->validation->getErrors();
-                return $this->failValidationErrors($errors);
-            }
+        if (strtolower($this->request->getMethod()) === 'put'){
+            if (!empty($this->data)) {
+                $this->validation = \Config\Services::validation();
+                $this->validation->setRules($this->board->validationRules, $this->board->validationMessages);
+                if (!$this->validation->run($this->data)) {
+                    $errors = $this->validation->getErrors();
+                    return $this->failValidationErrors($errors);
+                }
 
-            $data = [
-                'board_title' => $this->data['board_title'],
-                'board_description' => $this->data['board_description'],
-            ];
-            $this->board->update($id, $data);
-            $ret = true;
-        };
+                $data = [
+                    'board_title' => $this->data['board_title'],
+                    'board_description' => $this->data['board_description'],
+                ];
+                $this->board->update($id, $data);
+                $ret = true;
+            };
+        }else{
+            return $this->fail("잘못된 요청");
+        }
 
         return $this->respond($ret);
     }
@@ -78,20 +82,25 @@ class ApiBoardController extends \CodeIgniter\Controller
     public function post()
     {
         $ret = false;
-        if (!empty($this->data)) {
-            $this->validation = \Config\Services::validation();
-            $this->validation->setRules($this->board->validationRules);
-            if (!$this->validation->run($this->data)) {
-                $errors = $this->validation->getErrors();
-                return $this->failValidationErrors($errors);
-            }
+        if (strtolower($this->request->getMethod()) === 'post'){
+            if (!empty($this->data)) {
+                $this->validation = \Config\Services::validation();
+                $this->validation->setRules($this->board->validationRules, $this->board->validationMessages);
+                if (!$this->validation->run($this->data)) {
+                    $errors = $this->validation->getErrors();
+                    return $this->failValidationErrors($errors);
+                }
+
                 $data = [
                     'board_title' => $this->data['board_title'],
                     'board_description' => $this->data['board_description'],
                 ];
                 $this->board->save($data);
                 $ret = true;
-        };
+            };
+        }else{
+            return $this->fail("잘못된 요청");
+        }
 
         return $this->respond($ret);
     }
