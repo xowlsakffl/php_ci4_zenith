@@ -1,7 +1,9 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('content');?>
-
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!--content-->
     <div class="container-md">
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
@@ -76,11 +78,9 @@
         </div>
         <h1 class="font-weight-bold mb-5">게시판</h1>
         <div class="row mb-2 flex justify-content-end">
-            <div class="col-2">
-                <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택">
-            </div>
-            <div class="col-2">
-                <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택">
+            <div class="col-3">
+                <label for="dateRange">날짜</label>
+                <input type="text" class="form-control" id="dateRange" name="dateRange" placeholder="날짜 선택" readonly="readonly">
             </div>
         </div>
         <div class="row mb-2">
@@ -124,10 +124,10 @@
             </div>
         </div>
     </div>
+
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
 <script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
@@ -367,35 +367,11 @@ $('body').on('keyup', '.board_description', function(){
     $(this).siblings('span').text("");
 });
 
-var dateFormat = "yy/mm/dd",
-    from = $( "#fromDate" )
-    .datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-        numberOfMonths: 3
-    })
-    .on( "change", function() {
-        to.datepicker( "option", "minDate", getDate( this ) );
-    }),
-    to = $( "#toDate" ).datepicker({
-        defaultDate: "+1w",
-        changeMonth: true,
-        numberOfMonths: 3
-    })
-    .on( "change", function() {
-        from.datepicker( "option", "maxDate", getDate( this ) );
-    });
-
-function getDate( element ) {
-    var date;
-    try {
-        date = $.datepicker.parseDate( dateFormat, element.value );
-    } catch( error ) {
-        date = null;
-    }
-
-    return date;
-}
+$('input[name="dateRange"]').daterangepicker({
+    opens: 'left'
+  }, function(start, end, label) {
+    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+  });
 
 });
 
