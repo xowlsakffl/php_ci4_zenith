@@ -22,34 +22,41 @@ class ApiBoardController extends \CodeIgniter\Controller
             } else {
                 $param = $this->request->getGet();
 
-                $builder = $this->board;
+                $builder = $this->board->select('*');
 
-                if(isset($param['limit'])){
+                if(!empty($param['limit'])){
                     $limit = $param['limit'];
                 }else{
                     $limit = 10;
                 }
 
-                if(isset($param['search'])){
-                    $searchText = $param['search'];
-                    $builder = $builder->select('*')
-                    ->orLike('board_title', $searchText)
-                    ->orLike('board_description', $searchText);
+                if(!empty($param['startDate']) && !empty($param['endDate'])){
+                    $builder->where('created_at BETWEEN"'.$param['startDate'].'" and "'.$param['endDate'].'"');
+                    
                 }
 
-                if(isset($param['sort'])){
+                if(!empty($param['search'])){
+                    $searchText = $param['search'];
+                    $builder->groupStart();
+                        $builder->like('board_title', $searchText);
+                        $builder->orLike('board_description', $searchText);
+                    $builder->groupEnd();
+                    $data['pager']['search'] = $param['search'];
+                }
+     
+                if(!empty($param['sort'])){
                     if($param['sort'] == 'old'){
                         $builder->orderBy('created_at', 'asc');
                     }else{
                         $builder->orderBy('created_at', 'desc');
                     }
+                    
+                    $data['pager']['sort'] = $param['sort'];
                 }
 
                 $data['result'] = $builder->paginate($limit);
                 
                 $data['pager']['limit'] = intval($limit);
-                $data['pager']['search'] = $param['search'];
-                $data['pager']['sort'] = $param['sort'];
                 $data['pager']['total'] = $builder->pager->getTotal();
                 $data['pager']['pageCount'] = $builder->pager->getPageCount();
                 $data['pager']['currentPage'] = $builder->pager->getCurrentPage();

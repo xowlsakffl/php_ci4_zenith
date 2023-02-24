@@ -78,9 +78,11 @@
         </div>
         <h1 class="font-weight-bold mb-5">게시판</h1>
         <div class="row mb-2 flex justify-content-end">
-            <div class="col-4">
-                <label for="dateRange">날짜</label>
-                <input type="text" class="form-control" id="dateRange" name="dateRange" placeholder="날짜 선택" readonly="readonly">
+            <div class="col-5">
+                <label for="fromDate">시작날짜</label>
+                <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택" readonly="readonly">
+                <label for="toDate">종료날짜</label>
+                <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택" readonly="readonly">
             </div>
         </div>
         <div class="row mb-2">
@@ -131,19 +133,21 @@
 <script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
-let date = new Date();
-let startDate = date.toISOString().split('T')[0]
 
-getBoardList(1);
+let startDate;
+let endDate;
+
+getBoardList();
 function getBoardList(page, limit, search, sort, startDate, endDate){
+
     data = {
         'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
         'sort': sort ? sort : 'recent',
-        'startDate': startDate ? startDate : defaultDate,
-        'endDate': endDate ? endDate : defaultDate,
-    };
+        'startDate': startDate,
+        'endDate': endDate,
+    }
     console.log(data);
     $.ajax({
         type: "get",
@@ -215,41 +219,95 @@ function setAllCount(xhr){
 
 //페이지 게시글 갯수
 $('body').on('change', '#pageLimit', function(){
-    getBoardList(1, $(this).val(), $('#search').val(), $('#sort').val());
+    getBoardList(
+        1, 
+        $(this).val(), 
+        $('#search').val(), 
+        $('#sort').val(),
+        startDate,
+        endDate,
+    );
 })
 
 //검색
 $('body').on('keyup', '#search', function(){
-    getBoardList(1, $('#pageLimit').val(), $(this).val());
+    getBoardList(
+        1, 
+        $('#pageLimit').val(), 
+        $(this).val(), 
+        $('#sort').val(),
+        startDate,
+        endDate,
+    );
 })
 
 //분류
 $('body').on('change', '#sort', function(){
-    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $(this).val());
+    getBoardList(
+        1, 
+        $('#pageLimit').val(), 
+        $('#search').val(), 
+        $(this).val(),
+        startDate,
+        endDate,
+    );
 })
 
-$('#dateRange').on('apply.daterangepicker', function(ev, picker) {
-    var startDate = picker.startDate.format('YYYY-MM-DD HH:mm:ss');
-    var endDate = picker.endDate.format('YYYY-MM-DD HH:mm:ss');
-    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
-})
-
-$('input[name="dateRange"]').daterangepicker({
-    locale: {
-        "separator": " ~ ",                     // 시작일시와 종료일시 구분자
-        "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
-        "applyLabel": "확인",                    // 확인 버튼 텍스트
-        "cancelLabel": "취소",                   // 취소 버튼 텍스트
-        "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-        "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-        },
-        timePicker: true,                        // 시간 노출 여부
-        showDropdowns: true,                     // 년월 수동 설정 여부
-        autoApply: true,                         // 확인/취소 버튼 사용여부
-        timePicker24Hour: true,                  // 24시간 노출 여부(ex> true : 23:50, false : PM 11:50)
-        maxDate: new Date(),
+$('#dateRange').on('cancel.daterangepicker', function (ev, picker) {
+    $(this).val('');
+    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val());
 });
 
+
+if($('#fromDate, #toDate').length){
+    var currentDate = moment().format("YYYY-MM-DD");
+    $('#fromDate, #toDate').daterangepicker({
+        locale: {
+                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        "alwaysShowCalendars": true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        maxDate: new Date(),
+        autoUpdateInput: false,
+        ranges: {
+            '오늘': [moment(), moment()],
+            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '지난 일주일': [moment().subtract(6, 'days'), moment()],
+            '지난 한달': [moment().subtract(29, 'days'), moment()],
+            '이번달': [moment().startOf('month'), moment().endOf('month')],
+        }
+    }, function(start, end, label) {
+        // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+        // Lets update the fields manually this event fires on selection of range
+        var selectedStartDate = start.format('YYYY-MM-DD'); // selected start
+        var selectedEndDate = end.format('YYYY-MM-DD'); // selected end
+
+        $checkinInput = $('#fromDate');
+        $checkoutInput = $('#toDate');
+
+        // Updating Fields with selected dates
+        $checkinInput.val(selectedStartDate);
+        $checkoutInput.val(selectedEndDate);
+
+        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+        var checkOutPicker = $checkoutInput.data('daterangepicker');
+        checkOutPicker.setStartDate(selectedStartDate);
+        checkOutPicker.setEndDate(selectedEndDate);
+
+        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+        var checkInPicker = $checkinInput.data('daterangepicker');
+        checkInPicker.setStartDate(selectedStartDate);
+        checkInPicker.setEndDate(selectedEndDate);
+
+        
+        getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
+    });
+}
 //글쓰기 버튼
 $('body').on('click', '#boardNewBtn', function(){
     $('#modalWrite #frm').trigger("reset");
@@ -275,7 +333,7 @@ $('body').on('click', '#boardInsertBtn', function(){
             $('#modalWrite').modal('hide');
             $('#modalWrite').find('input').val(''); 
             $('#modalWrite #frm span').text('');  
-            getBoardList(1);
+            getBoardList();
             console.log(response);
         },
         error: function(error){
@@ -353,7 +411,7 @@ $('body').on('click', '#boardUpdateBtn', function(){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
             $('#modalUpdate #frm span').text(''); 
-            getBoardList(1);
+            getBoardList();
             console.log(response);
         },
         error: function(error){
@@ -376,7 +434,7 @@ $('body').on('click', '#boardDelete', function(){
             contentType: 'application/json; charset=utf-8',
             success: function(data){
                 $('#modalView').modal('hide');
-                getBoardList(1);
+                getBoardList();
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
