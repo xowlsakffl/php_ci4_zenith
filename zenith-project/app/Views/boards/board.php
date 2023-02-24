@@ -78,7 +78,7 @@
         </div>
         <h1 class="font-weight-bold mb-5">게시판</h1>
         <div class="row mb-2 flex justify-content-end">
-            <div class="col-3">
+            <div class="col-4">
                 <label for="dateRange">날짜</label>
                 <input type="text" class="form-control" id="dateRange" name="dateRange" placeholder="날짜 선택" readonly="readonly">
             </div>
@@ -131,14 +131,18 @@
 <script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
+let date = new Date();
+let startDate = date.toISOString().split('T')[0]
 
 getBoardList(1);
-function getBoardList(page, limit, search, sort){
+function getBoardList(page, limit, search, sort, startDate, endDate){
     data = {
         'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
         'sort': sort ? sort : 'recent',
+        'startDate': startDate ? startDate : defaultDate,
+        'endDate': endDate ? endDate : defaultDate,
     };
     console.log(data);
     $.ajax({
@@ -223,6 +227,28 @@ $('body').on('keyup', '#search', function(){
 $('body').on('change', '#sort', function(){
     getBoardList(1, $('#pageLimit').val(), $('#search').val(), $(this).val());
 })
+
+$('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+    var startDate = picker.startDate.format('YYYY-MM-DD HH:mm:ss');
+    var endDate = picker.endDate.format('YYYY-MM-DD HH:mm:ss');
+    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
+})
+
+$('input[name="dateRange"]').daterangepicker({
+    locale: {
+        "separator": " ~ ",                     // 시작일시와 종료일시 구분자
+        "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
+        "applyLabel": "확인",                    // 확인 버튼 텍스트
+        "cancelLabel": "취소",                   // 취소 버튼 텍스트
+        "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+        "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        timePicker: true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        timePicker24Hour: true,                  // 24시간 노출 여부(ex> true : 23:50, false : PM 11:50)
+        maxDate: new Date(),
+});
 
 //글쓰기 버튼
 $('body').on('click', '#boardNewBtn', function(){
@@ -366,12 +392,6 @@ $('body').on('keyup', '.board_title', function(){
 $('body').on('keyup', '.board_description', function(){
     $(this).siblings('span').text("");
 });
-
-$('input[name="dateRange"]').daterangepicker({
-    opens: 'left'
-  }, function(start, end, label) {
-    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-  });
 
 });
 
