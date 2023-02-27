@@ -28,20 +28,23 @@ class ApiBoardController extends \CodeIgniter\Controller
                     $limit = $param['limit'];
                 }else{
                     $limit = 10;
-                }
-
-                if(!empty($param['startDate']) && !empty($param['endDate'])){
-                    $builder->where('created_at BETWEEN"'.$param['startDate'].'" and "'.$param['endDate'].'"');
-                    
-                }
+                }            
 
                 if(!empty($param['search'])){
                     $searchText = $param['search'];
                     $builder->groupStart();
-                        $builder->like('board_title', $searchText);
-                        $builder->orLike('board_description', $searchText);
+                        $builder->orlike('board_title', $searchText, 'both');
+                        $builder->orLike('board_description', $searchText, 'both');
                     $builder->groupEnd();
                     $data['pager']['search'] = $param['search'];
+                }
+
+                if(!empty($param['startDate']) && !empty($param['endDate'])){
+                    $builder->where('created_at >=', $param['startDate'].' 00:00:00');
+                    $builder->where('created_at <=', $param['endDate'].' 23:59:59');
+                    
+                    $data['pager']['startDate'] = $param['startDate'];
+                    $data['pager']['endDate'] = $param['endDate'];
                 }
      
                 if(!empty($param['sort'])){
@@ -53,7 +56,7 @@ class ApiBoardController extends \CodeIgniter\Controller
                     
                     $data['pager']['sort'] = $param['sort'];
                 }
-
+                
                 $data['result'] = $builder->paginate($limit);
                 
                 $data['pager']['limit'] = intval($limit);

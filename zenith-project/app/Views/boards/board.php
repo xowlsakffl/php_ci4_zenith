@@ -134,9 +134,6 @@
 <script>
 $(document).ready(function(){
 
-let startDate;
-let endDate;
-
 getBoardList();
 function getBoardList(page, limit, search, sort, startDate, endDate){
 
@@ -145,8 +142,8 @@ function getBoardList(page, limit, search, sort, startDate, endDate){
         'limit': limit ? limit : 10,
         'search': search ? search : '',
         'sort': sort ? sort : 'recent',
-        'startDate': startDate,
-        'endDate': endDate,
+        'startDate': startDate ? startDate : '',
+        'endDate': endDate ? endDate : '',
     }
     console.log(data);
     $.ajax({
@@ -159,6 +156,7 @@ function getBoardList(page, limit, search, sort, startDate, endDate){
             setTable(xhr);       
             setPaging(xhr);
             setAllCount(xhr);
+            setDate(xhr);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -191,7 +189,7 @@ function setPaging(xhr){
         
         onPageClick: function (event, page) {
             console.log(xhr.pager.limit);
-            getBoardList(page, xhr.pager.limit, xhr.pager.search, xhr.pager.sort)
+            getBoardList(page, xhr.pager.limit, xhr.pager.search, xhr.pager.sort, xhr.pager.startDate, xhr.pager.endDate)
         }
     });
 }
@@ -217,6 +215,56 @@ function setAllCount(xhr){
     $('#allCount').text("총 "+$total+"개");
 }
 
+function setDate(xhr){
+    if($('#fromDate, #toDate').length){
+        var currentDate = moment().format("YYYY-MM-DD");
+        $('#fromDate, #toDate').daterangepicker({
+            locale: {
+                    "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                    "applyLabel": "확인",                    // 확인 버튼 텍스트
+                    "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                    "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                    "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+            },
+            "alwaysShowCalendars": true,                        // 시간 노출 여부
+            showDropdowns: true,                     // 년월 수동 설정 여부
+            autoApply: true,                         // 확인/취소 버튼 사용여부
+            maxDate: new Date(),
+            autoUpdateInput: false,
+            ranges: {
+                '오늘': [moment(), moment()],
+                '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '지난 일주일': [moment().subtract(6, 'days'), moment()],
+                '지난 한달': [moment().subtract(29, 'days'), moment()],
+                '이번달': [moment().startOf('month'), moment().endOf('month')],
+            }
+        }, function(start, end, label) {
+            // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+            // Lets update the fields manually this event fires on selection of range
+            startDate = start.format('YYYY-MM-DD'); // selected start
+            endDate = end.format('YYYY-MM-DD'); // selected end
+
+            $checkinInput = $('#fromDate');
+            $checkoutInput = $('#toDate');
+
+            // Updating Fields with selected dates
+            $checkinInput.val(startDate);
+            $checkoutInput.val(endDate);
+
+            // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+            var checkOutPicker = $checkoutInput.data('daterangepicker');
+            checkOutPicker.setStartDate(startDate);
+            checkOutPicker.setEndDate(endDate);
+
+            // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+            var checkInPicker = $checkinInput.data('daterangepicker');
+            checkInPicker.setStartDate($checkinInput.val(startDate));
+            checkInPicker.setEndDate(endDate);
+            
+            getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
+        });
+    }
+}
 //페이지 게시글 갯수
 $('body').on('change', '#pageLimit', function(){
     getBoardList(
@@ -224,8 +272,8 @@ $('body').on('change', '#pageLimit', function(){
         $(this).val(), 
         $('#search').val(), 
         $('#sort').val(),
-        startDate,
-        endDate,
+        $('#fromDate').val(),
+        $('#toDate').val(),
     );
 })
 
@@ -236,8 +284,8 @@ $('body').on('keyup', '#search', function(){
         $('#pageLimit').val(), 
         $(this).val(), 
         $('#sort').val(),
-        startDate,
-        endDate,
+        $('#fromDate').val(),
+        $('#toDate').val(),
     );
 })
 
@@ -248,8 +296,8 @@ $('body').on('change', '#sort', function(){
         $('#pageLimit').val(), 
         $('#search').val(), 
         $(this).val(),
-        startDate,
-        endDate,
+        $('#fromDate').val(),
+        $('#toDate').val(),
     );
 })
 
@@ -258,56 +306,6 @@ $('#dateRange').on('cancel.daterangepicker', function (ev, picker) {
     getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val());
 });
 
-
-if($('#fromDate, #toDate').length){
-    var currentDate = moment().format("YYYY-MM-DD");
-    $('#fromDate, #toDate').daterangepicker({
-        locale: {
-                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
-                "applyLabel": "확인",                    // 확인 버튼 텍스트
-                "cancelLabel": "취소",                   // 취소 버튼 텍스트
-                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-        },
-        "alwaysShowCalendars": true,                        // 시간 노출 여부
-        showDropdowns: true,                     // 년월 수동 설정 여부
-        autoApply: true,                         // 확인/취소 버튼 사용여부
-        maxDate: new Date(),
-        autoUpdateInput: false,
-        ranges: {
-            '오늘': [moment(), moment()],
-            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '지난 일주일': [moment().subtract(6, 'days'), moment()],
-            '지난 한달': [moment().subtract(29, 'days'), moment()],
-            '이번달': [moment().startOf('month'), moment().endOf('month')],
-        }
-    }, function(start, end, label) {
-        // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
-        // Lets update the fields manually this event fires on selection of range
-        var selectedStartDate = start.format('YYYY-MM-DD'); // selected start
-        var selectedEndDate = end.format('YYYY-MM-DD'); // selected end
-
-        $checkinInput = $('#fromDate');
-        $checkoutInput = $('#toDate');
-
-        // Updating Fields with selected dates
-        $checkinInput.val(selectedStartDate);
-        $checkoutInput.val(selectedEndDate);
-
-        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
-        var checkOutPicker = $checkoutInput.data('daterangepicker');
-        checkOutPicker.setStartDate(selectedStartDate);
-        checkOutPicker.setEndDate(selectedEndDate);
-
-        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
-        var checkInPicker = $checkinInput.data('daterangepicker');
-        checkInPicker.setStartDate(selectedStartDate);
-        checkInPicker.setEndDate(selectedEndDate);
-
-        
-        getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
-    });
-}
 //글쓰기 버튼
 $('body').on('click', '#boardNewBtn', function(){
     $('#modalWrite #frm').trigger("reset");
