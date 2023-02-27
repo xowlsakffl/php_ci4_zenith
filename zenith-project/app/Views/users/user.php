@@ -15,14 +15,6 @@
                         <label for="username">이름</label>
                         <input type="text" name="username" id="username" class="form-control">
                     </div>
-                    <!-- <div class="form-group">
-                        <label for="password">비밀번호</label>
-                        <input type="password" name="password" class="form-control" id="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="password_confirm">비밀번호 확인</label>
-                        <input type="password" name="password_confirm" class="form-control" id="password_confirm">
-                    </div> -->
                     <div class="form-group">
                         <label for="group">권한</label>
                         <select name="group" class="form-control userGroup" multiple="multiple">
