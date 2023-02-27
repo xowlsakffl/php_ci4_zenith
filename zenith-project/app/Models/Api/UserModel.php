@@ -12,6 +12,7 @@ class UserModel extends ShieldUserModel
     protected $useTimestaps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
+    protected $deletedField  = 'deleted_at';
 
     protected $allowedFields = [
         'username',
@@ -22,18 +23,25 @@ class UserModel extends ShieldUserModel
         'deleted_at',
     ];
 
-    public function getUserGroups($id = NULL)
-    {
-        $builder = $this->db->table('users');
-        $builder->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups', false);
-        $builder->from('users as u');
-        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
-        if($id){
-            $builder->where('u.id', $id);
-        }
-        $builder->groupBy('u.id');
+    // Validation
+    protected $validationRules      = [
+        'username' => 'required',
+        'groups' => 'required'
+    ];
+    protected $validationMessages   = [
+        'username' => [
+            'required' => '이름은 필수 입력사항입니다.',
+        ],
+        'groups' => [
+            'required' => '그룹은 필수 선택사항입니다.',
+        ],
+    ];
+    protected $skipValidation       = false;
+    protected $cleanValidationRules = true;
 
-        $result = $builder->get()->getResult();
-        return $result; 
+
+    public function company()
+    {
+        return $this->belongsTo('companies', 'App\Models\Api\CompanyModel');
     }
 }

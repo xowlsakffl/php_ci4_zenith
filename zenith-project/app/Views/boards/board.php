@@ -127,7 +127,6 @@
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
-<script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
 

@@ -43,7 +43,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
     $routes->group('users', static function($routes){
         $routes->get('', 'Api\ApiUserController::get');
         $routes->get('(:num)', 'Api\ApiUserController::$1');
-        $routes->post('', 'Api\ApiUserController::$1');
         $routes->put('(:num)', 'Api\ApiUserController::$1');
         $routes->delete('(:num)', 'Api\ApiUserController::$1');
     });
