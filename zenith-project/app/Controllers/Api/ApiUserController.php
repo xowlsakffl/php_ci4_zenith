@@ -16,12 +16,65 @@ class ApiUserController extends \CodeIgniter\Controller
         $this->userModel = model(UserModel::class);
     }
 
-    public function get($id = false) {
+    public function get($id = NULL) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data = $this->userModel->getUserGroups($id);
+                $builder = $this->userModel->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
+
+                $builder->from('users as u');
+                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+
+                $builder->where('u.id', $id);
+                $builder->groupBy('u.id');              
+                $data['result'] = $builder->get()->getRow();
+                $data['result']->groups = explode(',', $data['result']->groups);
             } else {
-                $data = $this->userModel->getUserGroups();
+                $param = $this->request->getGet();
+
+                $builder = $this->userModel->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
+
+                if(!empty($param['limit'])){
+                    $limit = $param['limit'];
+                }else{
+                    $limit = 10;
+                }            
+                $builder->from('users as u');
+                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+
+                if(!empty($param['startDate']) && !empty($param['endDate'])){
+                    $builder->where('u.created_at >=', $param['startDate'].' 00:00:00');
+                    $builder->where('u.created_at <=', $param['endDate'].' 23:59:59');
+                    
+                    $data['pager']['startDate'] = $param['startDate'];
+                    $data['pager']['endDate'] = $param['endDate'];
+                }
+
+                if(!empty($param['search'])){
+                    $searchText = $param['search'];
+                    $builder->like('u.username', $searchText);
+                    $data['pager']['search'] = $param['search'];
+                }
+     
+                $builder->groupBy('u.id');
+
+                if(!empty($param['sort'])){
+                    if($param['sort'] == 'old'){
+                        $builder->orderBy('u.created_at', 'asc');
+                    }else{
+                        $builder->orderBy('u.created_at', 'desc');
+                    }
+                    
+                    $data['pager']['sort'] = $param['sort'];
+                }
+                
+                $data['result'] = $builder->paginate($limit);
+                
+                $data['pager']['limit'] = intval($limit);
+                $data['pager']['total'] = $builder->pager->getTotal();
+                $data['pager']['pageCount'] = $builder->pager->getPageCount();
+                $data['pager']['currentPage'] = $builder->pager->getCurrentPage();
+                $data['pager']['firstPage'] = $builder->pager->getFirstPage();
+                $data['pager']['lastPage'] = $builder->pager->getLastPage();
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -30,41 +83,29 @@ class ApiUserController extends \CodeIgniter\Controller
         return $this->respond($data);
     }
 
-    protected function put($id = false) {
+    public function put($id = NULL) {
         $ret = false;
 
         if (strtolower($this->request->getMethod()) === 'put') {
             if ($id && !empty($this->data)) {         
                 $this->validation = \Config\Services::validation();
-                $this->validation->setRules([
-                    'username' => 'required',
-                    'groups' => 'required'
-                ],
-                [   // Errors
-                    'username' => [
-                        'required' => '이름은 필수 입력사항입니다.',
-                    ],
-                ]);
-                if($this->validation->run($this->data)){  
-                    $user = $this->userModel->findById($id);  
-                       
-                    $user->fill([
-                        'username' => $this->data['username'],
-                    ]);     
-                    $this->userModel->save($user);
-                    $groups = $this->data['groups'];
-                    $user->syncGroups(...$this->data['groups']);
-
-                    $ret = true;
-                }else{
-                    if($this->validation->hasError('username')){
-                        $error = $this->validation->getError('username');
-                    }else if($this->validation->hasError('groups')){
-                        $error = $this->validation->getError('groups');
-                    }
-    
-                    return $this->failValidationErrors($error);
+                $this->validation->setRules($this->userModel->validationRules, $this->userModel->validationMessages);
+                if (!$this->validation->run($this->data)) {
+                    $errors = $this->validation->getErrors();
+                    return $this->failValidationErrors($errors);
                 }
+
+                $user = $this->userModel->findById($id);  
+                    
+                $user->fill([
+                    'username' => $this->data['username'],
+                ]);     
+                
+                $this->userModel->save($user);
+                $groups = $this->data['groups'];
+                $user->syncGroups(...$this->data['groups']);
+
+                $ret = true;
             }else{
                 return $this->fail("잘못된 요청");
             }
@@ -72,7 +113,7 @@ class ApiUserController extends \CodeIgniter\Controller
         return $this->respond($ret);
     }
 
-    protected function delete($id = false) {
+    protected function delete($id = NULL) {
         $ret = false;
         if (strtolower($this->request->getMethod()) === 'delete') {
             if ($id) {

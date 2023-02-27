@@ -73,7 +73,7 @@ class ApiBoardController extends \CodeIgniter\Controller
         return $this->respond($data);
     }
 
-    public function put($id = false)
+    public function put($id = NULL)
     {
         $ret = false;
         if (strtolower($this->request->getMethod()) === 'put'){
@@ -125,7 +125,7 @@ class ApiBoardController extends \CodeIgniter\Controller
         return $this->respond($ret);
     }
 
-    protected function delete($id = false)
+    protected function delete($id = NULL)
     {
         $ret = false;
         if (strtolower($this->request->getMethod()) === 'delete') {
