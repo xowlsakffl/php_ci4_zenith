@@ -39,4 +39,9 @@ class UserModel extends ShieldUserModel
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
+
+    public function company()
+    {
+        return $this->belongsTo('companies', 'App\Models\Api\CompanyModel');
+    }
 }

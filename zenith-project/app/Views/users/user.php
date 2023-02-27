@@ -19,13 +19,13 @@
                     <div class="form-group">
                         <label for="group">권한</label>
                         <select name="group" class="form-control" multiple="multiple" id="userGroup">
-                            <option value="superadmin">최고관리자</option>
-                            <option value="admin">관리자</option>
-                            <option value="developer">개발자</option>
-                            <option value="agency">광고대행사</option>
-                            <option value="advertiser">광고주</option>
-                            <option value="user">사용자</option>
-                            <option value="guest">게스트</option>
+                            <option value="superadmin">SuperAdmin</option>
+                            <option value="admin">Admin</option>
+                            <option value="developer">Developer</option>
+                            <option value="agency">Agency</option>
+                            <option value="advertiser">Advertiser</option>
+                            <option value="user">User</option>
+                            <option value="guest">Guest</option>
                         </select>
                         <span id="groups_error" class="text-danger"></span>
                     </div>
@@ -46,6 +46,10 @@
             <div class="modal-body">
                 <dl id="viewName">
                     <dt>이름</dt>
+                    <dd></dd>
+                </dl>
+                <dl id="viewCompany">
+                    <dt>소속</dt>
                     <dd></dd>
                 </dl>
                 <dl id="viewGroup">
@@ -304,7 +308,8 @@ $('body').on('click', '#userView', function(){
         success: function(data){
             console.log(data);
             $('#modalView .modal-body #viewName dd').html(data.result.username);
-            $('#modalView .modal-body #viewGroup dd').html(data.result.groups);
+            $('#modalView .modal-body #viewCompany dd').html(data.result.username);
+            $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(", "));       
             $('#modalView .modal-body #viewDate dd').html(data.result.created_at.substr(0, 16));
             $('#modalView #userUpdateModal').attr('data-id', data.result.id);
             $('#modalView #userDelete').attr('data-id', data.result.id);

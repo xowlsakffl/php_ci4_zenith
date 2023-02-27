@@ -69,9 +69,8 @@ class ApiUserController extends \CodeIgniter\Controller
                     $data['pager']['sort'] = $param['sort'];
                 }
                 
-                $result = $builder->paginate($limit);
-                
-                $data['result'] = $result;
+                $data['result'] = $builder->paginate($limit);
+
                 $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $builder->pager->getTotal();
                 $data['pager']['pageCount'] = $builder->pager->getPageCount();

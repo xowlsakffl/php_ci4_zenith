@@ -53,4 +53,9 @@ class CompanyModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function users()
+    {
+        return $this->hasMany('users', 'App\Models\Api\UserModel');
+    }
 }
