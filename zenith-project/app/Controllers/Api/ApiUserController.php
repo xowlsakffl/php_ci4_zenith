@@ -49,6 +49,8 @@ class ApiUserController extends \CodeIgniter\Controller
                     $data['pager']['endDate'] = $param['endDate'];
                 }
 
+                $builder->where('u.deleted_at', NULL);
+
                 if(!empty($param['search'])){
                     $searchText = $param['search'];
                     $builder->like('u.username', $searchText);
@@ -67,8 +69,9 @@ class ApiUserController extends \CodeIgniter\Controller
                     $data['pager']['sort'] = $param['sort'];
                 }
                 
-                $data['result'] = $builder->paginate($limit);
+                $result = $builder->paginate($limit);
                 
+                $data['result'] = $result;
                 $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $builder->pager->getTotal();
                 $data['pager']['pageCount'] = $builder->pager->getPageCount();
@@ -100,7 +103,7 @@ class ApiUserController extends \CodeIgniter\Controller
                 $user->fill([
                     'username' => $this->data['username'],
                 ]);     
-                
+
                 $this->userModel->save($user);
                 $groups = $this->data['groups'];
                 $user->syncGroups(...$this->data['groups']);

@@ -22,8 +22,10 @@
                             <option value="superadmin">최고관리자</option>
                             <option value="admin">관리자</option>
                             <option value="developer">개발자</option>
+                            <option value="agency">광고대행사</option>
+                            <option value="advertiser">광고주</option>
                             <option value="user">사용자</option>
-                            <option value="guest">미인증 사용자</option>
+                            <option value="guest">게스트</option>
                         </select>
                         <span id="groups_error" class="text-danger"></span>
                     </div>
@@ -177,6 +179,8 @@ function setPaging(xhr){
 
 function setTable(xhr){
     $('#user tbody').empty();
+    console.log(xhr);
+
     $.each(xhr.result, function(index, item){   
         index++
         $('<tr id="userView" data-id="'+item.id+'">').append('<td>'+item.id+'</td>')
@@ -366,19 +370,19 @@ $('body').on('click', '#userUpdateBtn', function(){
         error: function(error){
             var errorText = error.responseJSON.messages;
             $.each(errorText, function(key, val){
-                $("#modalWrite #" + key + "_error").text(val);
+                $("#modalUpdate #" + key + "_error").text(val);
             })
         }
     });
 })
 
 //글삭제
-$('body').on('click', '#boardDelete', function(){
+$('body').on('click', '#userDelete', function(){
     let id = $(this).attr('data-id');
     if(confirm('정말 삭제하시겠습니까?')){
         $.ajax({
             type: "delete",
-            url: "<?=base_url()?>/boards/"+id,
+            url: "<?=base_url()?>/users/"+id,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){
@@ -392,11 +396,11 @@ $('body').on('click', '#boardDelete', function(){
     }
 })
 
-$('body').on('keyup', '.board_title', function(){
+$('body').on('keyup', '#username', function(){
     $(this).siblings('span').text("");
 });
 
-$('body').on('keyup', '.board_description', function(){
+$('body').on('change', '#userGroup', function(){
     $(this).siblings('span').text("");
 });
 
