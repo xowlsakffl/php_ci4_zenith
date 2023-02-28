@@ -1,7 +1,7 @@
 <?php
 namespace App\Models\Api;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
 
 class UserModel extends ShieldUserModel
@@ -26,7 +26,8 @@ class UserModel extends ShieldUserModel
     // Validation
     protected $validationRules      = [
         'username' => 'required',
-        'groups' => 'required'
+        'groups' => 'required',
+        'permission' => 'required',
     ];
     protected $validationMessages   = [
         'username' => [
@@ -35,13 +36,25 @@ class UserModel extends ShieldUserModel
         'groups' => [
             'required' => '그룹은 필수 선택사항입니다.',
         ],
+        'permission' => [
+            'required' => '세부 권한은 필수 선택사항입니다.',
+        ],
     ];
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
+    public function getUser($id){
+        $builder = $this->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups, GROUP_CONCAT(DISTINCT apu.permission) as permission, c.companyType, c.companyName');
 
-    public function company()
-    {
-        return $this->belongsTo('companies', 'App\Models\Api\CompanyModel');
+        $builder->from('users as u');
+        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id');
+        $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id');
+        $builder->join('companies_users as cu', 'u.id = cu.user_id');
+        $builder->join('companies as c', 'cu.company_id = c.cdx');
+        $builder->where('u.id', $id);
+        $builder->groupBy('u.id');              
+        $result = $builder->get()->getRow();
+
+        return $result;
     }
 }

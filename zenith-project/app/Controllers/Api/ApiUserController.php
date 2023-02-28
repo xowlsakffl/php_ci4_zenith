@@ -19,15 +19,9 @@ class ApiUserController extends \CodeIgniter\Controller
     public function get($id = NULL) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $builder = $this->userModel->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
-
-                $builder->from('users as u');
-                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
-
-                $builder->where('u.id', $id);
-                $builder->groupBy('u.id');              
-                $data['result'] = $builder->get()->getRow();
+                $data['result'] = $this->userModel->getUser($id);
                 $data['result']->groups = explode(',', $data['result']->groups);
+                $data['result']->permission = explode(',', $data['result']->permission);
             } else {
                 $param = $this->request->getGet();
 
@@ -39,7 +33,7 @@ class ApiUserController extends \CodeIgniter\Controller
                     $limit = 10;
                 }            
                 $builder->from('users as u');
-                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id');
 
                 if(!empty($param['startDate']) && !empty($param['endDate'])){
                     $builder->where('u.created_at >=', $param['startDate'].' 00:00:00');
@@ -106,7 +100,7 @@ class ApiUserController extends \CodeIgniter\Controller
                 $this->userModel->save($user);
                 $groups = $this->data['groups'];
                 $user->syncGroups(...$this->data['groups']);
-
+                $user->syncPermissions(...$this->data['permission']);
                 $ret = true;
             }else{
                 return $this->fail("잘못된 요청");

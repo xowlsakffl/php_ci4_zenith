@@ -2,140 +2,8 @@
 
 <?=$this->section('content');?>
 <div class="container-md">
-    <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">사용자 수정</h5>
-            </div>
-            <div class="modal-body">
-                <form id="frm">
-                    <input type="hidden" name="id" id="hidden_id">
-                    <div class="form-group">
-                        <label for="username">이름</label>
-                        <input type="text" name="username" id="username" class="form-control">
-                        <span id="username_error" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="group">권한</label>
-                        <select name="group" class="form-control" multiple="multiple" id="userGroup">
-                            <option value="superadmin">SuperAdmin</option>
-                            <option value="admin">Admin</option>
-                            <option value="developer">Developer</option>
-                            <option value="agency">Agency</option>
-                            <option value="advertiser">Advertiser</option>
-                            <option value="user">User</option>
-                            <option value="guest">Guest</option>
-                        </select>
-                        <span id="groups_error" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="permission">세부 권한</label>
-                        <select name="permission" class="form-control" multiple="multiple" id="userPermission">
-                            <option value="admin.access">관리자만 가능한 페이지 접근 가능</option>
-                            <option value="admin.settings">관리자만 가능한 설정 접근 가능</option>
-                            <option value="users.create">회원 생성</option>
-                            <option value="users.edit">회원 수정</option>
-                            <option value="users.delete">회원 삭제</option>
-                            <option value="agency.access">대행사 목록 페이지</option>
-                            <option value="agency.advertisers">대행사 하위 광고주 관리</option>
-                            <option value="agency.create">대행사 생성</option>
-                            <option value="agency.edit">대행사 수정</option>
-                            <option value="agency.delete">대행사 삭제</option>
-                            <option value="advertiser.access">광고주 목록 페이지</option>
-                            <option value="advertiser.create">광고주 생성</option>
-                            <option value="advertiser.edit">광고주 수정</option>
-                            <option value="advertiser.delete">광고주 삭제</option>
-                        </select>
-                        <span id="permission_error" class="text-danger"></span>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">            
-                <button type="button" class="btn btn-primary" id="userUpdateBtn">저장</button>
-            </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="modalView" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">사용자</h5>
-            </div>
-            <div class="modal-body">
-                <dl id="viewName">
-                    <dt>이름</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewCompany">
-                    <dt>소속</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewGroup">
-                    <dt>권한</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewDate">
-                    <dt>가입일</dt>
-                    <dd></dd>
-                </dl>
-            </div>
-            <div class="modal-footer">     
-                <a href="/users/belong" class="btn btn-primary" id="userBelong">소속 수정</a>       
-                <button type="button" class="btn btn-primary" id="userUpdateModal">수정</button>
-                <button type="button" class="btn btn-danger" id="userDelete">삭제</button>
-            </div>
-            </div>
-        </div>
-    </div>
     <h1 class="font-weight-bold mb-5">사용자 관리</h1>
-    <div class="row mb-2 flex justify-content-end">
-        <div class="col-5">
-            <label for="fromDate">시작날짜</label>
-            <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택" readonly="readonly">
-            <label for="toDate">종료날짜</label>
-            <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택" readonly="readonly">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col" id="allCount"></div>
-        <div class="col">
-            <select name="sort" id="sort" class="form-control">
-                <option value="recent">최근순</option>
-                <option value="old">오래된 순</option>
-            </select>
-        </div>
-        <div class="col-3">
-            <select name="pageLimit" id="pageLimit" class="form-control">
-                <option value="10">10개</option>
-                <option value="50">50개</option>
-                <option value="100">100개</option>
-            </select>
-        </div>
-        <div class="col-3">
-            <input type="text" class="form-control" id="search" name="search" placeholder="검색">
-        </div>
-    </div>
-    <div class="row">
-        <table class="table" id="user">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">이름</th>
-                    <th scope="col">권한</th>
-                    <th scope="col">가입일</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <div class="row pagination-container">
-            <ul class="pagination">
-
-            </ul>
-        </div>
-    </div>
+    
 </div>
 <?=$this->endSection();?>
 
@@ -330,9 +198,8 @@ $('body').on('click', '#userView', function(){
             console.log(data);
             $('#modalView .modal-body #viewName dd').html(data.result.username);
             $('#modalView .modal-body #viewCompany dd').html(data.result.companyType+" "+data.result.companyName);
-            $('#modalView .modal-body #viewGroup dd').html(data.result.groups);       
+            $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(", "));       
             $('#modalView .modal-body #viewDate dd').html(data.result.created_at.substr(0, 16));
-            $('#modalView #userBelong').attr('href', '/user/belong/'+data.result.id);
             $('#modalView #userUpdateModal').attr('data-id', data.result.id);
             $('#modalView #userDelete').attr('data-id', data.result.id);
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
@@ -360,10 +227,7 @@ $('body').on('click', '#userUpdateModal', function(){
             $('#modalUpdate #username').val(data.result.username);
             for (let i = 0; i < data.result.groups.length; i++) {
                 $('#userGroup option[value="' + data.result.groups[i] + '"]').prop('selected', true);
-            }    
-            for (let i = 0; i < data.result.permission.length; i++) {
-                $('#userPermission option[value="' + data.result.permission[i] + '"]').prop('selected', true);
-            }    
+            }      
             $('#modalUpdate #hidden_id').val(data.result.id);
             $('#modalUpdate #frm span').text(''); 
             var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
@@ -381,7 +245,6 @@ $('body').on('click', '#userUpdateBtn', function(){
     data = {
         username: $('#modalUpdate input:text[name=username]').val(),
         groups: $('#modalUpdate #userGroup').val(),
-        permission: $('#modalUpdate #userPermission').val()
     };
     console.log(data);
     $.ajax({

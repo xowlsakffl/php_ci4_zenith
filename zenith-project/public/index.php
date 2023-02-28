@@ -51,6 +51,8 @@ require_once SYSTEMPATH . 'Config/DotEnv.php';
  * the pieces all working together.
  */
 
+// Global helpers that should be available on every request
+
 $app = Config\Services::codeigniter();
 $app->initialize();
 $context = is_cli() ? 'php-cli' : 'web';

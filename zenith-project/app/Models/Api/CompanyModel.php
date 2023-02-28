@@ -2,9 +2,9 @@
 
 namespace App\Models\Api;
 
-use CodeIgniter\Model;
+use App\Models\BaseModel;
 
-class CompanyModel extends Model
+class CompanyModel extends BaseModel
 {
     protected $DBGroup          = 'default';
     protected $table            = 'companies';
@@ -54,8 +54,5 @@ class CompanyModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function users()
-    {
-        return $this->hasMany('users', 'App\Models\Api\UserModel');
-    }
+    
 }

@@ -3,7 +3,7 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Shield\Models\UserModel;
+use App\Models\Api\UserModel;
 use CodeIgniter\Shield\Entities\User;
 
 class UserController extends ResourceController 
@@ -21,20 +21,14 @@ class UserController extends ResourceController
         return view('users/user');
     }
 
-/*
-    public function _remap(...$params) {
-        $method = $this->request->getMethod();
-        var_dump($params);
-        $params = [($params[0] !== 'index' ? $params[0] : false)];
-        $this->data = $this->request->getJSON();
-
-        if(method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], $params);
-        }
-     
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+    public function belong($id){
+        $data = [
+            'user' => $this->userModel->getUser($id),
+        ];
+        
+        return view('users/belong', $data);
     }
-*/
+
     public function post() {
         $ret = false;
         if(!empty($this->data)) {
