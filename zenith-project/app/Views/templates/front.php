@@ -8,3 +8,6 @@
 <?=$this->renderSection('script')?>
 
 <?=$this->include('templates/footer.php')?>
+
+<?=$this->include('templates/exam.php')?>
+<?=$this->include('templates/exam02.php')?>
