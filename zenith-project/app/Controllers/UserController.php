@@ -4,6 +4,8 @@ namespace App\Controllers;
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\Api\UserModel;
+use App\Models\Api\CompanyModel;
+use App\Models\Api\CompanyUserModel;
 use CodeIgniter\Shield\Entities\User;
 
 class UserController extends ResourceController 
@@ -15,6 +17,8 @@ class UserController extends ResourceController
 
     public function __construct(){
         $this->userModel = model(UserModel::class);
+        $this->companyModel = model(CompanyModel::class);
+        $this->companyUserModel = model(CompanyUserModel::class);
     }
 
     public function index(){
@@ -25,8 +29,37 @@ class UserController extends ResourceController
         $data = [
             'user' => $this->userModel->getUser($id),
         ];
-        
         return view('users/belong', $data);
+    }
+    
+    public function getCompanies(){
+        if($this->request->isAJAX()){
+            $result = $this->companyModel->getCompanies();
+            $data = [
+                'companies' => $result,
+            ];
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+
+        return $this->respond($data);
+    }
+
+    public function updateCompanies(){
+        $ret = false;
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
+
+            $builder = $this->companyUserModel;
+
+            dd($companyUser);
+
+            $ret = true;
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+
+        return $this->respond($ret);
     }
 
     public function post() {

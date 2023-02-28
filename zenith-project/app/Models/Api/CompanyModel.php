@@ -2,9 +2,9 @@
 
 namespace App\Models\Api;
 
-use App\Models\BaseModel;
+use CodeIgniter\Model;
 
-class CompanyModel extends BaseModel
+class CompanyModel extends Model
 {
     protected $DBGroup          = 'default';
     protected $table            = 'companies';
@@ -54,5 +54,11 @@ class CompanyModel extends BaseModel
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    
+    public function getCompanies()
+    {
+        $builder = $this->table('companies');           
+        $result = $builder->get()->getResult();
+
+        return $result;
+    }
 }
