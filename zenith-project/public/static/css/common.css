@@ -1,0 +1,167 @@
+/*css/common.css compile*/
+.exam-wrap {
+  width: 100%;
+  height: 100vh;
+}
+
+.exam-wrap .bg-area {
+  background: url(https://wallpapercave.com/dwp1x/ikgV0Gd.jpg);
+  background-attachment: fixed;
+  padding: 5%;
+}
+
+.flex-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/*reset style*/
+body {
+  padding: 0;
+  margin: 0;
+}
+
+ol, ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+.header-top {
+  padding: 10px 0;
+  border-bottom: 2px solid red;
+}
+.header-top a.button, .header-top .gnb-btn a.button {
+  display: block;
+  text-decoration: none;
+  color: #ccc;
+  outline: none;
+  font-size: 90%;
+}
+.header-top a.button i, .header-top .gnb-btn a.button i {
+  margin-right: 10px;
+}
+.header-top .device i {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+  position: relative;
+  font-size: 140%;
+  text-align: center;
+  color: #929599;
+}
+.header-top .device i:hover::after {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-color: #d3d4d6;
+  display: block;
+  content: "";
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.header-top .gnb-btn i.fa-github {
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  color: #929599;
+}
+.header-top .gnb-btn i.fa-github:hover::after {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-color: #d3d4d6;
+  display: block;
+  content: "";
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.header-top .gnb-btn a.button {
+  color: #de554c;
+  background-color: #f0e3e7;
+  padding: 2% 0;
+  border-radius: 5px;
+  font-size: 80%;
+  margin: 0 10px;
+}
+.header-top .gnb-btn a.button i {
+  margin: 0 10px;
+  text-align: center;
+}
+.header-top .gnb-btn a.button i::before {
+  margin-right: 7px;
+}
+.header-top .gnb-btn button.close {
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  position: relative;
+}
+.header-top .gnb-btn button.close:hover::after {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  background-color: #d3d4d6;
+  display: block;
+  content: "";
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+.header-top .gnb-btn button.close i::before {
+  color: #929599;
+}
+
+nav {
+  padding: 10px;
+  background-color: #000;
+}
+nav h6 {
+  color: #fff;
+  margin: 0;
+}
+nav .nav-tabs a {
+  font-size: 14px;
+  display: block;
+  margin: 0 5px;
+  color: #7f9598;
+}
+nav .nav-tabs a:visited {
+  color: #fff;
+}
+
+main {
+  padding-top: 20px;
+}
+main .con-01 .img {
+  background-color: #dee1e6;
+}
+main .banner {
+  border-radius: 5px;
+  background-color: #6c757d;
+  padding: 30px;
+  color: #fff;
+  margin: 40px 0;
+}
+main .banner p {
+  margin: 0;
+}
+
+/*# sourceMappingURL=common.css.map */
