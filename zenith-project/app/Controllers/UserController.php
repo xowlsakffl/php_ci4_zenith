@@ -3,7 +3,9 @@ namespace App\Controllers;
 
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-use CodeIgniter\Shield\Models\UserModel;
+use App\Models\Api\UserModel;
+use App\Models\Api\CompanyModel;
+use App\Models\Api\CompanyUserModel;
 use CodeIgniter\Shield\Entities\User;
 
 class UserController extends ResourceController 
@@ -15,26 +17,54 @@ class UserController extends ResourceController
 
     public function __construct(){
         $this->userModel = model(UserModel::class);
+        $this->companyModel = model(CompanyModel::class);
+        $this->companyUserModel = model(CompanyUserModel::class);
     }
 
     public function index(){
         return view('users/user');
     }
 
-/*
-    public function _remap(...$params) {
-        $method = $this->request->getMethod();
-        var_dump($params);
-        $params = [($params[0] !== 'index' ? $params[0] : false)];
-        $this->data = $this->request->getJSON();
-
-        if(method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], $params);
-        }
-     
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+    public function belong($id){
+        $data = [
+            'user' => $this->userModel->getUser($id),
+            'companies' => $this->companyModel->getCompanies(),
+        ];
+        
+        return view('users/belong', $data);
     }
-*/
+    
+    public function getCompanies(){
+
+        $result = $this->companyModel->getCompanies();
+        $data = [
+            'companies' => $result,
+        ];
+
+        return $data;
+    }
+
+    public function updateCompanies(){
+        $ret = false;
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
+
+            $builder = $this->companyUserModel;
+            $builder->where('user_id', $data['user_id'])
+            ->set(['company_id' => $data['company_id']])
+            ->update();
+
+            $ret = true;
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+
+        return $this->respond($ret);
+    }
+
+
+
+    
     public function post() {
         $ret = false;
         if(!empty($this->data)) {

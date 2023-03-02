@@ -53,4 +53,12 @@ class CompanyModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getCompanies()
+    {
+        $builder = $this->table('companies');           
+        $result = $builder->get()->getResult();
+
+        return $result;
+    }
 }

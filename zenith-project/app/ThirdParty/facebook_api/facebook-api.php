@@ -9,6 +9,8 @@ ini_set('memory_limit', '-1');
 require_once __DIR__ . '/facebook-db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+use CodeIgniter\CLI\CLI;
+
 use Facebook\Facebook;
 use Facebook\FacebookApp;
 use Facebook\FacebookRequest;
@@ -82,8 +84,8 @@ class ChainsawFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
-    private $access_token = 'EAAKNGLMV4o4BABizxUeNtE0Y5SUl2LBlOUMD5yxyENJCPTVhEMwgV7ZCix73ahxPBQosQtVGwfdVVlrMuZB6I2in7byD5FnUkl2wjUOmgIjJKjx1APYQ8mzyDSLjLL9dB2U4bZCx6bfYaKW6f55FSKCcFI7a1vUFpM8lQZCfzNqRIAt35k0tWq5SfZBuLsD40sVxK6drgDgZDZD';
-    private $longLivedAccessToken = 'EAAKNGLMV4o4BAKVyB8cL6B94wkze0SflZCw5cIxyN088JSbkFZAMjZAMXZB6ruIaSKNT1fChukZCmmB4CA8ivBifix228E1cPQty0VBeYIOKocND2tlhHXUjqdOzCl3UYWebKhRjeOb7LDhi64lvfZA6Pqotjn5ahAaqMu4yExhUienOqyiQB0Snao4Txa5axQLEdOmORsAgZDZD';
+    private $access_token = 'EAAKNGLMV4o4BABCrZBY6AsWfpadUc2fumCOKxStBHzdFsJnPy8kOgxfdPTUMOmnNwZA8vRzmEMKDmncluzmNro1ZB0YHZCea3zuz8c6RErqSNDnMzH7SnuQFTyQbMqCPE4AKvyMoh1GQU3chYpjVfYM7skvy8Ltu7yqpZAgAj8mZBVw6hySyJ61kolHQEnMHiA4urTrDkbksONZC2xaGsbN';
+    private $longLivedAccessToken = 'EAAKNGLMV4o4BAGHXK97JQ9yz8CLZAfF4WlUcg8yrSZBV6j8w4FWMvQyuZCAxdrmBiP6K2kcrR2esqvYOsZAGxiIo10taHkSv9cvrx3IZAXlIGtIrNV1U9Td91ZAithdZBQNhGFnrbXlVRkUvJP9ZA58NBtF0oea17LkMaxPCZAZA7V6qglHTMdX0Q6NovfdIbhB41p7hLKZAv55sZAaUBWQlUpBA';
     private $db;
     private $fb, $fb_app;
     private $business_id_list = ['213123902836946'];
@@ -135,13 +137,15 @@ class ChainsawFB
             $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($this->access_token);
             $accesstoken = new AccessToken($longLivedAccessToken);
             $this->access_token = $longLivedAccessToken;
-            echo '<p>longLivedAccessToken at ' . $longLivedAccessToken . '</p>';
+            CLI::write("longLivedAccessToken at ". CLI::color($longLivedAccessToken, "white"), "yellow");
 
             // 현재 토큰 정보 조회
             $accesstoken = new AccessToken($this->access_token);
+            /*
             echo '<pre>'. print_r($accesstoken,1) .'</pre>';
             echo '<p>Issued at ' . $accesstoken->isLongLived() .'</p>';
             echo '<p>Expirest at ' . $accesstoken->getValue()->getExpiresAt()->format('Y-m-d\TH:i:s') .'</p>';
+            */
         } catch (Exception $ex) {
             echo $ex->getMessage();
         }
@@ -175,137 +179,6 @@ class ChainsawFB
                     $funding_source = $account['funding_source_details']['display_string'];
                 }
                 array_push($results, array($this->business_id, $account['account_id'], $account['name'], $funding_source, $account['account_status'], $pixel_id));
-            }
-        } while ($edges = $this->fb->next($edges));
-
-        return $results;
-    }
-
-    public function getFBAdAccountsPerm()
-    {
-        $ad_accounts = $this->db->getAdAccounts(false);          // 각 광고 계정별
-        $accounts = $ad_accounts->getResultArray();
-        $result = array();
-        $cnt = 0;
-        foreach ($accounts as $row) {
-            if ($row['business_id'] != $this->business_id) continue;
-            $response = $this->fb->get(
-                "/act_{$row['ad_account_id']}/assigned_users?business={$this->business_id}",
-                $this->access_token
-            );
-            $edges = $response->getGraphEdge();
-            do {
-                $permission = 0;
-                echo $this->business_id . ':' . $row['ad_account_id'] . "({$row['name']})";
-                foreach ($edges as $account) {
-                    $account = $account->asArray();
-                    // echo "<pre>".print_r($account,1)."</pre>"; exit;
-                    if (in_array($account['id'], ['482525632506639', '109156827315469', '112622820616127', '110599870819040', '100151575213916', '336797230922166'])) { //482525632506639 / 배익준, 432677113839199 / 박용태
-                        if (in_array("ANALYZE", $account['tasks'])) { //Token 주인 ID
-                            $permission = 1;
-                            echo ' :Permission OK.';
-                            $this->db->updateAdAccountPerm($row['ad_account_id'], $permission);
-                            continue;
-                        } else {
-                            echo " :No Have Permission.";
-                        }
-                    }
-                }
-                if (!$permission) {
-                    echo " :No Added User.";
-                }
-                echo '<br>';
-            } while ($edges = $this->fb->next($edges));
-        }
-    }
-
-    public function getFBAdAccounts()
-    {
-        $params = array(
-            'fields' => array(
-                UserFields::ID,
-                UserFields::NAME
-            )
-        );
-        $this->user = new User($this->business_id);
-
-        $adaccounts = $this->user->getAdAccounts(array(), $params);
-        $response = $adaccounts->getResponse()->getContent();
-        $result = array_merge($result, $response['data']);
-
-        if (isset($response['paging'])) {
-            $url = @$response['paging']['next'];
-
-            while ($url) {
-                $data = $this->getFBRequest_CURL($url);
-
-                if (isset($data['data'])) {
-                    $result = array_merge($result, $data['data']);
-                }
-
-                $url = isset($data['paging']['next']) ? $data['paging']['next'] : null;
-            }
-        }
-
-        return $result;
-    }
-
-    public function getFBAdAccountList()
-    {
-        $account_ids = $this->db->getAccountIdsFromCampaign();
-        $data = $account_ids->getResultArray();
-        foreach ($data as $row) {
-            echo $row['account_id'] . '<br>';
-        }
-    }
-
-    // 인스타그램 계정 목록
-    function getFBInstagramAccounts()
-    {
-        $request = new FacebookRequest(
-            $this->fb_app,
-            $this->access_token,
-            'GET',
-            '/316991668497111/instagram_accounts?fields=id,username'
-        );
-
-        $response = $this->fb->getClient()->sendRequest($request);
-        $edges = $response->getGraphEdge();
-        $results = array();
-
-        do {
-            foreach ($edges as $account) {
-                array_push($results, array($account['id'], $account['username']));
-            }
-        } while ($edges = $this->fb->next($edges));
-
-        return $results;
-    }
-
-    // 광고 페이지 목록
-    function getFBPages()
-    {
-        $request = new FacebookRequest(
-            $this->fb_app,
-            $this->access_token,
-            'GET',
-            '/me/accounts?fields=id,name,access_token,tasks'
-        );
-
-        $response = $this->fb->getClient()->sendRequest($request);
-        $edges = $response->getGraphEdge();
-        $results = array();
-
-        do {
-            foreach ($edges as $account) {
-                $perm = 0;
-                if (is_object($account['tasks'])) {
-                    if (in_array("MANAGE", $account['tasks']->asArray()) === true || in_array("ADVERTISE", $account['tasks']->asArray()) === true) {
-                        $perm = 1;
-                    }
-                }
-
-                array_push($results, array($account['id'], $account['name'], $account['access_token'], $perm));
             }
         } while ($edges = $this->fb->next($edges));
 
@@ -486,6 +359,9 @@ class ChainsawFB
         }
         $account_id = $this->db->getAdAccounts(true, " AND business_id = '{$this->business_id}'");
         $accounts = $account_id->getResultArray();
+        $total = $account_id->getNumRows();
+        $step = 1;
+        CLI::write("{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
         $result = array();
         $cnt = 0;
         foreach ($accounts as $row) {
@@ -510,6 +386,7 @@ class ChainsawFB
                 }
                 $count++;
             }
+            CLI::showProgress($step++, $total);
             if ($continue) continue;
             ob_flush();
             flush();
@@ -653,10 +530,14 @@ class ChainsawFB
         foreach ($data as $row) $_ids[] = $row['ad_id'];
         if (count($_ids)) {
             $ids = array_unique($_ids);
+            $total = count($ids);
+            $step = 1;
+            CLI::write("{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $ad_id) {
                 $this->setAdId($ad_id);
                 $ads = $this->ad->getSelf(array(), $params);
                 $response = $ads->getData();
+                CLI::showProgress($step++, $total);
                 $result[] = $response;
             }
             $this->db->updateAds($result);
@@ -697,11 +578,15 @@ class ChainsawFB
         foreach ($data as $row) $_ids[] = $row['adset_id'];
         if (count($_ids)) {
             $ids = array_unique($_ids);
+            $total = count($ids);
+            $step = 1;
+            CLI::write("{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $adset_id) {
                 $this->setAdsetId($adset_id);
                 $adset = $this->adset->getSelf(array(), $params);
                 $response = $adset->getData();
                 // echo '<pre>'.print_r($response,1).'</pre>'; exit;
+                CLI::showProgress($step++, $total);
                 $result[] = $response;
             }
             $this->db->updateAdsets($result);
@@ -744,10 +629,14 @@ class ChainsawFB
         foreach ($data as $row) $_ids[] = $row['campaign_id'];
         if (count($_ids)) {
             $ids = array_unique($_ids);
+            $total = count($ids);
+            $step = 1;
+            CLI::write("{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $campaign_id) {
                 $this->setCampaignId($campaign_id);
                 $campaign = $this->campaign->getSelf(array(), $params);
                 $response = $campaign->getData();
+                CLI::showProgress($step++, $total);
                 $result[] = $response;
             }
             $this->db->updateCampaigns($result);
@@ -795,8 +684,11 @@ class ChainsawFB
         );
 
         $ad_accounts = $this->db->getAdAccounts();          // 각 광고 계정별
+        $total = $ad_accounts->getNumRows();
+        $step = 1;
         $result = array();
         $cnt = 0;
+        CLI::write("{$total}개의 계정에 대한 광고 데이터 수신을 시작합니다.", "light_red");
         foreach ($ad_accounts->getResultArray() as $row) {
             // $row['ad_account_id'] = 796319794698742;
             $this->setAdAccount($row['ad_account_id']);
@@ -932,7 +824,11 @@ class ChainsawFB
             return null;
         }
         $i = 0;
+        $total = $ads->getNumRows();
+        $step = 1;
+        CLI::write("{$total}개의 광고데이터를 분석합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
+            CLI::showProgress($step++, $total);
             $landing = $this->landingGroup($row['ad_name']);
             if ($landing['media']) {
                 $result[$i]['date'] = $date;
@@ -1246,7 +1142,11 @@ class ChainsawFB
         );
         
         $ad_ids = $this->db->getAdsByAdAccountId($from_date, $to_date); //from DB
+        $total = $ad_ids->getNumRows();
+        $step = 1;
+        CLI::write("{$total}개의 계정에서 {$from} ~ {$to} 기간의 잠재고객 데이터를 수신합니다.", "light_red");
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
+            CLI::showProgress($step++, $total);
             // $this->grid($row); continue;
             if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || $row['effective_status'] != 'ACTIVE'/* || strtotime($row['created_time']) <= strtotime('-26 month')*/) {
                 continue;

@@ -1,4 +1,5 @@
 <?php
+use CodeIgniter\CLI\CLI;
 class FBDB
 {
     private $db, $db2, $zenith;
@@ -147,7 +148,7 @@ class FBDB
             $to = date('Y-m-d', $to);
             $between = "AND E.date BETWEEN '{$from}' AND '{$to}'";
         }
-        $sql = "SELECT A.ad_id, A.ad_name, A.effective_status, A.leadgen_id, A.created_time FROM fb_ad AS A LEFT JOIN fb_ad_insight_history AS E ON A.ad_id = E.ad_id LEFT JOIN fb_adset AS B ON A.adset_id = B.adset_id LEFT JOIN fb_campaign AS C ON B.campaign_id = C.campaign_id LEFT JOIN fb_ad_account AS D ON C.account_id = D.ad_account_id WHERE 1 {$between} AND D.ad_account_id IS NOT NULL AND D.status = 1 AND D.perm = 1 GROUP BY A.ad_id";
+        $sql = "SELECT A.ad_id, A.ad_name, A.effective_status, A.leadgen_id, A.created_time, D.name AS account_name FROM fb_ad AS A LEFT JOIN fb_ad_insight_history AS E ON A.ad_id = E.ad_id LEFT JOIN fb_adset AS B ON A.adset_id = B.adset_id LEFT JOIN fb_campaign AS C ON B.campaign_id = C.campaign_id LEFT JOIN fb_ad_account AS D ON C.account_id = D.ad_account_id WHERE 1 {$between} AND D.ad_account_id IS NOT NULL AND D.status = 1 AND D.perm = 1 GROUP BY A.ad_id";
         $result = $this->db_query($sql);
 
         return $result;
@@ -169,52 +170,6 @@ class FBDB
     {
         $sql = "UPDATE fb_ad_account SET perm = {$perm} WHERE ad_account_id = '{$ad_account_id}'";
         $result = $this->db_query($sql);
-        return $result;
-    }
-
-    // 인스타그램 계정 목록
-    public function getInstagramAccounts()
-    {
-        $sql = "SELECT id, username FROM fb_ad_page";
-        $result = $this->db_query($sql);
-
-        return $result;
-    }
-
-    public function updateInstagramAccounts($list)
-    {
-
-
-        foreach ($list as $key => $row) {
-            $sql = "INSERT INTO fb_instagram_account (id, username, updated_time)
-					VALUES ('{$row[0]}', '{$row[1]}', NOW())
-					ON DUPLICATE KEY
-					UPDATE username = '{$row[1]}', updated_time = NOW();";
-
-            $result = $this->db_query($sql);
-        }
-    }
-
-    public function updatePages($list)
-    {
-
-        $this->db_query("UPDATE fb_ad_page SET is_admin = 0");
-        foreach ($list as $key => $row) {
-            $sql = "INSERT INTO fb_ad_page (page_id, name, access_token, is_admin, updated_time)
-					VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', {$row[3]}, NOW())
-					ON DUPLICATE KEY
-					UPDATE name = '{$row[1]}', access_token = '{$row[2]}', is_admin = {$row[3]}, updated_time = NOW();";
-
-            $result = $this->db_query($sql);
-        }
-    }
-
-    // 페이지 목록
-    public function getAdPages()
-    {
-        $sql = "SELECT page_id, name, access_token, is_admin FROM fb_ad_page ORDER BY NAME DESC";
-        $result = $this->db_query($sql);
-
         return $result;
     }
 
@@ -247,7 +202,11 @@ class FBDB
 
     public function insertAsyncInsights($data)
     {
+        $total = count($data);
+        $step = 1;
+        CLI::write("{$total}개의 광고인사이트를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
+            CLI::showProgress($step++, $total);
             if (!$report['impressions']) $report['impressions'] = 0;
             if (!$report['clicks']) $report['clicks'] = 0;
             if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
@@ -346,7 +305,11 @@ class FBDB
     public function updateAdCreatives($data)
     {
         if (is_array($data) && count($data)) {
+            $total = count($data);
+            $step = 1;
+            CLI::write("{$total}개의 광고 소재를 저장합니다.", "light_red");
             foreach ($data as $row) {
+                CLI::showProgress($step++, $total);
                 $sql = "INSERT INTO fb_adcreative(
                             adcreative_id,
                             ad_id,
@@ -374,9 +337,12 @@ class FBDB
 
     public function updateAds($data)
     {
-
         $cnt = 0;
+        $total = count($data);
+        $step = 1;
+        CLI::write("{$total}개의 광고를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
+            CLI::showProgress($step++, $total);
             if (!empty($report['tracking_specs'])) {
                 foreach ($report['tracking_specs'] as $list) {
                     foreach ($list as $key => $data) {
@@ -476,9 +442,12 @@ class FBDB
 
     public function updateAdsets($data)
     {
-
         $cnt = 0;
+        $total = count($data);
+        $step = 1;
+        CLI::write("{$total}개의 광고그룹을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
+            CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
@@ -559,8 +528,11 @@ class FBDB
 
     public function updateCampaigns($data)
     {
-
+        $total = count($data);
+        $step = 1;
+        CLI::write("{$total}개의 캠페인을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
+            CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
@@ -644,56 +616,16 @@ class FBDB
         }
     }
 
-    public function insertLeads($data)
-    {
-        $fields = array('full_name', 'first_name', 'last_name', 'phone_number', 'date_of_birth', 'gender');
-        $insert = "INSERT INTO fb_page_lead (
-							form_id, id, created_time,
-							ad_id, ad_name, adset_id, adset_name, campaign_id, campaign_name, is_organic,
-							full_name, first_name, last_name, phone_number, date_of_birth, gender, field_data, update_date)
-				VALUES (";
-        if (count($data) > 0) {
-            $this->db_query('BEGIN');
-            foreach ($data as $key => $row) {
-                $form_id = $row['id'];
-                if (count($row['data']) > 0) {
-                    foreach ($row['data'] as $key => $lead) {
-                        $dt = array();
-                        $id = $lead['id'];
-                        $created_time = $lead['created_time'];
-                        $dt['full_name'] = $dt['phone_number'] = $dt['date_of_birth'] = $dt['gender'] = null;
-                        $is_organic = (strlen($lead['is_organic']) == 0) ? 0 : 1;
-                        $custom_fields = array();
-
-                        foreach ($lead['field_data'] as $key => $field) {
-                            if (in_array($field['name'], $fields)) {
-                                $dt[$field['name']] = trim(addslashes($field['values'][0]));
-                            } else {
-                                array_push($custom_fields, $field);
-                            }
-                        }
-                        $field_data = addslashes(var_export($custom_fields, true));     // 배열 그대로 저장하는데 조금 이상하다...이상해씨
-                        $values = "'{$form_id}', '{$id}', '{$created_time}',
-									'{$lead['ad_id']}', '{$lead['ad_name']}', '{$lead['adset_id']}', '{$lead['adset_name']}', '{$lead['campaign_id']}', '{$lead['campaign_name']}',
-									'{$is_organic}', '{$dt['full_name']}', '{$dt['first_name']}', '{$dt['last_name']}', '{$dt['phone_number']}', '{$dt['date_of_birth']}', '{$dt['gender']}',
-									'{$field_data}', NOW())";
-                        $sql = $insert . $values . " ON DUPLICATE KEY UPDATE full_name = '{$dt['full_name']}', first_name = '{$dt['first_name']}', last_name = '{$dt['last_name']}', phone_number = '{$dt['phone_number']}', gender = '{$dt['gender']}', date_of_birth = '{$dt['date_of_birth']}', field_data = '{$field_data}', update_date = NOW();";
-                        //                      echo $sql.'<br />';
-                        $result = $this->db_query($sql);
-                    }
-                }
-            }
-            $this->db_query('COMMIT');
-        }
-        //echo $sql;
-    }
-
     public function insertAdLeads($data)
     {
         if (count($data) > 0) {
+            $total = count($data);
+            $step = 1;
+            CLI::write("{$total}개의 잠재고객을 저장합니다.", "light_red");
             $insert = "INSERT INTO `fb_ad_lead` SET ";
             $this->db_query('BEGIN');
             foreach ($data as $key => $lead) {
+                CLI::showProgress($step++, $total);
                 $created_time = $lead['created_time'];
                 $full_name = $phone_number = $date_of_birth = $gender = null;
                 $is_organic = (strlen($lead['is_organic']) == 0) ? 0 : 1;
@@ -717,8 +649,8 @@ class FBDB
                         }
                         if (preg_match("/[a-z\_]+/i", $field['name']) && !preg_match("/[가-힣]+/i", $field['name'])) {
                             $$field['name'] = trim(addslashes($field['values'][0]));
-                            @$this->db->query("ALTER TABLE `fb_ad_lead` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
-                            @$this->db->query("ALTER TABLE `fb_ad_lead_delete` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
+                            // @$this->db->query("ALTER TABLE `fb_ad_lead` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
+                            // @$this->db->query("ALTER TABLE `fb_ad_lead_delete` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
                             if (trim($$field['name'])) {
                                 $values .= ", {$field['name']} = '{$$field['name']}'";
                             }
