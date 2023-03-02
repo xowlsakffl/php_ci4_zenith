@@ -1,13 +1,7 @@
 <?php
 class KMDB
 {
-    private $host = "db.chainsaw.co.kr";
-    private $host2 = "db2.chainsaw.co.kr";
-    private $user = "moment";
-    private $password = "qkdlqmdkfTl#mm";
-    private $dbname = "moment";
-    private $db;
-    private $g5db;
+    private $db, $db2, $zenith;
 
     public function __construct()
     {
@@ -42,7 +36,7 @@ class KMDB
     {
         $sql = "SELECT access_token, refresh_token, expires_time FROM api_info WHERE uid = 0";
         $result = $this->db_query($sql) or die($this->db->error);
-        $row = $result->fetch_assoc();
+        $row = $result->getRowArray();
 
         return $row;
     }
@@ -133,7 +127,7 @@ class KMDB
         if (is_null($id)) return NULL;
         $sql = "SELECT * FROM mm_campaign WHERE id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->fetch_assoc();
+        $row = $result->getResult();
         return $row;
     }
 
@@ -217,7 +211,7 @@ class KMDB
                         ON C.ad_account_id = D.id
                 WHERE B.id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->fetch_assoc();
+        $row = $result->getResult();
         $ad_account_id = $row['ad_account_id'];
         return $ad_account_id;
     }
@@ -365,7 +359,7 @@ class KMDB
                         ON C.ad_account_id = D.id
                 WHERE A.id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->fetch_assoc();
+        $row = $result->getResult();
         $ad_account_id = $row['ad_account_id'];
         return $ad_account_id;
     }
@@ -375,7 +369,7 @@ class KMDB
         if (is_null($id)) return NULL;
         $sql = "SELECT * FROM mm_creative WHERE id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->fetch_assoc();
+        $row = $result->getResult();
         return $row;
     }
 
@@ -580,7 +574,7 @@ class KMDB
         $sql = "SELECT * FROM mm_db_count WHERE creative_id = '{$ad_id}' AND date = '{$date}'";
         $result = $this->db_query($sql);
         if (!$result) return null;
-        return $result->fetch_assoc();
+        return $result->getResultArray();
     }
 
     public function insertToSubscribe($row)
@@ -603,7 +597,7 @@ class KMDB
         $sql = "SELECT bizform_id, id, title FROM mm_bizform_items WHERE bizform_id = '{$bizformId}' AND id = '{$itemId}'";
         $result = $this->db_query($sql);
         if (!$result->num_rows) return null;
-        return $result->fetch_assoc();
+        return $result->getResultArray();
     }
 
     public function getBizformUserResponse()
@@ -631,7 +625,7 @@ class KMDB
         $result = $this->g5db->query($sql);
         if (!$result->num_rows) return NULL;
         $data = [];
-        while ($row = $result->fetch_assoc()) {
+        foreach ($result->getResultArray() as $row) {
             $data[] = [
                 'id' => $row['id'],
                 'bizFormId' => $row['bizFormId'],
@@ -772,9 +766,9 @@ class KMDB
         $sql = "SELECT * FROM mm_memo WHERE id = '{$p['id']}' AND type = '{$p['type']}' ORDER BY datetime DESC";
         $result = $this->db_query($sql);
         if ($result->num_rows) {
-            while ($row = $result->fetch_assoc()) {
+            foreach ($result->getResultArray() as $row) {
                 $sql = "SELECT mb_name FROM g5_member WHERE mb_id = '{$row['mb_id']}'";
-                $mb = $this->g5db->query($sql)->fetch_assoc();
+                $mb = $this->g5db->query($sql)->getResult();
                 $row['mb_name'] = $mb['mb_name'];
                 $memo[] = $row;
             }

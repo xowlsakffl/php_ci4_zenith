@@ -41,7 +41,6 @@ class ApiController extends BaseController
     }
 
     protected function km_func(...$params) {
-        dd($this->chainsaw);
         if (method_exists($this->chainsaw, $params[0])) {
             $result = $this->chainsaw->{$params[0]}();
             if(in_array('grid', $params)) $this->chainsaw->grid($result);
