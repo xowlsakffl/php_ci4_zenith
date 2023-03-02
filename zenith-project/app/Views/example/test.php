@@ -1,7 +1,7 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('content');?>
-<h1 class="text-primary">테스트페이지</h1>
+
 <div class="exam-wrap">
     <div class="container-fluid bg-dark text-white text-center h-100 d-flex flex-column justify-content-center">
         <main>
@@ -13,9 +13,6 @@
         </main>
     </div>    
 </div>
-<?=$this->endSection();?>
-
-<?=$this->section('content');?>
 <div class="exam-container-wrap">
     <header class="d-flex justify-content-between align-items-center header-top container-fluid">
         <a href="#" class="button"><i class="fa fa-long-arrow-left" aria-hidden="true"></i>Overview Page</a>

@@ -1,0 +1,134 @@
+.exam-wrap{width:100%; height:100vh;}
+.exam-wrap .bg-area{background:url(https://wallpapercave.com/dwp1x/ikgV0Gd.jpg); background-attachment: fixed; padding:5%;}
+
+@mixin a-arrow() {
+    display: block; text-decoration: none; color:#ccc; outline: none;
+}
+@mixin btn-close() {
+    background-color: transparent; outline: none; cursor: pointer; border:none; position:relative; 
+}
+
+@mixin hover($bgc:#d3d4d6, $num:50%, $per:120%){
+    &:hover::after{position:absolute; width: $per; height:$per; background-color: $bgc; display: block; content: ''; top:50%; left:50%; border-radius:$num; transform:translate(-50%, -50%); z-index:-1;}
+}
+.flex-layout{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*reset style*/
+body {
+    padding:0;
+    margin:0;
+}
+ol, ul{
+    list-style:none;
+    margin: 0;
+    padding:0;
+}
+a {
+    text-decoration: none;
+}
+
+.header-top{  
+    padding:10px 0;
+    border-bottom:2px solid red;
+    
+
+    a.button {
+        @include a-arrow();
+        font-size: 90%;
+
+        i {
+            margin-right:10px;
+        }
+    } 
+    .device {
+        i {
+            display:block; width:20px; height:20px; margin:0 10px; position:relative; font-size:140%; text-align: center; color:#929599;
+
+            @include hover($per:200%);
+        }
+    }
+    .gnb-btn {   
+        i.fa-github{
+            @include btn-close();
+            @include hover($num:10px,$per:200%);
+
+            color:#929599;
+        } 
+        a.button {
+            @extend .button; 
+            color: #de554c;
+            background-color: #f0e3e7;
+            padding:2% 0;
+            border-radius: 5px;
+            font-size:80%;
+            margin:0 10px;
+
+            i {
+                margin:0 10px; text-align:center;
+
+                &::before {
+                    margin-right:7px;
+                }
+            }
+        }
+
+        button.close{
+            @include btn-close();
+            @include hover();
+            i {
+                &::before {
+                    color:#929599;
+                }
+            }                
+        }   
+    }  
+}
+
+nav{   
+    padding:10px;
+    background-color: #000;
+    h6 {
+        color:#fff;
+        margin:0;
+    } 
+    .nav-tabs {    
+        a {
+            font-size: 14px;
+            display: block;
+            margin: 0 5px;
+            color: #7f9598;
+
+            &:visited {
+                color: #fff;
+            }
+        }
+
+    }
+    
+}
+
+main {
+    padding-top:20px;
+
+    .con-01 .img {
+        background-color: #dee1e6;
+    }
+    .banner {
+        border-radius:5px;
+        background-color: #6c757d;
+        padding:30px;
+        color:#fff;
+        margin:40px 0;
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+
+
