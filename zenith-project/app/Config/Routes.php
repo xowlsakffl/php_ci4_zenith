@@ -47,10 +47,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
         $routes->delete('(:num)', 'Api\ApiUserController::$1');
     });
 
-    $routes->group('', ['filter' => 'group:admin,superadmin'], static function($routes){
+    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
         $routes->get('user/list', 'UserController::index');
         $routes->get('user/belong/(:num)', 'UserController::belong/$1');//소속 변경
-        $routes->get('user/belong/companies', 'UserController::getCompanies');
         $routes->put('user/belong/companies', 'UserController::updateCompanies');
     });
     // 게시판

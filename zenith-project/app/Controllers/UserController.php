@@ -28,21 +28,20 @@ class UserController extends ResourceController
     public function belong($id){
         $data = [
             'user' => $this->userModel->getUser($id),
+            'companies' => $this->companyModel->getCompanies(),
         ];
+        
         return view('users/belong', $data);
     }
     
     public function getCompanies(){
-        if($this->request->isAJAX()){
-            $result = $this->companyModel->getCompanies();
-            $data = [
-                'companies' => $result,
-            ];
-        }else{
-            return $this->fail("잘못된 요청");
-        }
 
-        return $this->respond($data);
+        $result = $this->companyModel->getCompanies();
+        $data = [
+            'companies' => $result,
+        ];
+
+        return $data;
     }
 
     public function updateCompanies(){

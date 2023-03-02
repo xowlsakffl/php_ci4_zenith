@@ -9,15 +9,19 @@
                 <div class="card-body">
                     <form id="frm">
                         <input type="hidden" name="id" id="hidden_id" value="<?=$user->id?>">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             아이디 : <span><?=$user->username?></span>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             현재 소속 : <span><?=$user->companyName?></span>
                         </div>
-                        <div class="form-group">
-                            <label for="company">소속</label>
-                            <select name="company" class="form-control" id="userCompany"></select>
+                        <div class="form-group mb-3">
+                            <label for="company">소속 선택</label>
+                            <select name="company" class="form-control" id="userCompany">
+                                <?php foreach ($companies as $company) :?>
+                                    <option value="<?= $company->cdx?>"><?= $company->companyName ?></option>
+                                <?php endforeach ?>
+                            </select>
                             <span id="company_error" class="text-danger"></span>
                         </div>
                     </form>
@@ -34,31 +38,6 @@
 <?=$this->section('script');?>
 <script>
 $(document).ready(function(){
-getCompanyList();
-function getCompanyList(){
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/user/belong/companies",
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            addOption(data);
-        }
-    });
-}
-
-function addOption(data){
-    const select = $('#userCompany');
-    const currentData = <?=$user->id?>;
-    $.each(data.companies, function(index, option) {
-        select.append($('<option>', {
-            value: option.cdx,
-            text: option.companyName
-        }));
-    });
-
-    $('#userCompany').val(currentData);
-}
 
 $('body').on('click', '#userCompanyUpdate', function(){
     data = {
