@@ -80,7 +80,7 @@ use Google\Cloud\Translate\TranslateClient;
 use Curl\Curl;
 use FacebookAds\Logger\CurlLogger;
 
-class ChainsawFB
+    class ChainsawFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
@@ -361,7 +361,7 @@ class ChainsawFB
         $accounts = $account_id->getResultArray();
         $total = $account_id->getNumRows();
         $step = 1;
-        CLI::write("{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
         $result = array();
         $cnt = 0;
         foreach ($accounts as $row) {
@@ -532,7 +532,7 @@ class ChainsawFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $ad_id) {
                 $this->setAdId($ad_id);
                 $ads = $this->ad->getSelf(array(), $params);
@@ -580,7 +580,7 @@ class ChainsawFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $adset_id) {
                 $this->setAdsetId($adset_id);
                 $adset = $this->adset->getSelf(array(), $params);
@@ -631,7 +631,7 @@ class ChainsawFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $campaign_id) {
                 $this->setCampaignId($campaign_id);
                 $campaign = $this->campaign->getSelf(array(), $params);
@@ -688,7 +688,7 @@ class ChainsawFB
         $step = 1;
         $result = array();
         $cnt = 0;
-        CLI::write("{$total}개의 계정에 대한 광고 데이터 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고 데이터 수신을 시작합니다.", "light_red");
         foreach ($ad_accounts->getResultArray() as $row) {
             // $row['ad_account_id'] = 796319794698742;
             $this->setAdAccount($row['ad_account_id']);
@@ -826,7 +826,7 @@ class ChainsawFB
         $i = 0;
         $total = $ads->getNumRows();
         $step = 1;
-        CLI::write("{$total}개의 광고데이터를 분석합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고데이터를 분석합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
             CLI::showProgress($step++, $total);
             $landing = $this->landingGroup($row['ad_name']);
@@ -1144,7 +1144,7 @@ class ChainsawFB
         $ad_ids = $this->db->getAdsByAdAccountId($from_date, $to_date); //from DB
         $total = $ad_ids->getNumRows();
         $step = 1;
-        CLI::write("{$total}개의 계정에서 {$from} ~ {$to} 기간의 잠재고객 데이터를 수신합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에서 {$from} ~ {$to} 기간의 잠재고객 데이터를 수신합니다.", "light_red");
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
             CLI::showProgress($step++, $total);
             // $this->grid($row); continue;
