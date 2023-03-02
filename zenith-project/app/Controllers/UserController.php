@@ -51,8 +51,9 @@ class UserController extends ResourceController
             $data = $this->request->getRawInput();
 
             $builder = $this->companyUserModel;
-            //여기부터 작업
-            dd($companyUser);
+            $builder->where('user_id', $data['user_id'])
+            ->set(['company_id' => $data['company_id']])
+            ->update();
 
             $ret = true;
         }else{
@@ -62,6 +63,9 @@ class UserController extends ResourceController
         return $this->respond($ret);
     }
 
+
+
+    
     public function post() {
         $ret = false;
         if(!empty($this->data)) {

@@ -74,7 +74,7 @@ $('body').on('click', '#userCompanyUpdate', function(){
         contentType: 'application/json; charset=utf-8',
         headers:{'X-Requested-With':'XMLHttpRequest'},
         success: function(data){
-            console.log(data)
+            location.reload();
         },
         error: function(error){
             var errorText = error.responseJSON.messages;

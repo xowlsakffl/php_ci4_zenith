@@ -23,7 +23,8 @@ class CompanyUserMigration extends Migration
             'user_id' => [
                 'type'       => 'INT',
                 'constraint'     => 5,
-                'unsigned' => true
+                'unsigned' => true,
+                'unique' => true,
             ],
         ]);
         $this->forge->addKey('id', true);

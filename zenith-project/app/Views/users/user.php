@@ -330,7 +330,7 @@ $('body').on('click', '#userView', function(){
             console.log(data);
             $('#modalView .modal-body #viewName dd').html(data.result.username);
             $('#modalView .modal-body #viewCompany dd').html(data.result.companyType+" "+data.result.companyName);
-            $('#modalView .modal-body #viewGroup dd').html(data.result.groups);       
+            $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(", "));       
             $('#modalView .modal-body #viewDate dd').html(data.result.created_at.substr(0, 16));
             $('#modalView #userBelong').attr('href', '/user/belong/'+data.result.id);
             $('#modalView #userUpdateModal').attr('data-id', data.result.id);
