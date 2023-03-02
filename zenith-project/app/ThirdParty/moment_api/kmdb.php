@@ -11,11 +11,9 @@ class KMDB
 
     public function __construct()
     {
-        $this->db = mysqli_connect($this->host, $this->user, $this->password, $this->dbname);
-        $this->db2 = mysqli_connect($this->host2, $this->user, $this->password, $this->dbname);
-        $this->db->query("set session character_set_client=utf8mb;");
-        $this->db->query("set session character_set_connection=utf8mb;");
-        $this->g5db = mysqli_connect('db.chainsaw.co.kr', 'chainsaw_old', 'cpdls#db', 'chainsaw_old');
+        $this->db = \Config\Database::connect('kakaoMoment');
+        $this->db2 = \Config\Database::connect('kakaoMoment2');
+        $this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
 
