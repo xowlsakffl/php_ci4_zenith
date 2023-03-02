@@ -204,7 +204,7 @@ class FBDB
     {
         $total = count($data);
         $step = 1;
-        CLI::write("{$total}개의 광고인사이트를 저장합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고인사이트를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
             CLI::showProgress($step++, $total);
             if (!$report['impressions']) $report['impressions'] = 0;
@@ -307,7 +307,7 @@ class FBDB
         if (is_array($data) && count($data)) {
             $total = count($data);
             $step = 1;
-            CLI::write("{$total}개의 광고 소재를 저장합니다.", "light_red");
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 소재를 저장합니다.", "light_red");
             foreach ($data as $row) {
                 CLI::showProgress($step++, $total);
                 $sql = "INSERT INTO fb_adcreative(
@@ -340,7 +340,7 @@ class FBDB
         $cnt = 0;
         $total = count($data);
         $step = 1;
-        CLI::write("{$total}개의 광고를 저장합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
             CLI::showProgress($step++, $total);
             if (!empty($report['tracking_specs'])) {
@@ -445,7 +445,7 @@ class FBDB
         $cnt = 0;
         $total = count($data);
         $step = 1;
-        CLI::write("{$total}개의 광고그룹을 저장합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
             CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
@@ -530,7 +530,7 @@ class FBDB
     {
         $total = count($data);
         $step = 1;
-        CLI::write("{$total}개의 캠페인을 저장합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
             CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
@@ -621,7 +621,7 @@ class FBDB
         if (count($data) > 0) {
             $total = count($data);
             $step = 1;
-            CLI::write("{$total}개의 잠재고객을 저장합니다.", "light_red");
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 잠재고객을 저장합니다.", "light_red");
             $insert = "INSERT INTO `fb_ad_lead` SET ";
             $this->db_query('BEGIN');
             foreach ($data as $key => $lead) {

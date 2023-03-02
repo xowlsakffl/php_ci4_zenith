@@ -80,6 +80,9 @@ $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 
 
 
+//테스트
+$routes->get('example/(:any)', 'ExampleController::view/$1');
+
 
 
 /*
