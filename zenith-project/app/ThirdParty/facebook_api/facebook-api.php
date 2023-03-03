@@ -694,6 +694,7 @@ use FacebookAds\Logger\CurlLogger;
             $this->setAdAccount($row['ad_account_id']);
             $ads = $this->account->getAds(array(), $params);
             $response = $ads->getResponse()->getContent();
+            CLI::showProgress($step++, $total);
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
                 $url = @$response['paging']['next'];
