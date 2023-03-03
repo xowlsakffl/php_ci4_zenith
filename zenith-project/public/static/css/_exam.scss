@@ -114,8 +114,17 @@ nav{
 main {
     padding-top:20px;
 
-    .con-01 .img {
-        background-color: #dee1e6;
+    .con-01 {
+        min-height:200px;
+        .img{
+            padding:0 3% 0 0;
+        }
+        img{
+            display: block;
+            width:100%;
+        }  
+        @extend .flex-layout;
+        flex-wrap:wrap;
     }
     .banner {
         border-radius:5px;
@@ -130,5 +139,17 @@ main {
     }
 }
 
+@media screen and (max-width: 500px){
+    main {
+        .con-01{
+            text-align: center;
+
+            .img{
+                padding:0;
+                margin-bottom:1rem;
+            }
+        }
+    }
+}
 
 

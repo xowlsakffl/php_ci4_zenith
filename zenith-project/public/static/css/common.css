@@ -10,7 +10,7 @@
   padding: 5%;
 }
 
-.flex-layout {
+.flex-layout, main .con-01 {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -150,8 +150,16 @@ nav .nav-tabs a:visited {
 main {
   padding-top: 20px;
 }
+main .con-01 {
+  min-height: 200px;
+  flex-wrap: wrap;
+}
 main .con-01 .img {
-  background-color: #dee1e6;
+  padding: 0 3% 0 0;
+}
+main .con-01 img {
+  display: block;
+  width: 100%;
 }
 main .banner {
   border-radius: 5px;
@@ -162,6 +170,16 @@ main .banner {
 }
 main .banner p {
   margin: 0;
+}
+
+@media screen and (max-width: 500px) {
+  main .con-01 {
+    text-align: center;
+  }
+  main .con-01 .img {
+    padding: 0;
+    margin-bottom: 1rem;
+  }
 }
 
 /*# sourceMappingURL=common.css.map */

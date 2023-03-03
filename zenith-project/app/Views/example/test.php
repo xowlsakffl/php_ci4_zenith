@@ -39,9 +39,9 @@
         </ul>
     </nav>
     <main class="row container-fluid">
-        <article class="con-01 d-flex justify-content-between">
-            <div class="img col-lg-7 h-100">
-                <img src="">
+        <article class="con-01 flex-layout">
+            <div class="col-lg-7 img">
+                <img src="https://dummyimage.com/900x400/dee2e6/6c757d.jpg" class="img-fluid">              
             </div>  
             <div class="col-lg-5 article-card">
                 <h1 class="fs-3">Business Name or Tagline</h1>
@@ -56,7 +56,7 @@
         
         <article class="con-02 container-fluid">
             <div class="row">
-                <div class="col">
+                <div class="col-md-4 mb-5">
                     <div class="card">
                         <div class="card-body">
                             <h2 class="card-title">Card One</h2>
@@ -65,7 +65,7 @@
                         <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
                     </div>
                 </div> 
-                <div class="col">
+                <div class="col-md-4 mb-5">
                     <div class="card">
                         <div class="card-body">
                             <h2 class="card-title">Card Two</h2>
@@ -74,7 +74,7 @@
                         <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
                     </div>
                 </div> 
-                <div class="col">
+                <div class="col-md-4 mb-5">
                     <div class="card">
                         <div class="card-body">
                             <h2 class="card-title">Card Three</h2>
@@ -85,6 +85,12 @@
                 </div> 
             </div>
         </article>        
-    </div> 
+    </main> 
+
+    <footer>
+        <div class="container pt-5 pb-5 bg-dark text-white text-center">
+            <p>Copyright © Your Website 2023</p>
+        </div>
+    </footer>
 </div>
 <?=$this->endSection();?>
