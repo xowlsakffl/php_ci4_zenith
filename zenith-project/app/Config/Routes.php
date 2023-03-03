@@ -77,7 +77,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
-
+$routes->cli('kmapi/(:any)', 'Advertisement\kakaoMoment::$1');
 
 
 //테스트
