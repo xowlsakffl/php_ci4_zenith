@@ -57,7 +57,7 @@ class KMDB
     }
     public function updateAdAccount($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->real_escape_string($v) : $v;
+        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         if (is_array($row['ownerCompany'])) {
             $ownerCompany = $row['ownerCompany']['name'] . "(" . $row['ownerCompany']['businessRegistrationNumber'] . ")";
         }
@@ -133,7 +133,7 @@ class KMDB
 
     public function updateCampaign($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->real_escape_string($v) : $v;
+        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $sql = "INSERT INTO mm_campaign (ad_account_id, id, name, type, goal, config, objectiveType, objectiveDetailType, objectiveValue, dailyBudgetAmount, statusDescription, trackId, create_time)
                 VALUES ({$row['adAccountId']}, {$row['id']}, '{$row['name']}', '{$row['campaignTypeGoal']['campaignType']}', '{$row['campaignTypeGoal']['goal']}', '{$row['config']}', '" . @$row['objective']['type'] . "', '" . @$row['objective']['detailType'] . "', '" . @$row['objective']['value'] . "', '{$row['dailyBudgetAmount']}', '{$row['statusDescription']}', '{$row['trackId']}', NOW())
                 ON DUPLICATE KEY
@@ -218,7 +218,7 @@ class KMDB
 
     public function updateAdGroup($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->real_escape_string($v) : $v;
+        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $sql = "INSERT INTO mm_adgroup (campaign_id, id, name, type, config, allAvailableDeviceType, allAvailablePlacement, pricingType, pacing, adult, bidStrategy, totalBudget, dailyBudgetAmount, bidAmount, useMaxAutoBidAmount, autoMaxBidAmount, isDailyBudgetAmountOver, creativeOptimization, isValidPeriod, deviceTypes, placements, statusDescription, create_time)
                 VALUES(
                 '{$row['campaign_id']}', '{$row['id']}', '{$row['name']}', '{$row['type']}', '{$row['config']}', '{$row['allAvailableDeviceType']}', '{$row['allAvailablePlacement']}', '{$row['pricingType']}', '{$row['pacing']}', '{$row['adult']}', '{$row['bidStrategy']}', '{$row['totalBudget']}', '{$row['dailyBudgetAmount']}', '{$row['bidAmount']}', '{$row['useMaxAutoBidAmount']}', '{$row['autoMaxBidAmount']}', '{$row['isDailyBudgetAmountOver']}', '{$row['creativeOptimization']}', '{$row['isValidPeriod']}', '" . @implode(',', $row['deviceTypes']) . "', '" . @implode(',', $row['placements']) . "', '{$row['statusDescription']}', NOW()) 
@@ -375,7 +375,7 @@ class KMDB
 
     public function updateCreative($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->real_escape_string($v) : $v;
+        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $bizFormQuery = "";
         if($row['landingInfo']['bizFormId'])
             $bizFormQuery = ", bizFormId = '" . @$row['landingInfo']['bizFormId'] . "'";
@@ -502,7 +502,7 @@ class KMDB
 
     public function updateCreativeReportBasic($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->real_escape_string($v) : $v;
+        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $sql = "INSERT INTO mm_creative_report_basic (id, date, imp, click, ctr, cost, create_time)
                 VALUES ({$row['creative_id']}, '{$row['date']}', '{$row['imp']}', '{$row['click']}', '{$row['ctr']}', '{$row['cost']}', NOW())
                 ON DUPLICATE KEY
@@ -663,7 +663,7 @@ class KMDB
     {
         if ($data) {
             foreach ($data as $row) {
-                foreach ($row as $k => $v) $row[$k] = @$this->db->real_escape_string($v);
+                foreach ($row as $k => $v) $row[$k] = @$this->db->escape($v);
                 $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
                     VALUES('{$bizformId}', '{$creative_id}', '{$row['seq']}', '{$row['encUserId']}', '{$row['applyOrUpdate']}', '{$row['submitAt']}', '{$row['nickname']}', '{$row['email']}', '{$row['phoneNumber']}', '{$row['response']}', NOW())
                     ON DUPLICATE KEY UPDATE 
@@ -708,7 +708,7 @@ class KMDB
         $allow = ['INSERT', 'UPDATE'];
         $sql = preg_replace("/\r\n|\t+|\s+/", " ", $sql);
         $table = preg_replace("/{$action}.+(mm_[_a-z]+)\s.+/i", "$1", $sql);
-        $result = ['action' => $action, 'table' => $table, 'query' => $this->db->real_escape_string($sql)];
+        $result = ['action' => $action, 'table' => $table, 'query' => $this->db->escape($sql)];
         if (in_array($table, ['fb_optimization', 'fb_optimization_history', 'fb_optimization_onoff_history'])) return;
         // echo '<pre>'.print_r($result,1).'</pre>';
         if (in_array($action, $allow) && $member['mb_id']) {
@@ -778,14 +778,14 @@ class KMDB
 
     public function addMemo($data)
     {
-        $data['memo'] = $this->db->real_escape_string($data['memo']);
+        $data['memo'] = $this->db->escape($data['memo']);
         $sql = "INSERT INTO mm_memo (`id`, `type`, `memo`, `mb_id`, `datetime`) VALUES({$data['id']}, '{$data['type']}', '{$data['memo']}', '{$data['mb_id']}', NOW())";
         if ($this->db_query($sql))
             return $data['id'];
     }
 
-    public function real_escape_string($val)
+    public function escape($val)
     {
-        return $this->db->real_escape_string($val);
+        return $this->db->escape($val);
     }
 }
