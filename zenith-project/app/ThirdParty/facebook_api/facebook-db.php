@@ -1,6 +1,7 @@
 <?php
 use CodeIgniter\CLI\CLI;
-class FBDB
+use CodeIgniter\Database\Config;
+class FBDB extends Config
 {
     private $db, $db2, $zenith;
     private $sltDB;

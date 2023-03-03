@@ -59,7 +59,7 @@ class Facebook extends Controller
         $this->chainsaw->getLeadgens($from, $to);
     }
     
-    public function updateCampaignsAdsetsAds() {
+    public function updateAll() {
         CLI::clearScreen();
         // $run = CLI::prompt("캠페인/광고그룹/광고를 업데이트 합니다.",["y","n"]);
         // if($run != 'y') return false;
