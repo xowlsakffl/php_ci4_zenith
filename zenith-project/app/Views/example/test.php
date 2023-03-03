@@ -93,4 +93,86 @@
         </div>
     </footer>
 </div>
+
+
+<div class="features-container-wrap">
+    <div class="container-fluid">        
+        <main>
+            <article>
+                <div class="row nav_bar">
+                    <h1>Columns with icons</h1>
+                </div>
+                <div class="row featured-card py-4">
+                    <div class="col-md-4 card p-3">
+                        <div class="icon"></div>
+                        <h2>Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a href="#">Call to action <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>   
+                    <div class="col-md-4 card p-3">
+                        <div class="icon"></div>
+                        <h2>Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a href="#">Call to action <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div> 
+                    <div class="col-md-4 card p-3">
+                        <div class="icon"></div>
+                        <h2>Featured title</h2>
+                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                        <a href="#">Call to action <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    </div>    
+                </div>
+            </article>
+            <div class="row underline p-4"></div>
+            <article>
+                <div class="row nav_bar">
+                    <h1>Hanging icons</h1>
+                </div>
+                <div class="row heading-card py-4">
+                    <div class="col-md-4 card-containner p-3 flex-layout">
+                        <div class="icon">
+                            <i class="fa fa-toggle-on" aria-hidden="true"></i>
+                        </div>
+                        <div class="card px-2">     
+                            <h2>Featured title</h2>
+                            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                            <button class="btn btn-primary btn-sm">Primary button</button>
+                        </div>        
+                    </div> 
+                    <div class="col-md-4 card-containner p-3 flex-layout">
+                        <div class="icon">
+                            <i class="fa fa-address-book" aria-hidden="true"></i>
+                        </div>
+                        <div class="card px-2">     
+                            <h2>Featured title</h2>
+                            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                            <button class="btn btn-primary btn-sm">Primary button</button>
+                        </div>        
+                    </div> 
+                    <div class="col-md-4 card-containner p-3 flex-layout">
+                        <div class="icon">
+                            <i class="fa fa-recycle" aria-hidden="true"></i>
+                        </div>
+                        <div class="card px-2">     
+                            <h2>Featured title</h2>
+                            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+                            <button class="btn btn-primary btn-sm">Primary button</button>
+                        </div>        
+                    </div> 
+                </div>
+            </article>
+            <div class="row underline p-4"></div>
+            <article>
+                <div class="row nav_bar">
+                    <h1>Custom cards</h1>
+                </div>
+                <div class="row custom-card py-4">
+                    <div class="col-md-4 card p-3">
+                        <p>Short title, long jacket</p>                        
+                    </div>  
+                </div>
+            </article>
+        </main>
+    </div>
+</div>
 <?=$this->endSection();?>
