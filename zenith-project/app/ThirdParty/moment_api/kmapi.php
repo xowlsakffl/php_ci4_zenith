@@ -2,6 +2,9 @@
 require_once __DIR__ . '/kmdb.php';
 set_time_limit(0);
 ini_set('memory_limit', '-1');
+
+use CodeIgniter\CLI\CLI;
+
 class ChainsawKM
 {
     private $app_id = '243424';
@@ -135,7 +138,10 @@ class ChainsawKM
     { //전체 광고계정 업데이트
         $adAccountList = $this->getAdAccountList();
         $i = 0;
+        $total = count($adAccountList['content']);  
+        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
         foreach ($adAccountList['content'] as $row) {
+            CLI::showProgress($i, $total);
             $data[$i] = $this->getAdAccount($row['id']);
             $data[$i]['memberType'] = $row['memberType'];
             $i++;
@@ -854,8 +860,11 @@ class ChainsawKM
     { //전체 소재 보고서 BASIC 업데이트
         $adgroups = $this->db->getAdGroups(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
         $cnt = 1;
+        $step = 1;
         $ids = [];
         $this->ad_account_id = '';
+        $total = $adgroups->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 소재 보고서 BASIC  수신을 시작합니다.", "light_red");
         foreach ($adgroups->getResultArray() as $adgroup) {
             // if(!in_array($adgroup['id'], ['1365907','1365923'])) {$cnt++; continue;}
             if (!$this->ad_account_id)
@@ -868,6 +877,7 @@ class ChainsawKM
                     $new_ids[] = $adgroup['id'];
                 }
             }
+            CLI::showProgress($step++, $total);
             // echo '<h1>'.date('[H:i:s] ').$this->ad_account_id.','.$adgroup['ad_account_id'].'</h1>';
             // echo '<h2>'.$cnt.'</h2>';
             if (count($ids) == 20 || $this->ad_account_id != $adgroup['ad_account_id'] || $adgroups->getNumRows() == $cnt) {
@@ -961,7 +971,9 @@ class ChainsawKM
         if (!$data['name']) {
             return null;
         }
+
         preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $data['name'], $matches);
+
         // $data['landingUrl'] = 'http://hotevent.hotblood.co.kr/event_spin/event_62.php';
         if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
             // echo $data['landingUrl'].'<br>';
@@ -970,11 +982,11 @@ class ChainsawKM
             $event_id = @array_pop(explode('/', $urls['path']));
             $site = @$urls['qs']['site'];
         } else {
-            $event_id = $matches[2][0];
-            $site = $matches[4][0];
+            $event_id = @$matches[2][0];
+            $site = @$matches[4][0];
         }
-        if($urls['qs']['site'] != $matches[4][0]) //제목 site값 우선
-            $site = $matches[4][0];
+        if(@$urls['qs']['site'] != @$matches[4][0]) //제목 site값 우선
+            $site = @$matches[4][0];
         // echo '<pre>' . $data['name'] . ':' . print_r($urls, 1) . '</pre>';
         $db_prefix = '';
         if (isset($matches[10][0]) && $matches[10][0]) {
@@ -1059,7 +1071,10 @@ class ChainsawKM
         $data = [];
         $i = 0;
         $cnt = 1;
+        $total = $creatives->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."리포트데이터 수신을 시작합니다.", "light_red");
         foreach ($creatives->getResultArray() as $row) {
+            CLI::showProgress($i, $total); 
             $report = $this->getCreativeReport($row['id'], $row['date']);
             if ($report['message'] == 'Success' && count($report['data']) > 0) {
                 echo date('[H:i:s]') . " {$row['id']}/{$row['date']} 수신" . PHP_EOL;
@@ -1094,9 +1109,13 @@ class ChainsawKM
             $result = array();
         }
         $i = 0;
+        $step = 1;
+        $total = $creatives->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."유효DB 개수 수신을 시작합니다.", "light_red");
         foreach ($creatives->getResultArray() as $row) {
+            CLI::showProgress($step++, $total);
             $landing = $this->landingGroup($row);
-            if ($landing['media']) {
+            if (isset($landing['media'])) {
                 $result[$i]['date'] = $date;
                 $result[$i]['creative_id'] = $row['id'];
                 $result[$i]['cost'] = $row['cost'];
