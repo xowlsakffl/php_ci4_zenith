@@ -11,7 +11,7 @@
                         <input type="hidden" name="id" id="hidden_id" value="<?=$user->id?>">
                         <div class="form-group mb-3">
                             아이디 : <span><?=$user->username?></span>
-                        </div>test
+                        </div>
                         <div class="form-group mb-3">
                             현재 소속 : <span><?=$user->companyName?></span>
                         </div>
