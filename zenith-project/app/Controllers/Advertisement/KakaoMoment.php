@@ -24,6 +24,15 @@ class KakaoMoment extends BaseController
         CLI::write("전체 광고계정 업데이트 완료", "yellow");
     }
 
+    //전체 캠페인 업데이트
+    public function updateCampaigns()
+    { 
+        CLI::clearScreen();
+        CLI::write("전체 캠페인 업데이트를 진행합니다.", "light_red");
+        $this->chainsaw->updateCampaigns();
+        CLI::write("전체 캠페인 업데이트 완료", "yellow");
+    }
+
     //전체 소재 보고서 BASIC 업데이트
     public function updateCreativesReportBasic()
     { 

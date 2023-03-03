@@ -242,11 +242,15 @@ class ChainsawKM
     public function updateCampaigns()
     { //전체 캠페인 업데이트
         $accounts = $this->db->getAdAccounts();
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 캠페인 수신을 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             $campaignList = $this->getCampaigns($account['id']);
             if (count($campaignList['content']) > 0) {
                 $i = 0;
+                $total = count($campaignList['content']);
                 foreach ($campaignList['content'] as $row) {
+                    CLI::showProgress($step++, $total);
                     if ($row['id'] && $row['config'] != 'DEL') {
                         $campaign = $this->getCampaign($row['id']);
                         $data[$account['id']][$i] = $campaign;

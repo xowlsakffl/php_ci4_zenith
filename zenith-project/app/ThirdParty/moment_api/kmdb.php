@@ -542,8 +542,8 @@ class KMDB
             return 0;
         }
         $sql = "SELECT * FROM app_subscribe WHERE group_id = '{$data['app_id']}' AND status = 1 AND site = '{$data['site']}' AND DATE_FORMAT(reg_date, '%Y-%m-%d') = '{$date}' AND deleted = 0";
-        $res = $this->g5db->query($sql);
-        $num_rows = $res->num_rows;
+        $res = $this->zenith->query($sql);
+        $num_rows = $res->getNumRow();
         return $num_rows;
     }
 
@@ -583,12 +583,12 @@ class KMDB
                 VALUES('{$row['group_id']}', '{$row['event_id']}', '{$row['site']}', '{$row['full_name']}', '{$row['email']}', '{$row['gender']}', '{$row['age']}', ENC_DATA('{$row['phone']}'), '{$row['add1']}', '{$row['add2']}', '{$row['add3']}', '{$row['add4']}', '{$row['add5']}', '{$row['add6']}', '{$row['addr']}', '{$row['reg_date']}', 0, '{$row['ad_id']}', 1)
                 ON DUPLICATE KEY
                 UPDATE group_id='{$row['group_id']}', event_seq='{$row['event_id']}', site='{$row['site']}', name='{$row['full_name']}', email='{$row['email']}', gender='{$row['gender']}', age='{$row['age']}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', add6='{$row['add6']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', fb_ad_lead_id='{$row['ad_id']}'";
-        $result = $this->g5db->query($sql, true);
+        $result = $this->zenith->query($sql, true);
         if ($result) {
             $sql = "update mm_bizform_user_response set send_time=now() where encUserId='{$row['encUserId']}' and bizFormId='{$row['bizFormId']}'";
             $result = $this->db_query($sql);
         } else {
-            echo $this->g5db->error;
+            echo $this->zenith->error;
         }
     }
 
@@ -596,7 +596,7 @@ class KMDB
     {
         $sql = "SELECT bizform_id, id, title FROM mm_bizform_items WHERE bizform_id = '{$bizformId}' AND id = '{$itemId}'";
         $result = $this->db_query($sql);
-        if (!$result->num_rows) return null;
+        if (!$result->getNumRow()) return null;
         return $result->getResultArray();
     }
 
@@ -622,8 +622,8 @@ class KMDB
             LEFT JOIN moment.mm_ad_account AS maa ON mcp.ad_account_id = maa.id
         WHERE ei.creative_id <> '' AND ei.bizform_apikey <> '' AND ei.is_stop = 0
         AND mc.config = 'ON' AND maa.config = 'ON' AND maa.is_update = 1";
-        $result = $this->g5db->query($sql);
-        if (!$result->num_rows) return NULL;
+        $result = $this->zenith->query($sql);
+        if (!$result->getNumRow()) return NULL;
         $data = [];
         foreach ($result->getResultArray() as $row) {
             $data[] = [
@@ -765,10 +765,10 @@ class KMDB
     {
         $sql = "SELECT * FROM mm_memo WHERE id = '{$p['id']}' AND type = '{$p['type']}' ORDER BY datetime DESC";
         $result = $this->db_query($sql);
-        if ($result->num_rows) {
+        if ($result->getNumRow()) {
             foreach ($result->getResultArray() as $row) {
                 $sql = "SELECT mb_name FROM g5_member WHERE mb_id = '{$row['mb_id']}'";
-                $mb = $this->g5db->query($sql)->getResult();
+                $mb = $this->zenith->query($sql)->getResult();
                 $row['mb_name'] = $mb['mb_name'];
                 $memo[] = $row;
             }
