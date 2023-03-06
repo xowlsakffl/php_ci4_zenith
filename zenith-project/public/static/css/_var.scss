@@ -16,13 +16,13 @@ $radius:10px;
 	&:after{clear:both; display:block; content:'';}
 }
 @mixin repeat-bg($imgpath, $pos, $x, $y){
-	background:url('/images/'+$imgpath) repeat-+$pos $x $y;
+	background:url('/img/'+$imgpath) repeat-+$pos $x $y;
 }
 @mixin color-bg($bg-color, $imgpath, $x, $y){
-	background:$bg-color url('/images/'+$imgpath) no-repeat $x $y;
+	background:$bg-color url('/img/'+$imgpath) no-repeat $x $y;
 }
 @mixin bg($imgpath, $x, $y){
-	background:url('/images/'+$imgpath) no-repeat $x $y;
+	background:url('/img/'+$imgpath) no-repeat $x $y;
 }
 @mixin ellipsis($line-cnt){
     display:-webkit-box; overflow:hidden; text-overflow: ellipsis; -webkit-line-clamp: $line-cnt; -webkit-box-orient:vertical;

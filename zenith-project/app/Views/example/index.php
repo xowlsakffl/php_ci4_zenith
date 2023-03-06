@@ -165,8 +165,8 @@
                 <div class="type">
                     <div class="summary">
                         <strong><i class="google"></i>구글 애드워즈</strong>
-                        <dl>
-                            <dl class="percentage">
+                        <dl class="percentage">                           
+                            <dt>수익률</dt>
                             <dd>46.51</dd>
                         </dl>
                         <dl>
