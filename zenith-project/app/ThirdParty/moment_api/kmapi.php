@@ -485,7 +485,7 @@ class ChainsawKM
                             continue;
                             //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                         }
-                        $data[$campaign['id']][$i]['type'] = $row['type'];
+                        $data[$campaign['id']][$i]['type'] = @$row['type'];
                         $i++;
                     } else if ($row['config'] == 'DEL') {
                         $delete = ['id' => $row['id'], 'config' => 'DEL'];
@@ -684,17 +684,17 @@ class ChainsawKM
     { //전체 소재 업데이트
         $adgroups = $this->db->getAdGroups(["ON", "OFF"]);
         $step = 1;
+        $total = count($adgroups->getResult());
         CLI::write("[".date("Y-m-d H:i:s")."]"."소재 수신을 시작합니다.", "light_red");
         foreach ($adgroups->getResultArray() as $adgroup) {
+            CLI::showProgress($step++, $total);
             // echo "<p>{$adgroup['id']}, {$adgroup['ad_account_id']}</p>";
             $creativeList = $this->getCreatives($adgroup['id'], $adgroup['ad_account_id']);
             // echo '<pre>'.print_r($creativeList,1).'</pre>';
             if (count($creativeList) > 0) {
                 $i = 0;
-                $total = count($creativeList);
                 foreach ($creativeList as $lists) {
                     foreach ($lists as $row) {
-                        CLI::showProgress($step++, $total);
                         if ($row['id'] && $row['config'] != 'DEL') {
                             $creative = $this->getCreative($row['id']);
                             $data[$adgroup['id']][$i] = $creative;
@@ -1131,14 +1131,14 @@ class ChainsawKM
             $date = date('Y-m-d', strtotime($date));
         }
         $creatives = $this->db->getCreativeReportBasic("AND report.date='{$date}'");
-        if (!$creatives->getNumRows()) {
+        $step = 1;
+        $total = $creatives->getNumRows();
+        if (!$total) {
             return null;
         } else {
             $result = array();
         }
-        $i = 0;
-        $step = 1;
-        $total = $creatives->getNumRows();
+        $i = 0;   
         CLI::write("[".date("Y-m-d H:i:s")."]"."유효DB 개수 수신을 시작합니다.", "light_red");
         foreach ($creatives->getResultArray() as $row) {
             CLI::showProgress($step++, $total);

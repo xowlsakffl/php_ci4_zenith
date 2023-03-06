@@ -174,10 +174,4 @@ class KakaoMoment extends BaseController
         $this->chainsaw->autoAiOn();
         CLI::write("AI 시작", "yellow");
     }
-
-    /* 
-    $step = 1;
-    CLI::write("[".date("Y-m-d H:i:s")."]"."전체 소재 보고서 BASIC  수신을 시작합니다.", "light_red");
-    CLI::showProgress($step++, $total); 
-    */
 }
