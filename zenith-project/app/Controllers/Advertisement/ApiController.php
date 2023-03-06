@@ -34,6 +34,8 @@ class ApiController extends BaseController
         }
     }
 
+    //안쓰는거
+    /* 
     protected function kakaoMoment(...$params) {
         include APPPATH."/ThirdParty/moment_api/kmapi.php";
         $this->chainsaw = new \ChainsawKM();
@@ -47,5 +49,6 @@ class ApiController extends BaseController
             
             return $result;
         }
-    }
+    } 
+    */
 }
