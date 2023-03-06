@@ -126,7 +126,8 @@ class KakaoMoment extends BaseController
     { 
         CLI::clearScreen();
         CLI::write("자동 입찰가한도 리셋을 진행합니다.", "light_red");
-        $this->chainsaw->autoLimitBidAmountReset();
+        $date = CLI::prompt("자동 입찰가한도 리셋할 날짜를 입력해주세요.", date('Y-m-d'));
+        $this->chainsaw->autoLimitBidAmountReset($date);
         CLI::write("자동 입찰가한도 리셋 완료", "yellow");
     }
 
@@ -134,9 +135,10 @@ class KakaoMoment extends BaseController
     public function autoLimitBidAmount()
     { 
         CLI::clearScreen();
-        CLI::write("자동 입찰가한도 리셋을 진행합니다.", "light_red");
-        $this->chainsaw->autoLimitBidAmountReset();
-        CLI::write("자동 입찰가한도 리셋 완료", "yellow");
+        CLI::write("자동 입찰가한도 설정을 진행합니다.", "light_red");
+        $date = CLI::prompt("자동 입찰가한도 설정할 날짜를 입력해주세요.", date('Y-m-d'));
+        $this->chainsaw->autoLimitBidAmount($date);
+        CLI::write("자동 입찰가한도 설정 완료", "yellow");
     }
 
     //자동 예산한도 리셋
@@ -144,7 +146,8 @@ class KakaoMoment extends BaseController
     { 
         CLI::clearScreen();
         CLI::write("자동 예산한도 리셋을 진행합니다.", "light_red");
-        $this->chainsaw->autoLimitBudgetReset();
+        $date = CLI::prompt("자동 예산한도 리셋할 날짜를 입력해주세요.", date('Y-m-d'));
+        $this->chainsaw->autoLimitBudgetReset($date);
         CLI::write("자동 예산한도 리셋 완료", "yellow");
     }
 
@@ -153,6 +156,7 @@ class KakaoMoment extends BaseController
     { 
         CLI::clearScreen();
         CLI::write("자동 예산한도 설정을 진행합니다.", "light_red");
+        $date = CLI::prompt("자동 예산한도 설정할 날짜를 입력해주세요.", date('Y-m-d'));
         $this->chainsaw->autoLimitBudget();
         CLI::write("자동 예산한도 설정 완료", "yellow");
     }
