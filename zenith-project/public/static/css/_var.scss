@@ -1,0 +1,29 @@
+//base var
+$font:'NanumSquareNeo', 'Noto Sans', dotum, Gulim, sans-serif;
+$size-base:16px;
+$color-primary:#ce1922;
+$color-dark:#2d2e34;
+$radius:10px;
+
+//mixin
+@mixin hover-shadow{
+	box-shadow:3px 3px 10px rgba(0, 0, 0, .16);
+}
+@mixin width {
+	width:100%; max-width:1200px; box-sizing:border-box; margin:0 auto;
+}
+@mixin clear{
+	&:after{clear:both; display:block; content:'';}
+}
+@mixin repeat-bg($imgpath, $pos, $x, $y){
+	background:url('/images/'+$imgpath) repeat-+$pos $x $y;
+}
+@mixin color-bg($bg-color, $imgpath, $x, $y){
+	background:$bg-color url('/images/'+$imgpath) no-repeat $x $y;
+}
+@mixin bg($imgpath, $x, $y){
+	background:url('/images/'+$imgpath) no-repeat $x $y;
+}
+@mixin ellipsis($line-cnt){
+    display:-webkit-box; overflow:hidden; text-overflow: ellipsis; -webkit-line-clamp: $line-cnt; -webkit-box-orient:vertical;
+}

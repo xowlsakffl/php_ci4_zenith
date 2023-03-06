@@ -14,7 +14,11 @@ class ChainsawKMBF
     private function updateBizform()
     {
         $bizforms = $this->db->getBizformUpdateList();
+        $step = 1;
+        $toral = count($bizforms);
+        CLI::write("[".date("Y-m-d H:i:s")."]"."비즈폼 수신을 시작합니다.", "light_red");
         foreach ($bizforms as $row) {
+            CLI::showProgress($step++, $total); 
             if (!$row['bizFormId'] || !$row['bizFormApiKey']) continue;
             $info = $this->getBizformInfo($row['bizFormId'], $row['bizFormApiKey']);
             $count = @count($info['userResponse']['data']['content']);
