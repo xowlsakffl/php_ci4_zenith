@@ -7,7 +7,7 @@ class KMDB
     {
         $this->db = \Config\Database::connect('kakaoMoment');
         $this->db2 = \Config\Database::connect('kakaoMoment2');
-        $this->zenith = \Config\Database::connect();
+        //$this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
 

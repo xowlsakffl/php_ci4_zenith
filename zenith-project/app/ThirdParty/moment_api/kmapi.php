@@ -327,7 +327,11 @@ class ChainsawKM
     public function setAdGroupsAiRun()
     { //광고그룹 AI 실행 예산수정 aiConfig2 - Ai 2
         $adGroups = $this->db->getAdGroups(['ON'], " AND aiConfig2 = 'ON'");
+        $step = 1;
+        $total = $adGroups->getNumRow();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."광고그룹 AI 업데이트를 시작합니다.", "light_red");
         foreach ($adGroups->getResultArray() as $adGroup) {
+            CLI::showProgress($step++, $total); 
             $rs = ['budget'=>'예산변경 대상 아님', 'bid'=>'입찰가변경 대상 아님'];
             echo '['.$adGroup['account_name']. '][' .$adGroup['id'] . ']' . $adGroup['name'] . '/';
             $adAccountId = $adGroup['ad_account_id'];
@@ -462,12 +466,16 @@ class ChainsawKM
     public function updateAdGroups()
     { //전체 광고그룹 업데이트
         $campaigns = $this->db->getCampaigns(["ON", "OFF"]);
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."광고그룹 수신을 시작합니다.", "light_red");
         foreach ($campaigns->getResultArray() as $campaign) {
             //echo "{$campaign['id']}<br>";
             $adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
             if (count($adGroupList['content']) > 0) {
                 $i = 0;
+                $total = count($adGroupList['content']);
                 foreach ($adGroupList['content'] as $row) {
+                    CLI::showProgress($step++, $total);
                     if ($row['id'] && $row['config'] != 'DEL') { //echo $row['id'].'<br>';
                         $adgroup = $this->getAdGroup($row['id']);
                         $data[$campaign['id']][$i] = $adgroup;
@@ -675,14 +683,18 @@ class ChainsawKM
     public function updateCreatives()
     { //전체 소재 업데이트
         $adgroups = $this->db->getAdGroups(["ON", "OFF"]);
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."소재 수신을 시작합니다.", "light_red");
         foreach ($adgroups->getResultArray() as $adgroup) {
             // echo "<p>{$adgroup['id']}, {$adgroup['ad_account_id']}</p>";
             $creativeList = $this->getCreatives($adgroup['id'], $adgroup['ad_account_id']);
             // echo '<pre>'.print_r($creativeList,1).'</pre>';
             if (count($creativeList) > 0) {
                 $i = 0;
+                $total = count($creativeList);
                 foreach ($creativeList as $lists) {
                     foreach ($lists as $row) {
+                        CLI::showProgress($step++, $total);
                         if ($row['id'] && $row['config'] != 'DEL') {
                             $creative = $this->getCreative($row['id']);
                             $data[$adgroup['id']][$i] = $creative;
@@ -797,10 +809,14 @@ class ChainsawKM
     public function moveToAppsubscribe()
     { //잠재고객 > app_subscribe 테이블로 이동
         $ads = $this->db->getBizFormUserResponse();
-        if (!$ads->getNumRows()) {
+        $total = $ads->getNumRows();
+        $step = 1;
+        if (!$total) {
             return null;
         }
+        CLI::write("[".date("Y-m-d H:i:s")."]"."app_subscribe 데이터 업데이트를 시작합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
+            CLI::showProgress($step++, $total); 
             $landing = $this->landingGroup($row);
             if(is_null($landing)) {
                 echo '비즈폼 매칭 오류 발생 : <pre>' . print_r($row, 1) . '</pre>';
@@ -914,8 +930,12 @@ class ChainsawKM
 
     public function autoAiOn() {
         $adgroups = $this->db->getInitCreatives();
-        if(!$adgroups->getNumRows()) return;
+        $step = 1;
+        $total = $adgroups->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."AI를 시작합니다.", "light_red");
+        if(!$total) return;
         foreach ($adgroups->getResultArray() as $adgroup) {
+            CLI::showProgress($step++, $total); 
             if($adgroup['report_date'] == date('Y-m-d') && $adgroup['report_update_time'] == '0000-00-00 00:00:00') {
                 $aiData = [
                     'campaign_id' => $adgroup['campaign_id'],
@@ -934,10 +954,14 @@ class ChainsawKM
     2. 디비 1개 이상  0% 이하 > 해당 소재 off 익일 00시 on
     */
         $creatives = $this->db->getAutoCreativeOnOff($onoff);
-        if(!$creatives->getNumRows()) return;
+        $step = 1;
+        $total = $creatives->getNumRows();
+        if(!$total) return;
         if($onoff=='on') $set = 'off';
         else $set = 'on';
+        CLI::write("[".date("Y-m-d H:i:s")."]"."소재 자동 변경을 시작합니다.", "light_red");
         foreach ($creatives->getResultArray() as $creative) {
+            CLI::showProgress($step++, $total); 
             if(!is_null($creative['aitype']) && strtolower($creative['creative_config']) == strtolower($onoff)) {
                 // echo '<pre>'.print_r($creative,1).'</pre>';
                 // $result['http_code'] = 200;
@@ -1245,8 +1269,12 @@ class ChainsawKM
     {
         if (!isset($data['date'])) $data['date'] = date('Y-m-d');
         $campaigns = $this->db->getAutoLimitBudgetCampaign($data);
-        if ($campaigns->getNumRows()) {
+        $step = 1;
+        $total = $campaigns->getNumRows();
+        if ($total) {
+            CLI::write("[".date("Y-m-d H:i:s")."]"."자동 예산한도 설정을 시작합니다.", "light_red");
             foreach ($campaigns->getResultArray() as $row) {
+                CLI::showProgress($step++, $total); 
                 preg_match_all('/@([0-9]+)/', $row['name'], $matches); //제목에서 @숫자 추출
                 $row['limit_db'] = $matches[1][0]; //설정DB 개수
                 if ($row['limit_db'] <= $row['unique_total'] && $row['cost'] && $row['already'] == 0) {
@@ -1271,8 +1299,12 @@ class ChainsawKM
     { //23시 55분에 예산 리셋
         if (!isset($data['date'])) $data['date'] = date('Y-m-d');
         $campaigns = $this->db->getAutoLimitBudgetCampaign($data);
-        if ($campaigns->getNumRows()) {
+        $step = 1;
+        $total = $campaigns->getNumRows();
+        if ($total) {
+            CLI::write("[".date("Y-m-d H:i:s")."]"."자동 예산한도 리셋을 시작합니다.", "light_red");
             foreach ($campaigns->getResultArray() as $row) {
+                CLI::showProgress($step++, $total); 
                 preg_match_all('/@([0-9]+)/', $row['name'], $matches); //제목에서 @숫자 추출
                 $row['limit_db'] = $matches[1][0]; //설정DB 개수
                 if ($row['already'] == 1) {
@@ -1303,8 +1335,12 @@ class ChainsawKM
             $data['date'] = $date = date('Y-m-d');
         }
         $adgroups = $this->db->getAutoLimitBidAmountAdGroup($data);
-        if ($adgroups->getNumRows()) {
+        $step = 1;
+        $total = $adgroups->getNumRows();
+        if ($total) {
+            CLI::write("[".date("Y-m-d H:i:s")."]"."자동 입찰가 설정을 시작합니다.", "light_red");
             foreach ($adgroups->getResultArray() as $row) {
+                CLI::showProgress($step++, $total); 
                 $data = [];
                 unset($result);
                 // echo '내역<pre>'.print_r($row,true).'</pre>';
@@ -1362,8 +1398,12 @@ class ChainsawKM
             $data['date'] = $date = date('Y-m-d');
         }
         $adgroups = $this->db->getAutoLimitBidAmountAdGroup($data);
-        if ($adgroups->getNumRows()) {
+        $step = 1;
+        $total = $adgroups->getNumRows();
+        if ($total) {
+            CLI::write("[".date("Y-m-d H:i:s")."]"."자동 입찰가한도 리셋을 시작합니다.", "light_red");
             foreach ($adgroups->getResultArray() as $row) {
+                CLI::showProgress($step++, $total);          
                 if ($row['campaign_config'] == 'ON' && $row['config'] == 'OFF') {
                     if ($row['already_2'] == 1 || $row['already_3'] == 1 || $row['already_4'] == 1) {
                         if ($row['already_2']) $level = "2";
