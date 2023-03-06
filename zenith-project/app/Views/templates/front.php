@@ -3,7 +3,7 @@
     <?=$this->include('templates/inc/navbar.php')?>
     <div>
         <?=$this->renderSection('content')?>
-    </div>\
+    </div>
 </div>
 <?=$this->renderSection('script')?>
 
