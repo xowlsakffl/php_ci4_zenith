@@ -10,7 +10,7 @@ class GoogleAds extends BaseController
 
     public function __construct(...$param)
     {
-        include APPPATH."/ThirdParty/googleAds_api/adsapi.php";
+        include APPPATH."/ThirdParty/google_api/adsapi.php";
         $this->chainsaw = new \GoogleAds();       
     }
 
