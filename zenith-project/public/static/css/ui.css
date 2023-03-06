@@ -227,7 +227,7 @@ body {
 }
 .ad-list .btn-more span {
   padding: 30px 0 0;
-  background: url("/images/ico_arrow.png") no-repeat center 0;
+  background: url("/img/ico_arrow.png") no-repeat center 0;
 }
 .ad-list .btn-primary {
   background: #ce1922;
@@ -251,13 +251,13 @@ body {
   vertical-align: top;
 }
 .ad-list .summary .facebook {
-  background: url("/images/ico_facebook.png") no-repeat center 0;
+  background: url("/img/ico_facebook.png") no-repeat center 0;
 }
 .ad-list .summary .kakao {
-  background: url("/images/ico_kakao.png") no-repeat center 0;
+  background: url("/img/ico_kakao.png") no-repeat center 0;
 }
 .ad-list .summary .google {
-  background: url("/images/ico_google.png") no-repeat center 0;
+  background: url("/img/ico_google.png") no-repeat center 0;
 }
 .ad-list .summary dl {
   display: flex;
