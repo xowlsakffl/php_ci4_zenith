@@ -10,6 +10,7 @@ ini_set('soap.wsdl_cache_ttl', 0);
 require_once __DIR__ . '/adsdb.php';
 require_once __DIR__ . '/google-ads-php/vendor/autoload.php';
 
+use CodeIgniter\CLI\CLI;
 use GetOpt\GetOpt;
 use Google\Ads\GoogleAds\Util\FieldMasks;
 use Google\Ads\GoogleAds\Util\V12\ResourceNames;
@@ -722,12 +723,16 @@ class GoogleAds
         if ($date == null) {
             $date = date('Y-m-d');
         }
+        $step = 1;
         $ads = $this->db->getAdLeads($date);
-        if (!$ads->num_rows) {
+        $total = $ads->getNumRows();
+        if (!$total) {
             return null;
         }
         $i = 0;
-        while ($row = $ads->fetch_assoc()) {
+        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
+        foreach ($ads->getResultArray() as $row) {
+            CLI::showProgress($step, $total);
             $title = trim($row['code']) ? $row['code'] : $row['campaign_name'] . '||' . $row['finalUrl'];
             // echo date('[H:i:s]') . "광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}";
             $landing = $this->landingGroup($title);

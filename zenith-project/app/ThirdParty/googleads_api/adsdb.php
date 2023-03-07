@@ -1,32 +1,22 @@
 <?php
 class GADB
 {
-	//private $host = "viberc-1.cluster-cxrnaofyo5ly.ap-northeast-2.rds.amazonaws.com";
-	private $host = "db.chainsaw.co.kr";
-	private $host2 = "db2.chainsaw.co.kr";
-	private $user = "adwords";
-	private $password = "qkdlqmdkfTl#aw";
-	private $dbname = "adwords";
-	private $db;
-	private $g5db;
-	private $sltDB;
+	private $db, $db2, $zenith;
 
-	public function __construct()
-	{
-		$this->db = mysqli_connect($this->host, $this->user, $this->password, $this->dbname);
-		$this->db2 = mysqli_connect($this->host2, $this->user, $this->password, $this->dbname);
-		$this->db->query("set session character_set_client=utf8mb;");
-		$this->db->query("set session character_set_connection=utf8mb;");
-		$this->g5db = mysqli_connect($this->host, 'chainsaw_old', 'cpdls#db', 'chainsaw_old');
-		//      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
-	}
+    public function __construct()
+    {
+        $this->db = \Config\Database::connect('google');
+        $this->db2 = \Config\Database::connect('google2');
+        //$this->zenith = \Config\Database::connect();
+        //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
+    }
 
 	public function __call(string $method, array $data)
 	{
 		if (is_array($data)) {
 			array_walk_recursive($data, function (&$v) {
 				if (is_string($v))
-					$v = $this->db->real_escape_string($v);
+					$v = $this->db->escape($v);
 			});
 		}
 		if (!method_exists($this, $method))
