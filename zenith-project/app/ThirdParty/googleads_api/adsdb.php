@@ -2,7 +2,8 @@
 class GADB
 {
 	private $db, $db2, $zenith;
-
+	private $sltDB;
+	
     public function __construct()
     {
         $this->db = \Config\Database::connect('google');
@@ -31,10 +32,10 @@ class GADB
 		if ($is_hidden == '0') {
 			$is_update = 1; //1 업데이트, 0 제외
 		}
-		$data['Name'] = $this->db->real_escape_string($data['Name']);
+		$data['Name'] = $this->db->escape($data['Name']);
 		$sql = "INSERT INTO aw_ad_account (customerId, manageCustomer, name, status, canManageClients, currencyCode, dateTimeZone, testAccount, is_hidden, create_time)
-                VALUES ({$data['customerId']}, {$data['manageCustomer']}, '{$data['name']}', '{$data['status']}', {$data['canManageClients']}, '{$data['currencyCode']}', '{$data['dateTimeZone']}', {$data['testAccount']}, {$data['is_hidden']}, NOW()) ON DUPLICATE KEY
-                UPDATE customerId = {$data['customerId']}, manageCustomer = {$data['manageCustomer']}, is_update = {$is_update}, name = '{$data['name']}', status = '{$data['status']}',  canManageClients = {$data['canManageClients']}, currencyCode = '{$data['currencyCode']}', dateTimeZone = '{$data['dateTimeZone']}', testAccount = {$data['testAccount']}, is_hidden = {$data['is_hidden']}, update_time=NOW();";
+                VALUES ({$data['customerId']}, {$data['manageCustomer']}, {$data['name']}, {$data['status']}, {$data['canManageClients']}, {$data['currencyCode']}, {$data['dateTimeZone']}, {$data['testAccount']}, {$data['is_hidden']}, NOW()) ON DUPLICATE KEY
+                UPDATE customerId = {$data['customerId']}, manageCustomer = {$data['manageCustomer']}, is_update = {$is_update}, name = {$data['name']}, status = {$data['status']},  canManageClients = {$data['canManageClients']}, currencyCode = {$data['currencyCode']}, dateTimeZone = {$data['dateTimeZone']}, testAccount = {$data['testAccount']}, is_hidden = {$data['is_hidden']}, update_time=NOW();";
 		//echo $sql .'<br>';
 		$result = $this->db_query($sql, true);
 		return $result;
@@ -42,7 +43,7 @@ class GADB
 
 	private function modifyAccountBudget($data)
 	{
-		$sql = "UPDATE aw_ad_account SET amountSpendingLimit = '{$data['amountSpendingLimit']}', amountServed = '{$data['amountServed']}'  WHERE customerId = '{$data['customerId']}'";
+		$sql = "UPDATE aw_ad_account SET amountSpendingLimit = {$data['amountSpendingLimit']}, amountServed = {$data['amountServed']}  WHERE customerId = {$data['customerId']}";
 		$result = $this->db_query($sql, true);
 		return $result;
 	}
@@ -159,12 +160,12 @@ class GADB
 		if (is_null($data)) return false;
 
 		$sql = "INSERT INTO aw_asset(id, name, type, video_id, url, create_time)
-				VALUES('{$data['id']}', '{$data['name']}', '{$data['type']}', '{$data['video_id']}', '{$data['url']}', NOW())
+				VALUES({$data['id']}, {$data['name']}, {$data['type']}, {$data['video_id']}, {$data['url']}, NOW())
 				ON DUPLICATE KEY UPDATE
-					name = '{$data['name']}',
-					type = '{$data['type']}',
-					video_id = '{$data['video_id']}',
-					url = '{$data['url']}',
+					name = {$data['name']},
+					type = {$data['type']},
+					video_id = {$data['video_id']},
+					url = {$data['url']},
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
 		$result = $this->db_query($sql, true);
@@ -178,14 +179,14 @@ class GADB
 		$sql = "SELECT * FROM aw_db_count WHERE ad_id = '{$ad_id}' AND date = '{$date}'";
 		$result = $this->db_query($sql);
 		if (!$result) return null;
-		return $result->fetch_assoc();
+		return $result->getResultArray();
 	}
 
 	public function getAppSubscribeCount($data, $date)
 	{
 		if (!$data['db_prefix']) return 0;
 		$sql = "SELECT * FROM app_subscribe WHERE group_id = '{$data['app_id']}' AND status = 1 AND site = '{$data['site']}' AND DATE_FORMAT(reg_date, '%Y-%m-%d') = '{$date}' AND deleted = 0";
-		$res = $this->g5db->query($sql);
+		$res = $this->zenith->query($sql);
 		$num_rows = $res->num_rows;
 		return $num_rows;
 	}

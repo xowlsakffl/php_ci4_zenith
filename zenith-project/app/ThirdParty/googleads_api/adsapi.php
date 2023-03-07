@@ -93,8 +93,11 @@ class GoogleAds
         $rootCustomerIds = self::getAccessibleCustomers($this->googleAdsClient);
         $allHierarchies = [];
         $accountsWithNoInfo = [];
-
+        $step = 1;
+        $total = count($rootCustomerIds);
+        CLI::write("[".date("Y-m-d H:i:s")."]"."광고계정 수신을 시작합니다.", "light_red");
         foreach ($rootCustomerIds as $rootCustomerId) {
+            CLI::showProgress($step++, $total);
             $customerClientToHierarchy = self::createCustomerClientToHierarchy($loginCustomerId, $rootCustomerId);
             if (is_null($customerClientToHierarchy)) {
                 $accountsWithNoInfo[] = $rootCustomerId;
@@ -450,7 +453,11 @@ class GoogleAds
         flush();
         usleep(1);
         $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
-        while ($account = $accounts->fetch_assoc()) {
+        $step = 1;
+        $total = $accounts->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
+        foreach ($accounts->getResultArray() as $account) {
+            CLI::showProgress($step++, $total);
             echo date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ";
             $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             if ($account['status'] != 'ENABLED') {

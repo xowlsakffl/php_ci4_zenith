@@ -138,7 +138,7 @@ class ChainsawKM
     { //전체 광고계정 업데이트
         $adAccountList = $this->getAdAccountList();
         $i = 0;
-        $total = count($adAccountList['content']);  
+        $total = count($adAccountList['content']); 
         CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
         foreach ($adAccountList['content'] as $row) {
             CLI::showProgress($i, $total);
