@@ -1,16 +1,5 @@
 /*css/common.css compile*/
-.exam-wrap {
-  width: 100%;
-  height: 100vh;
-}
-
-.exam-wrap .bg-area {
-  background: url(https://wallpapercave.com/dwp1x/ikgV0Gd.jpg);
-  background-attachment: fixed;
-  padding: 5%;
-}
-
-.flex-layout, .features-container-wrap main article .heading-card .card-containner, .exam-container-wrap main .con-01 {
+.flex-layout, .features-container-wrap main article .icon_grid .card-containner, .features-container-wrap main article .heading-card .card-containner, .exam-container-wrap main .con-01 {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,6 +21,9 @@ a {
   text-decoration: none;
 }
 
+.exam-container-wrap {
+  width: 100%;
+}
 .exam-container-wrap .header-top {
   padding: 10px 0;
   border-bottom: 2px solid red;
@@ -195,10 +187,17 @@ a {
   text-decoration: none;
 }
 
-.flex-layout, .features-container-wrap main article .heading-card .card-containner, .exam-container-wrap main .con-01 {
+.flex-layout, .features-container-wrap main article .icon_grid .card-containner, .features-container-wrap main article .heading-card .card-containner, .exam-container-wrap main .con-01 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.wrap {
+  padding: 4% 5%;
+}
+.wrap .row {
+  background-color: #fff;
 }
 
 .features-container-wrap main article .nav_bar {
@@ -207,6 +206,8 @@ a {
 .features-container-wrap main article .featured-card a {
   text-decoration: underline;
   display: inline-block;
+  color: var(--bs-link-hover-color);
+  padding-top: 5%;
 }
 .features-container-wrap main article .featured-card a i {
   display: inline-block;
@@ -222,14 +223,51 @@ a {
   background-color: #f8f9fa;
 }
 .features-container-wrap main article .heading-card .card-containner .icon i {
-  font-size: 160%;
+  font-size: 200%;
 }
 .features-container-wrap main article .custom-card {
   color: #fff;
+  display: flex;
+  justify-content: space-between;
 }
 .features-container-wrap main article .custom-card .card {
   border-radius: 20px;
-  background: url(file:///C:/Users/owner/Downloads/bootstrap-5.1.3-examples/bootstrap-5.1.3-examples/features/unsplash-photo-1.jpg) no-repeat 50%;
+  background: black;
+  text-align: center;
+  width: 32%;
+  flex-direction: column;
+}
+.features-container-wrap main article .custom-card .card h1 {
+  font-weight: 900;
+  font-size: 2.5rem;
+  margin: 100px auto 100px;
+  line-height: 1.3;
+}
+.features-container-wrap main article .custom-card .card ul.icon {
+  display: flex;
+  width: 70%;
+  margin: 0 auto;
+}
+.features-container-wrap main article .custom-card .card ul.icon li i {
+  width: 30px;
+  height: 30px;
+  display: block;
+}
+.features-container-wrap main article .custom-card .card ul.icon li:nth-of-type(1) {
+  flex: 2;
+}
+.features-container-wrap main article .custom-card .card ul.icon li:nth-of-type(1) i {
+  background: url(https://avatars.githubusercontent.com/u/2918581?v=4);
+  background-size: contain;
+}
+.features-container-wrap main article .icon_grid .card-containner {
+  align-items: start;
+}
+.features-container-wrap main article .icon_grid .card-containner .icon {
+  padding: 2%;
+}
+.features-container-wrap main article .icon_grid .card-containner .icon i {
+  font-size: 200%;
 }
 .features-container-wrap main .underline {
   background-color: #ccc;
@@ -237,6 +275,13 @@ a {
 }
 .features-container-wrap main .card {
   --bs-card-border-color:transparent;
+}
+.features-container-wrap main .card h2 {
+  font-size: 35px;
+  padding: 4% 0;
+}
+.features-container-wrap main .card h3 {
+  font-size: 25px;
 }
 
 /*# sourceMappingURL=common.css.map */

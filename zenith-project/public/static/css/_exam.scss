@@ -1,6 +1,3 @@
-.exam-wrap{width:100%; height:100vh;}
-.exam-wrap .bg-area{background:url(https://wallpapercave.com/dwp1x/ikgV0Gd.jpg); background-attachment: fixed; padding:5%;}
-
 @mixin a-arrow() {
     display: block; text-decoration: none; color:#ccc; outline: none;
 }
@@ -32,6 +29,8 @@ a {
 }
 
 .exam-container-wrap{
+    width:100%;
+    
     .header-top{  
         padding:10px 0;
         border-bottom:2px solid red;
