@@ -1,7 +1,7 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('content');?>
-<div class="wrap">
+<div class="exam-wrap">
     <div class="exam-container-wrap">
         <header class="flex-layout header-top container-fluid">
             <a href="#" class="button"><i class="fa fa-long-arrow-left" aria-hidden="true"></i>Overview Page</a>

@@ -64,10 +64,12 @@ class Facebook extends Controller
         // $run = CLI::prompt("캠페인/광고그룹/광고를 업데이트 합니다.",["y","n"]);
         // if($run != 'y') return false;
         CLI::write("캠페인/광고그룹/광고를 업데이트 합니다.", "light_red");
-
+        $this->chainsaw->updateAllByAccount();
+        /*
         $getAds = $this->chainsaw->getAds();
         $updateAdsets = $this->chainsaw->updateAdsets($getAds);
         $updateCampaigns = $this->chainsaw->updateCampaigns($updateAdsets);
+        */
     }
 
     public function updateAds() {
