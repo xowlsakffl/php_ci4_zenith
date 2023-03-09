@@ -2,7 +2,7 @@
 
 <?=$this->section('content');?>
 <!--html 쓰는곳-->
-
+ams2브랜치
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>

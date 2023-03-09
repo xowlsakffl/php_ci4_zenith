@@ -95,6 +95,7 @@ use FacebookAds\Logger\CurlLogger;
     private $adset_id;
     private $ad_id;
     private $result_data = [];
+    private $account, $campaign, $adset, $ad;
 
     // https://developers.facebook.com/tools/debug/accesstoken
     public function __construct($bs_id = '')
@@ -422,9 +423,56 @@ use FacebookAds\Logger\CurlLogger;
         return $result;
     }
 
-    public function updateAdCreatives($data = null)
+    public function updateAllByAccount() {
+        $account_id = $this->db->getAdAccounts(true, " AND business_id = '{$this->business_id}'");
+        $accounts = $account_id->getResultArray();
+        $total = $account_id->getNumRows();
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고데이터 수신을 시작합니다.", "light_red");
+        $result = [];
+        $campaigns_fields = implode(',', [ CampaignFields::ID, CampaignFields::NAME, CampaignFields::ACCOUNT_ID, CampaignFields::DAILY_BUDGET, CampaignFields::BUDGET_REMAINING, CampaignFields::BUDGET_REBALANCE_FLAG, CampaignFields::CAN_USE_SPEND_CAP, CampaignFields::SPEND_CAP, CampaignFields::OBJECTIVE, CampaignFields::EFFECTIVE_STATUS, CampaignFields::STATUS, CampaignFields::START_TIME, CampaignFields::CREATED_TIME, CampaignFields::UPDATED_TIME ]);
+        $adsets_fields = implode(',', [ AdSetFields::ID, AdSetFields::NAME, AdSetFields::CAMPAIGN_ID, AdSetFields::EFFECTIVE_STATUS, AdSetFields::STATUS, AdSetFields::LEARNING_STAGE_INFO, AdSetFields::START_TIME, AdSetFields::UPDATED_TIME, AdSetFields::CREATED_TIME, AdSetFields::DAILY_BUDGET, AdSetFields::LIFETIME_BUDGET, AdSetFields::BUDGET_REMAINING ]);
+        $ads_fields = implode(',', [ AdFields::ID, AdFields::NAME, AdFields::ADSET_ID, AdFields::EFFECTIVE_STATUS, AdFields::STATUS, AdFields::UPDATED_TIME, AdFields::CREATED_TIME, AdFields::TRACKING_SPECS, AdFields::CONVERSION_SPECS ]);
+        $adcreatives_fields = implode(',', [ AdCreativeFields::ID, AdCreativeFields::BODY, AdCreativeFields::OBJECT_TYPE, AdCreativeFields::OBJECT_URL, AdCreativeFields::THUMBNAIL_URL, AdCreativeFields::IMAGE_FILE, AdCreativeFields::IMAGE_URL, AdCreativeFields::CALL_TO_ACTION_TYPE, AdCreativeFields::OBJECT_STORY_SPEC ]);
+        foreach($accounts as $account) {
+            CLI::showProgress($step++, $total);
+            $response = $this->fb->get(
+                "/act_{$account['ad_account_id']}?fields=id,name,campaigns{{$campaigns_fields},adsets{{$adsets_fields},ads{{$ads_fields},adcreatives{{$adcreatives_fields}}}}}",
+                $this->access_token
+            );
+            $data = $response->getDecodedBody();
+            $results = array();
+            // print_r($this->fb->next($data)); exit;
+            // echo '<pre>'.print_r($data,1).'</pre>'; exit;
+            // do {
+                $campaigns = $data['campaigns']['data'];
+                if(!@count($campaigns)) continue;
+                foreach($campaigns as $campaign) {
+                    $adsets = $campaign['adsets']['data'];
+                    if(!@count($adsets)) continue;
+                    foreach($adsets as $adset) {
+                        $ads = $adset['ads']['data'];
+                        if(!@count($ads)) continue;
+                        foreach($ads as $ad) {
+                            $adcreatives = $ad['adcreatives']['data'];
+                            if(!@count($adcreatives)) continue;
+                            for($i=0; $i<count($adcreatives); $i++) $adcreatives[$i]['ad_id'] = $ad['id'];
+                            $this->updateAdcreatives(null, $adcreatives);
+                        }
+                        $this->db->updateAds($ads);
+                    }
+                    $this->db->updateAdsets($adsets);
+                }
+                $this->db->updateCampaigns($campaigns);
+            // } while ($data = $this->fb->next($data));
+           
+            // print_r($result);
+        }
+    }
+
+    public function updateAdCreatives($data = null, $adcreatives = null)
     {
-        $adcreatives = $this->getAdCreatives($data);
+        if(is_null($adcreatives)) $adcreatives = $this->getAdCreatives($data);
         $i = 0;
         foreach ($adcreatives as $data) {
             $result[$i]['adcreative_id'] = $data['id'];
