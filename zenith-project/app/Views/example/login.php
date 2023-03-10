@@ -1,7 +1,4 @@
 <?= $this->extend(config('Auth')->views['layout']) ?>
-
-<?= $this->section('title') ?><?= lang('Auth.login') ?> <?= $this->endSection() ?>
-
 <?= $this->section('main') ?>
 
     <div class="container d-flex justify-content-center p-5">
