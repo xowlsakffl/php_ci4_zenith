@@ -60,25 +60,20 @@
         </div>
     </div>
     <main class="contents-wrap">
-        <div class="ad-management text-center">
+        <form class="ad-management text-center">
             <div class="row">
                 <div class="title">
                     <h1>페이스북 광고관리</h1>
                     <p>숫자 중심의 퍼포먼스 마케팅에 집중! 사람들이 어떤 콘텐츠에 반응하는가? 비용 대비 얼만큼의 성과가 있는가?</p>
-                </div>
+                </div>              
                 <div class="type">
                     <div class="summary">
-                        <strong><i class="facebook"></i>페이스북</strong>
-                        <dl class="percentage">
-                            <dt>수익률</dt>
-                            <dd>46.51</dd>
-                        </dl>
-                        <dl>
-                            <dt>수익</dt>
-                            <dd>953,458</dd>
-                        </dl>
+                    <div class="search d-flex"> 
+                        <input class="form-control me-2" type="search" placeholder="검색어를 입력하세요" aria-label="Search">
+                        <button class="btn btn-primary" type="submit">조회</button>
                     </div>
-                    <div class="detail row">
+                    </div>
+                    <div class="detail">
                         <dl class="col">
                             <dt>노출수</dt>
                             <dd>34,456</dd>
@@ -114,8 +109,50 @@
                     </div>
                 </div>
             </div>
-        
+            <article class="row menu account">
+                <div class="title">
+                    <i class="check-circle"></i><strong>비지니스 계정</strong>
+                    <span class="line"></span>
+                </div>
+                <div class="btn-tab d-flex">
+                    <a href="#" class="btn-management active btn-primary"><span>열혈 패밀리</span></a>
+                    <a href="#" class="btn-management btn-primary"><span>케어랩스5</span></a>
+                    <a href="#" class="btn-management btn-primary"><span>케어랩스7케어랩스7케어랩스</span></a>
+                </div>
+            </article>
 
+            <article class="row menu advertiser">
+                <div class="title">
+                    <i class="check-circle"></i><strong>광고주</strong>
+                    <span class="line"></span>
+                </div>
+                <div class="btn-tab d-flex">
+                    <a href="#" class="btn-management active btn-primary"><span>[대전]상상의원_가나다라마바</span></a>
+                    <a href="#" class="btn-management btn-primary"><span>플란치과_임플</span></a>
+                    <a href="#" class="btn-management btn-primary"><span>비결뷰티센터</span></a>
+                </div>
+            </article>
+            
+            <section class="container">
+                <div class="row">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-selected="true">캠페인</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-selected="false">광고세트</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-selected="false">광고</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="home"  aria-labelledby="home-tab">캠페인</div>
+                        <div class="tab-pane" id="profile"  aria-labelledby="profile-tab">광고세트</div>
+                        <div class="tab-pane" id="messages"  aria-labelledby="messages-tab">광고</div>
+                    </div>
+            </section>
             <!-- <div class="row">
                 <div class="type">
                     <div class="summary">
@@ -166,9 +203,15 @@
                 </div>
                 <a href="#" class="btn-more btn-primary"><span>더보기</span></a>
             </div> -->
-        </div>
+        </form>
     </main>
 </div>
+<script>
+     var firstTabEl = document.querySelector('#myTab li:last-child button')
+  var firstTab = new bootstrap.Tab(firstTabEl)
+
+  firstTab.show()
+</script>
 </body>
 </html>
 <?=$this->endSection();?>
