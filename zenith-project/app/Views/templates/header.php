@@ -16,5 +16,6 @@
     <script src="/static/node_modules/moment/moment.js"></script>
     <script src="/static/node_modules/daterangepicker/daterangepicker.js"></script>
     <script src="/static/js/twbsPagination.js"></script>
+    <?=$this->renderSection('header')?>
 </head>
 <body>

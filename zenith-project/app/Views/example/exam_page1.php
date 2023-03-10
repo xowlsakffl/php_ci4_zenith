@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
-<title>CHAIN 열혈광고</title>
+<title>페이스북 광고관리_연습</title>
 </head>
 <body>
 <div class="wrap d-flex">
@@ -60,8 +60,12 @@
         </div>
     </div>
     <main class="contents-wrap">
-        <div class="ad-list text-center">
+        <div class="ad-management text-center">
             <div class="row">
+                <div class="title">
+                    <h1>페이스북 광고관리</h1>
+                    <p>숫자 중심의 퍼포먼스 마케팅에 집중! 사람들이 어떤 콘텐츠에 반응하는가? 비용 대비 얼만큼의 성과가 있는가?</p>
+                </div>
                 <div class="type">
                     <div class="summary">
                         <strong><i class="facebook"></i>페이스북</strong>
@@ -109,59 +113,10 @@
                         </dl>
                     </div>
                 </div>
-                <a href="#" class="btn-more btn-primary"><span>더보기</span></a>
             </div>
-            <div class="row">
-                <div class="type">
-                    <div class="summary">
-                        <strong><i class="kakao"></i>카카오 모먼트</strong>
-                        <dl class="percentage">
-                            <dt>수익률</dt>
-                            <dd>46.51</dd>
-                        </dl>
-                        <dl>
-                            <dt>수익</dt>
-                            <dd>953,458</dd>
-                        </dl>
-                    </div>
-                    <div class="detail row">
-                        <dl class="col">
-                            <dt>노출수</dt>
-                            <dd>34,456</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>클릭수</dt>
-                            <dd>809</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>클릭율</dt>
-                            <dd>1.09</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>지출액</dt>
-                            <dd>1,234,123</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>DB수</dt>
-                            <dd>61</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>DB당 단가</dt>
-                            <dd>45,234</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>전환율</dt>
-                            <dd>7.34</dd>
-                        </dl>
-                        <dl class="col">
-                            <dt>매출</dt>
-                            <dd>23,456,900</dd>
-                        </dl>
-                    </div>
-                </div>
-                <a href="#" class="btn-more"><span>더보기</span></a>
-            </div>
-            <div class="row">
+        
+
+            <!-- <div class="row">
                 <div class="type">
                     <div class="summary">
                         <strong><i class="google"></i>구글 애드워즈</strong>
@@ -210,7 +165,7 @@
                     </div>
                 </div>
                 <a href="#" class="btn-more btn-primary"><span>더보기</span></a>
-            </div>
+            </div> -->
         </div>
     </main>
 </div>

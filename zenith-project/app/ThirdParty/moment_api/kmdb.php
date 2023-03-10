@@ -2,7 +2,8 @@
 class KMDB
 {
     private $db, $db2, $zenith;
-
+    private $sltDB;
+    
     public function __construct()
     {
         $this->db = \Config\Database::connect('kakaoMoment');

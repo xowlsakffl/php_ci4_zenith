@@ -139,6 +139,12 @@ class FBDB extends Config
         return $result;
     }
 
+    public function getLeadgenAds() {
+        $sql = "SELECT * FROM fb_ad WHERE (leadgen_id IS NOT NULL AND leadgen_id <> '')";
+        $result = $this->db_query($sql);
+        return $result;
+    }
+
     public function getAdsByAdAccountId($from = null, $to = null)
     {
         if ($from != null) {
@@ -203,11 +209,7 @@ class FBDB extends Config
 
     public function insertAsyncInsights($data)
     {
-        $total = count($data);
-        $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고인사이트를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
-            CLI::showProgress($step++, $total);
             if (!$report['impressions']) $report['impressions'] = 0;
             if (!$report['clicks']) $report['clicks'] = 0;
             if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
@@ -306,11 +308,7 @@ class FBDB extends Config
     public function updateAdCreatives($data)
     {
         if (is_array($data) && count($data)) {
-            $total = count($data);
-            $step = 1;
-            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 소재를 저장합니다.", "light_red");
             foreach ($data as $row) {
-                CLI::showProgress($step++, $total);
                 $sql = "INSERT INTO fb_adcreative(
                             adcreative_id,
                             ad_id,
@@ -339,11 +337,12 @@ class FBDB extends Config
     public function updateAds($data)
     {
         $cnt = 0;
-        $total = count($data);
-        $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고를 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
-            CLI::showProgress($step++, $total);
+            $report['page'] = null;
+            $report['fb_pixel'] = null;
+            $report['post'] = null;
+            $created_time = null;
+            $updated_time = null;
             if (!empty($report['tracking_specs'])) {
                 foreach ($report['tracking_specs'] as $list) {
                     foreach ($list as $key => $data) {
@@ -383,18 +382,26 @@ class FBDB extends Config
                         ad_name,
                         effective_status,
                         status,
+                        fb_pixel,
+                        page_id,
                         adset_id,
                         use_landing,
                         leadgen_id,
+                        created_time,
+                        updated_time,
                         create_date
                     ) VALUES (
                         '{$report['id']}',
                         {$name},
                         '{$report['effective_status']}',
                         '{$report['status']}',
+                        '{$report['fb_pixel']}',
+                        '{$report['page']}',
                         '{$report['adset_id']}',
                         '{$use_landing}',
                         '{$report['leadgen']}',
+                        '{$created_time}',
+                        '{$updated_time}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
 						ad_name = {$name},
@@ -444,11 +451,7 @@ class FBDB extends Config
     public function updateAdsets($data)
     {
         $cnt = 0;
-        $total = count($data);
-        $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
-            CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
@@ -471,6 +474,12 @@ class FBDB extends Config
                         campaign_id,
                         effective_status,
                         status,
+                        start_time,
+                        lsi_conversions,
+                        lsi_status,
+                        lsi_last_sig_edit_ts,
+                        created_time,
+                        updated_time,
                         create_date
                     ) VALUES (
                         '{$report['id']}',
@@ -478,6 +487,12 @@ class FBDB extends Config
                         '{$report['campaign_id']}',
                         '{$report['effective_status']}',
                         '{$report['status']}',
+                        '{$start_time}',
+                        '{$report['learning_stage_info']['conversions']}',
+                        '{$report['learning_stage_info']['status']}',
+                        '{$lst_sig_edit_ts}',
+                        '{$created_time}',
+                        '{$updated_time}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
 						adset_name = {$name},
@@ -529,11 +544,7 @@ class FBDB extends Config
 
     public function updateCampaigns($data)
     {
-        $total = count($data);
-        $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인을 저장합니다.", "light_red");
         foreach ($data as $key => $report) {
-            CLI::showProgress($step++, $total);
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
@@ -559,6 +570,16 @@ class FBDB extends Config
                         account_id,
                         effective_status,
                         status,
+                        budget_type,
+                        budget,
+                        budget_remaining,
+                        budget_rebalance_flag,
+                        can_use_spend_cap,
+                        spend_cap,
+                        objective,
+                        start_time,
+                        created_time,
+                        updated_time,
                         create_date
                     ) VALUES (
                         '{$report['id']}',
@@ -566,6 +587,16 @@ class FBDB extends Config
                         '{$report['account_id']}',
                         '{$report['effective_status']}',
                         '{$report['status']}',
+                        '{$budget_type}',
+                        {$budget},
+                        {$report['budget_remaining']},
+                        {$budget_rebalance_flag},
+                        '{$can_use_spend_cap}',
+                        {$spend_cap},
+                        '{$report['objective']}',
+                        '{$start_time}',
+                        '{$created_time}',
+                        '{$updated_time}',
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
 						campaign_name = {$name},

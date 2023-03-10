@@ -2,7 +2,6 @@
 
 <?=$this->section('content');?>
 <!--html 쓰는곳-->
-
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>

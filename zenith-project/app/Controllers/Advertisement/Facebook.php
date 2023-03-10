@@ -46,28 +46,17 @@ class Facebook extends Controller
         $this->chainsaw->getAdLead($from, $to);
     }
 
-    // 잠재 고객 작성 정보 불러오기
-    public function getLeadgens($from = null, $to = null) {
-        CLI::clearScreen();
-        if($from == null)
-            $from = CLI::prompt("잠재고객 작성정보를 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
-        if($to == null)
-            $to = CLI::prompt("잠재고객 작성정보를 업데이트 할 종료날짜를 입력해주세요.", date('Y-m-d'));
-        // $run = CLI::prompt("잠재고객 작성정보를 업데이트 합니다.",["y","n"]);
-        // if($run != 'y') return false;
-
-        $this->chainsaw->getLeadgens($from, $to);
-    }
-    
     public function updateAll() {
         CLI::clearScreen();
         // $run = CLI::prompt("캠페인/광고그룹/광고를 업데이트 합니다.",["y","n"]);
         // if($run != 'y') return false;
         CLI::write("캠페인/광고그룹/광고를 업데이트 합니다.", "light_red");
-
+        $this->chainsaw->updateAllByAccount();
+        /*
         $getAds = $this->chainsaw->getAds();
         $updateAdsets = $this->chainsaw->updateAdsets($getAds);
         $updateCampaigns = $this->chainsaw->updateCampaigns($updateAdsets);
+        */
     }
 
     public function updateAds() {
