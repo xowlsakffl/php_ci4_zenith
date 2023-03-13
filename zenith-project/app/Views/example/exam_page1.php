@@ -53,7 +53,7 @@
                     </ul>
                 </div>
             </li>
-          </ul>
+        </ul>
         <div class="util-nav">
             <a href="#">마이페이지</a>
             <a href="#">로그아웃</a>
@@ -133,25 +133,29 @@
                 </div>
             </article>
             
-            <section class="container">
-                <div class="row">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-selected="true">캠페인</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-selected="false">광고세트</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-selected="false">광고</button>
-                        </li>
-                    </ul>
+            <section class="row">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-selected="true">캠페인</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-selected="false">광고세트</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-selected="false">광고</button>
+                    </li>
+                </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="home"  aria-labelledby="home-tab">캠페인</div>
-                        <div class="tab-pane" id="profile"  aria-labelledby="profile-tab">광고세트</div>
-                        <div class="tab-pane" id="messages"  aria-labelledby="messages-tab">광고</div>
+                <div class="tab-content">
+                    <div class="btn-tab d-flex">
+                        <a href="#" class="btn btn-outline-primary"><span>수동 업데이트</span></a>
+                        <a href="#" class="btn btn-outline-primary"><span>데이터 비교</span></a>
+                        <a href="#" class="btn btn-outline-primary"><span>메모확인</span></a>
                     </div>
+                    <div class="tab-pane active" id="home"  aria-labelledby="home-tab">캠페인</div>
+                    <div class="tab-pane" id="profile"  aria-labelledby="profile-tab">광고세트</div>
+                    <div class="tab-pane" id="messages"  aria-labelledby="messages-tab">광고</div>
+                </div>
             </section>
             <!-- <div class="row">
                 <div class="type">

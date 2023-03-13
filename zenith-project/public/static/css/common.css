@@ -451,7 +451,6 @@ a {
 }
 .ad-management .row {
   margin: 0;
-  border: 1px solid blue;
 }
 .ad-management .row:not(:first-child) {
   margin-top: 24px;
@@ -551,6 +550,7 @@ a {
 .ad-management .menu .title {
   display: flex;
   align-items: center;
+  padding: 0;
 }
 .ad-management .menu .btn-management {
   width: 143px;
@@ -594,6 +594,56 @@ a {
 }
 .ad-management .menu.advertiser .btn-management {
   width: 179px;
+}
+.ad-management ul.nav-tabs {
+  padding: 0 0;
+  margin-top: 24px;
+}
+.ad-management ul.nav-tabs li {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+.ad-management ul.nav-tabs li button.nav-link {
+  width: 100%;
+  padding: 15px 0;
+  color: #000;
+  background-color: #d7d7d7;
+  font-weight: normal;
+}
+.ad-management ul.nav-tabs li button.nav-link.active {
+  border-top: 3px solid #ce1922;
+  background-color: #fff !important;
+  font-weight: 900;
+}
+.ad-management ul.nav-tabs li:nth-child(odd) button.nav-link {
+  background-color: #b9b9b9;
+}
+.ad-management .tab-content {
+  padding: 20px 15px 60px;
+  background-color: #fff;
+}
+.ad-management .tab-content .btn-outline-primary {
+  margin-right: 7px;
+}
+.ad-management .tab-content .tab-pane {
+  padding: 40px 0;
+  margin-top: 24px;
+}
+.ad-management .btn-outline-primary {
+  color: #2d2e34;
+  border-color: #ce1922;
+  border-radius: 30px;
+  width: 120px;
+  font-size: 14px;
+}
+.ad-management .btn-outline-primary span {
+  width: 98%;
+  margin: 0 auto;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /*# sourceMappingURL=common.css.map */

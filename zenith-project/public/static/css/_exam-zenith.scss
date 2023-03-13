@@ -1,7 +1,8 @@
 @mixin text-overflow() {overflow: hidden; text-overflow:ellipsis; white-space:nowrap;}
+$btn-xsm:120px;
 $btn-sm:143px;
 $btn-lg:179px;
-
+$row-child:0;
 
 .ad-management{
 	.title{display:flex; align-items:baseline; text-align:left;
@@ -9,10 +10,10 @@ $btn-lg:179px;
         p{font-size:13px;}
 	}
 	
-    .row{margin:0; border:1px solid blue;}
+    .row{margin:0;}
     .row:not(:first-child){margin-top:24px;}
 
-    .type{flex:1;  border:1px solid #d1d1d1; border-radius:$radius $radius 0 0; background:#fff; padding:0;}
+    .type{flex:1;  border:1px solid #d1d1d1; border-radius:$radius $radius 0 0; background:#fff; padding:$row-child;}
 
     .search {
         .form-control{border-radius: 30px;
@@ -45,7 +46,7 @@ $btn-lg:179px;
     }
    
     .menu {
-        .title {display:flex; align-items: center;}
+        .title {display:flex; align-items: center; padding:$row-child;}
         .btn-management{width:$btn-sm; background-color: #fff;
             color: #d1d1d1;  border-radius: 5px; border: 1px solid #d1d1d1; padding: 8px 0; margin: 14px 5px;
             
@@ -60,5 +61,24 @@ $btn-lg:179px;
         &.advertiser {
             .btn-management {width:$btn-lg;}
         }
+    }
+
+    ul.nav-tabs {padding:0 0; margin-top:24px;
+        li {flex:1; padding:$row-child; margin:0;
+            button.nav-link{width:100%; padding:15px 0; color:#000; background-color: #d7d7d7; font-weight:normal;
+            &.active{border-top:3px solid $color-primary; background-color:#fff !important; font-weight: 900;}
+            }
+            &:nth-child(odd){
+                button.nav-link{background-color:#b9b9b9;}
+            } //if문 작성, 두번째가 선택 될때, 배경색 변경
+        }
+    }
+
+    .tab-content{padding:20px 15px 60px; background-color: #fff;
+        .btn-outline-primary{margin-right:7px;}
+        .tab-pane{padding:40px 0; margin-top:24px;}
+    }
+    .btn-outline-primary{color: #2d2e34; border-color:$color-primary; border-radius: 30px; width:$btn-xsm; font-size:14px;
+        span{width:98%; margin:0 auto; display: block; @include text-overflow();}
     }
 }
