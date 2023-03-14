@@ -47,10 +47,10 @@ class UserModel extends ShieldUserModel
         $builder = $this->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups, GROUP_CONCAT(DISTINCT apu.permission) as permission, c.companyType, c.companyName');
 
         $builder->from('users as u');
-        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id');
-        $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id');
-        $builder->join('companies_users as cu', 'u.id = cu.user_id');
-        $builder->join('companies as c', 'cu.company_id = c.cdx');
+        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'inner');
+        $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id', 'left');
+        $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
+        $builder->join('companies as c', 'cu.company_id = c.cdx', 'left');
         $builder->where('u.id', $id);
         $builder->groupBy('u.id');              
         $result = $builder->get()->getRow();

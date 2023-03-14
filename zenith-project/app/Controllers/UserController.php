@@ -50,9 +50,15 @@ class UserController extends ResourceController
             $data = $this->request->getRawInput();
 
             $builder = $this->companyUserModel;
-            $builder->where('user_id', $data['user_id'])
-            ->set(['company_id' => $data['company_id']])
-            ->update();
+            $count = $builder->where('user_id', $data['user_id'])->countAllResults();
+            
+            if($count > 0){
+                $builder->where('user_id', $data['user_id']);
+                $builder->set('company_id', $data['company_id']);
+                $builder->update();
+            }else{
+                $builder->insert($data);
+            }
 
             $ret = true;
         }else{

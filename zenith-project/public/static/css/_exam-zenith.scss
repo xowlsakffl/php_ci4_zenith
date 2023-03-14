@@ -63,7 +63,7 @@ $row-child:0;
         }
     }
 
-    ul.nav-tabs {padding:0 0; margin-top:24px;
+    ul.nav-tabs {padding:0 0; margin-top:24px; border-bottom:0px; --bs-nav-tabs-border-color:#d1d1d1;
         li {flex:1; padding:$row-child; margin:0;
             button.nav-link{width:100%; padding:15px 0; color:#000; background-color: #d7d7d7; font-weight:normal;
             &.active{border-top:3px solid $color-primary; background-color:#fff !important; font-weight: 900;}
@@ -74,7 +74,7 @@ $row-child:0;
         }
     }
 
-    .tab-content{padding:20px 15px 60px; background-color: #fff;
+    .tab-content{padding:20px 15px 60px; background-color: #fff; border:1px solid #d1d1d1; border-width:0 1px 1px 1px;
         .btn-outline-primary{margin-right:7px;}
         .tab-pane{padding:40px 0; margin-top:24px;}
     }

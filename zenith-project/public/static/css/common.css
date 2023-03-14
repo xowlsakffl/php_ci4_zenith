@@ -1,4 +1,5 @@
 /*css/common.css compile*/
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Lepcha&display=swap");
 body {
   background: #f7f7f7;
 }
@@ -598,6 +599,8 @@ a {
 .ad-management ul.nav-tabs {
   padding: 0 0;
   margin-top: 24px;
+  border-bottom: 0px;
+  --bs-nav-tabs-border-color:#d1d1d1;
 }
 .ad-management ul.nav-tabs li {
   flex: 1;
@@ -622,6 +625,8 @@ a {
 .ad-management .tab-content {
   padding: 20px 15px 60px;
   background-color: #fff;
+  border: 1px solid #d1d1d1;
+  border-width: 0 1px 1px 1px;
 }
 .ad-management .tab-content .btn-outline-primary {
   margin-right: 7px;
@@ -644,6 +649,72 @@ a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.account-container {
+  height: 100vh;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(339deg, rgba(24, 22, 19, 0.8) 0%, rgb(226, 148, 117) 100%, rgb(107, 82, 69) 50%);
+  font-family: "Noto Sans Lepcha", sans-serif;
+}
+.account-container .card {
+  --bs-card-bg: inherit;
+  border: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.account-container .card .card-body {
+  --bs-card-bg: inherit;
+}
+.account-container .card .card-body .card-title {
+  font-size: 3rem;
+  font-weight: 900;
+}
+.account-container form .form-control {
+  color: red;
+  background-color: rgba(107, 82, 69, 0.3);
+  border-color: transparent;
+  border-radius: 1.875rem;
+  padding: 1.25rem 1.25rem 1.25rem 3.75rem;
+  margin-bottom: 24px;
+}
+.account-container form .form-control::placeholder {
+  color: #fff;
+}
+.account-container form .form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(177, 155, 143, 0.8);
+}
+.account-container form i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 1.25rem;
+  font-size: 150%;
+}
+.account-container form .form-check {
+  text-align: left;
+  padding-left: 2rem;
+}
+.account-container form .forgot {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 5%;
+}
+.account-container .btn-primary {
+  background-color: transparent;
+  border-color: rgb(177, 155, 143);
+  border-radius: 1.875rem;
+  padding: 1.25rem;
+  width: 100%;
+}
+.account-container .btn-primary:active {
+  --bs-btn-active-bg:#fff;
+  border-color: transparent;
+  --bs-btn-active-color: rgb(107 82 69);
 }
 
 /*# sourceMappingURL=common.css.map */

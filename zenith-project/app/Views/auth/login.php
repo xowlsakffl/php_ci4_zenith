@@ -2,7 +2,7 @@
 
 <?= $this->section('title') ?><?= lang('Auth.login') ?> <?= $this->endSection() ?>
 
-<?= $this->section('main') ?>
+<?= $this->section('guestContent') ?>
     view login 페이지
     <div class="container d-flex justify-content-center p-5">
         <div class="card col-12 col-md-5 shadow-sm">
