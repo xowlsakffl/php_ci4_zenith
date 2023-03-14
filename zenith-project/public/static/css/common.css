@@ -660,6 +660,8 @@ a {
 }
 .account-container .card {
   --bs-card-bg: inherit;
+  width: 100%;
+  max-width: 505px;
   border: none;
   position: absolute;
   top: 50%;
@@ -674,7 +676,7 @@ a {
   font-weight: 900;
 }
 .account-container form .form-control {
-  color: red;
+  color: #fff;
   background-color: rgba(107, 82, 69, 0.3);
   border-color: transparent;
   border-radius: 1.875rem;
@@ -698,11 +700,18 @@ a {
   text-align: left;
   padding-left: 2rem;
 }
+.account-container form .form-check span {
+  display: inline-block;
+  vertical-align: sub;
+}
 .account-container form .forgot {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: 5%;
+}
+.account-container form a:hover, .account-container form a:active {
+  color: rgba(177, 155, 143, 0.8);
 }
 .account-container .btn-primary {
   background-color: transparent;

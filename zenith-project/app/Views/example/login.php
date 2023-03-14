@@ -5,7 +5,7 @@
 <?= $this->section('guestContent') ?>
 
     <div class="container-fluid account-container">
-        <div class="card col-12 col-md-5">
+        <div class="card col-10 col-md-5">
             <div class="card-body">
                 <h5 class="card-title mb-5"><?= lang('Auth.login') ?></h5>
             
