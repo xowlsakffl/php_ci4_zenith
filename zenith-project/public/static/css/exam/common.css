@@ -696,6 +696,9 @@ a {
   left: 1.25rem;
   font-size: 150%;
 }
+.account-container form i:hover {
+  box-shadow: 5px 5px 5px #fff;
+}
 .account-container form .form-check {
   text-align: left;
   padding-left: 2rem;
