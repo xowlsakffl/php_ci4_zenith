@@ -1,13 +1,12 @@
 <?= $this->extend(config('Auth')->views['layout']) ?>
 
-<?= $this->section('title') ?><?= lang('Auth.login') ?> <?= $this->endSection() ?>
+<?= $this->section('title') ?>로그인<?= $this->endSection() ?>
 
 <?= $this->section('guestContent') ?>
-    view login 페이지
     <div class="container d-flex justify-content-center p-5">
         <div class="card col-12 col-md-5 shadow-sm">
             <div class="card-body">
-                <h5 class="card-title mb-5"><?= lang('Auth.login') ?></h5>
+                <h5 class="card-title mb-5 text-center">로그인</h5>
 
                 <?php if (session('error') !== null) : ?>
                     <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
@@ -33,12 +32,12 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                        <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required />
+                        <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="로그인" value="<?= old('email') ?>" required />
                     </div>
 
                     <!-- Password -->
                     <div class="mb-2">
-                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required />
+                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="비밀번호" required />
                     </div>
 
                     <!-- Remember me -->
@@ -46,7 +45,7 @@
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')): ?> checked<?php endif ?>>
-                                <?= lang('Auth.rememberMe') ?>
+                                로그인 유지
                             </label>
                         </div>
                     <?php endif; ?>

@@ -103,7 +103,22 @@
             </div>
         </div>
         <h1 class="font-weight-bold">광고주, 광고대행사 관리</h1>
-        <div class="row">
+        <div class="row mb-2 flex justify-content-end">
+            <div class="col-5">
+                <label for="fromDate">시작날짜</label>
+                <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택" readonly="readonly">
+                <label for="toDate">종료날짜</label>
+                <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택" readonly="readonly">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col" id="allCount"></div>
+            <div class="col">
+                <select name="sort" id="sort" class="form-control">
+                    <option value="recent">최근순</option>
+                    <option value="old">오래된 순</option>
+                </select>
+            </div>
             <div class="col-3">
                 <select name="pageLimit" id="pageLimit" class="form-control">
                     <option value="10">10개</option>
@@ -111,9 +126,11 @@
                     <option value="100">100개</option>
                 </select>
             </div>
-            <div class="col-5">
+            <div class="col-3">
                 <input type="text" class="form-control" id="search" name="search" placeholder="검색">
             </div>
+        </div>
+        <div class="row">
             <table class="table" id="companies">
                 <thead class="table-dark">
                     <tr>
@@ -139,16 +156,18 @@
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
-<script src="/static/js/twbsPagination.js"></script>
 <script>
 $(document).ready(function(){
 
-getBoardList(1);
-function getBoardList(page, limit, search){
+getBoardList();
+function getBoardList(page, limit, search, sort, startDate, endDate){
     data = {
         'page': page ? page : 1,
         'limit': limit ? limit : 10,
         'search': search ? search : '',
+        'sort': sort ? sort : 'recent',
+        'startDate': startDate ? startDate : '',
+        'endDate': endDate ? endDate : '',
     };
     
     $.ajax({
@@ -160,6 +179,8 @@ function getBoardList(page, limit, search){
         success: function(xhr){
             setTable(xhr);       
             setPaging(xhr);
+            setAllCount(xhr);
+            setDate(xhr);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -168,6 +189,9 @@ function getBoardList(page, limit, search){
 }
 
 function setPaging(xhr){
+    if(xhr.pager.pageCount == 0){
+        xhr.pager.pageCount = 1;
+    }
     $('.pagination').twbsPagination('destroy');
     $('.pagination').twbsPagination({
         totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
@@ -189,7 +213,7 @@ function setPaging(xhr){
         
         onPageClick: function (event, page) {
             console.log(xhr.pager.limit);
-            getBoardList(page, xhr.pager.limit)
+            getBoardList(page, xhr.pager.limit, xhr.pager.search, xhr.pager.sort, xhr.pager.startDate, xhr.pager.endDate)
         }
     });
 }
@@ -205,17 +229,107 @@ function setTable(xhr){
         .appendTo('#companies'); 
     });
 }
+function setAllCount(xhr){
+    console.log(xhr.pager.total);
+    if(xhr.pager.total == 0){
+        $total = 0;
+    }else{
+        $total = xhr.pager.total;
+    }
+    $('#allCount').text("총 "+$total+"개");
+}
 
-//검색
-$('body').on('keyup', '#search', function(){
-    getBoardList(1, 10,$(this).val());
-})
+function setDate(xhr){
+    if($('#fromDate, #toDate').length){
+        var currentDate = moment().format("YYYY-MM-DD");
+        $('#fromDate, #toDate').daterangepicker({
+            locale: {
+                    "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                    "applyLabel": "확인",                    // 확인 버튼 텍스트
+                    "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                    "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                    "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+            },
+            "alwaysShowCalendars": true,                        // 시간 노출 여부
+            showDropdowns: true,                     // 년월 수동 설정 여부
+            autoApply: true,                         // 확인/취소 버튼 사용여부
+            maxDate: new Date(),
+            autoUpdateInput: false,
+            ranges: {
+                '오늘': [moment(), moment()],
+                '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                '지난 일주일': [moment().subtract(6, 'days'), moment()],
+                '지난 한달': [moment().subtract(29, 'days'), moment()],
+                '이번달': [moment().startOf('month'), moment().endOf('month')],
+            }
+        }, function(start, end, label) {
+            // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+            // Lets update the fields manually this event fires on selection of range
+            startDate = start.format('YYYY-MM-DD'); // selected start
+            endDate = end.format('YYYY-MM-DD'); // selected end
+
+            $checkinInput = $('#fromDate');
+            $checkoutInput = $('#toDate');
+
+            // Updating Fields with selected dates
+            $checkinInput.val(startDate);
+            $checkoutInput.val(endDate);
+
+            // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+            var checkOutPicker = $checkoutInput.data('daterangepicker');
+            checkOutPicker.setStartDate(startDate);
+            checkOutPicker.setEndDate(endDate);
+
+            // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+            var checkInPicker = $checkinInput.data('daterangepicker');
+            checkInPicker.setStartDate($checkinInput.val(startDate));
+            checkInPicker.setEndDate(endDate);
+            
+            getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
+        });
+    }
+}
 
 //페이지 게시글 갯수
 $('body').on('change', '#pageLimit', function(){
-    getBoardList(1, $(this).val());
+    getBoardList(
+        1, 
+        $(this).val(), 
+        $('#search').val(), 
+        $('#sort').val(),
+        $('#fromDate').val(),
+        $('#toDate').val(),
+    );
 })
 
+//검색
+$('body').on('keyup', '#search', function(){
+    getBoardList(
+        1, 
+        $('#pageLimit').val(), 
+        $(this).val(), 
+        $('#sort').val(),
+        $('#fromDate').val(),
+        $('#toDate').val(),
+    );
+})
+
+//분류
+$('body').on('change', '#sort', function(){
+    getBoardList(
+        1, 
+        $('#pageLimit').val(), 
+        $('#search').val(), 
+        $(this).val(),
+        $('#fromDate').val(),
+        $('#toDate').val(),
+    );
+})
+
+$('#dateRange').on('cancel.daterangepicker', function (ev, picker) {
+    $(this).val('');
+    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val());
+});
 
 //글쓰기 버튼
 $('body').on('click', '#companyNewBtn', function(){
@@ -243,7 +357,7 @@ $('body').on('click', '#companyInsertBtn', function(){
             $('#modalWrite').modal('hide');
             $('#modalWrite').find('input').val('');  
             $('#modalWrite #frm span').text('');  
-            getBoardList(1);
+            getBoardList();
             console.log(response);
         },
         error: function(error){
@@ -324,7 +438,7 @@ $('body').on('click', '#companyUpdateBtn', function(){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
             $('#modalUpdate #frm span').text(''); 
-            getBoardList(1);
+            getBoardList();
             console.log(response);
         },
         error: function(error){

@@ -61,7 +61,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
         $routes->delete('(:num)', 'Api\ApiBoardController::$1');
     });   
 
-    $routes->get('boards-list', 'BoardController::index');
+    $routes->get('board/list', 'BoardController::index');
 
     // 소속
     $routes->group('companies', static function($routes){     
@@ -72,7 +72,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
         $routes->delete('(:num)', 'Api\ApiCompanyController::$1');
     });   
 
-    $routes->get('companies-list', 'CompanyController::index');
+    $routes->get('company/list', 'CompanyController::index');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');

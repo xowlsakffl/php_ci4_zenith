@@ -22,7 +22,7 @@ class ApiCompanyController extends \CodeIgniter\Controller
             } else {
                 $param = $this->request->getGet();
 
-                $builder = $this->company;
+                $builder = $this->company->select('*');
 
                 if(isset($param['limit'])){
                     $limit = $param['limit'];
@@ -30,16 +30,35 @@ class ApiCompanyController extends \CodeIgniter\Controller
                     $limit = 10;
                 }
 
-                if(isset($param['search'])){
+                if(!empty($param['search'])){
                     $searchText = $param['search'];
-                    $builder = $builder->select('*')
-                    ->orLike('companyType', $searchText)
-                    ->orLike('companyName', $searchText)
-                    ->orLike('companyTel', $searchText);
+                    $builder->groupStart();
+                        $builder->orlike('companyType', $searchText, 'both');
+                        $builder->orLike('companyName', $searchText, 'both');
+                        $builder->orLike('companyTel', $searchText, 'both');
+                    $builder->groupEnd();
+                    $data['pager']['search'] = $param['search'];
+                }
+    
+                if(!empty($param['startDate']) && !empty($param['endDate'])){
+                    $builder->where('created_at >=', $param['startDate'].' 00:00:00');
+                    $builder->where('created_at <=', $param['endDate'].' 23:59:59');
+                    
+                    $data['pager']['startDate'] = $param['startDate'];
+                    $data['pager']['endDate'] = $param['endDate'];
                 }
 
-                
-                $data['result'] = $builder->orderBy('cdx', 'desc')->paginate($limit);
+                if(!empty($param['sort'])){
+                    if($param['sort'] == 'old'){
+                        $builder->orderBy('created_at', 'asc');
+                    }else{
+                        $builder->orderBy('created_at', 'desc');
+                    }
+                    
+                    $data['pager']['sort'] = $param['sort'];
+                }
+
+                $data['result'] = $builder->paginate($limit);
 
                 $data['pager']['limit'] = intval($limit);
                 $data['pager']['total'] = $builder->pager->getTotal();
