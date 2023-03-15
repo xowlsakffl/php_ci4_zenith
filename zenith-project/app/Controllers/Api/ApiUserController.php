@@ -22,6 +22,13 @@ class ApiUserController extends \CodeIgniter\Controller
                 $data['result'] = $this->userModel->getUser($id);
                 $data['result']->groups = explode(',', $data['result']->groups);
                 $data['result']->permission = explode(',', $data['result']->permission);
+
+                $new_arr = array_map(function($value) {
+                    if($value == 'superadmin'){
+                        str_replace('superadmin', '최고관리자', $value);
+                    };
+                    //return str_replace('banana', 'kiwi', $value);
+                }, $data['result']->groups);
             } else {
                 $param = $this->request->getGet();
 
