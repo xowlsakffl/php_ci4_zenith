@@ -506,15 +506,6 @@ a {
   margin: 0 6px 0 0;
   vertical-align: top;
 }
-.ad-management .summary .facebook {
-  background: url("/img/ico_facebook.png") no-repeat center 0;
-}
-.ad-management .summary .kakao {
-  background: url("/img/ico_kakao.png") no-repeat center 0;
-}
-.ad-management .summary .google {
-  background: url("/img/ico_google.png") no-repeat center 0;
-}
 .ad-management .summary dl {
   display: flex;
   align-items: center;
@@ -689,19 +680,33 @@ a {
 .account-container form .form-control:focus {
   box-shadow: 0 0 0 0.25rem rgba(177, 155, 143, 0.8);
 }
-.account-container form i {
+.account-container form > div {
+  transform: translateY(50%);
+  visibility: hidden;
+  transition: all linear 0.3s;
+  transition: all linear 0.5s;
+}
+.account-container form > div.effect {
+  transform: translateY(0%);
+  visibility: visible;
+}
+.account-container form > div i {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   left: 1.25rem;
   font-size: 150%;
 }
-.account-container form i:hover {
-  box-shadow: 5px 5px 5px #fff;
-}
 .account-container form .form-check {
   text-align: left;
   padding-left: 2rem;
+  transform: translateY(50%);
+  visibility: hidden;
+  transition: all linear 0.3s;
+}
+.account-container form .form-check.effect {
+  transform: translateY(0%);
+  visibility: visible;
 }
 .account-container form .form-check span {
   display: inline-block;
@@ -712,6 +717,9 @@ a {
   top: 50%;
   transform: translateY(-50%);
   right: 5%;
+}
+.account-container form .forgot:hover {
+  animation: flash 2s infinite;
 }
 .account-container form a:hover, .account-container form a:active {
   color: rgba(177, 155, 143, 0.8);
@@ -727,6 +735,30 @@ a {
   --bs-btn-active-bg:#fff;
   border-color: transparent;
   --bs-btn-active-color: rgb(107 82 69);
+}
+.account-container .text-start {
+  position: relative;
+  transform: translateY(50%);
+  visibility: hidden;
+  transition: all linear 0.3s;
+}
+.account-container .text-start.effect {
+  transform: translateY(0%);
+  visibility: visible;
+}
+@media (max-width: 500px) {
+  .account-container .text-start {
+    color: green;
+  }
+}
+
+@keyframes flash {
+  0%, 20%, 40%, to {
+    opacity: 1;
+  }
+  10%, 30% {
+    opacity: 0;
+  }
 }
 
 /*# sourceMappingURL=common.css.map */

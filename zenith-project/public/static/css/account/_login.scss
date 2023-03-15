@@ -5,6 +5,32 @@ $icon-pd:3.75rem; //60px
 $boder-radius:1.875rem; //30px
 $theme-color: rgb(177 155 143/80%);
 
+$breakpoint-desktop:1920px;
+$breakpoint-lg-mobile:500px;
+$breakpoint-md-mobile:415px;
+$breakpoint-sm-mobile:300px;
+
+@mixin mobile-500{
+    @media (max-width : #{$breakpoint-lg-mobile}){
+        @content;
+    }
+}
+@mixin mobile-415{
+    @media (max-width : #{$breakpoint-md-mobile}){
+        @content;
+    }
+}
+@mixin mobile-375{
+    @media (max-width : #{$breakpoint-sm-mobile}){
+        @content;
+    }
+}
+
+
+@mixin effect($second:0.3s) {
+    transform: translateY(50%); visibility:hidden; transition: all linear $second;
+    &.effect{transform: translateY(0%); visibility:visible;}
+}
 .account-container{height: 100vh; text-align: center; color:#fff; background: linear-gradient(339deg, rgba(24, 22, 19,0.8) 0%, rgb(226, 148, 117) 100%, rgb(107,82,69) 50%); font-family: 'Noto Sans Lepcha', sans-serif;
 
     .card{--bs-card-bg: inherit; width:100%; max-width:505px; border:none; position: absolute; top:50%; left:50%; transform: translate(-50%,-50%);
@@ -18,13 +44,16 @@ $theme-color: rgb(177 155 143/80%);
             &::placeholder{color:#fff;}
             &:focus{box-shadow:0 0 0 0.25rem $theme-color;}
         }
-        i{position: absolute; top:50%; transform: translateY(-50%); left:$input-pd; font-size: 150%;
-            &:hover{box-shadow: 5px 5px 5px #fff;}
+        > div{@include effect; transition:all linear 0.5s;           
+            i{position: absolute; top:50%; transform: translateY(-50%); left:$input-pd; font-size: 150%;}            
         }
-        .form-check{text-align:left; padding-left: 2rem;
+    
+        .form-check{text-align:left; padding-left: 2rem; @include effect;    
             span{display: inline-block; vertical-align: sub;}
         }
-        .forgot{position: absolute; top:50%; transform: translateY(-50%); right:5%;}
+        .forgot{position: absolute; top:50%; transform: translateY(-50%); right:5%;
+            &:hover{animation: flash 2s infinite;}
+        }
 
         a:hover,a:active{color:$theme-color;}
     }    
@@ -32,6 +61,11 @@ $theme-color: rgb(177 155 143/80%);
     .btn-primary{background-color:transparent; border-color:rgb(177 155 143); border-radius: $boder-radius; padding:$input-pd; width:100%;
         &:active{--bs-btn-active-bg:#fff; border-color:transparent;  --bs-btn-active-color: rgb(107 82 69);}   
     }
+    .text-start{position: relative; @include effect;
+        @include mobile-500{color:green;}}
     
 }
 
+@keyframes flash { //text 깜빡임
+    0%, 20%, 40%, to { opacity: 1; } 10%, 30% { opacity: 0; } 
+}

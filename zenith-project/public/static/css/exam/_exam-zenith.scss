@@ -23,15 +23,11 @@ $row-child:0;
     .btn-more{display:flex; align-items:center; justify-content:center; width:143px; color:#fff; border-radius:$radius; background:$color-dark;
         span{padding:30px 0 0; @include bg('ico_arrow.png', center, 0);}
     }
-    // .btn-primary{background:$color-primary;}
 
     .summary{display:flex; margin:0 0 24px; padding:35px 48px 0;
-
         strong{min-width:210px; margin:0 45px 0 0; font-size:28px; font-weight:600; font-variation-settings:"wght" 600;}
         i{display:inline-block; width:28px; height:28px; margin:0 6px 0 0; vertical-align:top;}
-        .facebook{@include bg('ico_facebook.png', center, 0);}
-        .kakao{@include bg('ico_kakao.png', center, 0);}
-        .google{@include bg('ico_google.png', center, 0);}
+    
         dl{display:flex; align-items:center; margin:0 45px 0 0;}
         dt{margin:0 6px 0 0; font-size:16px;}
         dd{font-size:28px; font-weight:600; font-variation-settings:"wght" 600;}
@@ -44,7 +40,7 @@ $row-child:0;
         dl{box-sizing:border-box; margin:0 22px 0 0; padding:7px 10px; text-align:center; }
         dd{margin:8px 0 0; color:#929292;}
     }
-   
+
     .menu {
         .title {display:flex; align-items: center; padding:$row-child;}
         .btn-management{width:$btn-sm; background-color: #fff;
