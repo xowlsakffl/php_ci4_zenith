@@ -13,54 +13,54 @@ require_once __DIR__ . '/google-ads-php/vendor/autoload.php';
 use CodeIgniter\CLI\CLI;
 use GetOpt\GetOpt;
 use Google\Ads\GoogleAds\Util\FieldMasks;
-use Google\Ads\GoogleAds\Util\V12\ResourceNames;
+use Google\Ads\GoogleAds\Util\V13\ResourceNames;
 use Google\Ads\GoogleAds\Examples\Utils\ArgumentNames;
 use Google\Ads\GoogleAds\Examples\Utils\ArgumentParser;
 use Google\Ads\GoogleAds\Examples\Utils\Helper;
 use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
-use Google\Ads\GoogleAds\Lib\V12\GoogleAdsClient;
-use Google\Ads\GoogleAds\Lib\V12\GoogleAdsClientBuilder;
-use Google\Ads\GoogleAds\Lib\V12\GoogleAdsException;
-use Google\Ads\GoogleAds\Lib\V12\GoogleAdsServerStreamDecorator;
-use Google\Ads\GoogleAds\V12\Errors\GoogleAdsError;
-use Google\Ads\GoogleAds\V12\Resources\CustomerClient;
-use Google\Ads\GoogleAds\V12\Resources\BiddingStrategy;
-use Google\Ads\GoogleAds\V12\Resources\ChangeEvent;
-use Google\Ads\GoogleAds\V12\Services\CampaignService;
-use Google\Ads\GoogleAds\V12\Services\AdGroupAdService;
-use Google\Ads\GoogleAds\V12\Services\CustomerServiceClient;
-use Google\Ads\GoogleAds\V12\Services\GoogleAdsRow;
-use Google\Ads\GoogleAds\V12\Services\FrequencyCap;
+use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClient;
+use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClientBuilder;
+use Google\Ads\GoogleAds\Lib\V13\GoogleAdsException;
+use Google\Ads\GoogleAds\Lib\V13\GoogleAdsServerStreamDecorator;
+use Google\Ads\GoogleAds\V13\Errors\GoogleAdsError;
+use Google\Ads\GoogleAds\V13\Resources\CustomerClient;
+use Google\Ads\GoogleAds\V13\Resources\BiddingStrategy;
+use Google\Ads\GoogleAds\V13\Resources\ChangeEvent;
+use Google\Ads\GoogleAds\V13\Services\CampaignService;
+use Google\Ads\GoogleAds\V13\Services\AdGroupAdService;
+use Google\Ads\GoogleAds\V13\Services\CustomerServiceClient;
+use Google\Ads\GoogleAds\V13\Services\GoogleAdsRow;
+use Google\Ads\GoogleAds\V13\Services\FrequencyCap;
 use Google\ApiCore\ApiException;
-use Google\Ads\GoogleAds\V12\Common\AdTextAsset;
-use Google\Ads\GoogleAds\V12\Common\AdImageAsset;
-use Google\Ads\GoogleAds\V12\Common\AdVideoAsset;
-use Google\Ads\GoogleAds\V12\Enums\AccountBudgetStatusEnum\AccountBudgetStatus;
-use Google\Ads\GoogleAds\V12\Enums\SpendingLimitTypeEnum\SpendingLimitType;
-use Google\Ads\GoogleAds\V12\Enums\TimeTypeEnum\TimeType;
-use Google\Ads\GoogleAds\V12\Enums\CampaignStatusEnum\CampaignStatus;
-use Google\Ads\GoogleAds\V12\Enums\CampaignServingStatusEnum\CampaignServingStatus;
-use Google\Ads\GoogleAds\V12\Enums\AdGroupStatusEnum\AdGroupStatus;
-use Google\Ads\GoogleAds\V12\Enums\AdGroupTypeEnum\AdGroupType;
-use Google\Ads\GoogleAds\V12\Enums\AdvertisingChannelTypeEnum\AdvertisingChannelType;
-use Google\Ads\GoogleAds\V12\Enums\AdvertisingChannelSubTypeEnum\AdvertisingChannelSubType;
-use Google\Ads\GoogleAds\V12\Enums\AdServingOptimizationStatusEnum\AdServingOptimizationStatus;
-use Google\Ads\GoogleAds\V12\Enums\AdGroupAdStatusEnum\AdGroupAdStatus;
-use Google\Ads\GoogleAds\V12\Enums\PolicyReviewStatusEnum\PolicyReviewStatus;
-use Google\Ads\GoogleAds\V12\Enums\PolicyApprovalStatusEnum\PolicyApprovalStatus;
-use Google\Ads\GoogleAds\V12\Enums\ServedAssetFieldTypeEnum\ServedAssetFieldType;
-use Google\Ads\GoogleAds\V12\Enums\AdTypeEnum\AdType;
-use Google\Ads\GoogleAds\V12\Enums\BiddingStrategyTypeEnum\BiddingStrategyType;
-use Google\Ads\GoogleAds\V12\Enums\BudgetStatusEnum\BudgetStatus;
-use Google\Ads\GoogleAds\V12\Enums\BudgetDeliveryMethodEnum\BudgetDeliveryMethod;
-use Google\Ads\GoogleAds\V12\Enums\CustomerStatusEnum\CustomerStatus;
-use Google\Ads\GoogleAds\V12\Enums\MimeTypeEnum\MimeType;
-use Google\Ads\GoogleAds\V12\Enums\ChangeEventResourceTypeEnum\ChangeEventResourceType;
-use Google\Ads\GoogleAds\V12\Enums\ChangeClientTypeEnum\ChangeClientType;
-use Google\Ads\GoogleAds\V12\Enums\AssetTypeEnum\AssetType;
-use Google\Ads\GoogleAds\V12\Enums\ResourceChangeOperationEnum\ResourceChangeOperation;
-use Google\Ads\GoogleAds\V12\Resources\Campaign;
-use Google\Ads\GoogleAds\V12\Services\CampaignOperation;
+use Google\Ads\GoogleAds\V13\Common\AdTextAsset;
+use Google\Ads\GoogleAds\V13\Common\AdImageAsset;
+use Google\Ads\GoogleAds\V13\Common\AdVideoAsset;
+use Google\Ads\GoogleAds\V13\Enums\AccountBudgetStatusEnum\AccountBudgetStatus;
+use Google\Ads\GoogleAds\V13\Enums\SpendingLimitTypeEnum\SpendingLimitType;
+use Google\Ads\GoogleAds\V13\Enums\TimeTypeEnum\TimeType;
+use Google\Ads\GoogleAds\V13\Enums\CampaignStatusEnum\CampaignStatus;
+use Google\Ads\GoogleAds\V13\Enums\CampaignServingStatusEnum\CampaignServingStatus;
+use Google\Ads\GoogleAds\V13\Enums\AdGroupStatusEnum\AdGroupStatus;
+use Google\Ads\GoogleAds\V13\Enums\AdGroupTypeEnum\AdGroupType;
+use Google\Ads\GoogleAds\V13\Enums\AdvertisingChannelTypeEnum\AdvertisingChannelType;
+use Google\Ads\GoogleAds\V13\Enums\AdvertisingChannelSubTypeEnum\AdvertisingChannelSubType;
+use Google\Ads\GoogleAds\V13\Enums\AdServingOptimizationStatusEnum\AdServingOptimizationStatus;
+use Google\Ads\GoogleAds\V13\Enums\AdGroupAdStatusEnum\AdGroupAdStatus;
+use Google\Ads\GoogleAds\V13\Enums\PolicyReviewStatusEnum\PolicyReviewStatus;
+use Google\Ads\GoogleAds\V13\Enums\PolicyApprovalStatusEnum\PolicyApprovalStatus;
+use Google\Ads\GoogleAds\V13\Enums\ServedAssetFieldTypeEnum\ServedAssetFieldType;
+use Google\Ads\GoogleAds\V13\Enums\AdTypeEnum\AdType;
+use Google\Ads\GoogleAds\V13\Enums\BiddingStrategyTypeEnum\BiddingStrategyType;
+use Google\Ads\GoogleAds\V13\Enums\BudgetStatusEnum\BudgetStatus;
+use Google\Ads\GoogleAds\V13\Enums\BudgetDeliveryMethodEnum\BudgetDeliveryMethod;
+use Google\Ads\GoogleAds\V13\Enums\CustomerStatusEnum\CustomerStatus;
+use Google\Ads\GoogleAds\V13\Enums\MimeTypeEnum\MimeType;
+use Google\Ads\GoogleAds\V13\Enums\ChangeEventResourceTypeEnum\ChangeEventResourceType;
+use Google\Ads\GoogleAds\V13\Enums\ChangeClientTypeEnum\ChangeClientType;
+use Google\Ads\GoogleAds\V13\Enums\AssetTypeEnum\AssetType;
+use Google\Ads\GoogleAds\V13\Enums\ResourceChangeOperationEnum\ResourceChangeOperation;
+use Google\Ads\GoogleAds\V13\Resources\Campaign;
+use Google\Ads\GoogleAds\V13\Services\CampaignOperation;
 
 class GoogleAds
 {
@@ -323,15 +323,27 @@ class GoogleAds
             $c = $googleAdsRow->getCampaign();
             //$bid = BiddingStrategy $googleAdsRow->getBiddingStrategy();
             $data = [
-                'campaignId' => $c->getId(), 'id' => $g->getId(), 'name' => $g->getName(), 'status' => AdGroupStatus::name($g->getStatus()), 'adGroupType' => AdGroupType::name($g->getType())
+                'campaignId' => $c->getId(), 
+                'id' => $g->getId(), 
+                'name' => $g->getName(), 
+                'status' => AdGroupStatus::name($g->getStatus()), 
+                'adGroupType' => AdGroupType::name($g->getType()),
                 //,'biddingStrategyType' => BiddingStrategyType::name($c->getBiddingStrategy())
-                , 'biddingStrategyType' => $c->getCampaignBiddingStrategy(), 'cpcBidAmount' => $g->getCpcBidMicros()
+                'biddingStrategyType' => $c->getCampaignBiddingStrategy(), 
+                'cpcBidAmount' => $g->getCpcBidMicros(),
                 //,'cpcBidSource' => $bid->getEffectiveCpcBidSource()
-                , 'cpmBidAmount' => $g->getCpmBidMicros()
+                'cpmBidAmount' => $g->getCpmBidMicros(),
                 //,'cpmBidSource' => $bid->getEffectiveCpmBidSource()
                 // ,'cpaBidAmount' => $g->getCpaBidAmount()
                 // ,'cpaBidSource' => $g->getCpaBidSource()
             ];
+
+            $data['biddingStrategyType'] = $data['biddingStrategyType'] ? $data['biddingStrategyType'] : '';
+            $data['cpcBidSource'] = $data['cpcBidSource'] ? $data['cpcBidSource'] : '';
+            $data['cpmBidSource'] = $data['cpmBidSource'] ? $data['cpmBidSource'] : '';
+            $data['cpaBidAmount'] = $data['cpaBidAmount'] ? $data['cpaBidAmount'] : '';
+            $data['cpaBidSource'] = $data['cpaBidSource'] ? $data['cpaBidSource'] : '';
+            
             if ($this->db->updateAdGroup($data))
                 $result[] = $data;
         }
@@ -345,7 +357,7 @@ class GoogleAds
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
         if ($date == null)
             $date = date('Y-m-d');
-        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
+        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.iㄹmage_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
         if ($adGroupId !== null) {
             $query .= " AND ad_group.id = $adGroupId";
         }
@@ -389,10 +401,32 @@ class GoogleAds
                 //print_r($url);
                 //echo '<br>';
             }
-            //var_dump(PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus())); exit;
+            //var_dump(PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus())); exit
+            
+            $status = AdGroupAdStatus::name($d->getStatus());    
+            $reviewStatus = PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus());
+            $approvalStatus = PolicyApprovalStatus::name($d->getPolicySummary()->getApprovalStatus());
+
             $data = [
-                'adgroupId' => $g->getId(), 'id' => $d->getAd()->getId(), 'name' => $d->getAd()->getName(), 'status' => AdGroupAdStatus::name($d->getStatus()), 'reviewStatus' => PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus()), 'approvalStatus' => PolicyApprovalStatus::name($d->getPolicySummary()->getApprovalStatus()), 'code' => "", 'adType' => $adType, 'mediaType' => $imgType, 'imageUrl' => $imgUrl, 'assets' => $assets, 'finalUrl' => $finalUrl, 'date' => $date, 'clicks' => $metric->getClicks(), 'impressions' => $metric->getImpressions(), 'cost' => round($metric->getCostMicros() / 1000000)
+                'adgroupId' => $g->getId(), 
+                'id' => $d->getAd()->getId() ? $d->getAd()->getId() : "", 
+                'name' => $d->getAd()->getName() ? $d->getAd()->getName() : "", 
+                'status' => $status ? $status : "", 
+                'reviewStatus' => $reviewStatus ? $reviewStatus : "", 
+                'approvalStatus' => $approvalStatus ? $approvalStatus : "", 
+                'code' => "", 
+                'adType' => $adType ? $adType : "", 
+                'mediaType' => $imgType ? $imgType : "",
+                'imageUrl' => $imgUrl ? $imgUrl : "",
+                'assets' => $assets ? $assets : "",
+                'finalUrl' => $finalUrl ? $finalUrl : "", 
+                'date' => $date ? $date : "",
+                'clicks' => $metric->getClicks() ? $metric->getClicks() : "", 
+                'impressions' => $metric->getImpressions(), 
+                'cost' => round($metric->getCostMicros() / 1000000)
             ];
+
+
             //echo '<pre>'.print_r($data,1).'</pre>';
             if ($this->db->updateAd($data))
                 $result[] = $data;
@@ -439,6 +473,12 @@ class GoogleAds
                 ];
             }
             $data = array_merge($data, $tData);
+
+            $data['name'] = $data['name'] ? $data['name'] : '';
+            $data['type'] = $data['type'] ? $data['type'] : '';
+            $data['video_id'] = $data['video_id'] ? $data['video_id'] : '';
+            $data['url'] = $data['url'] ? $data['url'] : '';
+
             if ($this->db->updateAsset($data))
                 $result[] = $data;
         }
@@ -448,28 +488,29 @@ class GoogleAds
     public function getAll($date = null)
     {
         $this->getAccounts();
-        echo date('[H:i:s]') . " - 계정 업데이트 완료" . PHP_EOL;
         ob_flush();
         flush();
         usleep(1);
         $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
         $step = 1;
         $total = $accounts->getNumRows();
-        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."계정 데이터 업데이트를 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
-            echo date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ";
-            $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
-            if ($account['status'] != 'ENABLED') {
+            //echo date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ";
+            //$this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
+            /* if ($account['status'] != 'ENABLED') {
                 echo $account['status'] . ' 업데이트 미진행' . PHP_EOL;
                 continue;
-            }
-            $assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
-            $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
-            if (count($campaigns)) {
-                $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
+            } */
+            //$assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
+            
+            //$campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
+
+            //if (count($campaigns)) {
+                //$adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
-            }
+            //}
             //echo '<pre>'.print_r($campaigns,1).'</pre>';
             //echo '<pre>'.str_repeat('-', 2).print_r($adGroups,1).'</pre>';
             //echo '<pre>'.str_repeat('-', 4).print_r($ads,1).'</pre>';
@@ -483,8 +524,6 @@ class GoogleAds
 				}
 			}
 			*/
-            echo ' 업데이트 완료';
-            echo PHP_EOL;
             ob_flush();
             flush();
             usleep(1);

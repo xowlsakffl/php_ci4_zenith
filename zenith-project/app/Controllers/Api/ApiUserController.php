@@ -19,16 +19,21 @@ class ApiUserController extends \CodeIgniter\Controller
     public function get($id = NULL) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data['result'] = $this->userModel->getUser($id);
-                $data['result']->groups = explode(',', $data['result']->groups);
+                $data['result'] = $this->userModel->getUser($id);       
                 $data['result']->permission = explode(',', $data['result']->permission);
 
-                $new_arr = array_map(function($value) {
-                    if($value == 'superadmin'){
-                        str_replace('superadmin', '최고관리자', $value);
-                    };
-                    //return str_replace('banana', 'kiwi', $value);
-                }, $data['result']->groups);
+                $groups = explode(',', $data['result']->groups);
+
+                $data['result']->groups = array_map(function($value) {
+                    $value = str_replace('superadmin', '최고관리자', $value);
+                    $value = str_replace('admin', '관리자', $value);
+                    $value = str_replace('developer', '개발자', $value);
+                    $value = str_replace('user', '사용자', $value);
+                    $value = str_replace('agency', '광고대행사', $value);
+                    $value = str_replace('advertiser', '광고주', $value);
+                    $value = str_replace('guest', '게스트', $value);
+                    return $value;
+                }, $groups);
             } else {
                 $param = $this->request->getGet();
 
