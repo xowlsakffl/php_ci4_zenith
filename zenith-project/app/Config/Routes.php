@@ -73,6 +73,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
     });   
 
     $routes->get('company/list', 'CompanyController::index');
+
+    $routes->get('advertisements/facebook', 'AdvertisementController::facebook');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
