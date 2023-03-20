@@ -8,7 +8,7 @@ ini_set('soap.wsdl_cache_enabled', 0);
 ini_set('soap.wsdl_cache_ttl', 0);
 
 require_once __DIR__ . '/adsdb.php';
-require_once __DIR__ . '/google-ads-php/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use CodeIgniter\CLI\CLI;
 use GetOpt\GetOpt;
