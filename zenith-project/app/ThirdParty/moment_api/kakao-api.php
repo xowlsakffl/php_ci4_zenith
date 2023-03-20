@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/kmdb.php';
+require_once __DIR__ . '/kakao-db.php';
 set_time_limit(0);
 ini_set('memory_limit', '-1');
 
@@ -138,10 +138,11 @@ class ChainsawKM
     { //전체 광고계정 업데이트
         $adAccountList = $this->getAdAccountList();
         $i = 0;
+        $step = 1;
         $total = count($adAccountList['content']); 
-        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고계정 수신을 시작합니다.", "light_red");
         foreach ($adAccountList['content'] as $row) {
-            CLI::showProgress($i, $total);
+            CLI::showProgress($step++, $total);
             $data[$i] = $this->getAdAccount($row['id']);
             $data[$i]['memberType'] = $row['memberType'];
             $i++;
@@ -242,13 +243,15 @@ class ChainsawKM
     public function updateCampaigns()
     { //전체 캠페인 업데이트
         $accounts = $this->db->getAdAccounts();
-        $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 캠페인 수신을 시작합니다.", "light_red");
+        $total = $accounts->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 계정의 캠페인 수신을 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             $campaignList = $this->getCampaigns($account['id']);
             if (count($campaignList['content']) > 0) {
-                $i = 0;
+                $step = 1;
                 $total = count($campaignList['content']);
+                $i = 0;
+                CLI::write("[".date("Y-m-d H:i:s")."]"."{$account['name']} 계정의 캠페인 수신을 시작합니다.", "light_red");
                 foreach ($campaignList['content'] as $row) {
                     CLI::showProgress($step++, $total);
                     if ($row['id'] && $row['config'] != 'DEL') {
@@ -260,7 +263,7 @@ class ChainsawKM
                             continue;
                             //echo "{$account['id']} - 캠페인({$row['id']}) : 삭제" . PHP_EOL;
                         }
-                        $data[$account['id']][$i]['type'] = $row['type'];
+                        if(isset($row['type'])) $data[$account['id']][$i]['type'] = $row['type'];
                         $i++;
                     } else if ($row['config'] == 'DEL') {
                         $delete = ['id' => $row['id'], 'config' => 'DEL'];
@@ -466,39 +469,66 @@ class ChainsawKM
     public function updateAdGroups()
     { //전체 광고그룹 업데이트
         $campaigns = $this->db->getCampaigns(["ON", "OFF"]);
+        $total = $campaigns->getNumRows();
         $step = 1;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."광고그룹 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 캠페인의 광고그룹 수신을 시작합니다.", "light_red");
+        $result = [];
         foreach ($campaigns->getResultArray() as $campaign) {
+            CLI::showProgress($step++, $total);
             //echo "{$campaign['id']}<br>";
             $adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
-            if (count($adGroupList['content']) > 0) {
+            if (isset($adGroupList['content']) && count($adGroupList['content'])) {
                 $i = 0;
-                $total = count($adGroupList['content']);
+                // $groupStep = 1;
+                // $groupTotal = count($adGroupList['content']);
+                // CLI::write("[".date("Y-m-d H:i:s")."]"."{$campaign['name']} 캠페인의 {$groupTotal}개 광고그룹을 수신중입니다.", "light_red");
+                // CLI::newLine();
+                $data = [];
                 foreach ($adGroupList['content'] as $row) {
-                    CLI::showProgress($step++, $total);
+                    // CLI::showProgress($groupStep++, $groupTotal);
                     if ($row['id'] && $row['config'] != 'DEL') { //echo $row['id'].'<br>';
                         $adgroup = $this->getAdGroup($row['id']);
                         $data[$campaign['id']][$i] = $adgroup;
                         if (isset($adgroup['extras']) && $adgroup['extras']['detailCode'] == '32026') {
                             $delete = ['id' => $row['id'], 'config' => 'DEL'];
                             $this->db->setAdgroup($delete);
+                            // CLI::write("[".date("Y-m-d H:i:s")."] {$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제");
+                            // CLI::newLine();
                             continue;
                             //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                         }
-                        $data[$campaign['id']][$i]['type'] = @$row['type'];
+                        if(!isset($row['totalBudget']))
+                            $data[$campaign['id']][$i]['totalBudget'] = null;
+                        if(!isset($row['useMaxAutoBidAmount']))
+                            $data[$campaign['id']][$i]['useMaxAutoBidAmount'] = null;
+                        if(!isset($row['autoMaxBidAmount']))
+                            $data[$campaign['id']][$i]['autoMaxBidAmount'] = null;
+                        if(!isset($row['pacing']))
+                            $data[$campaign['id']][$i]['pacing'] = null;
+                        if(!isset($row['dailyBudgetAmount']))
+                            $data[$campaign['id']][$i]['dailyBudgetAmount'] = null;
+                        if(!isset($row['statusDescription']))
+                            $data[$campaign['id']][$i]['statusDescription'] = null;
+                        if(!isset($row['type']))
+                            $data[$campaign['id']][$i]['type'] = null;
                         $i++;
                     } else if ($row['config'] == 'DEL') {
                         $delete = ['id' => $row['id'], 'config' => 'DEL'];
                         $this->db->setAdgroup($delete);
+                        // CLI::write("[".date("Y-m-d H:i:s")."] {$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제");
+                        // CLI::newLine();
                         continue;
                         //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                     }
                 }
+                $this->db->updateAdGroups($data);
+                $result = array_merge($result, $data);
+            } else {
+                print_r($adGroupList); exit;
             }
         }
         //echo '<pre>'.print_r($data,1).'</pre>';
-        $this->db->updateAdGroups($data);
-        return $data;
+        return $result;
     }
 
     public function updateBulkAdGroups()
@@ -524,7 +554,6 @@ class ChainsawKM
         $request = "creatives/{$creativeId}";
         if ($adAccountId) $this->ad_account_id = $adAccountId;
         $result = $this->getCall($request, '', '', 'GET', true);
-        print_r($result['landingInfo']);
         return $result; //Array ( [id] => 716600 [creativeId] => 1470241 [name] => 3514 [format] => THUMBNAIL_FEED [bidAmount] => 130 [landingUrl] => http://hotevent.hotblood.co.kr/index.php/app_3514 [frequencyCap] => 2 [config] => ON [reviewStatus] => APPROVED [modifyReviewStatus] => NONE [statusDescription] => 운영중 )
     }
 
@@ -686,6 +715,7 @@ class ChainsawKM
         $step = 1;
         $total = count($adgroups->getResult());
         CLI::write("[".date("Y-m-d H:i:s")."]"."소재 수신을 시작합니다.", "light_red");
+        $result = [];
         foreach ($adgroups->getResultArray() as $adgroup) {
             CLI::showProgress($step++, $total);
             // echo "<p>{$adgroup['id']}, {$adgroup['ad_account_id']}</p>";
@@ -694,6 +724,7 @@ class ChainsawKM
             if (count($creativeList) > 0) {
                 $i = 0;
                 foreach ($creativeList as $lists) {
+                    $data = [];
                     foreach ($lists as $row) {
                         if ($row['id'] && $row['config'] != 'DEL') {
                             $creative = $this->getCreative($row['id']);
@@ -712,6 +743,20 @@ class ChainsawKM
                                 $data[$adgroup['id']][$i]['landingUrl'] = $data[$adgroup['id']][$i]['mobileLandingUrl'];
                             if (trim($data[$adgroup['id']][$i]['rspvLandingUrl']))
                                 $data[$adgroup['id']][$i]['landingUrl'] = $data[$adgroup['id']][$i]['rspvLandingUrl'];
+                            if(!isset($row['bidAmount']))
+                                $data[$adgroup['id']][$i]['bidAmount'] = null;
+                            if(!isset($row['altText']))
+                                $data[$adgroup['id']][$i]['altText'] = null;
+                            if(!isset($row['hasExpandable']))
+                                $data[$adgroup['id']][$i]['hasExpandable'] = 0;
+                            if(!isset($row['frequencyCap']))
+                                $data[$adgroup['id']][$i]['frequencyCap'] = null;
+                            if(!isset($row['frequencyCapType']))
+                                $data[$adgroup['id']][$i]['frequencyCapType'] = null;
+                            if(!isset($row['reviewStatus']))
+                                $data[$adgroup['id']][$i]['reviewStatus'] = null;
+                            if(!$data[$adgroup['id']][$i]['landingUrl'])
+                                $data[$adgroup['id']][$i]['landingUrl'] = null;
                             $i++;
                         } else if ($row['config'] == 'DEL') {
                             $delete = ['id' => $row['id'], 'config' => 'DEL'];
@@ -720,11 +765,13 @@ class ChainsawKM
                             //echo "{$adgroup['ad_account_id']} - 소재({$row['id']}) : 삭제" . PHP_EOL;
                         }
                     }
+                    $this->db->updateCreatives($data);
+                    $result = array_merge($result, $data);
                 }
             }
         }
-        $this->db->updateCreatives($data);
-        return $data;
+        
+        return $result;
     }
 
     public function updateBulkCreatives()
@@ -884,7 +931,8 @@ class ChainsawKM
         $ids = [];
         $this->ad_account_id = '';
         $total = $adgroups->getNumRows();
-        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 소재 보고서 BASIC  수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 광고그룹의 소재 보고서 수신을 시작합니다.", "light_red");
+        $result = [];
         foreach ($adgroups->getResultArray() as $adgroup) {
             // if(!in_array($adgroup['id'], ['1365907','1365923'])) {$cnt++; continue;}
             if (!$this->ad_account_id)
@@ -903,6 +951,7 @@ class ChainsawKM
             if (count($ids) == 20 || $this->ad_account_id != $adgroup['ad_account_id'] || $adgroups->getNumRows() == $cnt) {
                 $adgroup_ids = implode(",", $ids);
                 // echo '<h3>'.$adgroup_ids.'</h3>';
+                $data = [];
                 $report = $this->getAdGroupReport($adgroup_ids, 'CREATIVE', $datePreset, $dimension, $metrics);
                 // echo '<pre>'.print_r($report,1).'</pre>';
                 if ($report['message'] == 'Success' && count($report['data']) > 0) {
@@ -921,11 +970,13 @@ class ChainsawKM
                 ob_flush();
                 flush();
                 sleep(5);
+                $this->db->updateCreativesReportBasic($data);
+                $result = array_merge($result, $data);
             }
             $cnt++;
         }
-        $this->db->updateCreativesReportBasic($data);
-        return $data;
+        
+        return $result;
     }
 
     public function autoAiOn() {
@@ -1093,23 +1144,22 @@ class ChainsawKM
         if (is_null($sdate) || is_null($edate))
             return false;
         $creatives = $this->db->getCreativeReportBasic("AND report.date BETWEEN '{$sdate}' AND '{$edate}' ORDER BY report.date ASC");
-        if (!$creatives->getNumRows()) {
-            return null;
-        }
-        $data = [];
+        $total = $creatives->getNumRows();
+        if (!$total) return null;
         $i = 0;
         $cnt = 1;
-        $total = $creatives->getNumRows();
-        CLI::write("[".date("Y-m-d H:i:s")."]"."리포트데이터 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$sdate}~{$edate} 리포트데이터 수신을 시작합니다.", "light_red");
+        $result = [];
         foreach ($creatives->getResultArray() as $row) {
-            CLI::showProgress($i, $total); 
+            $data = [];
+            CLI::showProgress($cnt++, $total); 
             $report = $this->getCreativeReport($row['id'], $row['date']);
             if ($report['message'] == 'Success' && count($report['data']) > 0) {
-                echo date('[H:i:s]') . " {$row['id']}/{$row['date']} 수신" . PHP_EOL;
+                // echo date('[H:i:s]') . " {$row['id']}/{$row['date']} 수신" . PHP_EOL;
                 foreach ($report['data'] as $v) {
                     if (count($v['metrics'])) {
                         $data[$v['dimensions']['creative_id']][$i] = $v['metrics'];
-                        $data[$v['dimensions']['creative_id']][$i]['cost'] = $v['metrics']['cost'] / 1.1; //부가세 제거
+                        $data[$v['dimensions']['creative_id']][$i]['cost'] = $v['metrics']['cost'];
                         $data[$v['dimensions']['creative_id']][$i]['date'] = $v['start'];
                         $i++;
                     }
@@ -1118,9 +1168,11 @@ class ChainsawKM
             ob_flush();
             flush();
             sleep(5);
+            $this->db->updateCreativesReportBasic($data);
+            $result = array_merge($result, $data);
         }
-        $this->db->updateCreativesReportBasic($data);
-        return $data;
+        
+        return $result;
     }
 
     public function getCreativesUseLanding($date = null)

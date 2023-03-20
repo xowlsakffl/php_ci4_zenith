@@ -128,7 +128,7 @@ class Database extends Config
         'port'     => 3306,
     ];
 
-    public array $kakaoMoment = [
+    public array $kakao = [
         'DSN'      => '',
         'hostname' => 'localhost',
         'username' => '',
@@ -148,7 +148,7 @@ class Database extends Config
         'port'     => 3306,
     ];
 
-    public array $kakaoMoment2 = [
+    public array $ro_kakao = [
         'DSN'      => '',
         'hostname' => 'localhost',
         'username' => '',
@@ -188,7 +188,7 @@ class Database extends Config
         'port'     => 3306,
     ];
 
-    public array $google2 = [
+    public array $ro_google = [
         'DSN'      => '',
         'hostname' => 'localhost',
         'username' => '',

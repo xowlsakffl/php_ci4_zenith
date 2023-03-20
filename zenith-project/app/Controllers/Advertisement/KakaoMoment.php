@@ -11,7 +11,7 @@ class KakaoMoment extends BaseController
 
     public function __construct(...$param)
     {
-        include APPPATH."/ThirdParty/moment_api/kmapi.php";
+        include APPPATH."/ThirdParty/moment_api/kakao-api.php";
         $this->chainsaw = new \ChainsawKM();       
     }
 
@@ -61,13 +61,14 @@ class KakaoMoment extends BaseController
     }
 
     //전체 소재 보고서 BASIC 업데이트
-    public function updateCreativesReportBasic()
+    public function updateReport($date = null)
     { 
         CLI::clearScreen();
-        CLI::write("전체 소재 보고서 BASIC 업데이트를 진행합니다.", "light_red");
-        $date = CLI::prompt("전체 소재 보고서 BASIC 수신할 날짜를 입력해주세요.", date('Y-m-d'));
+        CLI::write("소재 보고서 업데이트를 진행합니다.", "light_red");
+        if(is_null($date))
+            $date = CLI::prompt("전체 소재 보고서 BASIC 수신할 날짜를 입력해주세요.(ex. ".date('Y-m-d', strtotime('-1 day')).")", 'TODAY');
         $this->chainsaw->updateCreativesReportBasic($date);
-        CLI::write("전체 소재 보고서 BASIC 업데이트 완료", "yellow");
+        CLI::write("소재 보고서 업데이트 완료", "yellow");
     }
 
     //비즈폼 데이터 업데이트

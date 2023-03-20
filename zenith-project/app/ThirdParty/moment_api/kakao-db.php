@@ -6,8 +6,8 @@ class KMDB
     
     public function __construct()
     {
-        $this->db = \Config\Database::connect('kakaoMoment');
-        $this->db2 = \Config\Database::connect('kakaoMoment2');
+        $this->db = \Config\Database::connect('kakao');
+        $this->db2 = \Config\Database::connect('ro_kakao');
         //$this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
@@ -60,15 +60,15 @@ class KMDB
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         if (is_array($row['ownerCompany'])) {
-            $ownerCompany = $row['ownerCompany']['name'] . "(" . $row['ownerCompany']['businessRegistrationNumber'] . ")";
+            $ownerCompany = $this->db->escape($row['ownerCompany']['name'] . "(" . $row['ownerCompany']['businessRegistrationNumber'] . ")");
         }
         if (is_array($row['advertiser'])) {
-            $advertiser = $row['advertiser']['name'] . "(" . $row['advertiser']['businessRegistrationNumber'] . ")";
+            $advertiser = $this->db->escape($row['advertiser']['name'] . "(" . $row['advertiser']['businessRegistrationNumber'] . ")");
         }
         $sql = "INSERT INTO mm_ad_account (id, name, memberType, config, ownerCompany, advertiser, type, isAdminStop, isOutOfBalance, statusDescription, create_time)
-                VALUES ({$row['id']}, '{$row['name']}', '{$row['memberType']}', '{$row['config']}', '{$ownerCompany}', '{$advertiser}', '{$row['type']}', '{$row['isAdminStop']}', '{$row['isOutOfBalance']}', '{$row['statusDescription']}', NOW())
+                VALUES ({$row['id']}, {$row['name']}, {$row['memberType']}, {$row['config']}, {$ownerCompany}, {$advertiser}, {$row['type']}, {$row['isAdminStop']}, {$row['isOutOfBalance']}, {$row['statusDescription']}, NOW())
                 ON DUPLICATE KEY
-                UPDATE name='{$row['name']}', memberType='{$row['memberType']}', config='{$row['config']}', ownerCompany='{$ownerCompany}', advertiser='{$advertiser}', type='{$row['type']}', isAdminStop='{$row['isAdminStop']}', isOutOfBalance='{$row['isOutOfBalance']}', statusDescription='{$row['statusDescription']}', update_time=NOW();";
+                UPDATE name={$row['name']}, memberType={$row['memberType']}, config={$row['config']}, ownerCompany={$ownerCompany}, advertiser={$advertiser}, type={$row['type']}, isAdminStop={$row['isAdminStop']}, isOutOfBalance={$row['isOutOfBalance']}, statusDescription={$row['statusDescription']}, update_time=NOW();";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
@@ -136,9 +136,9 @@ class KMDB
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $sql = "INSERT INTO mm_campaign (ad_account_id, id, name, type, goal, config, objectiveType, objectiveDetailType, objectiveValue, dailyBudgetAmount, statusDescription, trackId, create_time)
-                VALUES ({$row['adAccountId']}, {$row['id']}, '{$row['name']}', '{$row['campaignTypeGoal']['campaignType']}', '{$row['campaignTypeGoal']['goal']}', '{$row['config']}', '" . @$row['objective']['type'] . "', '" . @$row['objective']['detailType'] . "', '" . @$row['objective']['value'] . "', '{$row['dailyBudgetAmount']}', '{$row['statusDescription']}', '{$row['trackId']}', NOW())
+                VALUES ({$row['adAccountId']}, {$row['id']}, {$row['name']}, '{$row['campaignTypeGoal']['campaignType']}', '{$row['campaignTypeGoal']['goal']}', {$row['config']}, '" . @$row['objective']['type'] . "', '" . @$row['objective']['detailType'] . "', '" . @$row['objective']['value'] . "', {$row['dailyBudgetAmount']}, {$row['statusDescription']}, {$row['trackId']}, NOW())
                 ON DUPLICATE KEY
-                UPDATE name='{$row['name']}', type='{$row['campaignTypeGoal']['campaignType']}', goal='{$row['campaignTypeGoal']['goal']}', config='{$row['config']}', objectiveType='" . @$row['objective']['type'] . "', objectiveDetailType='" . @$row['objective']['detailType'] . "', objectiveValue='" . @$row['objective']['value'] . "', dailyBudgetAmount='{$row['dailyBudgetAmount']}', statusDescription='{$row['statusDescription']}', trackId='{$row['trackId']}', update_time=NOW();";
+                UPDATE name={$row['name']}, type='{$row['campaignTypeGoal']['campaignType']}', goal='{$row['campaignTypeGoal']['goal']}', config={$row['config']}, objectiveType='" . @$row['objective']['type'] . "', objectiveDetailType='" . @$row['objective']['detailType'] . "', objectiveValue='" . @$row['objective']['value'] . "', dailyBudgetAmount={$row['dailyBudgetAmount']}, statusDescription={$row['statusDescription']}, trackId={$row['trackId']}, update_time=NOW();";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
@@ -222,9 +222,9 @@ class KMDB
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $sql = "INSERT INTO mm_adgroup (campaign_id, id, name, type, config, allAvailableDeviceType, allAvailablePlacement, pricingType, pacing, adult, bidStrategy, totalBudget, dailyBudgetAmount, bidAmount, useMaxAutoBidAmount, autoMaxBidAmount, isDailyBudgetAmountOver, creativeOptimization, isValidPeriod, deviceTypes, placements, statusDescription, create_time)
                 VALUES(
-                '{$row['campaign_id']}', '{$row['id']}', '{$row['name']}', '{$row['type']}', '{$row['config']}', '{$row['allAvailableDeviceType']}', '{$row['allAvailablePlacement']}', '{$row['pricingType']}', '{$row['pacing']}', '{$row['adult']}', '{$row['bidStrategy']}', '{$row['totalBudget']}', '{$row['dailyBudgetAmount']}', '{$row['bidAmount']}', '{$row['useMaxAutoBidAmount']}', '{$row['autoMaxBidAmount']}', '{$row['isDailyBudgetAmountOver']}', '{$row['creativeOptimization']}', '{$row['isValidPeriod']}', '" . @implode(',', $row['deviceTypes']) . "', '" . @implode(',', $row['placements']) . "', '{$row['statusDescription']}', NOW()) 
+                {$row['campaign_id']}, {$row['id']}, {$row['name']}, {$row['type']}, {$row['config']}, {$row['allAvailableDeviceType']}, {$row['allAvailablePlacement']}, {$row['pricingType']}, {$row['pacing']}, {$row['adult']}, {$row['bidStrategy']}, {$row['totalBudget']}, {$row['dailyBudgetAmount']}, {$row['bidAmount']}, {$row['useMaxAutoBidAmount']}, {$row['autoMaxBidAmount']}, {$row['isDailyBudgetAmountOver']}, {$row['creativeOptimization']}, {$row['isValidPeriod']}, '" . @implode(',', $row['deviceTypes']) . "', '" . @implode(',', $row['placements']) . "', {$row['statusDescription']}, NOW()) 
                 ON DUPLICATE KEY 
-                UPDATE campaign_id = '{$row['campaign_id']}', name = '{$row['name']}', type = '{$row['type']}', config = '{$row['config']}', allAvailableDeviceType = '{$row['allAvailableDeviceType']}', allAvailablePlacement = '{$row['allAvailablePlacement']}', pricingType = '{$row['pricingType']}', pacing = '{$row['pacing']}', adult = '{$row['adult']}', bidStrategy = '{$row['bidStrategy']}', totalBudget = '{$row['totalBudget']}', dailyBudgetAmount = '{$row['dailyBudgetAmount']}', bidAmount = '{$row['bidAmount']}', useMaxAutoBidAmount = '{$row['useMaxAutoBidAmount']}', autoMaxBidAmount = '{$row['autoMaxBidAmount']}', isDailyBudgetAmountOver = '{$row['isDailyBudgetAmountOver']}', creativeOptimization = '{$row['creativeOptimization']}', isValidPeriod = '{$row['isValidPeriod']}', deviceTypes = '" . @implode(',', $row['deviceTypes']) . "', placements = '" . @implode(',', $row['placements']) . "', statusDescription = '{$row['statusDescription']}', update_time=NOW();";
+                UPDATE campaign_id = {$row['campaign_id']}, name = {$row['name']}, type = {$row['type']}, config = {$row['config']}, allAvailableDeviceType = {$row['allAvailableDeviceType']}, allAvailablePlacement = {$row['allAvailablePlacement']}, pricingType = {$row['pricingType']}, pacing = {$row['pacing']}, adult = {$row['adult']}, bidStrategy = {$row['bidStrategy']}, totalBudget = {$row['totalBudget']}, dailyBudgetAmount = {$row['dailyBudgetAmount']}, bidAmount = {$row['bidAmount']}, useMaxAutoBidAmount = {$row['useMaxAutoBidAmount']}, autoMaxBidAmount = {$row['autoMaxBidAmount']}, isDailyBudgetAmountOver = {$row['isDailyBudgetAmountOver']}, creativeOptimization = {$row['creativeOptimization']}, isValidPeriod = {$row['isValidPeriod']}, deviceTypes = '" . @implode(',', $row['deviceTypes']) . "', placements = '" . @implode(',', $row['placements']) . "', statusDescription = {$row['statusDescription']}, update_time=NOW();";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         // echo "<p>{$sql}</p>";
         return $result;
@@ -269,11 +269,13 @@ class KMDB
 
     public function updateAdGroups($data)
     { //광고그룹 목록 저장
-
-        foreach ($data as $campaign_id => $campaign) {
-            foreach ($campaign as $row) {
-                $row['campaign_id'] = $campaign_id;
-                if ($row['id']) $this->updateAdGroup($row);
+        if(isset($data) && count($data)) {
+            foreach ($data as $campaign_id => $campaign) {
+                foreach ($campaign as $row) {
+                    $row['campaign_id'] = $campaign_id;
+                    if (isset($row['id'])) $this->updateAdGroup($row);
+                    else print_r($row);
+                }
             }
         }
     }
@@ -360,7 +362,7 @@ class KMDB
                         ON C.ad_account_id = D.id
                 WHERE A.id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->getResult();
+        $row = $result->getRowArray();
         $ad_account_id = $row['ad_account_id'];
         return $ad_account_id;
     }
@@ -378,12 +380,12 @@ class KMDB
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         $bizFormQuery = "";
-        if($row['landingInfo']['bizFormId'])
+        if(isset($row['landingInfo']['bizFormId']))
             $bizFormQuery = ", bizFormId = '" . @$row['landingInfo']['bizFormId'] . "'";
         $sql = "INSERT INTO mm_creative (adgroup_id, id, creativeId, name, altText, type, landingType, hasExpandable, bizFormId, format, bidAmount, landingUrl, frequencyCap, frequencyCapType, config, imageUrl, reviewStatus, creativeStatus, statusDescription, create_time)
-                VALUES ('{$row['adgroup_id']}', '{$row['id']}', '{$row['creativeId']}', '{$row['name']}', '{$row['altText']}', '{$row['type']}', '" . @$row['landingInfo']['landingType'] . "', '{$row['hasExpandable']}', '" . @$row['landingInfo']['bizFormId'] . "', '{$row['format']}', '{$row['bidAmount']}', '{$row['landingUrl']}', '{$row['frequencyCap']}', '{$row['frequencyCapType']}', '{$row['config']}', '" . @$row['image']['url'] . "', '{$row['reviewStatus']}', '{$row['creativeStatus']}', '{$row['statusDescription']}', NOW())
+                VALUES ({$row['adgroup_id']}, {$row['id']}, {$row['creativeId']}, {$row['name']}, {$row['altText']}, {$row['type']}, '" . @$row['landingInfo']['landingType'] . "', {$row['hasExpandable']}, '" . @$row['landingInfo']['bizFormId'] . "', {$row['format']}, {$row['bidAmount']}, {$row['landingUrl']}, {$row['frequencyCap']}, {$row['frequencyCapType']}, {$row['config']}, '" . @$row['image']['url'] . "', {$row['reviewStatus']}, {$row['creativeStatus']}, {$row['statusDescription']}, NOW())
                 ON DUPLICATE KEY
-                UPDATE adgroup_id = '{$row['adgroup_id']}', creativeId = '{$row['creativeId']}', name = '{$row['name']}', altText = '{$row['altText']}', type = '{$row['type']}', landingType = '" . @$row['landingInfo']['landingType'] . "', hasExpandable = '{$row['hasExpandable']}'{$bizFormQuery}, format = '{$row['format']}', bidAmount = '{$row['bidAmount']}', landingUrl = '{$row['landingUrl']}', frequencyCap = '{$row['frequencyCap']}', frequencyCapType = '{$row['frequencyCapType']}', config = '{$row['config']}', imageUrl = '" . @$row['image']['url'] . "', reviewStatus = '{$row['reviewStatus']}', creativeStatus = '{$row['creativeStatus']}', statusDescription = '{$row['statusDescription']}', update_time = NOW();";
+                UPDATE adgroup_id = {$row['adgroup_id']}, creativeId = {$row['creativeId']}, name = {$row['name']}, altText = {$row['altText']}, type = {$row['type']}, landingType = '" . @$row['landingInfo']['landingType'] . "', hasExpandable = {$row['hasExpandable']}{$bizFormQuery}, format = {$row['format']}, bidAmount = {$row['bidAmount']}, landingUrl = {$row['landingUrl']}, frequencyCap = {$row['frequencyCap']}, frequencyCapType = {$row['frequencyCapType']}, config = {$row['config']}, imageUrl = '" . @$row['image']['url'] . "', reviewStatus = {$row['reviewStatus']}, creativeStatus = {$row['creativeStatus']}, statusDescription = {$row['statusDescription']}, update_time = NOW();";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         // echo "<p>{$sql}</p>";
         return $result;
@@ -504,10 +506,10 @@ class KMDB
     public function updateCreativeReportBasic($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
-        $sql = "INSERT INTO mm_creative_report_basic (id, date, imp, click, ctr, cost, create_time)
-                VALUES ({$row['creative_id']}, '{$row['date']}', '{$row['imp']}', '{$row['click']}', '{$row['ctr']}', '{$row['cost']}', NOW())
+        $sql = "INSERT INTO mm_creative_report_basic (id, date, hour, imp, click, ctr, cost, create_time)
+                VALUES ({$row['creative_id']}, {$row['date']}, IF(DATE(NOW()) = {$row['date']}, HOUR(NOW()), 23), {$row['imp']}, {$row['click']}, {$row['ctr']}, {$row['cost']}, NOW())
                 ON DUPLICATE KEY
-                UPDATE date='{$row['date']}', imp='{$row['imp']}', click='{$row['click']}', ctr='{$row['ctr']}', cost='{$row['cost']}', update_time=NOW();";
+                UPDATE date={$row['date']}, imp={$row['imp']}, click={$row['click']}, ctr={$row['ctr']}, cost={$row['cost']}, update_time=NOW();";
         // echo $sql.'<br>';
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;

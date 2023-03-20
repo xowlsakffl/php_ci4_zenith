@@ -1,7 +1,9 @@
 <?php
-require_once __DIR__ . '/kmdb.php';
+require_once __DIR__ . '/kakao-db.php';
 set_time_limit(0);
 ini_set('memory_limit', '-1');
+
+use CodeIgniter\CLI\CLI;
 class ChainsawKMBF
 {
     private $bizformId = '6590', $api_key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456';
@@ -15,7 +17,7 @@ class ChainsawKMBF
     {
         $bizforms = $this->db->getBizformUpdateList();
         $step = 1;
-        $toral = count($bizforms);
+        $total = count($bizforms);
         CLI::write("[".date("Y-m-d H:i:s")."]"."비즈폼 수신을 시작합니다.", "light_red");
         foreach ($bizforms as $row) {
             CLI::showProgress($step++, $total); 
