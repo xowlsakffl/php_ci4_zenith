@@ -1,4 +1,7 @@
 <?php
+
+use CodeIgniter\CLI\CLI;
+
 class GADB
 {
 	private $db, $db2, $zenith;
@@ -65,22 +68,38 @@ class GADB
 		if (is_null($data)) return false;
 		//print_r($data);exit;
 		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, create_time)
-				VALUES('{$data['customerId']}', '{$data['id']}', '{$data['name']}', '{$data['status']}', '{$data['servingStatus']}', '{$data['startDate']}', '{$data['endDate']}', '{$data['budgetId']}', '{$data['budgetName']}', '{$data['budgetReferenceCount']}', '{$data['budgetStatus']}', '{$data['budgetAmount']}', '{$data['budgetDeliveryMethod']}', '{$data['advertisingChannelType']}', '{$data['advertisingChannelSubType']}', '{$data['adServingOptimizationStatus']}', NOW())
+				VALUES(
+					{$data['customerId']},
+					{$data['id']},
+					{$data['name']}, 
+					{$data['status']},
+					{$data['servingStatus']},
+					{$data['startDate']},
+					{$data['endDate']},
+					{$data['budgetId']},
+					{$data['budgetName']},
+					{$data['budgetReferenceCount']},
+					{$data['budgetStatus']},
+					{$data['budgetAmount']},
+					{$data['budgetDeliveryMethod']},
+					{$data['advertisingChannelType']},
+					{$data['advertisingChannelSubType']},
+					{$data['adServingOptimizationStatus']}, NOW())
 				ON DUPLICATE KEY UPDATE
-					name = '{$data['name']}',
-					status = '{$data['status']}',
-					servingStatus = '{$data['servingStatus']}',
-					startDate = '{$data['startDate']}',
-					endDate = '{$data['endDate']}',
-					budgetId = '{$data['budgetId']}',
-					budgetName = '{$data['budgetName']}',
-					budgetReferenceCount = '{$data['budgetReferenceCount']}',
-					budgetStatus = '{$data['budgetStatus']}',
-					amount = '{$data['budgetAmount']}',
-					deliveryMethod = '{$data['budgetDeliveryMethod']}',
-					advertisingChannelType = '{$data['advertisingChannelType']}',
-					advertisingChannelSubType = '{$data['advertisingChannelSubType']}',
-					AdServingOptimizationStatus = '{$data['adServingOptimizationStatus']}',
+					name = {$data['name']},
+					status = {$data['status']},
+					servingStatus = {$data['servingStatus']},
+					startDate = {$data['startDate']},
+					endDate = {$data['endDate']},
+					budgetId = {$data['budgetId']},
+					budgetName = {$data['budgetName']},
+					budgetReferenceCount = {$data['budgetReferenceCount']},
+					budgetStatus = {$data['budgetStatus']},
+					amount = {$data['budgetAmount']},
+					deliveryMethod = {$data['budgetDeliveryMethod']},
+					advertisingChannelType = {$data['advertisingChannelType']},
+					advertisingChannelSubType = {$data['advertisingChannelSubType']},
+					AdServingOptimizationStatus = {$data['adServingOptimizationStatus']},
 					is_updating = 0,
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
@@ -94,18 +113,30 @@ class GADB
 		if (is_null($data)) return false;
 
 		$sql = "INSERT INTO aw_adgroup(campaignId, id, name, status, adGroupType, biddingStrategyType, cpcBidAmount, cpcBidSource, cpmBidAmount, cpmBidSource, cpaBidAmount, cpaBidSource, create_time)
-				VALUES('{$data['campaignId']}', '{$data['id']}', '{$data['name']}', '{$data['status']}', '{$data['adGroupType']}', '{$data['biddingStrategyType']}', '{$data['cpcBidAmount']}', '{$data['cpcBidSource']}', '{$data['cpmBidAmount']}', '{$data['cpmBidSource']}', '{$data['cpaBidAmount']}', '{$data['cpaBidSource']}', NOW())
+				VALUES(
+					{$data['campaignId']}, 
+					{$data['id']}, 
+					{$data['name']}, 
+					{$data['status']}, 
+					{$data['adGroupType']}, 
+					{$data['biddingStrategyType']}, 
+					{$data['cpcBidAmount']}, 
+					{$data['cpcBidSource']}, 
+					{$data['cpmBidAmount']}, 
+					{$data['cpmBidSource']}, 
+					{$data['cpaBidAmount']}, 
+					{$data['cpaBidSource']}, NOW())
 				ON DUPLICATE KEY UPDATE
-					name = '{$data['name']}',
-					status = '{$data['status']}',
-					adGroupType = '{$data['adGroupType']}',
-					biddingStrategyType = '{$data['biddingStrategyType']}',
-					cpcBidAmount = '{$data['cpcBidAmount']}',
-					cpcBidSource = '{$data['cpcBidSource']}',
-					cpmBidAmount = '{$data['cpmBidAmount']}',
-					cpmBidSource = '{$data['cpmBidSource']}',
-					cpaBidAmount = '{$data['cpaBidAmount']}',
-					cpaBidSource = '{$data['cpaBidSource']}',
+					name = {$data['name']},
+					status = {$data['status']},
+					adGroupType = {$data['adGroupType']},
+					biddingStrategyType = {$data['biddingStrategyType']},
+					cpcBidAmount = {$data['cpcBidAmount']},
+					cpcBidSource = {$data['cpcBidSource']},
+					cpmBidAmount = {$data['cpmBidAmount']},
+					cpmBidSource = {$data['cpmBidSource']},
+					cpaBidAmount = {$data['cpaBidAmount']},
+					cpaBidSource = {$data['cpaBidSource']},
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
 		$result = $this->db_query($sql, true);
@@ -118,35 +149,63 @@ class GADB
 		if (is_null($data)) return false;
 
 		$sql = "INSERT INTO aw_ad(adgroupId, id, name, status, reviewStatus, approvalStatus, code, adType, mediaType, assets, imageUrl, finalUrl, create_time)
-				VALUES('{$data['adgroupId']}', '{$data['id']}', '{$data['name']}', '{$data['status']}', '{$data['review_status']}', '{$data['approval_status']}', '{$data['code']}', '{$data['adType']}', '{$data['mediaType']}', '{$data['assets']}', '{$data['imageUrl']}', '{$data['finalUrl']}', NOW())
+				VALUES(
+					{$data['adgroupId']}, 
+					{$data['id']}, 
+					{$data['name']}, 
+					{$data['status']}, 
+					{$data['reviewStatus']}, 
+					{$data['approvalStatus']}, 
+					{$data['code']}, 
+					{$data['adType']}, 
+					{$data['mediaType']}, 
+					{$data['assets']}, 
+					{$data['imageUrl']}, 
+					{$data['finalUrl']}, 
+					NOW()
+				)
 				ON DUPLICATE KEY UPDATE
-					name = '{$data['name']}',
-					status = '{$data['status']}',
-					reviewStatus = '{$data['reviewStatus']}',
-					approvalStatus = '{$data['approvalStatus']}',
-					adType = '{$data['adType']}',
-					mediaType = '{$data['mediaType']}',
-					assets = '{$data['assets']}',
-					imageUrl = '{$data['imageUrl']}',
-					finalUrl = '{$data['finalUrl']}',
+					name = {$data['name']},
+					status = {$data['status']},
+					reviewStatus = {$data['reviewStatus']},
+					approvalStatus = {$data['approvalStatus']},
+					adType = {$data['adType']},
+					mediaType = {$data['mediaType']},
+					assets = {$data['assets']},
+					imageUrl = {$data['imageUrl']},
+					finalUrl = {$data['finalUrl']},
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
 		if ($result = $this->db_query($sql, true)) {
 			if ($data['impressions']) {
 				$sql = "INSERT INTO aw_ad_report(ad_id, impressions, clicks, cost, create_time)
-							VALUES('{$data['id']}', '{$data['impressions']}', '{$data['clicks']}', '{$data['cost']}', NOW())
+							VALUES(
+								{$data['id']}, 
+								{$data['impressions']}, 
+								{$data['clicks']}, 
+								{$data['cost']}, 
+								NOW()
+							)
 							ON DUPLICATE KEY UPDATE
-								impressions = '{$data['impressions']}',
-								clicks = '{$data['clicks']}',
-								cost = '{$data['cost']}',
+								impressions = {$data['impressions']},
+								clicks = {$data['clicks']},
+								cost = {$data['cost']},
 								update_time = NOW()";
 				$this->db_query($sql, true);
-				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, impressions, clicks, cost, create_time)
-							VALUES('{$data['id']}', '{$data['date']}', '{$data['impressions']}', '{$data['clicks']}', '{$data['cost']}', NOW())
+				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
+							VALUES(
+								{$data['id']}, 
+								{$data['date']}, 
+								IF(DATE(NOW()) = {$data['date']}, HOUR(NOW()), 23),
+								{$data['impressions']}, 
+								{$data['clicks']}, 
+								{$data['cost']},
+								 NOW()
+							)
 							ON DUPLICATE KEY UPDATE
-								impressions = '{$data['impressions']}',
-								clicks = '{$data['clicks']}',
-								cost = '{$data['cost']}',
+								impressions = {$data['impressions']},
+								clicks = {$data['clicks']},
+								cost = {$data['cost']},
 								update_time = NOW()";
 				$this->db_query($sql, true);
 			}
@@ -159,9 +218,18 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "INSERT INTO aw_asset(id, name, type, video_id, url, create_time)
-				VALUES({$data['id']}, {$data['name']}, {$data['type']}, {$data['video_id']}, {$data['url']}, NOW())
-				ON DUPLICATE KEY UPDATE
+		$sql = "INSERT INTO aw_asset(
+					id, name, type, video_id, url, create_time
+				)
+				VALUES(
+					{$data['id']}, 
+					{$data['name']}, 
+					{$data['type']}, 
+					{$data['video_id']}, 
+					{$data['url']}, 
+					NOW()
+				)
+				ON DUPLICATE KEY UPDATE 
 					name = {$data['name']},
 					type = {$data['type']},
 					video_id = {$data['video_id']},

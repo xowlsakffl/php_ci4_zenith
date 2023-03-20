@@ -1,4 +1,30 @@
 /*css/common.css compile*/
+$breakpoint-desktop:1920px;
+$breakpoint-lg-mobile:500px;
+$breakpoint-md-mobile:415px;
+$breakpoint-sm-mobile:300px;
+
+
+@mixin mobile-500{
+    @media screen and (max-width : #{$breakpoint-lg-mobile}){
+        @content;
+    }
+}
+
+@mixin mobile-415{
+    @media screen and (max-width : #{$breakpoint-md-mobile}){
+        $input-pd:0.93rem !global; //먹히지 않음
+        $icon-pd:3.43rem !global;  //먹히지 않음
+        @content;
+    }
+}
+@mixin mobile-375{
+    @media screen and (max-width : #{$breakpoint-sm-mobile}){
+        @content;
+    }
+}
+
+
 @import '_var.scss';
 @import '_layout.scss';
 

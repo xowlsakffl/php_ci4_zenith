@@ -5,33 +5,87 @@ $icon-pd:3.75rem; //60px
 $boder-radius:1.875rem; //30px
 $theme-color: rgb(177 155 143/80%);
 
+//일반 반응형, 특이사항 있음
+// @media screen and (max-width: 500px){ 
+//     $input-pd:0px !important;
+//     .account-container form .form-control{padding:$input-pd $input-pd $input-pd $icon-pd;}
+// }
+
+
+@mixin effect($second:0.3s) {
+    transform: translateY(50%); visibility:hidden; transition: all linear $second;
+    &.effect{transform: translateY(0%); visibility:visible;}
+}
 .account-container{height: 100vh; text-align: center; color:#fff; background: linear-gradient(339deg, rgba(24, 22, 19,0.8) 0%, rgb(226, 148, 117) 100%, rgb(107,82,69) 50%); font-family: 'Noto Sans Lepcha', sans-serif;
 
-    .card{--bs-card-bg: inherit; width:100%; max-width:505px; border:none; position: absolute; top:50%; left:50%; transform: translate(-50%,-50%);
+    .card{--bs-card-bg:inherit; width:100%; max-width:505px; border:none; position: absolute; top:50%; left:50%; transform: translate(-50%,-50%);
         .card-body{--bs-card-bg: inherit;      
-            .card-title{font-size:3rem; font-weight:900;}
+            .card-title{font-size:3rem; font-weight:900; margin-bottom:3rem;}
         }
     }
     
-    form {
-        .form-control{color:#fff; background-color:rgba(107,82, 69, 0.3); border-color:transparent; border-radius: $boder-radius; padding:$input-pd $input-pd $input-pd $icon-pd; margin-bottom:24px;
+    form { 
+        .form-control{color:#fff; background-color:rgba(107,82, 69, 0.3); border-color:transparent; border-radius: $boder-radius; padding:$input-pd $input-pd $input-pd $icon-pd; margin-bottom:24px; 
+            /*@include mobile-415{$input-pd:0.93rem; $icon-pd:3.125rem; padding:$input-pd $input-pd $input-pd $icon-pd;}*/
             &::placeholder{color:#fff;}
             &:focus{box-shadow:0 0 0 0.25rem $theme-color;}
         }
-        i{position: absolute; top:50%; transform: translateY(-50%); left:$input-pd; font-size: 150%;
-            &:hover{box-shadow: 5px 5px 5px #fff;}
+        > div{transition:all linear 0.5s; @include effect;          
+            i{position: absolute; top:52%; transform: translateY(-50%); left:$input-pd; font-size: 1.5rem; width: 1.5rem;}           
         }
-        .form-check{text-align:left; padding-left: 2rem;
+    
+        .form-check{text-align:left; padding-left: 2rem;    
             span{display: inline-block; vertical-align: sub;}
         }
-        .forgot{position: absolute; top:50%; transform: translateY(-50%); right:5%;}
+        .forgot{position: absolute; top:50%; transform: translateY(-50%); right:5%;
+            &:hover{animation: flash 2s infinite;}
+        }
 
         a:hover,a:active{color:$theme-color;}
     }    
     
     .btn-primary{background-color:transparent; border-color:rgb(177 155 143); border-radius: $boder-radius; padding:$input-pd; width:100%;
-        &:active{--bs-btn-active-bg:#fff; border-color:transparent;  --bs-btn-active-color: rgb(107 82 69);}   
+        &:active{--bs-btn-active-bg:#fff;  --bs-btn-active-color: rgb(107 82 69); border-color:transparent;}   
     }
+    .text-start{position: relative; @include effect;}
     
 }
 
+
+@keyframes flash { //text 깜빡임
+    0%, 20%, 40%, to { opacity: 1; } 10%, 30% { opacity: 0; } 
+}
+
+// 반응형 사용 
+@include mobile-500{
+    .account-container {
+        .card {
+            .card-body {
+                .card-title{margin-bottom:2rem;}
+            }
+        }    
+
+        form {padding:0 5%;            
+            > div {
+                i{top:54%; font-size:1.2rem;}
+            }
+            .forgot {font-size:0.95rem;}
+        }
+    }
+
+}
+@include mobile-415{
+    $input-pd:0.93rem; 
+    $icon-pd:3.125rem;  
+
+    .account-container {
+        form {
+            .form-control {               
+                padding:$input-pd $input-pd $input-pd $icon-pd;    
+            }
+            .btn-primary{
+                padding:$input-pd;   
+            }
+        }
+    }
+}

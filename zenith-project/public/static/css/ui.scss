@@ -1,4 +1,9 @@
-@import '_var.scss';
-@import '_reset.scss';
-@import '_layout.scss';
+@import '_var',
+        '_reset', 
+        '_layout', 
+        '_sub',
+        '_table';
 
+//font
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+        
