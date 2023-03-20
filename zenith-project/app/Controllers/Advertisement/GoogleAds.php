@@ -26,10 +26,9 @@ class GoogleAds extends BaseController
     public function getAll()
     {
         CLI::clearScreen();
-        CLI::write("계정 데이터 업데이트를 진행합니다.", "light_red");
-        $date = CLI::prompt("광고 데이터를 수신할 날짜를 입력해주세요.", date('Y-m-d'));
-        $this->chainsaw->getAll($date);
-        CLI::write("계정 데이터 업데이트 완료", "yellow");
+        CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 진행합니다.", "light_red");
+        $this->chainsaw->getAll();
+        CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트 완료", "yellow");
     }
     
     public function getAdsUseLanding()

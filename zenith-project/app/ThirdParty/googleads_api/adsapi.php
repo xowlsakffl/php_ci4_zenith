@@ -357,7 +357,7 @@ class GoogleAds
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
         if ($date == null)
             $date = date('Y-m-d');
-        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.iㄹmage_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
+        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
         if ($adGroupId !== null) {
             $query .= " AND ad_group.id = $adGroupId";
         }
@@ -494,23 +494,19 @@ class GoogleAds
         $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
         $step = 1;
         $total = $accounts->getNumRows();
-        CLI::write("[".date("Y-m-d H:i:s")."]"."계정 데이터 업데이트를 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
-            //echo date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ";
-            //$this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
-            /* if ($account['status'] != 'ENABLED') {
-                echo $account['status'] . ' 업데이트 미진행' . PHP_EOL;
-                continue;
-            } */
+            CLI::print(date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ");
+            $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             //$assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
-            //$campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
-
-            //if (count($campaigns)) {
-                //$adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
+            $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
+            
+            if (count($campaigns)) {
+                $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
-            //}
+            }
             //echo '<pre>'.print_r($campaigns,1).'</pre>';
             //echo '<pre>'.str_repeat('-', 2).print_r($adGroups,1).'</pre>';
             //echo '<pre>'.str_repeat('-', 4).print_r($ads,1).'</pre>';
@@ -776,7 +772,7 @@ class GoogleAds
             return null;
         }
         $i = 0;
-        CLI::write("[".date("Y-m-d H:i:s")."]"."전체 광고계정 수신을 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."유효DB 개수 수신을 시작합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
             CLI::showProgress($step, $total);
             $title = trim($row['code']) ? $row['code'] : $row['campaign_name'] . '||' . $row['finalUrl'];

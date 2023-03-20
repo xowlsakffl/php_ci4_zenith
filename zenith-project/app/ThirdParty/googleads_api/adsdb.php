@@ -192,10 +192,11 @@ class GADB
 								cost = {$data['cost']},
 								update_time = NOW()";
 				$this->db_query($sql, true);
-				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, impressions, clicks, cost, create_time)
+				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
 							VALUES(
 								{$data['id']}, 
 								{$data['date']}, 
+								IF(DATE(NOW()) = {$data['date']}, HOUR(NOW()), 23),
 								{$data['impressions']}, 
 								{$data['clicks']}, 
 								{$data['cost']},
