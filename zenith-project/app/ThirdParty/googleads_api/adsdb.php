@@ -11,7 +11,7 @@ class GADB
     {
         $this->db = \Config\Database::connect('google');
         $this->db2 = \Config\Database::connect('ro_google');
-        //$this->zenith = \Config\Database::connect();
+        $this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
 
