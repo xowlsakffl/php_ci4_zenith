@@ -10,7 +10,7 @@ class GADB
     public function __construct()
     {
         $this->db = \Config\Database::connect('google');
-        $this->db2 = \Config\Database::connect('google2');
+        $this->db2 = \Config\Database::connect('ro_google');
         //$this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
