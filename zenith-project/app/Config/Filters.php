@@ -22,7 +22,6 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'guest' => GuestFilter::class,
     ];
 
     /**
@@ -35,7 +34,6 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'session' => ['except' => ['login*', 'register', 'auth/a/*']],
-            'guest' => ['except' => ['logout', 'login*', 'auth/a/*', 'guest', 'fbapi/*']]
         ],
         'after' => [
             'toolbar',
