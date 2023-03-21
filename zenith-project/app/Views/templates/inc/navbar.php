@@ -1,3 +1,7 @@
+<?php 
+$directoryURI = $_SERVER['REQUEST_URI'];
+$path = parse_url($directoryURI, PHP_URL_PATH);
+?>
 <div class="left-side">
     <button type="button" class="btn-menu">메뉴보기</button>
     <h1 class="logo"><a href="/"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
@@ -7,10 +11,10 @@
                 <button data-bs-toggle="collapse" data-bs-target="#ad" aria-expanded="false">광고 관리</button>
                 <div class="collapse" id="ad">
                     <ul class="btn-toggle-nav">
-                        <li><a href="#">페이스북</a></li>
-                        <li><a href="#">카카오 모먼트</a></li>
-                        <li><a href="#">구글 애드워즈</a></li>
-                        <li><a href="#">기타</a></li>
+                        <li><a href="/advertisements/facebook" class="<?php if($path == '/advertisements/facebook'){ echo "active";} ?>">페이스북</a></li>
+                        <li><a href="#" class="<?php if($path == '/advertisements/kakao'){ echo "active";} ?>">카카오 모먼트</a></li>
+                        <li><a href="#" class="<?php if($path == '/advertisements/google'){ echo "active";} ?>">구글 애드워즈</a></li>
+                        <li><a href="#" class="<?php if($path == '/advertisements/etc'){ echo "active";} ?>">기타</a></li>
                     </ul>
                 </div>
             </li>
@@ -35,7 +39,8 @@
                 <div class="collapse" id="event">
                     <ul class="btn-toggle-nav">
                         <li><a href="#">이벤트 관리</a></li>
-                        <li><a href="#">광고주 관리</a></li>
+                        <li><a href="/company/list" class="<?php if($path == '/company/list'){ echo "active";} ?>">광고주 관리</a></li>
+                        <li><a href="/user/list" class="<?php if($path == '/user/list'){ echo "active";} ?>">사용자 관리</a></li>
                         <li><a href="#">매체 관리</a></li>
                         <li><a href="#">전환 관리</a></li>
                         <li><a href="#">엑셀 업로드</a></li>
@@ -46,6 +51,10 @@
     </div>
     <div class="util-nav">
         <a href="#">마이페이지</a>
-        <a href="#">로그아웃</a>
+        <a href="/logout">로그아웃</a>
     </div>
 </div>
+
+<script>
+    
+</script>
