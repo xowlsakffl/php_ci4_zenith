@@ -74,6 +74,7 @@ class GoogleAds
     public function __construct($clientCustomerId = "")
     {
         $this->db = new GADB();
+        GetOpt::
         $this->oAuth2Credential = (new OAuth2TokenBuilder())->fromFile(__DIR__ . "/google_ads_php.ini")->build();
     }
 
@@ -497,7 +498,6 @@ class GoogleAds
         CLI::write("[".date("Y-m-d H:i:s")."]"."계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
-            CLI::print(date('[H:i:s]') . "{$account['customerId']}({$account['name']}) - ");
             $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             //$assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
