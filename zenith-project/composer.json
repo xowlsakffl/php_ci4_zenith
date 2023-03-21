@@ -9,7 +9,8 @@
         "codeigniter4/framework": "^4.0",
         "codeigniter4/shield": "dev-develop",
         "codeigniter4/translations": "^4.3",
-        "codeigniter4/settings": "^2.1"
+        "codeigniter4/settings": "^2.1",
+        "googleads/googleads-php-lib": "^10.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
