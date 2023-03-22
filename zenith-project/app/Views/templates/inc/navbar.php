@@ -8,7 +8,7 @@ $path = parse_url($directoryURI, PHP_URL_PATH);
     <div class="nav-wrap">
         <ul class="nav flex-column">
             <li>
-                <button data-bs-toggle="collapse" data-bs-target="#ad" aria-expanded="false">광고 관리</button>
+                <button data-bs-toggle="collapse" data-bs-target="#ad" aria-expanded="false"><i class="bi bi-graph-up-arrow"></i>광고 관리</button>
                 <div class="collapse" id="ad">
                     <ul class="btn-toggle-nav">
                         <li><a href="/advertisements/facebook" class="<?php if($path == '/advertisements/facebook'){ echo "active";} ?>">페이스북</a></li>
@@ -19,10 +19,10 @@ $path = parse_url($directoryURI, PHP_URL_PATH);
                 </div>
             </li>
             <li>
-                <button>통합 DB 관리</button>
+                <button><i class="bi bi-people-fill"></i>통합 DB 관리</button>
             </li>
             <li>
-                <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false">회계 관리</button>
+                <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
                 <div class="collapse" id="accounting">
                     <ul class="btn-toggle-nav">
                         <li><a href="#">출금요청</a></li>
@@ -32,10 +32,10 @@ $path = parse_url($directoryURI, PHP_URL_PATH);
                 </div>
             </li>
             <li>
-                <button>인사 관리</button>
+                <button><i class="bi bi-person-vcard-fill"></i>인사 관리</button>
             </li>
             <li>
-                <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false">이벤트</button>
+                <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false"><i class="bi bi-calendar-week"></i>이벤트</button>
                 <div class="collapse" id="event">
                     <ul class="btn-toggle-nav">
                         <li><a href="#">이벤트 관리</a></li>

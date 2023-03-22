@@ -18,7 +18,10 @@ body{background:#f7f7f7;}
                 }
             }
         }
-        button{display:block; padding:0 0 0 33px; color:#fff;}
+        button{
+            display:block; padding:0 0 0 33px; color:#fff;
+            > i.bi {margin:0 10px 0 -37px; font-size:180%; vertical-align:middle;}
+        }
         .btn-toggle-nav{padding:18px 0 0;
             li{margin:0 0 12px 32px;}
             a{position:relative; display:inline-block; padding:0 0 2px 10px; font-size:0.875rem; color:#929292;}
