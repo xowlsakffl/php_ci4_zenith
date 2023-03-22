@@ -160,7 +160,7 @@ class ApiUserController extends \CodeIgniter\Controller
         }
         //admin - 본인, user 수정 권한 있음
         if($logginedUser->inGroup('admin') && !$logginedUser->inGroup('superadmin')){
-            if($updateUser->inGroup('superadmin', 'admin')){
+            if($updateUser->inGroup('superadmin')){
                 return false;
             }
 
