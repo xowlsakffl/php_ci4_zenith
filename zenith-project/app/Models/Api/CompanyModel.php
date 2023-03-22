@@ -54,10 +54,15 @@ class CompanyModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getCompanies()
+    public function getCompanies($id)
     {
-        $builder = $this->table('companies');           
-        $result = $builder->get()->getResult();
+        $builder = $this->select('c.*, GROUP_CONCAT(DISTINCT u.id) as user_id, GROUP_CONCAT(DISTINCT u.username) as username');
+        $builder->from('companies as c');
+        $builder->join('companies_users as cu', 'c.cdx = cu.company_id', 'left');
+        $builder->join('users as u', 'cu.user_id = u.id', 'left');
+        $builder->where('c.cdx', $id);             
+        $builder->groupBy('c.cdx'); 
+        $result = $builder->get()->getRow();
 
         return $result;
     }

@@ -18,7 +18,19 @@ class ApiCompanyController extends \CodeIgniter\Controller
     {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data['result'] = $this->company->find($id);
+                $data['result'] = $this->company->getCompanies($id);
+
+                $data['result']->user_id = explode(',', $data['result']->user_id);
+                $data['result']->username = explode(',', $data['result']->username);
+
+                $data['result']->users = array();
+                foreach($data['result']->user_id as $key => $user_id) {
+                    $data['result']->users[$key]['id'] = $user_id;
+                    $data['result']->users[$key]['username'] = $data['result']->username[$key];
+                }
+                
+                unset($data['result']->user_id);
+                unset($data['result']->username);
             } else {
                 $param = $this->request->getGet();
 
@@ -50,9 +62,9 @@ class ApiCompanyController extends \CodeIgniter\Controller
 
                 if(!empty($param['sort'])){
                     if($param['sort'] == 'old'){
-                        $builder->orderBy('created_at', 'asc');
+                        $builder->orderBy('cdx', 'asc');
                     }else{
-                        $builder->orderBy('created_at', 'desc');
+                        $builder->orderBy('cdx', 'desc');
                     }
                     
                     $data['pager']['sort'] = $param['sort'];

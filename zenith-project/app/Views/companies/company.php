@@ -59,6 +59,10 @@
                         <dt>전화번호</dt>
                         <dd id="companyTel"></dd>
                     </dl>
+
+                    <div id="userListWrap" class="mt-5">
+                        <h5>유저리스트</h5>
+                    </div>
                 </div>
                 <div class="modal-footer">            
                     <button type="button" class="btn btn-primary" id="companyUpdateModal">수정</button>
@@ -358,7 +362,6 @@ $('body').on('click', '#companyInsertBtn', function(){
             $('#modalWrite').find('input').val('');  
             $('#modalWrite #frm span').text('');  
             getBoardList();
-            console.log(response);
         },
         error: function(error){
             var errorText = error.responseJSON.messages;
@@ -378,12 +381,19 @@ $('body').on('click', '#companyView', function(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
+            console.log(data);
             $('#modalView .modal-title').html(data.result.companyName);
             $('#modalView .modal-body #companyType').html(data.result.companyType);
             $('#modalView .modal-body #companyName').html(data.result.companyName);
             $('#modalView .modal-body #companyTel').html(data.result.companyTel);
             $('#modalView #companyUpdateModal').attr('data-id', data.result.cdx);
             $('#modalView #companyDelete').attr('data-id', data.result.cdx);
+            $.each(data.result.users, function(index, item){   
+                $('<div id="userList">')
+                .append('<p>'+item.id+":"+item.username+'</p>')
+                .appendTo('#userListWrap'); 
+            });
+            
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
             myModal.show()
         },
