@@ -47,11 +47,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->delete('(:num)', 'Api\ApiUserController::$1');
     });
 
-    //$routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
+    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
         $routes->get('user/list', 'UserController::index');
         $routes->get('user/belong/(:num)', 'UserController::belong/$1');//소속 변경
         $routes->put('user/belong/companies', 'UserController::updateCompanies');
-    //});
+    });
     // 게시판
     $routes->group('boards', static function($routes){     
         $routes->get('', 'Api\ApiBoardController::get');
