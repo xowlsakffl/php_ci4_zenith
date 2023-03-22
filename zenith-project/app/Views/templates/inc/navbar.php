@@ -40,7 +40,6 @@ $path = parse_url($directoryURI, PHP_URL_PATH);
                     <ul class="btn-toggle-nav">
                         <li><a href="#">이벤트 관리</a></li>
                         <li><a href="/company/list" class="<?php if($path == '/company/list'){ echo "active";} ?>">광고주 관리</a></li>
-                        <li><a href="/user/list" class="<?php if($path == '/user/list'){ echo "active";} ?>">사용자 관리</a></li>
                         <li><a href="#">매체 관리</a></li>
                         <li><a href="#">전환 관리</a></li>
                         <li><a href="#">엑셀 업로드</a></li>

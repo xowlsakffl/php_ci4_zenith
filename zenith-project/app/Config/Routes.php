@@ -35,7 +35,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
 //관리자, 최고관리자, 개발자, 일반사용자
-$routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static function($routes){
+$routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
     $routes->get('/home', 'HomeController::index');
     $routes->get('pages/(:any)', 'PageController::view/$1');
@@ -47,11 +47,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user'], static
         $routes->delete('(:num)', 'Api\ApiUserController::$1');
     });
 
-    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
+    //$routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
         $routes->get('user/list', 'UserController::index');
         $routes->get('user/belong/(:num)', 'UserController::belong/$1');//소속 변경
         $routes->put('user/belong/companies', 'UserController::updateCompanies');
-    });
+    //});
     // 게시판
     $routes->group('boards', static function($routes){     
         $routes->get('', 'Api\ApiBoardController::get');

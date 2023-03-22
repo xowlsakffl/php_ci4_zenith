@@ -11,9 +11,12 @@ class ApiUserController extends \CodeIgniter\Controller
 
     protected $userModel;
     protected $data;
+    protected $logginedUser;
+    protected $validation;
 
     public function __construct() {
         $this->userModel = model(UserModel::class);
+        $this->logginedUser = auth()->user();
     }
 
     public function get($id = NULL) {
@@ -21,19 +24,7 @@ class ApiUserController extends \CodeIgniter\Controller
             if ($id) {
                 $data['result'] = $this->userModel->getUser($id);       
                 $data['result']->permission = explode(',', $data['result']->permission);
-
-                $groups = explode(',', $data['result']->groups);
-
-                $data['result']->groups = array_map(function($value) {
-                    $value = str_replace('superadmin', '최고관리자', $value);
-                    $value = str_replace('admin', '관리자', $value);
-                    $value = str_replace('developer', '개발자', $value);
-                    $value = str_replace('user', '사용자', $value);
-                    $value = str_replace('agency', '광고대행사', $value);
-                    $value = str_replace('advertiser', '광고주', $value);
-                    $value = str_replace('guest', '게스트', $value);
-                    return $value;
-                }, $groups);
+                $data['result']->groups = explode(',', $data['result']->groups);
             } else {
                 $param = $this->request->getGet();
 
@@ -74,7 +65,7 @@ class ApiUserController extends \CodeIgniter\Controller
                     
                     $data['pager']['sort'] = $param['sort'];
                 }
-                
+
                 $data['result'] = $builder->paginate($limit);
 
                 $data['pager']['limit'] = intval($limit);
@@ -91,9 +82,12 @@ class ApiUserController extends \CodeIgniter\Controller
         return $this->respond($data);
     }
 
-    public function put($id = NULL) {
+    public function put($id) {
         $ret = false;
-
+        $checkPermission = $this->checkPermission($this->logginedUser, $id, $this->data['groups']);
+        if($checkPermission == false){
+            return $this->failUnauthorized("권한이 없습니다.");
+        }
         if (strtolower($this->request->getMethod()) === 'put') {
             if ($id && !empty($this->data)) {         
                 $this->validation = \Config\Services::validation();
@@ -121,7 +115,7 @@ class ApiUserController extends \CodeIgniter\Controller
         return $this->respond($ret);
     }
 
-    protected function delete($id = NULL) {
+    protected function delete($id) {
         $ret = false;
         if (strtolower($this->request->getMethod()) === 'delete') {
             if ($id) {
@@ -133,6 +127,55 @@ class ApiUserController extends \CodeIgniter\Controller
         }
         
         return $this->respond($ret);
+    }
+
+    protected function checkPermission($logginedUser, $updateId, $postGroups)
+    {
+        $updateUser = $this->userModel->find($updateId);
+        $updateUserGroups = $updateUser->getGroups();
+        //user - 본인만 수정 권한 있음
+        if($logginedUser->inGroup('user') && !$logginedUser->inGroup('superadmin', 'admin', 'developer') && !$logginedUser->hasPermission('user.edit')){
+            if($logginedUser->id != $updateUser->id){
+                return false;
+            }
+            if(in_array('superadmin', $postGroups) || in_array('admin', $postGroups) || in_array('developer', $postGroups) || in_array('agency', $postGroups) || in_array('advertiser', $postGroups)){
+                return false;
+            }
+        }
+        //developer - 본인, user 수정 권한 있음
+        if($logginedUser->inGroup('developer') && !$logginedUser->inGroup('superadmin', 'admin')){
+            if($updateUser->inGroup('superadmin', 'admin')){
+                return false;
+            }
+
+            if($logginedUser->ingroup('developer') && $updateUser->inGroup('developer')){
+                if($logginedUser->id != $updateUser->id){
+                    return false;
+                }
+            }
+
+            if(in_array('superadmin', $postGroups) || in_array('admin', $postGroups) || in_array('developer', $postGroups)){
+                return false;
+            }
+        }
+        //admin - 본인, user 수정 권한 있음
+        if($logginedUser->inGroup('admin') && !$logginedUser->inGroup('superadmin')){
+            if($updateUser->inGroup('superadmin', 'admin')){
+                return false;
+            }
+
+            if($logginedUser->ingroup('admin') && $updateUser->inGroup('admin')){
+                if($logginedUser->id != $updateUser->id){
+                    return false;
+                }
+            }
+
+            if(in_array('superadmin', $postGroups)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function _remap(...$params) {

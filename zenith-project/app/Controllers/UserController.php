@@ -26,6 +26,10 @@ class UserController extends ResourceController
     }
 
     public function belong($id){
+        if(!auth()->user()->ingroup('superadmin', 'admin', 'developer')){
+            return redirect()->back()->with('message', '권한이 없습니다.');
+        }
+
         $data = [
             'user' => $this->userModel->getUser($id),
             'companies' => $this->companyModel->getCompanies(),
@@ -46,6 +50,9 @@ class UserController extends ResourceController
 
     public function updateCompanies(){
         $ret = false;
+        if(!auth()->user()->ingroup('superadmin', 'admin', 'developer')){
+            return $this->failUnauthorized("권한이 없습니다.");
+        }
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $data = $this->request->getRawInput();
 
@@ -67,9 +74,6 @@ class UserController extends ResourceController
 
         return $this->respond($ret);
     }
-
-
-
     
     public function post() {
         $ret = false;

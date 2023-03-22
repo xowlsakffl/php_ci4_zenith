@@ -16,16 +16,17 @@
                         <input type="text" name="username" id="username" class="form-control">
                         <span id="username_error" class="text-danger"></span>
                     </div>
+                    <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){?>              
                     <div class="form-group">
                         <label for="group">권한</label>
                         <select name="group" class="form-control" multiple="multiple" id="userGroup">
-                            <option value="superadmin">SuperAdmin</option>
-                            <option value="admin">Admin</option>
-                            <option value="developer">Developer</option>
-                            <option value="agency">Agency</option>
-                            <option value="advertiser">Advertiser</option>
-                            <option value="user">User</option>
-                            <option value="guest">Guest</option>
+                            <option value="superadmin">최고관리자</option>
+                            <option value="admin">관리자</option>
+                            <option value="developer">개발자</option>
+                            <option value="agency">광고대행사</option>
+                            <option value="advertiser">광고주</option>
+                            <option value="user">사용자</option>
+                            <option value="guest">게스트</option>
                         </select>
                         <span id="groups_error" class="text-danger"></span>
                     </div>
@@ -49,6 +50,7 @@
                         </select>
                         <span id="permission_error" class="text-danger"></span>
                     </div>
+                    <?php }?>
                 </form>
             </div>
             <div class="modal-footer">            
@@ -82,7 +84,9 @@
                 </dl>
             </div>
             <div class="modal-footer">     
-                <a href="/users/belong" class="btn btn-primary" id="userBelong">소속 수정</a>       
+                <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){
+                    echo '<a href="/users/belong" class="btn btn-primary" id="userBelong">소속 수정</a>';
+                }?>
                 <button type="button" class="btn btn-primary" id="userUpdateModal">수정</button>
                 <button type="button" class="btn btn-danger" id="userDelete">삭제</button>
             </div>
@@ -141,6 +145,11 @@
 
 <?=$this->section('script');?>
 <script>
+var alertMessage = "<?php echo session('message'); ?>";
+if(alertMessage) {
+    alert(alertMessage);
+}
+
 $(document).ready(function(){
 
 getUserList();
@@ -208,6 +217,16 @@ function setTable(xhr){
 
     $.each(xhr.result, function(index, item){   
         index++
+        item.groups = item.groups.map(function(group) {
+            group = group.replace('superadmin', '최고관리자');
+            group = group.replace('admin', '관리자');
+            group = group.replace('developer', '개발자');
+            group = group.replace('user', '사용자');
+            group = group.replace('agency', '광고대행사');
+            group = group.replace('advertiser', '광고주');
+            group = group.replace('guest', '게스트');
+            return group;
+        });
         $('<tr id="userView" data-id="'+item.id+'">').append('<td>'+item.id+'</td>')
         .append('<td>'+item.username+'</td>')
         .append('<td>'+item.groups+'</td>')
@@ -327,10 +346,19 @@ $('body').on('click', '#userView', function(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
-            console.log(data);
+            data.result.groups = data.result.groups.map(function(group) {
+                group = group.replace('superadmin', '최고관리자');
+                group = group.replace('admin', '관리자');
+                group = group.replace('developer', '개발자');
+                group = group.replace('user', '사용자');
+                group = group.replace('agency', '광고대행사');
+                group = group.replace('advertiser', '광고주');
+                group = group.replace('guest', '게스트');
+                return group;
+            });
             $('#modalView .modal-body #viewName dd').html(data.result.username);
             $('#modalView .modal-body #viewCompany dd').html(data.result.companyType+" "+data.result.companyName);
-            $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(", "));       
+            $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(","));       
             $('#modalView .modal-body #viewDate dd').html(data.result.created_at.substr(0, 16));
             $('#modalView #userBelong').attr('href', '/user/belong/'+data.result.id);
             $('#modalView #userUpdateModal').attr('data-id', data.result.id);
