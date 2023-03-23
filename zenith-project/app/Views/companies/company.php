@@ -390,10 +390,9 @@ $('body').on('click', '#companyView', function(){
             $('#modalView #companyDelete').attr('data-id', data.result.cdx);
             $.each(data.result.users, function(index, item){   
                 $('<div id="userList">')
-                .append('<p>'+item.id+":"+item.username+'</p>')
+                .append('<p>id : '+item.id+" username : "+item.username+'</p>')
                 .appendTo('#userListWrap'); 
             });
-            
             var myModal = new bootstrap.Modal(document.getElementById('modalView'))
             myModal.show()
         },
@@ -490,6 +489,10 @@ $('body').on('keyup', '#companyName', function(){
 
 $('body').on('keyup', '#companyTel', function(){
     $(this).siblings('span').text("");
+});
+
+$("#modalView").on("hidden.bs.modal", function () {
+    $('#userListWrap').html('')
 });
 
 });
