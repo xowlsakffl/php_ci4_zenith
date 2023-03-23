@@ -34,7 +34,7 @@ class UserController extends ResourceController
             'user' => $this->userModel->getUser($id),
             'companies' => $this->companyModel->getCompanies(),
         ];
-        
+
         return view('users/belong', $data);
     }
     

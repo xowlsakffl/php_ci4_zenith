@@ -20,28 +20,9 @@
                     <div class="form-group">
                         <label for="group">권한</label>
                         <select name="group" class="form-control" multiple="multiple" id="userGroup">
-                            <?php 
-                            if(auth()->user()->inGroup('superadmin')){
-                                echo '
-                                <option value="superadmin">최고관리자</option>
-                                <option value="admin">관리자</option>
-                                <option value="developer">개발자</option>
-                                ';
-                            }
-
-                            if(auth()->user()->inGroup('admin') && !auth()->user()->inGroup('superadmin')){
-                                echo '
-                                <option value="admin">관리자</option>
-                                ';
-                            }
-
-                            if(auth()->user()->inGroup('developer') && !auth()->user()->inGroup('superadmin')){
-                                echo '
-                                <option value="developer">개발자</option>
-                                ';
-                            }
-                            ?>
-                            
+                            <option value="superadmin">최고관리자</option>
+                            <option value="admin">관리자</option>
+                            <option value="developer">개발자</option>
                             <option value="agency">광고대행사</option>
                             <option value="advertiser">광고주</option>
                             <option value="user">사용자</option>
@@ -442,7 +423,7 @@ $('body').on('click', '#userUpdateBtn', function(){
             $('#modalUpdate').modal('hide');
             $('#modalUpdate').find('input').val('');  
             $('#modalUpdate #frm span').text(''); 
-            location.reload();
+            getUserList();
         },
         error: function(error){
             var errorText = error.responseJSON.messages;
