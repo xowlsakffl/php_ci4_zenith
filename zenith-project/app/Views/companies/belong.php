@@ -2,31 +2,34 @@
 
 <?=$this->section('content');?>
 <div class="container-md">
-    <h1 class="font-weight-bold mb-5">사용자 소속 변경</h1>
+    <h1 class="font-weight-bold mb-5">소속 변경</h1>
     <div class="row">
         <div class="col-6 m-auto">
             <div class="card">
                 <div class="card-body">
                     <form id="frm">
-                        <input type="hidden" name="id" id="hidden_id" value="<?=$user->id?>">
+                        <input type="hidden" name="cdx" id="hidden_id" value="<?=$company->cdx?>">
                         <div class="form-group mb-3">
-                            아이디 : <span><?=$user->username?></span>
+                            현재 소속 : <span><?=$company->parent_company_name?></span>
                         </div>
                         <div class="form-group mb-3">
-                            현재 소속 : <span><?=$user->companyName?></span>
+                            타입 : <span><?=$company->companyType?></span>
                         </div>
                         <div class="form-group mb-3">
-                            <label for="company">소속 선택</label>
-                            <select name="company" class="form-control" id="userCompany">
-                                <?php foreach ($companies as $company) :?>
-                                    <option value="<?= $company['cdx']?>"><?= $company['companyName'] ?></option>
+                            이름 : <span><?=$company->companyName?></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="agency">소속 선택</label>
+                            <select name="agency" class="form-control" id="agency">
+                                <?php foreach ($agencies as $agency) : ?>
+                                    <option value="<?= $agency['cdx']?>"><?= $agency['companyName'] ?></option>
                                 <?php endforeach ?>
                             </select>
-                            <span id="company_error" class="text-danger"></span>
+                            <span id="agency_error" class="text-danger"></span>
                         </div>
                     </form>
                     <div class="modal-footer">            
-                        <button type="button" class="btn btn-primary" id="userCompanyUpdate">저장</button>
+                        <button type="button" class="btn btn-primary" id="companyBelongUpdate">저장</button>
                     </div>
                 </div>
             </div>
@@ -39,15 +42,15 @@
 <script>
 $(document).ready(function(){
 
-$('body').on('click', '#userCompanyUpdate', function(){
+$('body').on('click', '#companyBelongUpdate', function(){
     data = {
-        company_id: $('#userCompany').val(),
-        user_id: $("input:hidden[name=id]").val(),
+        parent_cdx: $('#agency').val(),
+        cdx: $("input:hidden[name=cdx]").val(),
     };
     console.log(data);
     $.ajax({
         type: "put",
-        url: "<?=base_url()?>/user/belong",
+        url: "<?=base_url()?>/company/belong",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',

@@ -67,7 +67,10 @@
                     <div id="userListWrap">
                     </div>
                 </div>
-                <div class="modal-footer">            
+                <div class="modal-footer">          
+                    <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){
+                        echo '<a href="/company/belong" class="btn btn-primary" id="companyBelong">소속 수정</a>';
+                    }?>  
                     <button type="button" class="btn btn-primary" id="companyUpdateModal">수정</button>
                     <button type="button" class="btn btn-danger" id="companyDelete">삭제</button>
                 </div>
@@ -157,7 +160,7 @@
                 </ul>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-end">
-                <button class="btn btn-primary" id="companyNewBtn">글쓰기</button>
+                <button class="btn btn-primary" id="companyNewBtn">광고주 생성</button>
             </div>
         </div>
     </div>
@@ -396,6 +399,7 @@ $('body').on('click', '#companyView', function(){
             $('#modalView .modal-body #companyType').html(data.result.companyType);
             $('#modalView .modal-body #companyName').html(data.result.companyName);
             $('#modalView .modal-body #companyTel').html(data.result.companyTel);
+            $('#modalView #companyBelong').attr('href', '/company/belong/'+data.result.cdx);
             $('#modalView #companyUpdateModal').attr('data-id', data.result.cdx);
             $('#modalView #companyDelete').attr('data-id', data.result.cdx);
             $.each(data.result.users, function(index, item){   

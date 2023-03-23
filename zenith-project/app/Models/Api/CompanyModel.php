@@ -54,7 +54,7 @@ class CompanyModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getCompanies($id)
+    public function getCompanies($id = NULL)
     {
         $builder = $this->select('c.*, GROUP_CONCAT(DISTINCT u.id) as user_id, GROUP_CONCAT(DISTINCT u.username) as username, ci.parent_cdx as parent, parent_c.companyName as parent_company_name');
         $builder->from('companies as c');
@@ -62,9 +62,25 @@ class CompanyModel extends Model
         $builder->join('users as u', 'cu.user_id = u.id', 'left');
         $builder->join('companies_idx as ci', 'c.cdx = ci.cdx', 'left');
         $builder->join('companies as parent_c', 'ci.parent_cdx = parent_c.cdx', 'left');
-        $builder->where('c.cdx', $id);
+        if($id){
+            $builder->where('c.cdx', $id);
+        }
         $builder->groupBy('c.cdx');
-        $result = $builder->get()->getRow();
+        if($id){
+            $result = $builder->get()->getRow();
+        }else{
+            $result = $builder->get()->getResultArray();
+        }
+
+        return $result;
+    }
+
+    public function getAgency()
+    {
+        $builder = $this->db->table('companies');
+        $builder->select('*');
+        $builder->where('companyType', '광고대행사');
+        $result = $builder->get()->getResultArray();
 
         return $result;
     }
