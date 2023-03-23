@@ -34,7 +34,10 @@ class ApiCompanyController extends \CodeIgniter\Controller
             } else {
                 $param = $this->request->getGet();
 
-                $builder = $this->company->select('*');
+                $builder = $this->company->select('c.*, ci.parent_cdx as parent, parent_c.companyName as parent_company_name');
+                $builder->from('companies as c');
+                $builder->join('companies_idx as ci', 'c.cdx = ci.cdx', 'left');
+                $builder->join('companies as parent_c', 'ci.parent_cdx = parent_c.cdx', 'left');
 
                 if(isset($param['limit'])){
                     $limit = $param['limit'];
@@ -45,16 +48,16 @@ class ApiCompanyController extends \CodeIgniter\Controller
                 if(!empty($param['search'])){
                     $searchText = $param['search'];
                     $builder->groupStart();
-                        $builder->orlike('companyType', $searchText, 'both');
-                        $builder->orLike('companyName', $searchText, 'both');
-                        $builder->orLike('companyTel', $searchText, 'both');
+                        $builder->orlike('c.companyType', $searchText, 'both');
+                        $builder->orLike('c.companyName', $searchText, 'both');
+                        $builder->orLike('c.companyTel', $searchText, 'both');
                     $builder->groupEnd();
                     $data['pager']['search'] = $param['search'];
                 }
     
                 if(!empty($param['startDate']) && !empty($param['endDate'])){
-                    $builder->where('created_at >=', $param['startDate'].' 00:00:00');
-                    $builder->where('created_at <=', $param['endDate'].' 23:59:59');
+                    $builder->where('c.created_at >=', $param['startDate'].' 00:00:00');
+                    $builder->where('c.created_at <=', $param['endDate'].' 23:59:59');
                     
                     $data['pager']['startDate'] = $param['startDate'];
                     $data['pager']['endDate'] = $param['endDate'];
@@ -62,13 +65,14 @@ class ApiCompanyController extends \CodeIgniter\Controller
 
                 if(!empty($param['sort'])){
                     if($param['sort'] == 'old'){
-                        $builder->orderBy('cdx', 'asc');
+                        $builder->orderBy('c.cdx', 'asc');
                     }else{
-                        $builder->orderBy('cdx', 'desc');
+                        $builder->orderBy('c.cdx', 'desc');
                     }
                     
                     $data['pager']['sort'] = $param['sort'];
                 }
+                $builder->groupBy('c.cdx');
 
                 $data['result'] = $builder->paginate($limit);
 

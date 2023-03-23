@@ -48,6 +48,10 @@
                 </div>
                 <div class="modal-body">
                     <dl>
+                        <dt>소속 대행사</dt>
+                        <dd id="companyBelong"></dd>
+                    </dl>
+                    <dl>
                         <dt>타입</dt>
                         <dd id="companyType"></dd>
                     </dl>
@@ -59,9 +63,8 @@
                         <dt>전화번호</dt>
                         <dd id="companyTel"></dd>
                     </dl>
-
-                    <div id="userListWrap" class="mt-5">
-                        <h5>유저리스트</h5>
+                    <h5 class="mt-5">소속 유저 리스트</h5>
+                    <div id="userListWrap">
                     </div>
                 </div>
                 <div class="modal-footer">            
@@ -139,6 +142,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">소속대행사</th>
                         <th scope="col">타입</th>
                         <th scope="col">이름</th>
                         <th scope="col">전화번호</th>
@@ -181,6 +185,7 @@ function getBoardList(page, limit, search, sort, startDate, endDate){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(xhr){
+            console.log(xhr.result);
             setTable(xhr);       
             setPaging(xhr);
             setAllCount(xhr);
@@ -226,7 +231,11 @@ function setTable(xhr){
     $('#companies tbody').empty();
     $.each(xhr.result, function(index, item){   
         index++
+        if(item.parent_company_name == null){
+            item.parent_company_name = '';
+        }
         $('<tr id="companyView" data-id="'+item.cdx+'">').append('<td>'+item.cdx+'</td>')
+        .append('<td>'+item.parent_company_name+'</td>')
         .append('<td>'+item.companyType+'</td>')
         .append('<td>'+item.companyName+'</td>')
         .append('<td>'+item.companyTel+'</td>')
@@ -383,6 +392,7 @@ $('body').on('click', '#companyView', function(){
         success: function(data){
             console.log(data);
             $('#modalView .modal-title').html(data.result.companyName);
+            $('#modalView .modal-body #companyBelong').html(data.result.parent_company_name);
             $('#modalView .modal-body #companyType').html(data.result.companyType);
             $('#modalView .modal-body #companyName').html(data.result.companyName);
             $('#modalView .modal-body #companyTel').html(data.result.companyTel);

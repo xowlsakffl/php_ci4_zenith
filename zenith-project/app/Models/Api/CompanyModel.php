@@ -56,12 +56,14 @@ class CompanyModel extends Model
 
     public function getCompanies($id)
     {
-        $builder = $this->select('c.*, GROUP_CONCAT(DISTINCT u.id) as user_id, GROUP_CONCAT(DISTINCT u.username) as username');
+        $builder = $this->select('c.*, GROUP_CONCAT(DISTINCT u.id) as user_id, GROUP_CONCAT(DISTINCT u.username) as username, ci.parent_cdx as parent, parent_c.companyName as parent_company_name');
         $builder->from('companies as c');
         $builder->join('companies_users as cu', 'c.cdx = cu.company_id', 'left');
         $builder->join('users as u', 'cu.user_id = u.id', 'left');
-        $builder->where('c.cdx', $id);             
-        $builder->groupBy('c.cdx'); 
+        $builder->join('companies_idx as ci', 'c.cdx = ci.cdx', 'left');
+        $builder->join('companies as parent_c', 'ci.parent_cdx = parent_c.cdx', 'left');
+        $builder->where('c.cdx', $id);
+        $builder->groupBy('c.cdx');
         $result = $builder->get()->getRow();
 
         return $result;
