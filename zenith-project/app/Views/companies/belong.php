@@ -44,8 +44,8 @@ $(document).ready(function(){
 
 $('body').on('click', '#companyBelongUpdate', function(){
     data = {
-        agency: $('#agency').val(),
-        company_id: $("input:hidden[name=cdx]").val(),
+        parent_cdx: $('#agency').val(),
+        cdx: $("input:hidden[name=cdx]").val(),
     };
     console.log(data);
     $.ajax({

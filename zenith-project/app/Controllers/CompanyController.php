@@ -12,9 +12,11 @@ class CompanyController extends BaseController
     
     protected $companyModel;
     protected $data;
+    protected $db;
 
     public function __construct(){
         $this->companyModel = model(CompanyModel::class);
+        $this->db = \Config\Database::connect();
     }
 
     public function index()
@@ -43,12 +45,12 @@ class CompanyController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $data = $this->request->getRawInput();
 
-            $builder = $this->companyUserModel;
-            $count = $builder->where('user_id', $data['user_id'])->countAllResults();
+            $builder = $this->db->table('companies_idx');
+            $count = $builder->where('cdx', $data['cdx'])->countAllResults();
             
             if($count > 0){
-                $builder->where('user_id', $data['user_id']);
-                $builder->set('company_id', $data['company_id']);
+                $builder->where('cdx', $data['cdx']);
+                $builder->set('parent_cdx', $data['parent_cdx']);
                 $builder->update();
             }else{
                 $builder->insert($data);

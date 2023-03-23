@@ -11,8 +11,10 @@ use CodeIgniter\Shield\Entities\User;
 class UserController extends ResourceController 
 {
     use ResponseTrait;
-
+    
     protected $userModel;
+    protected $companyModel;
+    protected $companyUserModel;
     protected $data;
 
     public function __construct(){
