@@ -107,9 +107,7 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 input[type=submit], button {
@@ -148,9 +146,7 @@ textarea:focus {
 }
 
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 select:focus {
@@ -848,4 +844,6 @@ body {
   font-size: 1.125rem;
   line-height: 20px;
   border-radius: 50%;
-}/*# sourceMappingURL=ui.css.map */
+}
+
+/*# sourceMappingURL=ui.css.map */

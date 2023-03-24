@@ -32,7 +32,7 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                        <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="로그인" value="<?= old('email') ?>" required />
+                        <input type="text" class="form-control" name="username" placeholder="로그인" value="<?= old('username') ?>" required />
                     </div>
 
                     <!-- Password -->
