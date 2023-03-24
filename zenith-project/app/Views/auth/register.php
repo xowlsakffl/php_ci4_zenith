@@ -3,7 +3,6 @@
 <?= $this->section('title') ?><?= lang('Auth.register') ?> <?= $this->endSection() ?>
 
 <?= $this->section('guestContent') ?>
-    view 회원가입 페이지
     <div class="container d-flex justify-content-center p-5">
         <div class="card col-12 col-md-5 shadow-sm">
             <div class="card-body">
@@ -29,29 +28,29 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                        <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required />
+                        <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" />
                     </div>
 
                     <!-- Username -->
                     <div class="mb-4">
-                        <input type="text" class="form-control" name="username" inputmode="text" autocomplete="username" placeholder="<?= lang('Auth.username') ?>" value="<?= old('username') ?>" required />
+                        <input type="text" class="form-control" name="username" inputmode="text" autocomplete="username" placeholder="<?= lang('Auth.username') ?>" value="<?= old('username') ?>" />
                     </div>
 
                     <!-- Password -->
                     <div class="mb-2">
-                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="new-password" placeholder="<?= lang('Auth.password') ?>" required />
+                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="new-password" placeholder="<?= lang('Auth.password') ?>" />
                     </div>
 
                     <!-- Password (Again) -->
                     <div class="mb-5">
-                        <input type="password" class="form-control" name="password_confirm" inputmode="text" autocomplete="new-password" placeholder="<?= lang('Auth.passwordConfirm') ?>" required />
+                        <input type="password" class="form-control" name="password_confirm" inputmode="text" autocomplete="new-password" placeholder="<?= lang('Auth.passwordConfirm') ?>" />
                     </div>
 
                     <div class="d-grid col-12 col-md-8 mx-auto m-3">
                         <button type="submit" class="btn btn-primary btn-block"><?= lang('Auth.register') ?></button>
                     </div>
 
-                    <p class="text-center"><?= lang('Auth.haveAccount') ?> <a href="<?= url_to('login') ?>"><?= lang('Auth.login') ?></a></p>
+                    <p class="text-center"><a href="<?= url_to('login') ?>"><?= lang('Auth.login') ?></a></p>
 
                 </form>
             </div>
