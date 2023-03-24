@@ -140,6 +140,7 @@
                 <input type="text" class="form-control" id="search" name="search" placeholder="검색">
             </div>
         </div>
+        <button id="DataResetBtn" class="btn btn-primary">초기화</button>
         <div class="row">
             <table class="table" id="companies">
                 <thead class="table-dark">
@@ -484,7 +485,7 @@ $('body').on('click', '#companyDelete', function(){
             contentType: 'application/json; charset=utf-8',
             success: function(data){
                 $('#modalView').modal('hide');
-                getBoardList(1);
+                getBoardList();
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
@@ -508,6 +509,15 @@ $('body').on('keyup', '#companyTel', function(){
 $("#modalView").on("hidden.bs.modal", function () {
     $('#userListWrap').html('')
 });
+
+$('body').on('click', '#DataResetBtn', function(){
+    $('#sort option:first').prop('selected',true);
+    $('#pageLimit option:first').prop('selected',true);
+    $('#fromDate').val('');
+    $('#toDate').val('');
+    $('#search').val('');
+    getBoardList();
+})
 
 });
 
