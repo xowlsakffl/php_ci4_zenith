@@ -31,11 +31,10 @@ $breakpoint-sm-mobile:300px;
 }
 
 
-@import 'zenith/_var.scss';
-@import 'zenith/_layout.scss';
+@import 'ui.scss';
 
-@import "exam/_exam-zenith";
-
+@import "exam/_exam-zenith.scss";
+@import "exam/_user.scss";
 
 @import "_account.scss";
 

@@ -7,7 +7,7 @@ $theme-color: rgb(177 155 143/80%);
 
 
 @mixin effect($second:0.3s) {
-    transform: translateY(50%); visibility:hidden; transition: all linear $second;
+    transform: translateY(150%); visibility:hidden; transition: all linear $second;
     &.effect{transform: translateY(0%); visibility:visible;}
 }
 .account-container{height: 100vh; text-align: center; color:#fff; background: linear-gradient(339deg, rgba(24, 22, 19,0.8) 0%, rgb(226, 148, 117) 100%, rgb(107,82,69) 50%); font-family: 'Noto Sans Lepcha', sans-serif;   

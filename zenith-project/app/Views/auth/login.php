@@ -32,12 +32,12 @@
 
                     <!-- Email -->
                     <div class="mb-2">
-                        <input type="text" class="form-control" name="username" placeholder="로그인" value="<?= old('username') ?>" required />
+                        <input type="text" class="form-control" name="username" placeholder="<?= lang('Auth.username') ?>" value="<?= old('username') ?>" />
                     </div>
 
                     <!-- Password -->
                     <div class="mb-2">
-                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="비밀번호" required />
+                        <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" />
                     </div>
 
                     <!-- Remember me -->
@@ -45,7 +45,7 @@
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input type="checkbox" name="remember" class="form-check-input" <?php if (old('remember')): ?> checked<?php endif ?>>
-                                로그인 유지
+                                <?= lang('Auth.rememberMe') ?>
                             </label>
                         </div>
                     <?php endif; ?>
@@ -55,11 +55,11 @@
                     </div>
 
                     <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
-                        <p class="text-center"><?= lang('Auth.forgotPassword') ?> <a href="<?= url_to('magic-link') ?>"><?= lang('Auth.useMagicLink') ?></a></p>
+                        <p class="text-center"><a href="<?= url_to('magic-link') ?>"><?= lang('Auth.forgotPassword') ?> </a></p>
                     <?php endif ?>
 
                     <?php if (setting('Auth.allowRegistration')) : ?>
-                        <p class="text-center"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></p>
+                        <p class="text-center"><a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></p>
                     <?php endif ?>
 
                 </form>

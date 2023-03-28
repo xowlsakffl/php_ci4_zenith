@@ -82,7 +82,7 @@
         if(i >= effect.length){
             clearInterval(timer); 
         }              
-    },700); 
+    },200); 
 
     // 타이핑 효과
     let typingTxt = 'Login';    
