@@ -1,0 +1,51 @@
+$color-reset: #0d6efd;
+
+.filter-btn-wrap{ //sorging 버튼
+    text-align:center; border-top:1px solid #c3c3c3; background:#e9e9e9;  padding:35px 10.4167vw;
+    .col{flex:0 0 auto; width:auto; padding:0 30px; color:#929292; font-weight:500;
+        dt{margin:0 0 5px; font-size:1.125rem; color:$color-dark;}
+    }
+
+    button{
+        &.active{color:$color-primary; border-color:$color-primary;}
+        &.alert{margin:0;
+            &::before{position:absolute; top:0; left:0; width:100%; height:3px; content:''; background:$color-primary;}
+        }
+    }
+    .btn-primary{width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:$color-primary;}        
+    .btn-reset{justify-content:center; width:115px; height:52px; color:#fff; border-radius:7px;background:$color-reset;
+        }  
+    }
+
+    .form-control{width:100%; height:100%; padding:12px 15px; text-align:left; line-height:1.4; border:1px solid #c3c3c3; border-radius:5px; background:#fff;
+        &.active{color:$color-primary; border-color:$color-primary;}
+        &.alert{margin:0;
+            &::before{position:absolute; top:0; left:0; width:100%; height:3px; content:''; background:$color-primary;}
+        }
+    }
+
+
+.table-content{position:relative; padding:30px 24px 50px; border-radius:10px; border:1px solid #dbdbdb;  background:#fff;}
+
+.client-list{
+    span{display: inline-block; padding-left:1rem;}
+}
+@include x-large{
+    .filter-btn-wrap{padding:10px 35px 30px;}
+}
+
+
+
+//management.php
+.container-user-management{ 
+    .form-control{cursor:pointer;}  
+
+    .table{min-width:1000px;}
+
+    .btn-wrap{margin:0 0 12px;
+        .btn{height:27px; padding:0 15px; font-size:0.813rem; color:$color-dark; line-height:27px; border-radius:14px;
+            &:hover,
+            &.active{color:#fff;}
+        }
+    }   
+}

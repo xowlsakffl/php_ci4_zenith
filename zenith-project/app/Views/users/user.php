@@ -121,6 +121,7 @@
             <input type="text" class="form-control" id="search" name="search" placeholder="검색">
         </div>
     </div>
+    <button id="DataResetBtn" class="btn btn-primary">초기화</button>
     <div class="row">
         <table class="table" id="user">
             <thead class="table-dark">
@@ -462,6 +463,14 @@ $('body').on('change', '#userGroup', function(){
     $(this).siblings('span').text("");
 });
 
+$('body').on('click', '#DataResetBtn', function(){
+    $('#sort option:first').prop('selected',true);
+    $('#pageLimit option:first').prop('selected',true);
+    $('#fromDate').val('');
+    $('#toDate').val('');
+    $('#search').val('');
+    getUserList();
+})
 
 });
 

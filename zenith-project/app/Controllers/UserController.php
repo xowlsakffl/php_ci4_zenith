@@ -20,7 +20,7 @@ class UserController extends ResourceController
     public function __construct(){
         $this->userModel = model(UserModel::class);
         $this->companyModel = model(CompanyModel::class);
-        $this->companyUserModel = model(CompanyUserModel::class);
+        $this->companyUserModel = model(CompanyUserModel::class);;
     }
 
     public function index(){

@@ -74,7 +74,7 @@
         if(i >= effect.length){
             clearInterval(timer); 
         }              
-    },700); 
+    },150); 
 
     // 타이핑 효과
     let typingTxt = 'Register';    
