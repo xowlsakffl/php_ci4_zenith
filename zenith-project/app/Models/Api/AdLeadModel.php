@@ -45,7 +45,7 @@ class AdLeadModel extends Model
     {
         $sql = "";
         
-        $result = $this->facebook->query($sql);
+        $result = $this->google->query($sql);
 
         return $result;
     }
