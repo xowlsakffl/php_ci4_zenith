@@ -7,7 +7,7 @@ ini_set('memory_limit', '-1');
 ini_set('soap.wsdl_cache_enabled', 0);
 ini_set('soap.wsdl_cache_ttl', 0);
 
-require_once __DIR__ . '/adsdb.php';
+require_once __DIR__ . '/google-db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 use CodeIgniter\CLI\CLI;
@@ -74,7 +74,6 @@ class GoogleAds
     public function __construct($clientCustomerId = "")
     {
         $this->db = new GADB();
-        GetOpt::
         $this->oAuth2Credential = (new OAuth2TokenBuilder())->fromFile(__DIR__ . "/google_ads_php.ini")->build();
     }
 

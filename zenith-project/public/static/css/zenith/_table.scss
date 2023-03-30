@@ -1,4 +1,13 @@
-.table{table-layout:fixed; min-width:1400px;
+.table{
+    .none{padding:50px 0; text-align:center;}
+    .ico{display:inline-block; width:8px; height:8px; border-radius:50%;
+        &.green{background:var(--bs-success);}
+        &.red{background:var(--bs-danger);}
+    }
+    .radio-wrap{
+    }
+}
+.table-default{table-layout:fixed; min-width:1400px;
     --bs-table-hover-bg:#ffebeb;
     --bs-table-striped-bg:rgba(0, 0, 0, .03);
     font-size:0.813rem;
@@ -9,7 +18,7 @@
     }
     tbody{
         th{position:relative; padding:12px; font-weight:400; border-right:1px dashed #dfdfdf;}
-        td{position:relative; padding:12px; text-align:center; vertical-align:middle;
+        td{position:relative; padding:12px 8px; text-align:center; vertical-align:middle;
             &:not(:last-child){border-right:1px dashed #dfdfdf;}
         }
     }
@@ -24,6 +33,39 @@
         .btn-arrow{width:20px; height:20px; overflow:hidden; padding:0; font-size:1.125rem; line-height:20px; border-radius:50%;}
     }
 }
+.table-event{ min-width:1400px;
+    thead{
+        th{font-size:13px; text-align:center; vertical-align:middle; line-height:1.4;
+            &:not(:last-child){border-right:1px dashed #dfdfdf;}
+        }
+    }
+    td{padding:5px; font-size:13px; vertical-align:middle;}
+    input[type="text"]{padding:5px; font-size:13px;}
+    .r-border{border-right:1px dashed #dfdfdf;}
+}
+.table-data{text-align:center;
+    th,
+    td{padding:20px 10px;}
+    thead{
+        th{background:#f7f7f7;}
+    }
+}
+.table-modal{font-size:13px; vertical-align:middle;
+    thead{
+        th{text-align:center; background:#f7f7f7;}
+    }
+    .btn{margin:0 0 0 10px; font-size:13px;}
+}
+.table-left-header{font-size:13px; vertical-align:middle;
+    th{text-align:center; background:#f7f7f7;}
+    td{
+        input,
+        select{font-size:13px;}
+    }
+    .btn{min-width:80px;}
+    * + .btn{margin-left:10px;}
+}
+.table-sm{min-width:1000px;}
 
 @include x-large{
 
@@ -32,7 +74,10 @@
 
 }
 @include medium{
-
+    .table-data{text-align:center;
+        th,
+        td{padding:10px;}
+    }
 }
 @include small{
     

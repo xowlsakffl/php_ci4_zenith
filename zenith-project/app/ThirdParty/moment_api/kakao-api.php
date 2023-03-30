@@ -7,9 +7,12 @@ use CodeIgniter\CLI\CLI;
 
 class ChainsawKM
 {
-    private $app_id = '243424';
-    private $app_key = '500a99d34478a54c7c4fbfc04ff90512';
-    private $client_secret = 'V1lTM4d4FrLoxVhnISLqGaLdhwsvcGTT';
+    //// private $app_id = '243424';
+    //// private $app_key = '500a99d34478a54c7c4fbfc04ff90512';
+    //// private $client_secret = 'V1lTM4d4FrLoxVhnISLqGaLdhwsvcGTT';
+    private $app_id = '887002';
+    private $app_key = '0cc29f3733642f5860974385add9855e';
+    private $client_secret = 'PvAXnDxpbO9mQxKXYrCVkTxI4z3eAyb5';
     private $oauth_url = 'https://kauth.kakao.com/oauth';
     private $code;
     private $host = 'https://apis.moment.kakao.com';
@@ -47,7 +50,7 @@ class ChainsawKM
     }
     public function get_code()
     {
-        $redirect_code_uri = urlencode("http://www.chainsaw.co.kr/kmmanager/oauth");
+        $redirect_code_uri = urlencode("https://zenith.chainsaw.co.kr/advertisement/moment/oauth");
         $param = "?client_id={$this->app_key}&redirect_uri={$redirect_code_uri}&response_type=code";
         $response = $this->curl($this->oauth_url . '/authorize' . $param, NULL, NULL);
     }
@@ -57,7 +60,7 @@ class ChainsawKM
         $data = array(
             'grant_type' => 'authorization_code',
             'client_id' => $this->app_key,
-            'redirect_uri' => 'http://www.chainsaw.co.kr/kmmanager/oauth',
+            'redirect_uri' => 'https://zenith.chainsaw.co.kr/advertisement/moment/oauth',
             'code' => $_GET['code'], //get_code() 에서 받은 code 값
             //'client_secret' => $this->client_secret
         );
@@ -1536,11 +1539,11 @@ class ChainsawKM
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         $result = json_decode($result, true);
-        // echo json_encode($data);
-        // echo '<pre>headers:'.print_r($headers,1).'</pre>';
-        // echo '<pre>data:'.print_r($data,1).'</pre>';
-        // echo '<pre>info:'.print_r($info,1).'</pre>';
-        // echo '<pre>result:'.print_r($result,1).'</pre>';
+        echo json_encode($data);
+        echo '<pre>headers:'.print_r($headers,1).'</pre>';
+        echo '<pre>data:'.print_r($data,1).'</pre>';
+        echo '<pre>info:'.print_r($info,1).'</pre>';
+        echo '<pre>result:'.print_r($result,1).'</pre>';
         if (isset($result['error'])) {
             $this->error($result['error'], $result['error_description']);
         }

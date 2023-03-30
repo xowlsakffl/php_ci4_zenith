@@ -20,8 +20,13 @@ class ApiController extends BaseController
         throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
     protected function facebook(...$params) {
-        include APPPATH."/ThirdParty/facebook_api/facebook-api.php";
+        include APPPATH."ThirdParty/facebook_api/facebook-api.php";
         $this->chainsaw = new \ChainsawFB();
+        $this->fb_func(...$params);
+    }
+    protected function moment(...$params) {
+        include APPPATH."ThirdParty/moment_api/kakao-api.php";
+        $this->chainsaw = new \ChainsawKM();
         $this->fb_func(...$params);
     }
 

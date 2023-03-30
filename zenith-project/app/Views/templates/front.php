@@ -5,6 +5,7 @@
         <?=$this->include('templates/inc/navbar.php')?>
         <?=$this->renderSection('content')?>
     </div>
+    <?=$this->renderSection('modal')?>
 </div>
 <?=$this->renderSection('script')?>
 
