@@ -1,0 +1,17 @@
+.modal-header{font-size: 1.15rem; border-bottom:0px; 
+    h5.modal-title{display:flex; align-items: center; position:relative; padding-bottom:1%;
+        i{font-size:130%; margin-right:3px; }
+        .bi-person-fill{
+            &::before{display: block;}
+        }
+        &::after{display: block; content: ''; background-color:$color-primary; position: absolute; bottom: 0; left: 0; width: 105%; height: 2px;}
+    }
+    
+}
+
+.modal-body{padding-bottom:0;
+    table{min-width:unset !important; border: 1px solid #d5d5d5; border-radius: 5px;
+        thead tr th{background-color:#f7f7f7;}
+    }   
+}
+.modal-footer{border-top:0px;}

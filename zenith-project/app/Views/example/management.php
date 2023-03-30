@@ -59,37 +59,42 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="modalView" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal">
             <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">사용자</h5>
-            </div>
-            <div class="modal-body">
-                <dl id="viewName">
-                    <dt>이름</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewCompany">
-                    <dt>소속</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewGroup">
-                    <dt>권한</dt>
-                    <dd></dd>
-                </dl>
-                <dl id="viewDate">
-                    <dt>가입일</dt>
-                    <dd></dd>
-                </dl>
-            </div>
-            <div class="modal-footer">     
-                <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){
-                    echo '<a href="/users/belong" class="btn btn-primary" id="userBelong">소속 수정</a>';
-                }?>
-                <button type="button" class="btn btn-primary" id="userUpdateModal">수정</button>
-                <button type="button" class="btn btn-danger" id="userDelete">삭제</button>
-            </div>
+                <div class="modal-header justify-content-start">
+                    <h5 class="modal-title"><i class="bi bi-person-fill"></i>사용자</h5>
+                </div>         
+
+                <div class="modal-body">
+                    <table class="table">                  
+                        <thead>
+                            <tr>
+                                <th scope="col">이름</th>
+                                <th>소속</th>
+                                <th>권한</th>
+                                <th>가입일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span id="viewName"></span></td></td>
+                                <td><span id="viewCompany"></span></td>
+                                <td><span id="viewGroup"></span></td>
+                                <td><span id="viewDate"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">     
+                    <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){
+                        echo '<a href="/users/belong" class="btn btn-primary" id="userBelong">소속 수정</a>';
+                    }?>
+                    <button type="button" class="btn btn-primary" id="userUpdateModal">수정</button>
+                    <button type="button" class="btn btn-danger" id="userDelete">삭제</button>
+                </div>
             </div>
         </div>
     </div>
@@ -97,8 +102,8 @@
     <div class="title-area">
         <h2 class="page-title">사용자 관리</h2>
     </div>
- 
-    <div class="search-wrap">
+    
+    <div class="search-wrap"> 
         <form class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
                 <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택" readonly="readonly">
@@ -114,39 +119,37 @@
                 <button class="btn-primary" type="submit">조회</button>
             </div>
         </form> 
-
-        <div class="filter-btn-wrap">        
-            <div class="row d-flex">
-                <dl class="col">
-                    <dt>
-                        <select name="sort" id="sort" class="form-control">
-                            <option value="recent">최근순</option>
-                            <option value="old">오래된 순</option>
-                        </select>
-                    </dt>
-                </dl>
-                <dl class="col">
-                    <dt>
-                        <select name="pageLimit" id="pageLimit" class="form-control">
-                            <option value="10">10개</option>
-                            <option value="50">50개</option>
-                            <option value="100">100개</option>
-                        </select>
-                    </dt>
-                </dl>
-                <div class="col">
-                    <button id="DataResetBtn" class="btn btn-reset">초기화</button
-                    >
-                </div>
+    
+        <div class="row d-flex justify-space-between filter-btn-wrap">    
+            <dl class="col">             
+                <dt>
+                    <select name="sort" id="sort" class="form-control text-center">
+                        <option value="정렬">정렬</option>
+                        <option value="recent">최근순</option>
+                        <option value="old">오래된 순</option>
+                    </select>
+                </dt>
+            </dl>
+            <dl class="col">  
+                <dt>
+                    <select name="pageLimit" id="pageLimit" class="form-control text-center">
+                        <option value="게시물수">게시물수</option>
+                        <option value="10">10개</option>
+                        <option value="50">50개</option>
+                        <option value="100">100개</option>
+                    </select>
+                </dt>
+            </dl>
+            <div class="col">
+                <button id="DataResetBtn" class="btn btn-reset">초기화</button>
             </div>
-        </div>  
+        </div>
     </div>
 
+    <div class="client-list"><h3><i class="bi bi-chevron-down"></i> 검색결과:<span id="allCount"></span></h3></div> 
+
     <div class="table-wrap">
-        <div class="table-content">
-            <dl class="col">
-                <dt class="mb-3" id="allCount"></dt>
-            </dl>
+        <div class="table-content">        
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="user">
                     <colgroup>
@@ -338,6 +341,7 @@
             $('#sort').val(),
             $('#fromDate').val(),
             $('#toDate').val(),
+            console.log(`이것은`, $('#sort').val())
         );
     })
 
@@ -389,10 +393,10 @@
                     group = group.replace('guest', '게스트');
                     return group;
                 });
-                $('#modalView .modal-body #viewName dd').html(data.result.username);
-                $('#modalView .modal-body #viewCompany dd').html(data.result.companyType+" "+data.result.companyName);
-                $('#modalView .modal-body #viewGroup dd').html(data.result.groups.join(","));       
-                $('#modalView .modal-body #viewDate dd').html(data.result.created_at.substr(0, 16));
+                $('#modalView .modal-body #viewName').html(data.result.username);
+                $('#modalView .modal-body #viewCompany').html(data.result.companyType+" "+data.result.companyName);
+                $('#modalView .modal-body #viewGroup').html(data.result.groups.join(","));       
+                $('#modalView .modal-body #viewDate').html(data.result.created_at.substr(0, 16));
                 $('#modalView #userBelong').attr('href', '/user/belong/'+data.result.id);
                 $('#modalView #userUpdateModal').attr('data-id', data.result.id);
                 $('#modalView #userDelete').attr('data-id', data.result.id);
