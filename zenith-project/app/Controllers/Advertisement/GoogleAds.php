@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controllers\Advertisement;
 
 use App\Controllers\BaseController;
@@ -11,7 +10,7 @@ class GoogleAds extends BaseController
 
     public function __construct(...$param)
     {
-        include APPPATH."/ThirdParty/googleads_api/adsapi.php";
+        include APPPATH."/ThirdParty/googleads_api/google-api.php";
         $this->chainsaw = new \GoogleAds();       
     }
 

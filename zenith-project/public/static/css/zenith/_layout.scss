@@ -11,15 +11,18 @@ body{background:#f7f7f7;}
     .nav{
         > li{position:relative; padding:15px 0 0 10px; font-size:1.063rem; transition:all .2s;
             &:not(:last-child){margin:0 0 30px;}
+            &:has(div){
+                &:after{position:absolute; top:16px; right:30px; width:10px; height:10px; content:''; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(45deg); transition:all .2s;}
+            }
             &:has([aria-expanded="true"]){background:#fff;
                 &:before{position:absolute; top:0; left:0; width:6px; height:100%; content:''; background:$color-primary;}
+                &:after{top:20px; border-color:$color-dark; transform:rotate(225deg);}
                 button{color:$color-dark;
                     &[aria-expanded="true"]{@include bold;}
                 }
             }
         }
-        button{
-            display:block; padding:0 0 0 33px; color:#fff;
+        button{display:block; padding:0 0 0 33px; color:#fff;
             > i.bi {margin:0 10px 0 -37px; font-size:180%; vertical-align:middle;}
         }
         .btn-toggle-nav{padding:18px 0 0;
