@@ -4,6 +4,7 @@ namespace App\Controllers\Advertisement;
 
 use App\Controllers\BaseController;
 use App\Models\Api\AdLeadModel;
+use CodeIgniter\CLI\CLI;
 
 class AdLeadController extends BaseController
 {
@@ -16,11 +17,14 @@ class AdLeadController extends BaseController
 
     public function sendToEventLead()
     {
+        CLI::clearScreen();
+        CLI::write("잠재고객 업데이트를 시작합니다.", "yellow");
         $facebook_ads = $this->adlead->getFBAdLead()->getResultArray();
-        
-        foreach($facebook_ads as $row){
+        $step = 1;
+        $total = count($facebook_ads);
+        foreach($facebook_ads as $row){  
+            CLI::showProgress($step++, $total);
             $landing = $this->landingGroup($row['ad_name']);
-            $i = 0;
             //이름
             $full_name = $row['full_name'];
             if (!$full_name || $full_name == null) {
@@ -86,33 +90,29 @@ class AdLeadController extends BaseController
                 $add5 = "";
             }
 
-
             if ($landing['event_id']) {
-                $result[$i]['event_seq'] = $landing['event_id'];
-                $result[$i]['site'] = $landing['site'];
-                $result[$i]['name'] = $full_name;
-                $result[$i]['gender'] = $gender;
-                $result[$i]['age'] = $age;
-                $result[$i]['phone'] = $phone;
-                $result[$i]['add1'] = $add1;
-                $result[$i]['add2'] = $add2;
-                $result[$i]['add3'] = $add3;
-                $result[$i]['add4'] = $add4;
-                $result[$i]['add5'] = $add5;
-                $result[$i]['addr'] = $addr;
-                $result[$i]['reg_date'] = $row['created_time'];
-                $result[$i]['lead_id'] = $row['ad_id'];            
-                $i++;
+                $result['event_seq'] = $landing['event_id'];
+                $result['site'] = $landing['site'];
+                $result['name'] = $full_name;
+                $result['gender'] = $gender;
+                $result['age'] = $age;
+                $result['phone'] = $phone;
+                $result['add1'] = $add1;
+                $result['add2'] = $add2;
+                $result['add3'] = $add3;
+                $result['add4'] = $add4;
+                $result['add5'] = $add5;
+                $result['addr'] = $addr;
+                $result['reg_date'] = $row['created_time'];
+                $result['id'] = $row['id'];            
+            }
+
+            if (is_array($result)) {
+                $this->adlead->insertEventLead($result);
             }
         }
-
-        if (is_array($result)) {
-            $this->adlead->insertEventLead($result);
-        }
-
+        CLI::write("잠재고객 업데이트가 완료되었습니다.", "yellow");
         //$kakao_ads = $this->adlead->getBizFormUserResponse();
-
-
     }
 
     public function landingGroup($title)
@@ -133,7 +133,5 @@ class AdLeadController extends BaseController
         $result['db_price']     = $matches[6][0];
         $result['period_ad']    = $matches[12][0];
         return $result;
-        
-        return null;
     }
 }
