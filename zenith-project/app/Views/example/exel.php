@@ -69,7 +69,7 @@
         </div>
         <div class="btn-area text-center">
             <button type="button" class="btn btn-primary">확인</button>
-            <button type="button" class="btn btn-secondary">이벤트 목록</button>
+            <a href="/example/event_manage"><button type="button" class="btn btn-secondary">이벤트 목록</button></a>
         </div>
     </div>
 </div>

@@ -96,9 +96,9 @@ CHAIN 열혈광고 - 세금계산서 요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <button type="button" class="btn btn-danger">업체목록(세금계산서)</button>
-            <button type="button" class="btn btn-danger">글쓰기(세금계산서)</button>
-            <button type="button" class="btn btn-danger">엑셀백업</button>
+            <a href="/example/tax_list"><button type="button" class="btn btn-danger">업체목록(세금계산서)</button></a>
+            <a href="/example/withdraw"><button type="button" class="btn btn-danger">글쓰기(세금계산서)</button></a>
+            <a href="/example/exel"><button type="button" class="btn btn-danger">엑셀백업</button></a>
         </div>
 
         <div class="table-responsive">

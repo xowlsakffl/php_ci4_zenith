@@ -22,9 +22,9 @@
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <button type="button" class="btn btn-danger">이벤트 관리</button>
-            <button type="button" class="btn btn-danger">광고주 관리</button>
-            <button type="button" class="btn btn-danger">매체 관리</button>
+            <a href="/example/event_manage"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
+            <a href="/company/list"><button type="button" class="btn btn-danger">광고주 관리</button></a>
+            <a href="/example/media_manage"><button type="button" class="btn btn-danger">매체 관리</button></a>
         </div>
 
         <div class="table-responsive">

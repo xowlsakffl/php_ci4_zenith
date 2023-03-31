@@ -121,7 +121,7 @@
         </form> 
     
         <div class="row d-flex justify-space-between filter-btn-wrap">    
-            <dl class="col">             
+            <!-- <dl class="col">             
                 <dt>
                     <select name="sort" id="sort" class="form-control text-center">
                         <option value="정렬">정렬</option>
@@ -129,8 +129,9 @@
                         <option value="old">오래된 순</option>
                     </select>
                 </dt>
-            </dl>
-            <dl class="col">  
+            </dl>          -->
+
+            <!-- <dl class="col">  
                 <dt>
                     <select name="pageLimit" id="pageLimit" class="form-control text-center">
                         <option value="게시물수">게시물수</option>
@@ -139,19 +140,33 @@
                         <option value="100">100개</option>
                     </select>
                 </dt>
-            </dl>
+            </dl> -->
+            <div class="btn-wrap text-end mb-2">
+                <button type="button" class="btn btn-danger"><input type="radio" name="sort" vlaue="recent">최근순</button>
+                <button type="button" class="btn btn-danger"><input type="radio" name="sort" vlaue="old">오래된 순</button>
+            </div>
+
+            <div class="btn-wrap text-end mb-2">
+                <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="10">10개</button>
+                <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="50">50개</button>
+                <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="100">100개</button>
+            </div>
+
             <div class="col">
                 <button id="DataResetBtn" class="btn btn-reset">초기화</button>
             </div>
         </div>
     </div>
 
-    <div class="client-list"><h3><i class="bi bi-chevron-down"></i> 검색결과:<span id="allCount"></span></h3></div> 
+    <div class="section client-list">
+        <h3 class="content-title"><i class="bi bi-chevron-up"></i>검색결과:<span id="allCount"></span></h3>       
+    </div>
 
+    
     <div class="table-wrap">
         <div class="table-content">        
             <div class="table-responsive">
-                <table class="table table-striped table-hover" id="user">
+                <table class="table table-striped table-hover table-default" id="user">
                     <colgroup>
                         <col style="width:10%">
                         <col style="width:*">

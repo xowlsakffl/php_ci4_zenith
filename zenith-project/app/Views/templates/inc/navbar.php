@@ -53,7 +53,7 @@
 </div> -->
 <div class="left-side">
         <button type="button" class="btn-menu">메뉴보기</button>
-        <h1 class="logo"><a href="/"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
+        <h1 class="logo"><a href="/"><img src="/images/logo.png" alt="CHAIN 열혈광고"></a></h1>
         <div class="nav-wrap">
             <ul class="nav flex-column">
                 <li>
@@ -71,11 +71,11 @@
                     <button>통합 DB 관리</button>
                 </li>
                 <li>
-                    <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false">회계 관리</button>
-                    <div class="collapse" id="accounting">
+                    <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="true">회계 관리</button>
+                    <div class="collapse show" id="accounting">
                         <ul class="btn-toggle-nav">
                             <li><a href="#">출금요청</a></li>
-                            <li><a href="#">세금계산서 요청</a></li>
+                            <li><a href="#" class="active">세금계산서 요청</a></li>
                             <li><a href="#">미수금 관리</a></li>
                         </ul>
                     </div>
@@ -102,6 +102,5 @@
             <a href="#">로그아웃</a>
         </div>
     </div>
-<script>
     
 </script>

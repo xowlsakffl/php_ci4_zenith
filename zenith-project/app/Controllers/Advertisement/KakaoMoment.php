@@ -61,7 +61,7 @@ class KakaoMoment extends BaseController
     }
 
     //전체 소재 보고서 BASIC 업데이트
-    public function updateReport($date = null)
+    public function updateReportByAdgroup($date = null)
     { 
         CLI::clearScreen();
         CLI::write("소재 보고서 업데이트를 진행합니다.", "light_red");
@@ -71,14 +71,24 @@ class KakaoMoment extends BaseController
         CLI::write("소재 보고서 업데이트 완료", "yellow");
     }
 
+    public function updateReportByHour($date = null)
+    { 
+        CLI::clearScreen();
+        CLI::write("소재 보고서 업데이트를 진행합니다.", "light_red");
+        if(is_null($date))
+            $date = CLI::prompt("전체 소재 보고서 BASIC 수신할 날짜를 입력해주세요.(ex. ".date('Y-m-d', strtotime('-1 day')).")", 'TODAY');
+        $this->chainsaw->updateHourReportBasic($date);
+        CLI::write("소재 보고서 업데이트 완료", "yellow");
+    }
+
     public function getAll() {
         $this->chainsaw->updateAdAccounts();
         $this->chainsaw->updateCampaigns();
         $this->chainsaw->updateAdGroups();
         $this->chainsaw->updateCreatives();
-        $this->chainsaw->updateCreativesReportBasic('TODAY');
         $this->chainsaw->updateBizform();
     }
+    
 
     //비즈폼 데이터 업데이트
     public function updateBizform()

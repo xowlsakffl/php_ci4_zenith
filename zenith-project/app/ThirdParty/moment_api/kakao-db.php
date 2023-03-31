@@ -506,8 +506,9 @@ class KMDB
     public function updateCreativeReportBasic($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
+        if($row['imp'] == 0 && $row['click'] == 0 && $row['cost'] == 0 && $row['ctr'] == 0) return;
         $sql = "INSERT INTO mm_creative_report_basic (id, date, hour, imp, click, ctr, cost, create_time)
-                VALUES ({$row['creative_id']}, {$row['date']}, IF(DATE(NOW()) = {$row['date']}, HOUR(NOW()), 23), {$row['imp']}, {$row['click']}, {$row['ctr']}, {$row['cost']}, NOW())
+                VALUES ({$row['creative_id']}, {$row['date']}, IF({$row['hour']} <> '', {$row['hour']}, IF(DATE(NOW()) = {$row['date']}, HOUR(NOW()), 23)), {$row['imp']}, {$row['click']}, {$row['ctr']}, {$row['cost']}, NOW())
                 ON DUPLICATE KEY
                 UPDATE date={$row['date']}, imp={$row['imp']}, click={$row['click']}, ctr={$row['ctr']}, cost={$row['cost']}, update_time=NOW();";
         // echo $sql.'<br>';

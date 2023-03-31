@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front_example.php');?>
+a<?=$this->extend('templates/front_example.php');?>
 
 <?=$this->section('title');?>
 CHAIN 열혈광고 - 출금요청
@@ -96,9 +96,9 @@ CHAIN 열혈광고 - 출금요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <button type="button" class="btn btn-danger">업체목록(출금요청)</button>
-            <button type="button" class="btn btn-danger">글쓰기(출금요청)</button>
-            <button type="button" class="btn btn-danger">엑셀백업</button>
+            <a href="/example/withdraw_list"><button type="button" class="btn btn-danger">업체목록(출금요청)</button></a>
+            <a href="/example/tax"/><button type="button" class="btn btn-danger">글쓰기(출금요청)</button></a>
+            <a href="/example/exel"/><button type="button" class="btn btn-danger">엑셀백업</button></a>
         </div>
 
         <div class="table-responsive">

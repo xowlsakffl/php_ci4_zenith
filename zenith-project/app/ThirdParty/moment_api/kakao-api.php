@@ -836,7 +836,7 @@ class ChainsawKM
             $param['dimension'] = $dimension;
         if ($metrics)
             $param['metricsGroup'] = $metrics;
-        $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
+        if(!$this->ad_account_id) $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
         if ($adAccountId) $this->ad_account_id = $adAccountId;
         $result = $this->getCall($request, $param);
         return $result;
@@ -970,6 +970,62 @@ class ChainsawKM
                 }
                 $ids = $new_ids;
                 $this->ad_account_id = $adgroup['ad_account_id'];
+                ob_flush();
+                flush();
+                sleep(5);
+                $this->db->updateCreativesReportBasic($data);
+                $result = array_merge($result, $data);
+            }
+            $cnt++;
+        }
+        
+        return $result;
+    }
+
+    public function updateHourReportBasic($datePreset = 'TODAY', $dimension = 'HOUR', $metrics = 'BASIC')
+    { //소재별 보고서 BASIC 업데이트
+        $creatives = $this->db->getCreatives(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
+        $cnt = 1;
+        $step = 1;
+        $ids = [];
+        $this->ad_account_id = '';
+        $total = $creatives->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 소재 보고서 수신을 시작합니다.", "light_red");
+        $result = [];
+        foreach ($creatives->getResultArray() as $creative) {
+            // if(!in_array($adgroup['id'], ['1365907','1365923'])) {$cnt++; continue;}
+            if (!$this->ad_account_id)
+                $this->ad_account_id = $creative['ad_account_id'];
+            if ($creative['id']) {
+                if ($this->ad_account_id == $creative['ad_account_id'])
+                    $ids[] = $creative['id'];
+                else {
+                    $new_ids = [];
+                    $new_ids[] = $creative['id'];
+                }
+            }
+            CLI::showProgress($step++, $total);
+            // echo '<h1>'.date('[H:i:s] ').$this->ad_account_id.','.$adgroup['ad_account_id'].'</h1>';
+            // echo '<h2>'.$cnt.'</h2>';
+            if (count($ids) == 100 || $this->ad_account_id != $creative['ad_account_id'] || $creatives->getNumRows() == $cnt) {
+                $creative_ids = implode(",", $ids);
+                // echo '<h3>'.$adgroup_ids.'</h3>';
+                $data = [];
+                $report = $this->getCreativeReport($creative_ids, $datePreset, $dimension, $metrics);
+                if ($report['message'] == 'Success' && count($report['data']) > 0) {
+                    $i = 0;
+                    foreach ($report['data'] as $row) {
+                        if (count($row['metrics'])) {
+                            $data[$row['dimensions']['creative_id']][$i] = $row['metrics'];
+                            $data[$row['dimensions']['creative_id']][$i]['hour'] = preg_replace('/^([0-9]{2}).+$/', '$1', $row['dimensions']['hour']);
+                            $data[$row['dimensions']['creative_id']][$i]['cost'] = $row['metrics']['cost']; //부가세 제거
+                            $data[$row['dimensions']['creative_id']][$i]['date'] = $row['start'];
+                            $i++;
+                        }
+                    }
+                }
+                $ids = $new_ids;
+                $this->ad_account_id = $creative['ad_account_id'];
                 ob_flush();
                 flush();
                 sleep(5);
