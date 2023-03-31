@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front.php');?>
+<?=$this->extend('templates/front_example.php');?>
 
 <?=$this->section('title');?>
     CHAIN 열혈광고 - 카카오 모먼트 광고관리
