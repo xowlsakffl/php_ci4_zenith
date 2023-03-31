@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front.php');?>
+<?=$this->extend('templates/front_example.php');?>
 
 <?=$this->section('content');?>
 <!doctype html>

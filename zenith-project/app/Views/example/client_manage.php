@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front.php');?>
+<?=$this->extend('templates/front_example.php');?>
 
 <?=$this->section('title');?>
     CHAIN 열혈광고 - 광고주 관리

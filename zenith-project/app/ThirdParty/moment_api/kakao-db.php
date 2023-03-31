@@ -619,14 +619,14 @@ class KMDB
     {
         $sql = "SELECT ei.creative_id, ei.bizform_apikey, mc.id, mc.bizFormId, mcp.name, ma.name, mc.name
         FROM chainsaw_old.event_information AS ei
-            LEFT JOIN moment.mm_creative AS mc ON ei.creative_id = mc.creativeId
-            LEFT JOIN moment.mm_adgroup AS ma ON ma.id = mc.adgroup_id
-            LEFT JOIN moment.mm_campaign AS mcp ON mcp.id = ma.campaign_id 
-            LEFT JOIN moment.mm_ad_account AS maa ON mcp.ad_account_id = maa.id
+            LEFT JOIN `z_moment`.mm_creative AS mc ON ei.creative_id = mc.creativeId
+            LEFT JOIN `z_moment`.mm_adgroup AS ma ON ma.id = mc.adgroup_id
+            LEFT JOIN `z_moment`.mm_campaign AS mcp ON mcp.id = ma.campaign_id 
+            LEFT JOIN `z_moment`.mm_ad_account AS maa ON mcp.ad_account_id = maa.id
         WHERE ei.creative_id <> '' AND ei.bizform_apikey <> '' AND ei.is_stop = 0
         AND mc.config = 'ON' AND maa.config = 'ON' AND maa.is_update = 1";
-        $result = $this->zenith->query($sql);
-        if (!$result->getNumRow()) return NULL;
+        $result = $this->db_query($sql);
+        if (!$result->getNumRows()) return NULL;
         $data = [];
         foreach ($result->getResultArray() as $row) {
             $data[] = [
@@ -641,6 +641,7 @@ class KMDB
     public function updateBizform($data)
     {
         $row = $data['data'];
+        if(!$row['id']) return;
         $sql = "INSERT INTO mm_bizform(`id`, `title`, `imgUrl`, `startAt`, `startTimeAt`, `endAt`, `endTimeAt`, `applyType`, `privacyScopeUse`, `flowType`, `completeType`, `status`, `runningStatus`, `editingPhase`, `channelUsed`, `channelProfileId`, `prizeAnnouncedDateAt`, `prizeAnnouncedTimeAt`, `partnerCsPhone`, `partnerCsUrl`, `reportEnable`, `createdAt`, `abortedAt`, `finishUv`, `create_time`)
         VALUES('{$row['id']}', '{$row['title']}', '{$row['imgUrl']}', '{$row['startAt']}', '{$row['startTimeAt']}', '{$row['endAt']}', '{$row['endTimeAt']}', '{$row['applyType']}', '{$row['privacyScopeUse']}', '{$row['flowType']}', '{$row['completeType']}', '{$row['status']}', '{$row['runningStatus']}', '{$row['editingPhase']}', '{$row['channelUsed']}', '{$row['channelProfileId']}', '{$row['prizeAnnouncedDateAt']}', '{$row['prizeAnnouncedTimeAt']}', '{$row['partnerCsPhone']}', '{$row['partnerCsUrl']}', '{$row['reportEnable']}', '{$row['createdAt']}', '{$row['abortedAt']}', '{$row['finishUv']}', NOW())
         ON DUPLICATE KEY
@@ -654,6 +655,7 @@ class KMDB
     {
         if(@count($data) <= 0) return;
         foreach ($data as $row) {
+            if(!$row['id']) continue;
             $sql = "INSERT INTO mm_bizform_items(`id`, `bizform_id`, `ordinal`, `title`, `contents`, `required`, `type`, `replyType`, `layoutType`, `multiple`, `multipleLimitMin`, `multipleLimitMax`, `stepGroupId`, `stepOrder`, `step`, `bizformOptions`, `create_time`)
             VALUES('{$row['id']}', '{$bizformId}', '{$row['ordinal']}', '{$row['title']}', '{$row['contents']}', '{$row['required']}', '{$row['type']}', '{$row['replyType']}', '{$row['layoutType']}', '{$row['multiple']}', '{$row['multipleLimitMin']}', '{$row['multipleLimitMax']}', '{$row['stepGroupId']}', '{$row['stepOrder']}', '{$row['step']}', '{$row['bizformOptions']}', NOW())
             ON DUPLICATE KEY
@@ -667,14 +669,15 @@ class KMDB
         if ($data) {
             foreach ($data as $row) {
                 foreach ($row as $k => $v) $row[$k] = @$this->db->escape($v);
+                if(!$row['seq']) continue;
                 $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
-                    VALUES('{$bizformId}', '{$creative_id}', '{$row['seq']}', '{$row['encUserId']}', '{$row['applyOrUpdate']}', '{$row['submitAt']}', '{$row['nickname']}', '{$row['email']}', '{$row['phoneNumber']}', '{$row['response']}', NOW())
+                    VALUES({$bizformId}, {$creative_id}, {$row['seq']}, {$row['encUserId']}, {$row['applyOrUpdate']}, {$row['submitAt']}, {$row['nickname']}, {$row['email']}, {$row['phoneNumber']}, {$row['response']}, NOW())
                     ON DUPLICATE KEY UPDATE 
                     `update_time`= IF(seq<>VALUES(seq) OR applyOrUpdate<>VALUES(applyOrUpdate) OR submitAt<>VALUES(submitAt) OR nickname<>VALUES(nickname) OR email<>VALUES(email) OR phoneNumber<>VALUES(phoneNumber) OR responses<>VALUES(responses), NOW(), NULL),
-                    `seq`='{$row['seq']}',`applyOrUpdate`='{$row['applyOrUpdate']}',`submitAt`='{$row['submitAt']}',`nickname`='{$row['nickname']}',`email`='{$row['email']}',`phoneNumber`='{$row['phoneNumber']}',`responses`='{$row['response']}'";
+                    `seq`={$row['seq']},`applyOrUpdate`={$row['applyOrUpdate']},`submitAt`={$row['submitAt']},`nickname`={$row['nickname']},`email`={$row['email']},`phoneNumber`={$row['phoneNumber']},`responses`={$row['response']}";
                 /*
                 $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
-                    VALUES('{$bizformId}', '{$creative_id}', '{$row['seq']}', '{$row['encUserId']}', '{$row['applyOrUpdate']}', '{$row['submitAt']}', '{$row['nickname']}', '{$row['email']}', '{$row['phoneNumber']}', '{$row['response']}', NOW())";
+                    VALUES({$bizformId}, {$creative_id}, {$row['seq']}, {$row['encUserId']}, {$row['applyOrUpdate']}, {$row['submitAt']}, {$row['nickname']}, {$row['email']}, {$row['phoneNumber']}, {$row['response']}, NOW())";
                 */
                 $this->db_query($sql, true);
             }

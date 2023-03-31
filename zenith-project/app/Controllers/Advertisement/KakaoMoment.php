@@ -71,6 +71,15 @@ class KakaoMoment extends BaseController
         CLI::write("소재 보고서 업데이트 완료", "yellow");
     }
 
+    public function getAll() {
+        $this->chainsaw->updateAdAccounts();
+        $this->chainsaw->updateCampaigns();
+        $this->chainsaw->updateAdGroups();
+        $this->chainsaw->updateCreatives();
+        $this->chainsaw->updateCreativesReportBasic('TODAY');
+        $this->chainsaw->updateBizform();
+    }
+
     //비즈폼 데이터 업데이트
     public function updateBizform()
     { 

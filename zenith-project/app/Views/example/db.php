@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front.php');?>
+<?=$this->extend('templates/front_example.php');?>
 
 <?=$this->section('title');?>
     CHAIN 열혈광고 - 통합 DB 관리

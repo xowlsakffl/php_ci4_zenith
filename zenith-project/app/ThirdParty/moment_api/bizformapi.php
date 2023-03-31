@@ -72,7 +72,7 @@ class ChainsawKMBF
         }
         if(isset($result['data']['content'])) {
             foreach ($result['data']['content'] as $idx => $row) {
-                $result['data']['content'][$idx]['response'] = json_encode($row['responses']);
+                $result['data']['content'][$idx]['response'] = json_encode($row['responses'],JSON_UNESCAPED_UNICODE);
             }
         }
         return $result;
