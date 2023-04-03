@@ -19,12 +19,90 @@ class AdLeadController extends BaseController
     {
         CLI::clearScreen();
         CLI::write("잠재고객 업데이트를 시작합니다.", "yellow");
-        $facebook_ads = $this->adlead->getFBAdLead()->getResultArray();
+        $this->sendToEventLeadFromKakao();
+        $this->sendToEventLeadFromFacebook();
+        //$this->sendToEventLeadFromGoogle();
+        CLI::write("잠재고객 업데이트가 완료되었습니다.", "yellow");
+    }
+
+    private function sendToEventLeadFromKakao()
+    {
+        $moment_ads = $this->adlead->getBizFormUserResponse();
+        $step = 1;
+        $total = count($moment_ads);
+        if(!$total){
+            return null;
+        }
+        CLI::write("카카오 모먼트 잠재고객 업데이트를 시작합니다.", "yellow");
+        foreach($moment_ads as $row){  
+            CLI::showProgress($step++, $total);
+            $landing = $this->landingGroupKakao($row);
+            if(is_null($landing)) {
+                CLI::print('비즈폼 매칭 오류 발생 : ' . $row . '');
+                continue;
+            }
+
+            //전화번호
+            $phone = str_replace("+82010", "010", $row['phoneNumber']);
+            $phone = str_replace("+8210", "010", $phone);
+            $phone = preg_replace("/^8210(.+)$/", "010$1", $phone);
+            $phone = str_replace("+82 10", "010", $phone);
+            $phone = str_replace("-", "", $phone);
+            if ($row['email'] == '없음') $row['email'] = '';
+
+            //추가질문
+            $questions = [];
+            $add = [];
+            $responses = json_decode($row['responses'], 1);
+            $acnt = 1;
+
+            $add1 = '';
+            $add2 = '';
+            $add3 = '';
+            $add4 = '';
+            $add5 = '';
+            foreach ($responses as $response) {
+                $qs = $this->adlead->getBizformQuestion($row['bizFormId'], $response['bizformItemId']);
+                if (!key_exists($qs['id'], $questions))
+                    $questions[$qs['id']] = $qs['title'];
+                $add[] = ${'add' . $acnt} = $questions[$response['bizformItemId']] . '::' . $response['response'];
+                $acnt++;
+            }
+            $result = [];
+            if ($landing['event_id']) {
+                $result['event_seq'] = $landing['event_id'];
+                $result['site'] = $landing['site'];
+                $result['name'] = $row['nickname'];
+                $result['phone'] = $phone;
+                $result['add1'] = $add1;
+                $result['add2'] = $add2;
+                $result['add3'] = $add3;
+                $result['add4'] = $add4;
+                $result['add5'] = $add5;
+                $result['reg_date'] = $row['create_time'];
+                $result['id'] = $row['seq'];   
+                $result['encUserId'] = $row['encUserId'];
+                $result['bizFormId'] = $row['bizFormId'];         
+            }
+            
+            if (is_array($result)) {
+                $this->adlead->insertEventLeadKakao($result);
+            }
+        }
+    }
+
+    private function sendToEventLeadFromFacebook()
+    {
+        $facebook_ads = $this->adlead->getFBAdLead();
         $step = 1;
         $total = count($facebook_ads);
+        if(!$total){
+            return null;
+        }
+        CLI::write("페이스북 잠재고객 업데이트를 시작합니다.", "yellow");
         foreach($facebook_ads as $row){  
             CLI::showProgress($step++, $total);
-            $landing = $this->landingGroup($row['ad_name']);
+            $landing = $this->landingGroupFacebook($row['ad_name']);
             //이름
             $full_name = $row['full_name'];
             if (!$full_name || $full_name == null) {
@@ -108,14 +186,16 @@ class AdLeadController extends BaseController
             }
 
             if (is_array($result)) {
-                $this->adlead->insertEventLead($result);
+                $this->adlead->insertEventLeadFacebook($result);
             }
         }
-        CLI::write("잠재고객 업데이트가 완료되었습니다.", "yellow");
-        //$kakao_ads = $this->adlead->getBizFormUserResponse();
     }
 
-    public function landingGroup($title)
+    private function sendToEventLeadFromGoogle()
+    {
+    }
+
+    private function landingGroupFacebook($title)
     {
         if (!$title) {
             return null;
@@ -133,5 +213,44 @@ class AdLeadController extends BaseController
         $result['db_price']     = $matches[6][0];
         $result['period_ad']    = $matches[12][0];
         return $result;
+    }
+
+    private function landingGroupKakao($data)
+    {
+        if (!$data['name']) {
+            return null;
+        }
+        preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $data['name'], $matches);
+        // $data['landingUrl'] = 'http://hotevent.hotblood.co.kr/event_spin/event_62.php';
+
+        if(isset($data['landingUrl'])){
+            if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
+                $urls = parse_url($data['landingUrl']);
+                parse_str($urls['query'], $urls['qs']);
+                $event_id = @array_pop(explode('/', $urls['path']));
+                $site = @$urls['qs']['site'];
+
+                if($urls['qs']['site'] != $matches[4][0]) //제목 site값 우선
+                $site = $matches[4][0];
+            }
+        } else {
+            $event_id = $matches[2][0];
+            $site = $matches[4][0];
+        }
+        
+        $result = array(
+            'name' => '', 'event_id' => '', 'site' => '', 'db_price' => 0, 'period_ad' => ''
+        );
+        $result['name']         = $matches[0][0];
+        $result['event_id']     = $event_id;
+        $result['site']         = $site;
+        $result['db_price']     = $matches[7][0];
+        $result['period_ad']    = $matches[13][0];
+        $result['url']          = @$data['landingUrl'];
+        return $result;
+    }
+
+    private function landingGroupGoogle($data)
+    {
     }
 }

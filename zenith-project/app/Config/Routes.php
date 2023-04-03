@@ -87,6 +87,7 @@ $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
 $routes->cli('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 
 $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead');
+$routes->get('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead');
 
 //테스트
 $routes->get('example/(:any)', 'ExampleController::view/$1');
