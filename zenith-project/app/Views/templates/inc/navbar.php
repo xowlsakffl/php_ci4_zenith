@@ -68,7 +68,7 @@
                     </div>
                 </li>
                 <li>
-                    <button>통합 DB 관리</button>
+                    <a href="/integrate/management">통합 DB 관리</a>
                 </li>
                 <li>
                     <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="true">회계 관리</button>
@@ -81,7 +81,7 @@
                     </div>
                 </li>
                 <li>
-                    <button>인사 관리</button>
+                    <a href="#">인사 관리</a>
                 </li>
                 <li>
                     <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false">이벤트</button>

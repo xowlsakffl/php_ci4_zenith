@@ -79,6 +79,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
     
     $routes->get('advertisements/facebook', 'AdvertisementController::facebook');
+
+    $routes->get('integrate/management', 'AdvertisementController::facebook');
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
@@ -86,8 +88,8 @@ $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
 $routes->cli('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 
+//잠재고객 가져오기
 $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead');
-$routes->get('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead');
 
 //테스트
 $routes->get('example/(:any)', 'ExampleController::view/$1');
