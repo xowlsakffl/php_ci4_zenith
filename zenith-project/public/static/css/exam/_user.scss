@@ -2,6 +2,7 @@ $color-reset: #0d6efd;
 
 .filter-btn-wrap{ //sorging 버튼
     text-align:center; border-top:1px solid #c3c3c3; background:#e9e9e9;  padding:35px 10.4167vw;
+    .col:has(.btn-reset){width:auto; padding:0;}
     .col{flex:0 0 auto; width:auto; padding:0 30px; color:#929292; font-weight:500;
         dt{margin:0 0 5px; font-size:1.125rem; color:$color-dark;}
     }
@@ -13,7 +14,7 @@ $color-reset: #0d6efd;
         }
     }
     .btn-primary{width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:$color-primary;}        
-    .btn-reset{justify-content:center; width:115px; height:52px; color:#fff; border-radius:7px;background:$color-reset;
+    .btn-reset{width:115px; height:52px; color:#fff; border-radius:7px;background:$color-reset;
         }  
     }
 
@@ -30,8 +31,11 @@ $color-reset: #0d6efd;
 .client-list{
     span{display: inline-block; padding-left:1rem;}
 }
+
+.none{appearance: none;}
+
 @include x-large{
-    .filter-btn-wrap{padding:10px 35px 30px;}
+    .filter-btn-wrap{padding:35px 30px;}
 }
 
 
@@ -42,10 +46,11 @@ $color-reset: #0d6efd;
 
     .table{min-width:1000px;}
 
-    .btn-wrap{margin:0 0 12px;
-        .btn{height:27px; padding:0 15px; font-size:0.813rem; color:$color-dark; line-height:27px; border-radius:14px;
-            &:hover,
-            &.active{color:#fff;}
-        }
-    }   
+    .btn-wrap{margin:0 0 12px; width:auto;
+        .btn{height:40px; padding:0; width:100px; font-size:0.813rem; line-height:40px; border-radius:14px;}
+        .btn-danger{--bs-btn-bg:#fff; --bs-btn-color:#dc3545;}
+        .btn-danger.active{color:#fff;}
+        input{appearance: none;}
+    }  
+    .row.filter-btn-wrap{width:100%; margin-left:0;} 
 }

@@ -120,7 +120,7 @@
             </div>
         </form> 
     
-        <div class="row d-flex justify-space-between filter-btn-wrap">    
+        <div class="row d-flex justify-content-between align-items-center filter-btn-wrap">    
             <!-- <dl class="col">             
                 <dt>
                     <select name="sort" id="sort" class="form-control text-center">
@@ -141,15 +141,13 @@
                     </select>
                 </dt>
             </dl> -->
-            <div class="btn-wrap text-end mb-2">
+            <div class="btn-wrap">
                 <button type="button" class="btn btn-danger"><input type="radio" name="sort" vlaue="recent">최근순</button>
-                <button type="button" class="btn btn-danger"><input type="radio" name="sort" vlaue="old">오래된 순</button>
-            </div>
-
-            <div class="btn-wrap text-end mb-2">
+                <button type="button" class="btn btn-danger"><input type="radio" name="sort" vlaue="old">오래된 순</button>          
                 <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="10">10개</button>
                 <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="50">50개</button>
                 <button type="button" class="btn btn-danger"><input type="radio" name="pageLimit" vlaue="100">100개</button>
+                
             </div>
 
             <div class="col">
@@ -196,6 +194,11 @@
 
 <?=$this->section('script');?>
 <script>
+    $('input[name="sort"]').bind('click', function(){
+        console.log($('input[name="sort"]').val());
+	});
+
+   
     var alertMessage = "<?php echo session('message'); ?>";
     if(alertMessage) {
         alert(alertMessage);
