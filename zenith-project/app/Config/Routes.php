@@ -80,7 +80,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     
     $routes->get('advertisements/facebook', 'AdvertisementController::facebook');
 
-    $routes->get('integrate/management', 'AdvertisementController::facebook');
+    // 통합 DB관리
+    $routes->group('integrate', static function($routes){   
+        $routes->get('management', 'Api\ApiIntegrateController::index');
+        $routes->get('list', 'Api\ApiIntegrateController::getList');
+    });
 });
 
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');

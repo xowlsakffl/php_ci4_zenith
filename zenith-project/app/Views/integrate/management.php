@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front_example.php');?>
+<?=$this->extend('templates/front.php');?>
 
 <!--타이틀-->
 <?=$this->section('title');?>
@@ -7,6 +7,10 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/node_modules/tablesorter/dist/css/theme.default.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/tablesorter/dist/js/jquery.tablesorter.js"></script>
+<script src="/static/node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js"></script>
+<script src="/static/node_modules/tablesorter/dist/js/jquery.tablesorter.widgets.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -71,8 +75,14 @@
     </div>
 
     <div class="section client-list advertiser">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
+        <h3 class="content-title toggle">
+            <i class="bi bi-chevron-up"></i> 
+            광고주
+        </h3>
         <div class="row">
+
+        </div>
+        <!-- <div class="row">
             <div class="col">
                 <div class="inner">
                     <button type="button">[대전]상상의원_가나다라마마다먀라</button>
@@ -180,10 +190,9 @@
                         <div class="txt">14/170</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div> -->
     </div>
-    <div class="section client-list advertiser">
+    <!-- <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
         <div class="row">
             <div class="col">
@@ -552,13 +561,143 @@
                 </div>
             </div>
         </div>
+    </div> -->
+    <div class="section client-list advertiser">
+        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 이벤트 구분</h3>
+        
+    </div>
+
+    <div>
+        <div class="row">
+            <table class="tablesorter">
+                <caption>목록</caption>
+                <thead>
+                    <tr>
+                        <th style="width:40px" class="first">#</th>
+                        <th style="width:80px">이벤트번호</th>
+                        <th style="width:130px">광고주</th>
+                        <th style="width:70px">매체</th>
+                        <th style="width:120px">이벤트 구분</th>
+                        <th style="width:70px" >이름</th>
+                        <th style="width:100px">전화번호</th>
+                        <th style="width:50px">나이</th>
+                        <th style="width:50px" >성별</th>
+                        <th>기타</th>
+                        <th style="width:200px">상담내용</th>
+                        <th style="width:60px">사이트</th>
+                        <th style="width:80px">등록일</th>
+                        <th class="last" style="width:60px">삭제</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <div id="pager" class="pager">
+                <button class="first">맨 처음</button>
+                <button class="prev">이전</button>
+                <span class="pagedisplay" data-pager-output-filtered="{startRow:input} &ndash; {endRow} / 전체 {totalRows}개 중 {filteredRows}개"></span>
+                <button class="next">다음</button>
+                <button class="last">마지막</button>
+                <select class="pagesize">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="all">All Rows</option>
+                </select>
+            </div>
+        </div>
     </div>
 </div>
 <?=$this->endSection();?>
 
 <!--스크립트-->
 <?=$this->section('script');?>
-<script></script>
+<script>
+$(function(){
+    $('.tablesorter').tablesorter({
+        showProcessing: true,
+        headerTemplate : '{content} {icon}',
+        widthFixed: true,
+        widgets: ['uitheme', 'filter', 'stickyHeaders'],
+        widgetOptions: {
+            sortReset   : true,
+            sortRestart : true,
+            resizable: true,
+            scroller_height : 300,
+            stickyHeaders_includeCaption : false,
+            // scroll tbody to top after sorting
+            scroller_upAfterSort: true,
+            scroller_jumpToHeader: true,
+            scroller_barWidth : null,
+            scroller_addFixedOverlay : false,
+            filter_external : '#stx',
+            filter_columnFilters: false,
+            filter_saveFilters : true,
+            filter_searchFiltered : true,
+        }
+    }).tablesorterPager({
+        container: $(".pager"),
+        ajaxUrl: "<?=base_url()?>/integrate/list",
+        customAjaxUrl: function(table, url) {
+            var pageNumber = table.config.pager.page;
+            var pageSize = table.config.pager.size;
+            return url + '?page=' + pageNumber + '&size=' + pageSize;
+        },
+        ajaxError: null,
+        ajaxObject: { 
+            type: 'POST',
+            dataType: 'json' 
+        },
+        ajaxProcessing: function(data) {
+            if (data && data.hasOwnProperty('result')) {
+                var indx, r, row, c, d = data.result,
+                total = data.total_rows,
+                headers = data.headers,
+                headerXref = headers.join(',').replace(/\s+/g,'').split(','),
+                rows = [],
+                len = d.length;
+                for ( r=0; r < len; r++ ) {
+                    row = [];
+                    for ( c in d[r] ) {
+                    if (typeof(c) === "string") {
+                        indx = $.inArray( c, headerXref );
+                        if (indx >= 0) {
+                        row[indx] = d[r][c];
+                        }
+                    }
+                    }
+                    rows.push(row);
+                }
+                return [ total, rows];
+            }
+        },
+        processAjaxOnInit: true,
+        output: '{startRow:input} – {endRow} / {totalRows} 개',
+        updateArrows: true,
+        page: 0,
+        size: 20,
+        savePages : true,
+        storageKey:'tablesorter-pager',
+        pageReset: 0,
+        fixedHeight: true,
+        removeRows: false,
+        countChildRows: false,
+        cssNext: '.next', // next page arrow
+        cssPrev: '.prev', // previous page arrow
+        cssFirst: '.first', // go to first page arrow
+        cssLast: '.last', // go to last page arrow
+        cssGoto: '.gotoPage', // select dropdown to allow choosing a page
+        cssPageDisplay: '.pagedisplay', // location of where the "output" is displayed
+        cssPageSize: '.pagesize', // page size selector - select dropdown that sets the "size" option
+        cssDisabled: 'disabled', // Note there is no period "." in front of this class name
+        cssErrorRow: 'tablesorter-errorRow' // ajax error information row
+    });
+
+})
+
+</script>
 <?=$this->endSection();?>
 
 <!--푸터-->

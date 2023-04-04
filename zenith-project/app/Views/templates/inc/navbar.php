@@ -60,7 +60,7 @@
                     <button data-bs-toggle="collapse" data-bs-target="#ad" aria-expanded="false">광고 관리</button>
                     <div class="collapse" id="ad">
                         <ul class="btn-toggle-nav">
-                            <li><a href="#">페이스북</a></li>
+                            <li><a href="/advertisements/facebook">페이스북</a></li>
                             <li><a href="#">카카오 모먼트</a></li>
                             <li><a href="#">구글 애드워즈</a></li>
                             <li><a href="#">기타</a></li>
