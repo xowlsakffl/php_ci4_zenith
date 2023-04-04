@@ -24,17 +24,16 @@ class ApiIntegrateController extends BaseController
     public function getList()
     {
         //if($this->request->isAJAX()){
-            /* $param = $this->request->getPost();
-            $results = $this->integrate->getEventLead();
-            dd($results);
+            $param = $this->request->getPost();
+            $results = $this->integrate->getEventLead()->paginate(10);
             $data = [
                 //'advertiser' => $this->integrate->getAdvertiser($param),
                 'headers' => ['seq', 'event_seq', '', '', '', 'name', 'phone', 'age', 'gender', ''],
-                //'result' => $results->paginate(10),
+                'result' => $results,
                 //'total_rows' => $builder->pager->getTotal(),
             ];
     
-            return $this->respond($data); */
+            return $this->respond($data);
         //}else{
 
         //}
