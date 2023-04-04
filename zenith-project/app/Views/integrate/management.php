@@ -647,7 +647,7 @@ $(function(){
         },
         ajaxError: null,
         ajaxObject: { 
-            type: 'POST',
+            type: 'GET',
             dataType: 'json' 
         },
         ajaxProcessing: function(data) {
