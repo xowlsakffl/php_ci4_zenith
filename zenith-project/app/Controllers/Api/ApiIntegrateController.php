@@ -23,6 +23,7 @@ class ApiIntegrateController extends BaseController
 
     public function getList()
     {
+
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $param = $this->request->getGet();
             $param['page'] = $param['page'] ?? 1;

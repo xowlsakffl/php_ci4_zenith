@@ -1,0 +1,37 @@
+
+@mixin chk_input { //chckbox input style
+    width:1px; height:1px; position:absolute; right:0; text-indent: -999px;
+    &:checked + label{border-color: red;}
+    &:checked + label i.bi-check2::before {content:"\f26f"; color:red;}
+}
+
+@mixin chk_label($wd:20px,$h:20px){//chckbox label style
+    width:$wd; height:$h; border-radius:50%; border:1px solid #000; position:relative;
+    i{display: block;  line-height: 1.2; height: 100%;}
+}
+
+.agree-container{margin:0 auto;   
+    .card{margin:0 auto; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
+
+    .card-title{font-size:1.5rem; margin:2.5rem 0;}
+
+    .card-body{padding:0;}
+
+    button:has(input[name="chk_all"]){background-color:#ededed;  border-radius:14px; height:4.375rem; padding:5px; width:100%; font-size:1.1rem; margin-bottom:3.12rem;   position:relative;        
+        input{@include chk_input;}    
+        label{@include chk_label; float: left;} 
+    }
+
+    .agree-box{margin: 0 auto; position:relative;
+        h2{font-size:1.1rem; padding-left:0.5rem;
+            span{color:#ce1922;}
+        }        
+        input{@include chk_input;}    
+        label{@include chk_label;}   
+    }
+    textarea{border:1px solid #c3c3c3; color:#929292; background-color:inherit; overflow-y:auto; border-radius:8px; width:100%; height:9.37rem; margin:1.5rem auto; font-size:90%; line-height: 1.4;}
+
+    .row:has(a.confirm_agree){margin:0;
+        a.confirm_agree{display: block; width:100%; margin-top:1.5rem; border-radius:14px; height:4.375rem; line-height:4.375rem; text-align: center; background-color: #ce1922; font-size:1.25rem; color:#fff;}
+    }   
+}

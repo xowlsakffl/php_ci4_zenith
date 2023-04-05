@@ -1788,6 +1788,124 @@ body {
     padding: 0.93rem;
   }
 }
+.agree-container {
+  margin: 0 auto;
+}
+.agree-container .card {
+  margin: 0 auto;
+  --bs-card-border-color:transparent;
+  --bs-card-bg:inherit;
+  max-width: 500px;
+}
+.agree-container .card-title {
+  font-size: 1.5rem;
+  margin: 2.5rem 0;
+}
+.agree-container .card-body {
+  padding: 0;
+}
+.agree-container button:has(input[name=chk_all]) {
+  background-color: #ededed;
+  border-radius: 14px;
+  height: 4.375rem;
+  padding: 5px;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-bottom: 3.12rem;
+  position: relative;
+}
+.agree-container button:has(input[name=chk_all]) input {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  right: 0;
+  text-indent: -999px;
+}
+.agree-container button:has(input[name=chk_all]) input:checked + label {
+  border-color: red;
+}
+.agree-container button:has(input[name=chk_all]) input:checked + label i.bi-check2::before {
+  content: "\f26f";
+  color: red;
+}
+.agree-container button:has(input[name=chk_all]) label {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  position: relative;
+  float: left;
+}
+.agree-container button:has(input[name=chk_all]) label i {
+  display: block;
+  line-height: 1.2;
+  height: 100%;
+}
+.agree-container .agree-box {
+  margin: 0 auto;
+  position: relative;
+}
+.agree-container .agree-box h2 {
+  font-size: 1.1rem;
+  padding-left: 0.5rem;
+}
+.agree-container .agree-box h2 span {
+  color: #ce1922;
+}
+.agree-container .agree-box input {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  right: 0;
+  text-indent: -999px;
+}
+.agree-container .agree-box input:checked + label {
+  border-color: red;
+}
+.agree-container .agree-box input:checked + label i.bi-check2::before {
+  content: "\f26f";
+  color: red;
+}
+.agree-container .agree-box label {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  position: relative;
+}
+.agree-container .agree-box label i {
+  display: block;
+  line-height: 1.2;
+  height: 100%;
+}
+.agree-container textarea {
+  border: 1px solid #c3c3c3;
+  color: #929292;
+  background-color: inherit;
+  overflow-y: auto;
+  border-radius: 8px;
+  width: 100%;
+  height: 9.37rem;
+  margin: 1.5rem auto;
+  font-size: 90%;
+  line-height: 1.4;
+}
+.agree-container .row:has(a.confirm_agree) {
+  margin: 0;
+}
+.agree-container .row:has(a.confirm_agree) a.confirm_agree {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  border-radius: 14px;
+  height: 4.375rem;
+  line-height: 4.375rem;
+  text-align: center;
+  background-color: #ce1922;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
 .account02-container {
   height: 100%;
   background-color: #f8f9fa;
