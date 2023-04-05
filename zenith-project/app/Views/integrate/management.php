@@ -7,10 +7,8 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/tablesorter/dist/css/theme.default.min.css" rel="stylesheet"> 
-<script src="/static/node_modules/tablesorter/dist/js/jquery.tablesorter.js"></script>
-<script src="/static/node_modules/tablesorter/dist/js/extras/jquery.tablesorter.pager.min.js"></script>
-<script src="/static/node_modules/tablesorter/dist/js/jquery.tablesorter.widgets.js"></script>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net-dt/js/dataTables.dataTables.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -569,7 +567,7 @@
 
     <div>
         <div class="row">
-            <table class="tablesorter">
+            <table class="dataTable" id="deviceTable">
                 <caption>목록</caption>
                 <thead>
                     <tr>
@@ -593,20 +591,6 @@
 
                 </tbody>
             </table>
-            <div id="pager" class="pager">
-                <button class="first">맨 처음</button>
-                <button class="prev">이전</button>
-                <span class="pagedisplay" data-pager-output-filtered="{startRow:input} &ndash; {endRow} / 전체 {totalRows}개 중 {filteredRows}개"></span>
-                <button class="next">다음</button>
-                <button class="last">마지막</button>
-                <select class="pagesize">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                    <option value="all">All Rows</option>
-                </select>
-            </div>
         </div>
     </div>
 </div>
@@ -616,85 +600,23 @@
 <?=$this->section('script');?>
 <script>
 $(function(){
-    $('.tablesorter').tablesorter({
-        showProcessing: true,
-        headerTemplate : '{content} {icon}',
-        widthFixed: true,
-        widgets: ['uitheme', 'filter', 'stickyHeaders'],
-        widgetOptions: {
-            sortReset   : true,
-            sortRestart : true,
-            resizable: true,
-            scroller_height : 300,
-            stickyHeaders_includeCaption : false,
-            // scroll tbody to top after sorting
-            scroller_upAfterSort: true,
-            scroller_jumpToHeader: true,
-            scroller_barWidth : null,
-            scroller_addFixedOverlay : false,
-            filter_external : '#stx',
-            filter_columnFilters: false,
-            filter_saveFilters : true,
-            filter_searchFiltered : true,
-        }
-    }).tablesorterPager({
-        container: $(".pager"),
-        ajaxUrl: "<?=base_url()?>/integrate/list",
-        customAjaxUrl: function(table, url) {
-            var pageNumber = table.config.pager.page;
-            var pageSize = table.config.pager.size;
-            return url + '?page=' + pageNumber + '&size=' + pageSize;
+    $("#deviceTable").DataTable({
+        "pageLength": 10,
+        ajax:{
+        	url:"<?=base_url()?>/integrate/list",
+        	type:"GET",
+        	dataSrc :''
         },
-        ajaxError: null,
-        ajaxObject: { 
-            type: 'GET',
-            dataType: 'json' 
-        },
-        ajaxProcessing: function(data) {
-            if (data && data.hasOwnProperty('result')) {
-                var indx, r, row, c, d = data.result,
-                total = data.total_rows,
-                headers = data.headers,
-                headerXref = headers.join(',').replace(/\s+/g,'').split(','),
-                rows = [],
-                len = d.length;
-                for ( r=0; r < len; r++ ) {
-                    row = [];
-                    for ( c in d[r] ) {
-                    if (typeof(c) === "string") {
-                        indx = $.inArray( c, headerXref );
-                        if (indx >= 0) {
-                        row[indx] = d[r][c];
-                        }
-                    }
-                    }
-                    rows.push(row);
-                }
-                return [ total, rows];
-            }
-        },
-        processAjaxOnInit: true,
-        output: '{startRow:input} – {endRow} / {totalRows} 개',
-        updateArrows: true,
-        page: 0,
-        size: 20,
-        savePages : true,
-        storageKey:'tablesorter-pager',
-        pageReset: 0,
-        fixedHeight: true,
-        removeRows: false,
-        countChildRows: false,
-        cssNext: '.next', // next page arrow
-        cssPrev: '.prev', // previous page arrow
-        cssFirst: '.first', // go to first page arrow
-        cssLast: '.last', // go to last page arrow
-        cssGoto: '.gotoPage', // select dropdown to allow choosing a page
-        cssPageDisplay: '.pagedisplay', // location of where the "output" is displayed
-        cssPageSize: '.pagesize', // page size selector - select dropdown that sets the "size" option
-        cssDisabled: 'disabled', // Note there is no period "." in front of this class name
-        cssErrorRow: 'tablesorter-errorRow' // ajax error information row
+        columns:[
+        	{data:"userid"},
+        	{data:"usernm"},
+        	{data:"tel"},
+        	{data:"email"},
+        	{data:"power"}
+        	
+        ]
+        
     });
-
 })
 
 </script>
