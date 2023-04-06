@@ -14,8 +14,6 @@ class IntegrateModel extends Model
 
     public function getEventLead($data)
     {
-        $offset = ($data['draw'] - 1) * $data['length'];
-
         $builder = $this->zenith->table('event_information as info');
         $builder->select("CONCAT('evt_', info.seq) AS seq, adv.name AS advertiser, med.media, adv.is_stop, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
@@ -29,14 +27,14 @@ class IntegrateModel extends Model
         $builderNoLimit = clone $builder;
 
         // limit 적용한 쿼리
-        $builder->limit($data['length'], $offset);
+        $builder->limit($data['length'], $data['start']);
 
         // 결과 반환
         $result = $builder->get()->getResultArray();
-        $resultNoLimit = $builderNoLimit->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
         return [
             'data' => $result,
-            'dataNoLimit' => $resultNoLimit
+            'allCount' => $resultNoLimit
         ];
     }
     

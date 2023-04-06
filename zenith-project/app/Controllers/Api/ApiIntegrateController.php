@@ -26,22 +26,18 @@ class ApiIntegrateController extends BaseController
 
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $param = $this->request->getGet();
-            $param['draw'] = $param['draw'] ?? 1;
-            $param['length'] = $param['length'] ?? 20;
-            $param['search'] = $param['search'] ?? '';
-
+            
             $param['sdate'] = '2023-04-03';
             $param['edate'] = '2023-04-04';
 
             $results = $this->integrate->getEventLead($param);
-            $total = count($results['dataNoLimit']);
+            $total = $results['allCount'];
+
             $result = [
                 'data' => $results['data'],
                 'recordsTotal' => $total,
                 'recordsFiltered' => $total,
-                'draw' => $param['draw'],
-                'length' => $param['length'],
-                'start' => 1,
+                'draw' => intval($param['draw']),
             ];
 
             return $this->respond($result);

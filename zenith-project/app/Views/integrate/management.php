@@ -126,22 +126,15 @@ $(function(){
     getMedia();
     getEvent();
     getList();
-    function getList(){
+    function getList(start, length){
         $('#deviceTable').DataTable({
+            "processing" : true,
+			"serverSide" : true,
             "responsive": true,
-            "paging": true,
-            "serverSide": true,
             "searching": false,
             "ajax": {
                 "url": "<?=base_url()?>/integrate/list",
                 "type": "GET",
-                "data": function (d) {
-                    d.start = d.start;
-                    d.length = d.length;
-                    d.draw = d.draw;
-                    d.search = d.search.value;
-                    d.recordsTotal = d.recordsTotal;
-                },
                 "contentType": "application/json",
                 "dataType": "json"
             },
@@ -173,15 +166,7 @@ $(function(){
                     "next": "다음",
                     "previous": "이전"
                 }
-
             },
-            "drawCallback": function(settings) {
-                var api = this.api();
-                var startIndex = api.context[0]._iDisplayStart; // 현재 페이지의 시작 인덱스
-                api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function(cell, i) {
-                    cell.innerHTML = startIndex + i + 1;
-                });
-            }
         });
     }
 
