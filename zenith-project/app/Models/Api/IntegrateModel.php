@@ -40,28 +40,60 @@ class IntegrateModel extends Model
         ];
     }
     
-    /* public function getEventLead()
+    public function getAdvertiser($data)
     {
-        $sql = "SELECT
-        CONCAT( 'evt_', info.seq ) AS seq,
-        adv.NAME AS advertiser,
-        med.media,
-        adv.is_stop,
-        info.description AS tab_name,
-        a.*
-    FROM
-        event_information AS info
-        LEFT JOIN event_advertiser AS adv ON info.advertiser = adv.seq AND adv.is_stop = 0
-        LEFT JOIN event_media AS med ON info.media = med.seq 
-        LEFT JOIN event_leads AS a ON a.event_seq = info.seq
-    WHERE
-        a.is_deleted = 0 
-        AND adv.NAME = '그라클레스'
-    ORDER BY
-        a.seq DESC;";
-
-        $result = $this->zenith->query($sql);
-        $this->zenith->close();
+        $builder = $this->zenith->table('event_advertiser adv');
+        $builder->select('adv.name AS advertiser, COUNT(el.seq) as total');
+        $builder->join('event_information info', 'info.advertiser = adv.seq', 'left');
+        $builder->join('event_media med', 'info.media = med.seq', 'left');
+        $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
+        $builder->where('el.is_deleted', 0);
+        $builder->where('advertiser !=', '');
+        $builder->where('el.status !=', 0);
+        $builder->where('el.reg_date >=', $data['sdate']);
+        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->groupBy('advertiser');
+        $builder->orderBy('advertiser');
+        $builder->distinct();
+        $result = $builder->get()->getResultArray();
         return $result;
-    } */
+    }
+
+    public function getMedia($data)
+    {
+        $builder = $this->zenith->table('event_media med');
+        $builder->select('med.media as media_name, COUNT(el.seq) as total');
+        $builder->join('event_information info', 'info.media = med.seq', 'left');
+        $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
+        $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
+        $builder->where('el.is_deleted', 0);
+        $builder->where('med.media !=', '');
+        $builder->where('el.status !=', 0);
+        $builder->where('el.reg_date >=', $data['sdate']);
+        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->groupBy('med.media');
+        $builder->orderBy('med.media');
+        $builder->distinct();
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
+    public function getEvent($data)
+    {
+        $builder = $this->zenith->table('event_information info');
+        $builder->select('info.description as event, COUNT(el.seq) as total');
+        $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
+        $builder->join('event_media med', 'info.media = med.seq', 'left');
+        $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
+        $builder->where('el.is_deleted', 0);
+        $builder->where('info.description !=', '');
+        $builder->where('el.status !=', 0);
+        $builder->where('el.reg_date >=', $data['sdate']);
+        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->groupBy('info.description');
+        $builder->orderBy('info.description');
+        $builder->distinct();
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
 }

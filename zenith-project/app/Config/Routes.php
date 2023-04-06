@@ -84,6 +84,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('integrate', static function($routes){   
         $routes->get('management', 'Api\ApiIntegrateController::index');
         $routes->get('list', 'Api\ApiIntegrateController::getList');
+        $routes->get('advertiser', 'Api\ApiIntegrateController::getAdvertiser');
+        $routes->get('media', 'Api\ApiIntegrateController::getMedia');
+        $routes->get('event', 'Api\ApiIntegrateController::getEvent');
     });
 });
 

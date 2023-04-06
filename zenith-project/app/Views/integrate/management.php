@@ -72,497 +72,20 @@
         </div>
     </div>
 
-    <div class="section client-list advertiser">
+    <div class="section client-list">
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 
             광고주
         </h3>
-        <div class="row">
-
-        </div>
-        <!-- <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">거무타</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">마디척병원○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div> -->
+        <div class="row" id="advertiser"></div>
     </div>
-    <!-- <div class="section client-list advertiser">
+    <div class="section client-list">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
-        <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active alert">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="alert">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">거무타</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">마디척병원○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="row" id="media"></div>
     </div>
-    <div class="section client-list advertiser">
+    <div class="section client-list">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 이벤트 구분</h3>
-        <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active alert">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="alert">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">거무타</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">마디척병원○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <div class="section client-list advertiser">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 이벤트 구분</h3>
-        
+        <div class="row" id="evt"></div>
     </div>
 
     <div>
@@ -599,61 +122,152 @@
 <?=$this->section('script');?>
 <script>
 $(function(){
-    $('#deviceTable').DataTable({
-        "responsive": true,
-        "paging": true,
-        "serverSide": true,
-        "searching": false,
-        "ajax": {
-            "url": "<?=base_url()?>/integrate/list",
-            "type": "GET",
-            "data": function (d) {
-                d.start = d.start;
-                d.length = d.length;
-                d.draw = d.draw;
-                d.search = d.search.value;
-                d.recordsTotal = d.recordsTotal;
+    getAdv();
+    getMedia();
+    getEvent();
+    getList();
+    function getList(){
+        $('#deviceTable').DataTable({
+            "responsive": true,
+            "paging": true,
+            "serverSide": true,
+            "searching": false,
+            "ajax": {
+                "url": "<?=base_url()?>/integrate/list",
+                "type": "GET",
+                "data": function (d) {
+                    d.start = d.start;
+                    d.length = d.length;
+                    d.draw = d.draw;
+                    d.search = d.search.value;
+                    d.recordsTotal = d.recordsTotal;
+                },
+                "contentType": "application/json",
+                "dataType": "json"
             },
-            "contentType": "application/json",
-            "dataType": "json"
-        },
-        "columns": [
-            {
-                "data": null,
-                "render": function (data, type, row, meta) {
-                    return meta.row + 1;
+            "columns": [
+                { "data": "event_seq" },
+                { "data": "advertiser" },
+                { "data": "media" },
+                { "data": "tab_name" },
+                { "data": "name" },
+                { "data": "dec_phone" },
+                { "data": "age" },
+                { "data": "gender" },
+                { "data": "add1" },
+                { "data": "add2" },
+                { "data": "site" },
+                { "data": "reg_date" },
+            ],
+            "language": {
+                "emptyTable": "데이터가 존재하지 않습니다.",
+                "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+                "info": "현재 _START_ - _END_ / _TOTAL_건",
+                "infoEmpty": "데이터 없음",
+                "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+                "search": "에서 검색: ",
+                "zeroRecords": "일치하는 데이터가 없어요.",
+                "loadingRecords": "로딩중...",
+                "processing":     "잠시만 기다려 주세요...",
+                "paginate": {
+                    "next": "다음",
+                    "previous": "이전"
                 }
-            },
-            { "data": "event_seq" },
-            { "data": "advertiser" },
-            { "data": "media" },
-            { "data": "tab_name" },
-            { "data": "name" },
-            { "data": "dec_phone" },
-            { "data": "age" },
-            { "data": "gender" },
-            { "data": "add1" },
-            { "data": "add2" },
-            { "data": "site" },
-            { "data": "reg_date" },
-        ],
-        "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "info": "현재 _START_ - _END_ / _TOTAL_건",
-            "infoEmpty": "데이터 없음",
-            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-            "search": "에서 검색: ",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-            "processing":     "잠시만 기다려 주세요...",
-            "paginate": {
-                "next": "다음",
-                "previous": "이전"
-            }
 
-        },
-    });
+            },
+            "drawCallback": function(settings) {
+                var api = this.api();
+                var startIndex = api.context[0]._iDisplayStart; // 현재 페이지의 시작 인덱스
+                api.column(0, {search: 'applied', order: 'applied'}).nodes().each(function(cell, i) {
+                    cell.innerHTML = startIndex + i + 1;
+                });
+            }
+        });
+    }
+
+    function getAdv(){
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/integrate/advertiser",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(result){
+                var html = '';
+                // data 값을 반복하여 HTML 코드 생성
+                $.each(result, function(index, item){
+                    html += '<div class="col">';
+                    html += '<div class="inner">';
+                    html += '<button type="button">' + item.advertiser + '</button>';
+                    html += '<div class="progress">';
+                    html += '<div class="txt">' + item.total + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+
+                $('#advertiser').html(html);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
+    
+    function getMedia(){
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/integrate/media",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(result){
+                var html = '';
+                // data 값을 반복하여 HTML 코드 생성
+                $.each(result, function(index, item){
+                    html += '<div class="col">';
+                    html += '<div class="inner">';
+                    html += '<button type="button">' + item.media_name + '</button>';
+                    html += '<div class="progress">';
+                    html += '<div class="txt">' + item.total + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+
+                $('#media').html(html);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
+
+    function getEvent(){
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/integrate/event",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(result){
+                var html = '';
+                // data 값을 반복하여 HTML 코드 생성
+                $.each(result, function(index, item){
+                    html += '<div class="col">';
+                    html += '<div class="inner">';
+                    html += '<button type="button">' + item.event + '</button>';
+                    html += '<div class="progress">';
+                    html += '<div class="txt">' + item.total + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+
+                $('#evt').html(html);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
 })
 
 </script>
