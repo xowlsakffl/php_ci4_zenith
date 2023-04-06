@@ -83,7 +83,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     // 통합 DB관리
     $routes->group('integrate', static function($routes){   
         $routes->get('management', 'Api\ApiIntegrateController::index');
-        $routes->post('list', 'Api\ApiIntegrateController::getList');
+        $routes->get('list', 'Api\ApiIntegrateController::getList');
     });
 });
 

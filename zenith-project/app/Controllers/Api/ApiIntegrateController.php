@@ -26,17 +26,16 @@ class ApiIntegrateController extends BaseController
 
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $param = $this->request->getGet();
-            $param['page'] = $param['page'] ?? 1;
-            $param['limit'] = $param['limit'] ?? 20;
-            $param['sort_by']  = $param['sort_by'] ?? 'seq';
-            $param['sort_order'] = $param['sort_order'] ?? 'desc';
+            $param['draw'] = $param['draw'] ?? 1;
+            $param['length'] = $param['length'] ?? 20;
+            $param['search'] = $param['search'] ?? '';
 
             $param['sdate'] = '2023-04-03';
             $param['edate'] = '2023-04-04';
 
-            $result = $this->integrate->getEventLead($param);
-
-            /* $data = [
+            $results = $this->integrate->getEventLead($param);
+            $total = count($results['dataNoLimit']);
+            $data = [
                 'advertiser'=>['count'=>[],'list'=>[],'media'=>[],'tab'=>[]],
                 'media'=>['count'=>[],'list'=>[],'media'=>[],'tab'=>[]],
                 'tab'=>['count'=>[],'list'=>[],'media'=>[],'tab'=>[]],
@@ -45,9 +44,9 @@ class ApiIntegrateController extends BaseController
                 ],
                 'data'=>[]
             ];
-            if($result['dataNoLimit']){
-                $no = count($result['dataNoLimit']);
-                foreach ($result['dataNoLimit'] as $row) {
+            if($results['dataNoLimit']){
+                $no = $total;
+                foreach ($results['dataNoLimit'] as $row) {
                     $row['no'] = $no--;
                     if($row['status'] == 1) {
                         $data['advertiser']['count'][$row['advertiser']]++;
@@ -97,19 +96,18 @@ class ApiIntegrateController extends BaseController
                 }
 
                 dd($data);
-            } */
+            }
 
-            /* $data = [
-                'headers' => ['seq', 'event_seq', 'advertiser', 'media', 'device_width', 'lead', 'title', 'phone', 'age', 'gender', ''],
-                'result' => $result['data'],
-                'total_rows' => $result['total'],
-                'page' => $param['page'],
-                'limit' => $param['limit'],
-                'sort_by' => $param['sort_by'],
-                'sort_order' => $param['sort_order'],
-            ]; */
+            $results = [
+                'data' => $result['data'],
+                'recordsTotal' => $total,
+                'recordsFiltered' => $total,
+                'draw' => $param['draw'],
+                'length' => $param['length'],
+                'start' => 1,
+            ];
 
-            return $this->respond($result);
+            return $this->respond($data);
         //}else{
             return $this->fail("잘못된 요청");
         //}

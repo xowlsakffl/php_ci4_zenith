@@ -8,7 +8,7 @@
 <!--헤더-->
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net-dt/js/dataTables.dataTables.js"></script>
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -568,7 +568,6 @@
     <div>
         <div class="row">
             <table class="dataTable" id="deviceTable">
-                <caption>목록</caption>
                 <thead>
                     <tr>
                         <th style="width:40px" class="first">#</th>
@@ -600,22 +599,60 @@
 <?=$this->section('script');?>
 <script>
 $(function(){
-    $("#deviceTable").DataTable({
-        "pageLength": 10,
-        ajax:{
-        	url:"<?=base_url()?>/integrate/list",
-        	type:"GET",
-        	dataSrc :''
+    $('#deviceTable').DataTable({
+        "responsive": true,
+        "paging": true,
+        "serverSide": true,
+        "searching": false,
+        "ajax": {
+            "url": "<?=base_url()?>/integrate/list",
+            "type": "GET",
+            "data": function (d) {
+                d.start = d.start;
+                d.length = d.length;
+                d.draw = d.draw;
+                d.search = d.search.value;
+                d.recordsTotal = d.recordsTotal;
+            },
+            "contentType": "application/json",
+            "dataType": "json"
         },
-        columns:[
-        	{data:"userid"},
-        	{data:"usernm"},
-        	{data:"tel"},
-        	{data:"email"},
-        	{data:"power"}
-        	
-        ]
-        
+        "columns": [
+            {
+                "data": null,
+                "render": function (data, type, row, meta) {
+                    return meta.row + 1;
+                }
+            },
+            { "data": "event_seq" },
+            { "data": "advertiser" },
+            { "data": "media" },
+            { "data": "tab_name" },
+            { "data": "name" },
+            { "data": "dec_phone" },
+            { "data": "age" },
+            { "data": "gender" },
+            { "data": "add1" },
+            { "data": "add2" },
+            { "data": "site" },
+            { "data": "reg_date" },
+        ],
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "info": "현재 _START_ - _END_ / _TOTAL_건",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+            "processing":     "잠시만 기다려 주세요...",
+            "paginate": {
+                "next": "다음",
+                "previous": "이전"
+            }
+
+        },
     });
 })
 
