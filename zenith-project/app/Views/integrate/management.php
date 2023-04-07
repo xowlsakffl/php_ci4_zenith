@@ -36,55 +36,23 @@
                 <button class="btn-primary" type="submit">조회</button>
             </div>
         </form>
-        <div class="detail row d-flex justify-content-center">
-            <dl class="col">
-                <dt>노출수</dt>
-                <dd>34,456</dd>
-            </dl>
-            <dl class="col">
-                <dt>클릭수</dt>
-                <dd>809</dd>
-            </dl>
-            <dl class="col">
-                <dt>클릭율</dt>
-                <dd>1.09</dd>
-            </dl>
-            <dl class="col">
-                <dt>지출액</dt>
-                <dd>1,234,123</dd>
-            </dl>
-            <dl class="col">
-                <dt>DB수</dt>
-                <dd>61</dd>
-            </dl>
-            <dl class="col">
-                <dt>DB당 단가</dt>
-                <dd>45,234</dd>
-            </dl>
-            <dl class="col">
-                <dt>전환율</dt>
-                <dd>7.34</dd>
-            </dl>
-            <dl class="col">
-                <dt>매출</dt>
-                <dd>23,456,900</dd>
-            </dl>
-        </div>
     </div>
-
     <div class="section client-list">
         <h3 class="content-title toggle">
-            <i class="bi bi-chevron-up"></i> 
-            광고주
+            <i class="bi bi-chevron-up"></i> 광고주
         </h3>
         <div class="row" id="advertiser"></div>
     </div>
     <div class="section client-list">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
+        <h3 class="content-title toggle">
+            <i class="bi bi-chevron-up"></i> 매체
+        </h3>
         <div class="row" id="media"></div>
     </div>
     <div class="section client-list">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 이벤트 구분</h3>
+        <h3 class="content-title toggle">
+            <i class="bi bi-chevron-up"></i> 이벤트 구분
+        </h3>
         <div class="row" id="evt"></div>
     </div>
 

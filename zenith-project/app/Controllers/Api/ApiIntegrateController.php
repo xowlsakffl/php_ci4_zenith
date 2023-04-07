@@ -31,6 +31,8 @@ class ApiIntegrateController extends BaseController
             $param['edate'] = '2023-04-04';
 
             $results = $this->integrate->getEventLead($param);
+            $statusCount = $this->integrate->getStatusCount($param);
+            dd($statusCount);
             $total = $results['allCount'];
 
             $result = [
@@ -38,6 +40,7 @@ class ApiIntegrateController extends BaseController
                 'recordsTotal' => $total,
                 'recordsFiltered' => $total,
                 'draw' => intval($param['draw']),
+                'statusCount' => $statusCount,
             ];
 
             return $this->respond($result);

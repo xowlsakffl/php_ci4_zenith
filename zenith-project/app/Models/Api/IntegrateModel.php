@@ -32,6 +32,7 @@ class IntegrateModel extends Model
         // 결과 반환
         $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();
+
         return [
             'data' => $result,
             'allCount' => $resultNoLimit
@@ -92,6 +93,22 @@ class IntegrateModel extends Model
         $builder->orderBy('info.description');
         $builder->distinct();
         $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
+    public function getStatusCount($data)
+    {
+        $builder = $this->zenith->table('event_information as info');
+        $builder->select("COUNT(CASE WHEN status=99 then 1 end)");
+        $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
+        $builder->join('event_media as med', 'info.media = med.seq', 'left');
+        $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
+        $builder->where('el.is_deleted', 0);
+        $builder->where('el.reg_date >=', $data['sdate']);
+        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->orderBy('el.seq', 'DESC');
+        $result = $builder->get()->getResultArray();
+
         return $result;
     }
 }
