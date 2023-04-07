@@ -29,10 +29,9 @@ class ApiIntegrateController extends BaseController
             
             $param['sdate'] = '2023-04-03';
             $param['edate'] = '2023-04-04';
-
+            //arg 받기
             $results = $this->integrate->getEventLead($param);
             $statusCount = $this->integrate->getStatusCount($param);
-            dd($statusCount);
             $total = $results['allCount'];
 
             $result = [

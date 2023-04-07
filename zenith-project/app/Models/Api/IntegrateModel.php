@@ -42,7 +42,7 @@ class IntegrateModel extends Model
     public function getAdvertiser($data)
     {
         $builder = $this->zenith->table('event_advertiser adv');
-        $builder->select('adv.name AS advertiser, COUNT(el.seq) as total');
+        $builder->select('adv.seq as seq, adv.name as advertiser, COUNT(el.seq) as total');
         $builder->join('event_information info', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -51,6 +51,10 @@ class IntegrateModel extends Model
         $builder->where('el.status !=', 0);
         $builder->where('el.reg_date >=', $data['sdate']);
         $builder->where('el.reg_date <=', $data['edate']);
+        if($data['seq'] && $data['name']){
+            $builder->where('adv.seq', $data['seq']);
+            $builder->where('adv.name', $data['name']);
+        }
         $builder->groupBy('advertiser');
         $builder->orderBy('advertiser');
         $builder->distinct();
@@ -99,7 +103,20 @@ class IntegrateModel extends Model
     public function getStatusCount($data)
     {
         $builder = $this->zenith->table('event_information as info');
-        $builder->select("COUNT(CASE WHEN status=99 then 1 end)");
+        $builder->select("
+        COUNT(CASE WHEN el.status=1 then 1 end) as 인정, 
+        COUNT(CASE WHEN el.status=2 then 1 end) as 중복, 
+        COUNT(CASE WHEN el.status=3 then 1 end) as 성별불량, 
+        COUNT(CASE WHEN el.status=4 then 1 end) as 나이불량, 
+        COUNT(CASE WHEN el.status=5 then 1 end) as 콜불량, 
+        COUNT(CASE WHEN el.status=6 then 1 end) as 번호불량, 
+        COUNT(CASE WHEN el.status=7 then 1 end) as 테스트, 
+        COUNT(CASE WHEN el.status=8 then 1 end) as 이름불량, 
+        COUNT(CASE WHEN el.status=9 then 1 end) as 지역불량, 
+        COUNT(CASE WHEN el.status=10 then 1 end) as 업체불량, 
+        COUNT(CASE WHEN el.status=11 then 1 end) as 미성년자, 
+        COUNT(CASE WHEN el.status=12 then 1 end) as 본인아님, 
+        COUNT(CASE WHEN el.status=99 then 1 end) as 확인");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 

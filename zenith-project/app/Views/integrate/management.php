@@ -57,6 +57,8 @@
     </div>
 
     <div>
+        <div class="statusCount">
+        </div>
         <div class="row">
             <table class="dataTable" id="deviceTable">
                 <thead>
@@ -94,7 +96,7 @@ $(function(){
     getMedia();
     getEvent();
     getList();
-    function getList(start, length){
+    function getList(start, length, arg){
         $('#deviceTable').DataTable({
             "processing" : true,
 			"serverSide" : true,
@@ -104,7 +106,7 @@ $(function(){
                 "url": "<?=base_url()?>/integrate/list",
                 "type": "GET",
                 "contentType": "application/json",
-                "dataType": "json"
+                "dataType": "json",
             },
             "columns": [
                 { "data": "event_seq" },
@@ -135,6 +137,14 @@ $(function(){
                     "previous": "이전"
                 }
             },
+            "initComplete": function(settings, json) {
+                $('.statusCount').empty();
+                $.each(json.statusCount[0], function(index, item) {
+                    var dl = $('<dl></dl>');
+                    dl.append('<dt>' + index + '</dt><dd>' + item + '</dd>');
+                    $('.statusCount').append(dl);
+                });
+            }
         });
     }
 
@@ -150,7 +160,7 @@ $(function(){
                 $.each(result, function(index, item){
                     html += '<div class="col">';
                     html += '<div class="inner">';
-                    html += '<button type="button">' + item.advertiser + '</button>';
+                    html += '<button type="button" class="advertiser_btn" value="'+item.seq+'">' + item.advertiser + '</button>';
                     html += '<div class="progress">';
                     html += '<div class="txt">' + item.total + '</div>';
                     html += '</div>';
@@ -221,6 +231,15 @@ $(function(){
             }
         });
     }
+
+    $('body').on('click', '.advertiser_btn', function() {
+        $data = {
+            'seq': $(this).val(),
+            'name': $(this).text(),
+        }
+
+        getList(0, 10, $data);
+	});
 })
 
 </script>
