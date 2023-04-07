@@ -15,13 +15,16 @@ class IntegrateModel extends Model
     public function getEventLead($data)
     {
         $builder = $this->zenith->table('event_information as info');
-        $builder->select("CONCAT('evt_', info.seq) AS seq, adv.name AS advertiser, med.media, adv.is_stop, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
+        $builder->select("info.seq as seq, adv.name AS advertiser, med.media, adv.is_stop, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
-        $builder->where('el.reg_date >=', $data['sdate']);
-        $builder->where('el.reg_date <=', $data['edate']);
+        if($data['adv_seq']){
+            $builder->where('adv.seq', $data['adv_seq']);
+        }
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
         $builder->orderBy('el.seq', 'DESC');
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
@@ -43,17 +46,16 @@ class IntegrateModel extends Model
     {
         $builder = $this->zenith->table('event_advertiser adv');
         $builder->select('adv.seq as seq, adv.name as advertiser, COUNT(el.seq) as total');
-        $builder->join('event_information info', 'info.advertiser = adv.seq', 'left');
+        $builder->join('event_information info', 'info.advertiser = adv.seq AND adv.is_stop = 0', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
         $builder->where('el.is_deleted', 0);
         $builder->where('advertiser !=', '');
         $builder->where('el.status !=', 0);
-        $builder->where('el.reg_date >=', $data['sdate']);
-        $builder->where('el.reg_date <=', $data['edate']);
-        if($data['seq'] && $data['name']){
-            $builder->where('adv.seq', $data['seq']);
-            $builder->where('adv.name', $data['name']);
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+        if(isset($data['adv_seq'])){
+            $builder->where('adv.seq', $data['adv_seq']);
         }
         $builder->groupBy('advertiser');
         $builder->orderBy('advertiser');
@@ -72,8 +74,8 @@ class IntegrateModel extends Model
         $builder->where('el.is_deleted', 0);
         $builder->where('med.media !=', '');
         $builder->where('el.status !=', 0);
-        $builder->where('el.reg_date >=', $data['sdate']);
-        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
         $builder->groupBy('med.media');
         $builder->orderBy('med.media');
         $builder->distinct();
@@ -91,8 +93,8 @@ class IntegrateModel extends Model
         $builder->where('el.is_deleted', 0);
         $builder->where('info.description !=', '');
         $builder->where('el.status !=', 0);
-        $builder->where('el.reg_date >=', $data['sdate']);
-        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
         $builder->groupBy('info.description');
         $builder->orderBy('info.description');
         $builder->distinct();
@@ -121,8 +123,8 @@ class IntegrateModel extends Model
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
-        $builder->where('el.reg_date >=', $data['sdate']);
-        $builder->where('el.reg_date <=', $data['edate']);
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
         $builder->orderBy('el.seq', 'DESC');
         $result = $builder->get()->getResultArray();
 

@@ -93,10 +93,14 @@
 <script>
 $(function(){
     getAdv();
-    getMedia();
-    getEvent();
+    /* getMedia();
+    getEvent(); */
     getList();
-    function getList(start, length, arg){
+    function getList(data = []){
+        data = {
+            'adv_seq': data.adv_seq ? data.adv_seq : '',
+            'adv_name': data.adv_name ? data.adv_name : ''
+        };
         $('#deviceTable').DataTable({
             "processing" : true,
 			"serverSide" : true,
@@ -104,6 +108,7 @@ $(function(){
             "searching": false,
             "ajax": {
                 "url": "<?=base_url()?>/integrate/list",
+                "data": data,
                 "type": "GET",
                 "contentType": "application/json",
                 "dataType": "json",
@@ -233,12 +238,13 @@ $(function(){
     }
 
     $('body').on('click', '.advertiser_btn', function() {
-        $data = {
-            'seq': $(this).val(),
-            'name': $(this).text(),
-        }
-
-        getList(0, 10, $data);
+        data = {
+            adv_seq: $(this).val(),
+            adv_name: $(this).text(),
+        };
+        $(this).css('border','1px solid red')
+        $('#deviceTable').DataTable().destroy();
+        getList(data);
 	});
 })
 
