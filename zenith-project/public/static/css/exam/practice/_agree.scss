@@ -6,7 +6,8 @@
 }
 
 @mixin chk_label($wd:20px,$h:20px){//chckbox label style
-    width:$wd; height:$h; border-radius:50%; border:1px solid #000; position:relative;
+    width:$wd; height:$h; border-radius:50%; border:1px solid #000; position:relative; cursor: pointer;
+    &:hover{animation: flash 2s infinite;}
     i{display: block;  line-height: 1.2; height: 100%;}
 }
 
@@ -17,7 +18,9 @@
 
     .card-body{padding:0;}
 
-    button:has(input[name="chk_all"]){background-color:#ededed;  border-radius:14px; height:4.375rem; padding:5px; width:100%; font-size:1.1rem; margin-bottom:3.12rem;   position:relative;        
+    button:has(input[name="chk_all"]){background-color:#ededed;  border-radius:14px; height:4.375rem; padding:5px; width:100%; font-size:1.1rem; margin-bottom:3.12rem;  position:relative; transition:all 0.2s ease-out;  
+        
+        &:hover{box-shadow: 5px 5px 15px #c3c3c3; transition:all 0.2s ease-out;}
         input{@include chk_input;}    
         label{@include chk_label; float: left;} 
     }
@@ -34,4 +37,15 @@
     .row:has(a.confirm_agree){margin:0;
         a.confirm_agree{display: block; width:100%; margin-top:1.5rem; border-radius:14px; height:4.375rem; line-height:4.375rem; text-align: center; background-color: #ce1922; font-size:1.25rem; color:#fff;}
     }   
+}
+
+// 반응형 사용 
+@include mobile-500{
+    .agree-container{
+        .agree-box{
+            label{
+                i{line-height: 1.5;}
+            }
+        }        
+    }
 }

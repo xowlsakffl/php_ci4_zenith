@@ -1274,211 +1274,6 @@ body {
     min-width: 800px;
   }
 }
-.ad-management .title {
-  display: flex;
-  align-items: baseline;
-  text-align: left;
-}
-.ad-management .title h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0 10px 10px;
-}
-.ad-management .title p {
-  font-size: 13px;
-}
-.ad-management .row {
-  margin: 0;
-}
-.ad-management .row:not(:first-child) {
-  margin-top: 24px;
-}
-.ad-management .type {
-  flex: 1;
-  border: 1px solid #d1d1d1;
-  border-radius: 10px 10px 0 0;
-  background: #fff;
-  padding: 0;
-}
-.ad-management .search .form-control {
-  border-radius: 30px;
-}
-.ad-management .search .form-control::placeholder {
-  font-size: 90%;
-}
-.ad-management .search .btn-primary {
-  background: #ce1922;
-  border-color: transparent;
-  width: 143px;
-}
-.ad-management .btn-more {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 143px;
-  color: #fff;
-  border-radius: 10px;
-  background: #2d2e34;
-}
-.ad-management .btn-more span {
-  padding: 30px 0 0;
-  background: url("/img/ico_arrow.png") no-repeat center 0;
-}
-.ad-management .summary {
-  display: flex;
-  margin: 0 0 24px;
-  padding: 35px 48px 0;
-}
-.ad-management .summary strong {
-  min-width: 210px;
-  margin: 0 45px 0 0;
-  font-size: 28px;
-  font-weight: 600;
-  font-variation-settings: "wght" 600;
-}
-.ad-management .summary i {
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  margin: 0 6px 0 0;
-  vertical-align: top;
-}
-.ad-management .summary dl {
-  display: flex;
-  align-items: center;
-  margin: 0 45px 0 0;
-}
-.ad-management .summary dt {
-  margin: 0 6px 0 0;
-  font-size: 16px;
-}
-.ad-management .summary dd {
-  font-size: 28px;
-  font-weight: 600;
-  font-variation-settings: "wght" 600;
-}
-.ad-management .summary .percentage dd {
-  color: #ce1922;
-}
-.ad-management .detail {
-  display: flex;
-  padding: 22px 48px 22px;
-  background-color: #e9e9e9;
-  border-top: 1px solid #d1d1d1;
-}
-.ad-management .detail dl {
-  box-sizing: border-box;
-  margin: 0 22px 0 0;
-  padding: 7px 10px;
-  text-align: center;
-}
-.ad-management .detail dd {
-  margin: 8px 0 0;
-  color: #929292;
-}
-.ad-management .menu .title {
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-.ad-management .menu .btn-management {
-  width: 143px;
-  background-color: #fff;
-  color: #d1d1d1;
-  border-radius: 5px;
-  border: 1px solid #d1d1d1;
-  padding: 8px 0;
-  margin: 14px 5px;
-}
-.ad-management .menu .btn-management.active {
-  color: #ce1922;
-  border-color: #ce1922;
-}
-.ad-management .menu .btn-management span {
-  width: 90%;
-  margin: 0 auto;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.ad-management .menu strong {
-  text-align: left;
-  margin-right: 15px;
-}
-.ad-management .menu .line {
-  display: block;
-  flex: 2;
-  height: 2px;
-  background-color: #d1d1d1;
-}
-.ad-management .menu .check-circle {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin-right: 8px;
-  background-color: #ce1922;
-  position: relative;
-}
-.ad-management .menu.advertiser .btn-management {
-  width: 179px;
-}
-.ad-management ul.nav-tabs {
-  padding: 0 0;
-  margin-top: 24px;
-  border-bottom: 0px;
-  --bs-nav-tabs-border-color:#d1d1d1;
-}
-.ad-management ul.nav-tabs li {
-  flex: 1;
-  padding: 0;
-  margin: 0;
-}
-.ad-management ul.nav-tabs li button.nav-link {
-  width: 100%;
-  padding: 15px 0;
-  color: #000;
-  background-color: #d7d7d7;
-  font-weight: normal;
-}
-.ad-management ul.nav-tabs li button.nav-link.active {
-  border-top: 3px solid #ce1922;
-  background-color: #fff !important;
-  font-weight: 900;
-}
-.ad-management ul.nav-tabs li:nth-child(odd) button.nav-link {
-  background-color: #b9b9b9;
-}
-.ad-management .tab-content {
-  padding: 20px 15px 60px;
-  background-color: #fff;
-  border: 1px solid #d1d1d1;
-  border-width: 0 1px 1px 1px;
-}
-.ad-management .tab-content .btn-outline-primary {
-  margin-right: 7px;
-}
-.ad-management .tab-content .tab-pane {
-  padding: 40px 0;
-  margin-top: 24px;
-}
-.ad-management .btn-outline-primary {
-  color: #2d2e34;
-  border-color: #ce1922;
-  border-radius: 30px;
-  width: 120px;
-  font-size: 14px;
-}
-.ad-management .btn-outline-primary span {
-  width: 98%;
-  margin: 0 auto;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .filter-btn-wrap {
   text-align: center;
   border-top: 1px solid #c3c3c3;
@@ -1652,6 +1447,197 @@ body {
   border-top: 0px;
 }
 
+.siteMap-container .sitemap-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+.siteMap-container .sitemap-wrap::after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  width: 2px;
+  height: 92%;
+  background-color: #ce1922;
+}
+.siteMap-container .section + .section {
+  margin: 0;
+}
+.siteMap-container .section {
+  width: 48%;
+  padding: 5px;
+}
+.siteMap-container .section:nth-child(odd) {
+  margin: 3rem 2% 3rem 0;
+}
+.siteMap-container .section:nth-child(even) {
+  margin: 3rem 0 3rem 2%;
+}
+.siteMap-container .section .content-title::after {
+  display: none;
+}
+.siteMap-container .client-list .row .col {
+  width: 25%;
+}
+.siteMap-container .client-list .row .col button:hover {
+  background-color: #881509;
+  color: #fff;
+  border-color: transparent;
+}
+.siteMap-container .client-list .row .col button:hover a {
+  color: inherit;
+}
+.siteMap-container .client-list .row .col button a {
+  display: block;
+}
+
+@media screen and (max-width: 500px) {
+  .siteMap-container .client-list .row .col {
+    width: 50%;
+  }
+  .siteMap-container .client-list .row .col button {
+    padding: 0.6rem 0.7rem;
+    font-size: 90%;
+  }
+}
+.agree-container {
+  margin: 0 auto;
+}
+.agree-container .card {
+  margin: 0 auto;
+  --bs-card-border-color:transparent;
+  --bs-card-bg:inherit;
+  max-width: 500px;
+}
+.agree-container .card-title {
+  font-size: 1.5rem;
+  margin: 2.5rem 0;
+}
+.agree-container .card-body {
+  padding: 0;
+}
+.agree-container button:has(input[name=chk_all]) {
+  background-color: #ededed;
+  border-radius: 14px;
+  height: 4.375rem;
+  padding: 5px;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-bottom: 3.12rem;
+  position: relative;
+  transition: all 0.2s ease-out;
+}
+.agree-container button:has(input[name=chk_all]):hover {
+  box-shadow: 5px 5px 15px #c3c3c3;
+  transition: all 0.2s ease-out;
+}
+.agree-container button:has(input[name=chk_all]) input {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  right: 0;
+  text-indent: -999px;
+}
+.agree-container button:has(input[name=chk_all]) input:checked + label {
+  border-color: red;
+}
+.agree-container button:has(input[name=chk_all]) input:checked + label i.bi-check2::before {
+  content: "\f26f";
+  color: red;
+}
+.agree-container button:has(input[name=chk_all]) label {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  position: relative;
+  cursor: pointer;
+  float: left;
+}
+.agree-container button:has(input[name=chk_all]) label:hover {
+  animation: flash 2s infinite;
+}
+.agree-container button:has(input[name=chk_all]) label i {
+  display: block;
+  line-height: 1.2;
+  height: 100%;
+}
+.agree-container .agree-box {
+  margin: 0 auto;
+  position: relative;
+}
+.agree-container .agree-box h2 {
+  font-size: 1.1rem;
+  padding-left: 0.5rem;
+}
+.agree-container .agree-box h2 span {
+  color: #ce1922;
+}
+.agree-container .agree-box input {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  right: 0;
+  text-indent: -999px;
+}
+.agree-container .agree-box input:checked + label {
+  border-color: red;
+}
+.agree-container .agree-box input:checked + label i.bi-check2::before {
+  content: "\f26f";
+  color: red;
+}
+.agree-container .agree-box label {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #000;
+  position: relative;
+  cursor: pointer;
+}
+.agree-container .agree-box label:hover {
+  animation: flash 2s infinite;
+}
+.agree-container .agree-box label i {
+  display: block;
+  line-height: 1.2;
+  height: 100%;
+}
+.agree-container textarea {
+  border: 1px solid #c3c3c3;
+  color: #929292;
+  background-color: inherit;
+  overflow-y: auto;
+  border-radius: 8px;
+  width: 100%;
+  height: 9.37rem;
+  margin: 1.5rem auto;
+  font-size: 90%;
+  line-height: 1.4;
+}
+.agree-container .row:has(a.confirm_agree) {
+  margin: 0;
+}
+.agree-container .row:has(a.confirm_agree) a.confirm_agree {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  border-radius: 14px;
+  height: 4.375rem;
+  line-height: 4.375rem;
+  text-align: center;
+  background-color: #ce1922;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+@media screen and (max-width: 500px) {
+  .agree-container .agree-box label i {
+    line-height: 1.5;
+  }
+}
 .account-container {
   height: 100vh;
   text-align: center;
@@ -1757,155 +1743,6 @@ body {
   visibility: visible;
 }
 
-@keyframes flash {
-  0%, 20%, 40%, to {
-    opacity: 1;
-  }
-  10%, 30% {
-    opacity: 0;
-  }
-}
-@media screen and (max-width: 500px) {
-  .account-container .card .card-body .card-title {
-    margin-bottom: 2rem;
-  }
-  .account-container form {
-    padding: 0 5%;
-  }
-  .account-container form > div i {
-    top: 54%;
-    font-size: 1.2rem;
-  }
-  .account-container form .forgot {
-    font-size: 0.95rem;
-  }
-}
-@media screen and (max-width: 415px) {
-  .account-container form .form-control {
-    padding: 0.93rem 0.93rem 0.93rem 3.125rem;
-  }
-  .account-container form .btn-primary {
-    padding: 0.93rem;
-  }
-}
-.agree-container {
-  margin: 0 auto;
-}
-.agree-container .card {
-  margin: 0 auto;
-  --bs-card-border-color:transparent;
-  --bs-card-bg:inherit;
-  max-width: 500px;
-}
-.agree-container .card-title {
-  font-size: 1.5rem;
-  margin: 2.5rem 0;
-}
-.agree-container .card-body {
-  padding: 0;
-}
-.agree-container button:has(input[name=chk_all]) {
-  background-color: #ededed;
-  border-radius: 14px;
-  height: 4.375rem;
-  padding: 5px;
-  width: 100%;
-  font-size: 1.1rem;
-  margin-bottom: 3.12rem;
-  position: relative;
-}
-.agree-container button:has(input[name=chk_all]) input {
-  width: 1px;
-  height: 1px;
-  position: absolute;
-  right: 0;
-  text-indent: -999px;
-}
-.agree-container button:has(input[name=chk_all]) input:checked + label {
-  border-color: red;
-}
-.agree-container button:has(input[name=chk_all]) input:checked + label i.bi-check2::before {
-  content: "\f26f";
-  color: red;
-}
-.agree-container button:has(input[name=chk_all]) label {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid #000;
-  position: relative;
-  float: left;
-}
-.agree-container button:has(input[name=chk_all]) label i {
-  display: block;
-  line-height: 1.2;
-  height: 100%;
-}
-.agree-container .agree-box {
-  margin: 0 auto;
-  position: relative;
-}
-.agree-container .agree-box h2 {
-  font-size: 1.1rem;
-  padding-left: 0.5rem;
-}
-.agree-container .agree-box h2 span {
-  color: #ce1922;
-}
-.agree-container .agree-box input {
-  width: 1px;
-  height: 1px;
-  position: absolute;
-  right: 0;
-  text-indent: -999px;
-}
-.agree-container .agree-box input:checked + label {
-  border-color: red;
-}
-.agree-container .agree-box input:checked + label i.bi-check2::before {
-  content: "\f26f";
-  color: red;
-}
-.agree-container .agree-box label {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid #000;
-  position: relative;
-}
-.agree-container .agree-box label i {
-  display: block;
-  line-height: 1.2;
-  height: 100%;
-}
-.agree-container textarea {
-  border: 1px solid #c3c3c3;
-  color: #929292;
-  background-color: inherit;
-  overflow-y: auto;
-  border-radius: 8px;
-  width: 100%;
-  height: 9.37rem;
-  margin: 1.5rem auto;
-  font-size: 90%;
-  line-height: 1.4;
-}
-.agree-container .row:has(a.confirm_agree) {
-  margin: 0;
-}
-.agree-container .row:has(a.confirm_agree) a.confirm_agree {
-  display: block;
-  width: 100%;
-  margin-top: 1.5rem;
-  border-radius: 14px;
-  height: 4.375rem;
-  line-height: 4.375rem;
-  text-align: center;
-  background-color: #ce1922;
-  font-size: 1.25rem;
-  color: #fff;
-}
-
 .account02-container {
   height: 100%;
   background-color: #f8f9fa;
@@ -2005,7 +1842,28 @@ body {
   display: none;
 }
 
+@keyframes flash {
+  0%, 20%, 40%, to {
+    opacity: 1;
+  }
+  10%, 30% {
+    opacity: 0;
+  }
+}
 @media screen and (max-width: 500px) {
+  .account-container .card .card-body .card-title {
+    margin-bottom: 2rem;
+  }
+  .account-container form {
+    padding: 0 5%;
+  }
+  .account-container form > div i {
+    top: 54%;
+    font-size: 1.2rem;
+  }
+  .account-container form .forgot {
+    font-size: 0.95rem;
+  }
   .wrap:has(.account02-container) {
     min-width: unset;
   }
@@ -2025,6 +1883,12 @@ body {
   }
 }
 @media screen and (max-width: 415px) {
+  .account-container form .form-control {
+    padding: 0.93rem 0.93rem 0.93rem 3.125rem;
+  }
+  .account-container form .btn-primary {
+    padding: 0.93rem;
+  }
   .account02-container .btn button .item {
     width: 1.8rem;
     height: 1.8rem;

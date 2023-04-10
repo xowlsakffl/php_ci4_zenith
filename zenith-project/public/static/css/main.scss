@@ -33,8 +33,13 @@ $breakpoint-sm-mobile:300px;
 
 @import 'ui.scss';
 
-@import "exam/_exam-zenith.scss";
-@import "exam/_user.scss";
-@import "exam/_modal.scss";
+@import "exam/_userManage.scss";//회원관리
+@import "exam/_etc.scss";//기타 통합
 
-@import "_account.scss";
+
+@import "exam/practice/_agree.scss"; //개인정보 동의
+@import "exam/practice/_login_exam.scss"; //로그인,회원가입 연습
+
+
+
+
