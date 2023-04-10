@@ -1,0 +1,31 @@
+$input-pd:1.25rem; //20px
+$icon-pd:3.75rem; //60px
+
+@mixin effect($second:0.3s) {
+    transform: translateY(150%); visibility:hidden; transition: all linear $second;
+    &.effect{transform: translateY(0%); visibility:visible;}
+}
+
+.register-container{margin:0 auto;   
+    .card{margin:0 auto; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
+
+    .card-title{font-size:1.5rem; margin:2.5rem 0;}
+
+    .card-body{padding:0;}
+
+    .btn-outline-primary{display: block; width:100%; margin-top:1.5rem; border-radius:14px; height:4.375rem; text-align: center; font-size:1.25rem; --bs-btn-color:#ce1922; --bs-btn-border-color:#ce1922;
+        &:hover{--bs-btn-hover-bg:#ce1922;--bs-btn-hover-border-color:#ce1922;}
+    }
+
+    form{
+        > div{transition:all linear 0.5s; @include effect;        
+            i{position: absolute; top:52%; transform: translateY(-50%); left:$input-pd; font-size: 1.5rem; width: 1.5rem; color:#787676;}           
+        }
+        .form-control{width:100%; height: 4.375rem; padding: 0 3.4rem; text-align: left; border-radius: 14px; border: 1px solid #c3c3c3; background-color: #ededed;
+            &:-webkit-autofill,    
+            &:-internal-autofill-selected {transition: background-color 5000s ease-in-out 0s; } 
+        }
+        
+    }
+    
+}

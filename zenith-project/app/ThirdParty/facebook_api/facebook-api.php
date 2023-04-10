@@ -58,6 +58,7 @@ use FacebookAds\Object\Fields\AdAccountFields;
 use FacebookAds\Object\Fields\AdsInsightsFields;
 use FacebookAds\Object\Values\AdsInsightsLevelValues;
 use FacebookAds\Object\Values\AdsInsightsDatePresetValues;
+use FacebookAds\Object\Values\AdsInsightsBreakdownsValues;
 
 use FacebookAds\Object\AdImage;
 use FacebookAds\Object\Fields\AdImageFields;
@@ -88,7 +89,11 @@ use FacebookAds\Logger\CurlLogger;
     private $longLivedAccessToken = 'EAAKNGLMV4o4BAGHXK97JQ9yz8CLZAfF4WlUcg8yrSZBV6j8w4FWMvQyuZCAxdrmBiP6K2kcrR2esqvYOsZAGxiIo10taHkSv9cvrx3IZAXlIGtIrNV1U9Td91ZAithdZBQNhGFnrbXlVRkUvJP9ZA58NBtF0oea17LkMaxPCZAZA7V6qglHTMdX0Q6NovfdIbhB41p7hLKZAv55sZAaUBWQlUpBA';
     private $db;
     private $fb, $fb_app;
-    private $business_id_list = ['213123902836946'];
+    private $business_id_list = [
+        '213123902836946' //케어랩스7
+        ,'2859468974281473' //케어랩스5
+        ,'316991668497111' //열혈패밀리
+    ];
     private $business_id;
     private $account_id;
     private $campaign_id;
@@ -184,6 +189,12 @@ use FacebookAds\Logger\CurlLogger;
         } while ($edges = $this->fb->next($edges));
 
         return $results;
+    }
+
+    // 비지니스 설정
+    public function setBusinessId($bs_id=null) {
+        if(is_null($bs_id)) return;
+        $this->business_id = $bs_id;
     }
 
     // 광고 계정 설정
@@ -313,11 +324,12 @@ use FacebookAds\Logger\CurlLogger;
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 인사이트 비동기 호출
-    public function getAsyncInsights($all = false, $date = null, $edate = null)
+    public function getAsyncInsights($all = "false", $date = null, $edate = null)
     {
         $params = array(
             'date_preset' => AdsInsightsDatePresetValues::TODAY,
             'level' => AdsInsightsLevelValues::AD,
+            'breakdowns' => AdsInsightsBreakdownsValues::HOURLY_STATS_AGGREGATED_BY_AUDIENCE_TIME_ZONE,
             'filtering' => array(
                 array(
                     'field'     => 'ad.impressions',
@@ -358,17 +370,15 @@ use FacebookAds\Logger\CurlLogger;
             $params['time_range'] = array('since' => $date, 'until' => $edate);
             unset($params['date_preset']);
         }
-        $account_id = $this->db->getAdAccounts(true, " AND business_id = '{$this->business_id}'");
+        $account_id = $this->db->getAdAccounts(true);
         $accounts = $account_id->getResultArray();
         $total = $account_id->getNumRows();
         $step = 1;
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
-        $result = array();
-        $cnt = 0;
+        $return = array();
         foreach ($accounts as $row) {
+            $result = [];
             $this->setAdAccount($row['ad_account_id']);
-            // echo $row['name'].'('.$getSelf->{AdReportRunFields::ACCOUNT_ID} .'):';
-            /** @var AdReportRun $async_job */
             $async_job = $this->account->getInsightsAsync(array(), $params);
             $getSelf = $async_job->getSelf();
             $count = 0;
@@ -377,54 +387,55 @@ use FacebookAds\Logger\CurlLogger;
                 usleep(1);
                 $getSelf = $async_job->getSelf();
                 if ($count > 100 && !$getSelf->isComplete()) {
-                    echo $row['name'] . '(' . $getSelf->{AdReportRunFields::ACCOUNT_ID} . '):';
-                    echo $getSelf->{AdReportRunFields::ID} . '/';
-                    echo 'Continue' . PHP_EOL;
-                    ob_flush();
-                    flush();
-                    sleep(1);
+                    // echo $row['name'] . '(' . $getSelf->{AdReportRunFields::ACCOUNT_ID} . '):';
+                    // echo $getSelf->{AdReportRunFields::ID} . '/';
+                    // echo 'Continue' . PHP_EOL;
+                    ob_flush(); flush(); sleep(1);
                     $continue = true;
                 }
                 $count++;
             }
             CLI::showProgress($step++, $total);
             if ($continue) continue;
-            ob_flush();
-            flush();
-            usleep(1);
+            ob_flush(); flush(); usleep(1);
             $insights = $getSelf->getInsights();
             $getResponse = $insights->getResponse();
             $response = $getResponse->getContent();
-            // echo '<pre>'.print_r($response,1).'</pre>'; exit;
+            // if(count($response['data'])) { echo '<pre>'.print_r($response,1).'</pre>'; exit; }
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
                 $url = @$response['paging']['next'];
-
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
-
-                    if (isset($data['data'])) {
-                        $result = array_merge($result, $data['data']);
-                    }
-
+                    if (isset($data['data'])) $result = array_merge($result, $data['data']);
                     $url = isset($data['paging']['next']) ? $data['paging']['next'] : null;
                 }
             }
-            $cnt++;
-            // echo '<pre>'.print_r($result,1).'</pre>'; exit;
+            $this->db->insertAsyncInsights($result);
+            if ($all == "true") {
+                $this->updateAds($result);
+                $this->updateAdCreatives($result);
+                $this->updateAdsets($result);
+                $this->updateCampaigns($result);
+            }
+            $return = array_merge($return, $result);
         }
-        $this->db->insertAsyncInsights($result);
-        if ($all) {
-            $this->updateAds($result);
-            $this->updateAdCreatives($result);
-            $this->updateAdsets($result);
-            $this->updateCampaigns($result);
-        }
-        return $result;
+        
+        return $return;
     }
 
-    public function updateAllByAccount() {
-        $account_id = $this->db->getAdAccounts(true, " AND business_id = '{$this->business_id}'");
+    public function updateAllByAccounts() {
+        foreach($this->business_id_list as $bs_id) {
+            self::setBusinessId($bs_id);
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$bs_id}비지니스 업데이트 시작", "white", "magenta");
+            self::updateAllByAccount();
+            CLI::write("[".date("Y-m-d H:i:s")."]"."{$bs_id}비지니스 업데이트 종료", "white", "magenta");
+        }
+    }
+
+    public function updateAllByAccount($bs_id=null) {
+        if(is_null($bs_id)) $bs_id = $this->business_id;
+        $account_id = $this->db->getAdAccounts(true, " AND business_id = '{$bs_id}'");
         $accounts = $account_id->getResultArray();
         $total = $account_id->getNumRows();
         $step = 1;
@@ -1198,7 +1209,7 @@ use FacebookAds\Logger\CurlLogger;
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
             CLI::showProgress($step++, $total);
             // $this->grid($row); continue;
-            if ($row['leadgen_id'] == null || $row['leadgen_id'] == ''/* || strtotime($row['created_time']) <= strtotime('-26 month')*/) {
+            if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || strtotime($row['update_date']) <= strtotime('-1 month')) { //소재가 1개월 이상 업데이트 되지 않았으면 잠재고객을 받지 않음
                 continue;
             }
             // echo '<pre>'.print_r($row,1).'</pre>';
@@ -1238,19 +1249,22 @@ use FacebookAds\Logger\CurlLogger;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     public function updateAdAccounts()
     {
-        $accounts = $this->getFBAccounts();
-
-        $this->db->updateAdAccounts($accounts);
+        $result = [];
+        foreach($this->business_id_list as $bs_id) {
+            self::setBusinessId($bs_id);
+            $accounts = self::getFBAccounts();
+            $this->db->updateAdAccounts($accounts);
+            $result = array_merge($result, $accounts);
+        }
         // echo '<pre>'.print_r($accounts,1).'</pre>';
         // $accounts = $this->getFBInstagramAccounts();
         // $this->db->updateInstagramAccounts($accounts);
 
         // // $accounts = $this->getFBPages();
         // $this->db->updatePages($accounts);
-        return $accounts;
+        return $result;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////

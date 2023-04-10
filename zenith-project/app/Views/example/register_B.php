@@ -4,7 +4,7 @@
 
 <?= $this->section('guestContent') ?>
 <div class="wrap">
-    <div class="container-fluid account02-container toggle">
+    <div class="container-fluid exam02-container toggle">
         <div class="btn btn-outline-primary">
             <button type="button" class="drag box">Have an account? Sign in
                 <div class="item" id="item" draggable="true"></div>

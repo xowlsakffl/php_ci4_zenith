@@ -4,20 +4,10 @@
 
 <?= $this->section('guestContent') ?>
 
-<div class="wrap">
-<div class="container-fluid account02-container">
-    <div class="btn btn-outline-primary">
-        <button type="button" class="drag box" id="drag" draggable="true">Not a member? Sign up
-            <div class="item" id="item" draggable="true"></div>
-        </button>
-        <!-- <?php if (setting('Auth.allowRegistration')) : ?>
-            <div class="text-start"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></div>
-        <?php endif ?> -->
-    </div>
-
+<div class="container-fluid exam-container" id="login">
     <div class="card col-10 col-md-5">
         <div class="card-body">
-            <h5 class="card-title">SIGN IN</h5>
+            <h5 class="card-title"></h5>
         
             <?php if (session('error') !== null) : ?>  <!-- 패스워드, alert -->
                 <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
@@ -43,16 +33,18 @@
 
                 <!-- Email -->
                 <div class="mb-2 position-relative">
-                    <p>EMAIL ADDRESS</p>
+                    <i class="fa fa-envelope-o"></i>
                     <input type="email" class="form-control" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Email') ?>" value="<?= old('email') ?>"/>
                 </div>
 
                 <!-- Password -->
                 <div class="mb-2 position-relative">
-                    <p>PASSWORD</p>
+                    <i class="bi bi-lock"></i>
                     <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>"  />
 
-                    
+                    <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
+                        <p class="text-center forgot"><a href="<?= url_to('magic-link') ?>"><?= lang('Forgot?') ?></a></p>
+                    <?php endif ?>
                 </div>
 
                 <!-- Remember me -->
@@ -65,67 +57,46 @@
                     </div>
                 <?php endif; ?>
 
-                <button type="submit" class="btn btn-primary btn-block"><?= lang('SIGN IN') ?></button>                
+                <div class="m-3">
+                    <button type="submit" class="btn btn-primary btn-block"><?= lang('Auth.login') ?></button>
+                </div>
+                
 
-                <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
-                    <p class="text-center forgot"><a href="<?= url_to('magic-link') ?>"><?= lang('Forgot password') ?></a></p>
+                <?php if (setting('Auth.allowRegistration')) : ?>
+                    <div class="text-start"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></div>
                 <?php endif ?>
+
             </form>
         </div>
     </div>
 </div>
-</div>
 <script>
-    const item = document.querySelector('.item');
-    const boxes = document.querySelectorAll('.box');
-    const target = document.querySelector('.target');
+    //slide up 효과
+    let account = document.querySelector('.exam-container form');
+    let effect = account.querySelectorAll('form > div');
+    let i=0;
+    let timer = setInterval(function(){
+        effect[i].classList.add('effect');     
+        i++;
+    
+        if(i >= effect.length){
+            clearInterval(timer); 
+        }              
+    },200); 
 
-    item.addEventListener('dragstart', dragStart);
+    // 타이핑 효과
+    let typingTxt = 'Login';    
+    let typingIdx = 0;   
+    let tyInt = setInterval(typing,250); 
+    typingTxt=typingTxt.split("");
 
-    boxes.forEach(box => {
-        box.addEventListener('dragenter', dragEnter)
-        box.addEventListener('dragover', dragOver);
-        box.addEventListener('dragleave', dragLeave);
-        box.addEventListener('drop', drop);
-    });
-
-function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-
-    setTimeout(() => {
-        e.target.classList.add('hide');
-    }, 0);
-}
-
-function dragEnter(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over'); //
-    console.log('dragEnter')
-}
-
-function dragOver(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-    console.log('dragOver')
-}
-
-function dragLeave(e) {
-    e.target.classList.remove('drag-over');
-    item.classList.remove('hide');
-    console.log('dragLeave')
-}
-
-function drop(e) {
-    e.target.classList.remove('drag-over');
-    console.log('drop')
-
-    const id = e.dataTransfer.getData('text/plain');
-    const draggable = document.getElementById(id);
-
-    e.target.appendChild(draggable);
-
-    draggable.classList.remove('hide');
-    location.href = "https://zenith.chainsaw.co.kr/example/signUP";    
-}
+    function typing(){
+        if(typingIdx < typingTxt.length){
+            $('h5.card-title').append(typingTxt[typingIdx]);
+            typingIdx++; 
+        }else{
+            clearInterval(tyInt);    
+        }
+    }  
 </script>
 <?= $this->endSection() ?>

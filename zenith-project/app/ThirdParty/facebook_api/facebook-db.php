@@ -215,9 +215,9 @@ class FBDB extends Config
             if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
             if (!$report['spend']) $report['spend'] = 0;
             if ($report['date_start'] == $report['date_stop']) {
-                if($report['date_start'] != date('Y-m-d')) {
-
-                }
+                $hour = ($report['date_start'] == date('Y-m-d'))?date('H'):'23';
+                if($report['hourly_stats_aggregated_by_audience_time_zone'])
+                    $hour = preg_replace('/^([0-9]{2}).+$/', '$1', $report['hourly_stats_aggregated_by_audience_time_zone']);
                 $sql = "INSERT INTO fb_ad_insight_history (
 							ad_id,
 							date,
@@ -231,7 +231,7 @@ class FBDB extends Config
 						VALUES (
 							'{$report['ad_id']}',
 							'{$report['date_start']}',
-                            IF(DATE(NOW()) = '{$report['date_start']}', HOUR(NOW()), 23),
+                            '{$hour}',
 							 {$report['impressions']},
 							 {$report['clicks']},
 							 {$report['inline_link_clicks']},
@@ -239,6 +239,7 @@ class FBDB extends Config
 							 NOW()
 						)
 						ON DUPLICATE KEY UPDATE
+                            hour = '{$hour}',
 							impressions = {$report['impressions']},
 							clicks = {$report['clicks']},
 							inline_link_clicks = {$report['inline_link_clicks']},
