@@ -15,13 +15,21 @@ class IntegrateModel extends Model
     public function getEventLead($data)
     {
         $builder = $this->zenith->table('event_information as info');
-        $builder->select("info.seq as seq, adv.name AS advertiser, med.media, adv.is_stop, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
+        $builder->select("info.seq as seq, adv.seq AS adv_seq, adv.name AS advertiser, med.seq as media_seq, med.media, adv.is_stop, info.seq AS info_seq, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
-        if($data['adv_seq']){
-            $builder->where('adv.seq', $data['adv_seq']);
+        if(isset($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
+        }
+
+        if(isset($data['media'])){
+            $builder->whereIn('med.seq', $data['media']);
+        }
+
+        if(isset($data['event'])){
+            $builder->whereIn('info.seq', $data['event']);
         }
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
@@ -35,7 +43,7 @@ class IntegrateModel extends Model
         // 결과 반환
         $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();
-
+        
         return [
             'data' => $result,
             'allCount' => $resultNoLimit
@@ -55,7 +63,7 @@ class IntegrateModel extends Model
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
         if(isset($data['adv_seq'])){
-            $builder->where('adv.seq', $data['adv_seq']);
+            $builder->whereIn('adv.seq', $data['adv_seq']);
         }
         $builder->groupBy('advertiser');
         $builder->orderBy('advertiser');
@@ -67,7 +75,7 @@ class IntegrateModel extends Model
     public function getMedia($data)
     {
         $builder = $this->zenith->table('event_media med');
-        $builder->select('med.media as media_name, COUNT(el.seq) as total');
+        $builder->select('med.seq as media_seq, med.media as media_name, COUNT(el.seq) as total');
         $builder->join('event_information info', 'info.media = med.seq', 'left');
         $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -86,7 +94,7 @@ class IntegrateModel extends Model
     public function getEvent($data)
     {
         $builder = $this->zenith->table('event_information info');
-        $builder->select('info.description as event, COUNT(el.seq) as total');
+        $builder->select('info.seq as event_seq, info.description as event, COUNT(el.seq) as total');
         $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -123,6 +131,17 @@ class IntegrateModel extends Model
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
+        if(isset($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
+        }
+
+        if(isset($data['media'])){
+            $builder->whereIn('med.seq', $data['media']);
+        }
+
+        if(isset($data['event'])){
+            $builder->whereIn('info.seq', $data['event']);
+        }
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
         $builder->orderBy('el.seq', 'DESC');

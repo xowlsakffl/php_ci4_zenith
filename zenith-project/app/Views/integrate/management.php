@@ -9,6 +9,14 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<style>
+    .section .active{
+        border: 1px solid red !important;
+    }
+    .section .active2{
+        background-color: red !important;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -93,14 +101,10 @@
 <script>
 $(function(){
     getAdv();
-    /* getMedia();
-    getEvent(); */
+    getMedia();
+    getEvent();
     getList();
     function getList(data = []){
-        data = {
-            'adv_seq': data.adv_seq ? data.adv_seq : '',
-            'adv_name': data.adv_name ? data.adv_name : ''
-        };
         $('#deviceTable').DataTable({
             "processing" : true,
 			"serverSide" : true,
@@ -149,6 +153,26 @@ $(function(){
                     dl.append('<dt>' + index + '</dt><dd>' + item + '</dd>');
                     $('.statusCount').append(dl);
                 });
+                console.log(json)
+
+                if(data.adv_seq){
+                    $.each(json.data, function(index, item) {
+                        $('.advertiser_btn[value="'+item.adv_seq+'"]').addClass('active2');
+                    });
+                }
+
+                if(data.media){
+                    $.each(json.data, function(index, item) {
+                        $('.media_btn[value="'+item.media_seq+'"]').addClass('active2');
+                    });
+                }
+
+                if(data.event){
+                    $.each(json.data, function(index, item) {
+                        $('.event_btn[value="'+item.info_seq+'"]').addClass('active2');
+                    });
+                }
+                
             }
         });
     }
@@ -193,7 +217,7 @@ $(function(){
                 $.each(result, function(index, item){
                     html += '<div class="col">';
                     html += '<div class="inner">';
-                    html += '<button type="button">' + item.media_name + '</button>';
+                    html += '<button type="button" class="media_btn" value="'+item.media_seq+'">' + item.media_name + '</button>';
                     html += '<div class="progress">';
                     html += '<div class="txt">' + item.total + '</div>';
                     html += '</div>';
@@ -221,7 +245,7 @@ $(function(){
                 $.each(result, function(index, item){
                     html += '<div class="col">';
                     html += '<div class="inner">';
-                    html += '<button type="button">' + item.event + '</button>';
+                    html += '<button type="button" class="event_btn" value="'+item.event_seq+'">' + item.event + '</button>';
                     html += '<div class="progress">';
                     html += '<div class="txt">' + item.total + '</div>';
                     html += '</div>';
@@ -237,14 +261,21 @@ $(function(){
         });
     }
 
-    $('body').on('click', '.advertiser_btn', function() {
+    $('body').on('click', '.advertiser_btn, .media_btn, .event_btn', function() {
+        $(this).toggleClass('active')
+
+        advertiser = $('.advertiser_btn.active').map(function(){return $(this).val();}).get();
+		media = $('.media_btn.active').map(function(){return $(this).val();}).get();
+		event = $('.event_btn.active').map(function(){return $(this).val();}).get();
+
         data = {
-            adv_seq: $(this).val(),
-            adv_name: $(this).text(),
+            'adv_seq': advertiser,
+            'media': media,
+            'event': event
         };
-        $(this).css('border','1px solid red')
+
         $('#deviceTable').DataTable().destroy();
-        getList(data);
+		getList(data);
 	});
 })
 
