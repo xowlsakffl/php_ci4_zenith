@@ -76,7 +76,7 @@ class GoogleAds
         $this->db = new GADB();
         $this->oAuth2Credential = (new OAuth2TokenBuilder())->fromFile(__DIR__ . "/google_ads_php.ini")->build();
     }
-
+    //사용
     private function setCustomerId($customerId = null)
     {
         $this->googleAdsClient = (new GoogleAdsClientBuilder())
@@ -85,7 +85,7 @@ class GoogleAds
             ->withLoginCustomerId($customerId ?? $this->manageCustomerId)
             ->build();
     }
-
+    //사용
     public function getAccounts($loginCustomerId = null)
     {
         self::setCustomerId();
@@ -115,7 +115,7 @@ class GoogleAds
             $this->db->updateAccount($data);
         }
     }
-
+    //사용
     public function getAccountBudgets($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -141,7 +141,7 @@ class GoogleAds
         }
     }
 
-
+    //사용
     private static function createCustomerClientToHierarchy(
         ?int $loginCustomerId,
         int $rootCustomerId
@@ -193,7 +193,7 @@ class GoogleAds
         return is_null($rootCustomerClient) ? null
             : [$rootCustomerClient->getId() => $customerIdsToChildAccounts];
     }
-
+    //사용
     private static function getAccessibleCustomers(GoogleAdsClient $googleAdsClient): array
     {
         $accessibleCustomerIds = [];
@@ -207,7 +207,7 @@ class GoogleAds
 
         return $accessibleCustomerIds;
     }
-
+    //사용
     private function printAccountHierarchy(
         CustomerClient $customerClient,
         array $customerIdsToChildAccounts,
@@ -238,7 +238,7 @@ class GoogleAds
         }
         return $data;
     }
-
+    //사용
     public function getCampaigns($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -264,35 +264,6 @@ class GoogleAds
         return $result;
     }
 
-    public function updateCampaign($customerId = null, $campaignId = null, $data = [])
-    {
-        self::setCustomerId($customerId);
-        $campaignServiceClient = $this->googleAdsClient->getCampaignServiceClient();
-
-        $campaign = new Campaign([
-            'resource_name' => ResourceNames::forCampaign($customerId, $campaignId),
-            $data
-        ]);
-
-        $campaignOperation = new CampaignOperation();
-        $campaignOperation->setUpdate($campaign);
-        $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
-
-        // Issues a mutate request to update the campaign.
-        $response = $campaignServiceClient->mutateCampaigns(
-            $customerId,
-            [$campaignOperation]
-        );
-
-        // Prints the resource name of the updated campaign.
-        /** @var Campaign $updatedCampaign */
-        $updatedCampaign = $response->getResults()[0];
-        printf(
-            "Updated campaign with resource name: '%s'%s",
-            $updatedCampaign->getResourceName(),
-            PHP_EOL
-        );
-    }
     private static function convertToString($value)
     {
         if (is_null($value)) {
@@ -307,7 +278,7 @@ class GoogleAds
             return strval($value);
         }
     }
-
+    //사용
     public function getAdGroups($loginCustomerId = null, $customerId = null, $campaignId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -350,7 +321,7 @@ class GoogleAds
         //echo '<pre>'.print_r($data,1).'</pre>';
         return $result;
     }
-
+    //사용
     public function getAds($loginCustomerId = null, $customerId = null, $adGroupId = null, $date = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -433,7 +404,7 @@ class GoogleAds
         }
         return $result;
     }
-
+    //사용
     public function getAsset($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -484,7 +455,7 @@ class GoogleAds
         }
         return $result;
     }
-
+    //사용
     public function getAll($date = null)
     {
         $this->getAccounts();
@@ -525,159 +496,9 @@ class GoogleAds
         }
     }
 
-    public function getChangeEvent($loginCustomerId = null, $customerId = null)
-    {
-        self::setCustomerId($loginCustomerId);
-        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
-        $query = 'SELECT change_event.resource_name, '
-            . 'change_event.change_date_time, '
-            . 'change_event.change_resource_name, '
-            . 'change_event.user_email, '
-            . 'change_event.client_type, '
-            . 'change_event.change_resource_type, '
-            . 'change_event.old_resource, '
-            . 'change_event.new_resource, '
-            . 'change_event.resource_change_operation, '
-            . 'change_event.changed_fields '
-            . 'FROM change_event '
-            . sprintf(
-                'WHERE change_event.change_date_time <= %s ',
-                date_format(new DateTime('+1 day'), 'Ymd')
-            ) . sprintf(
-                'AND change_event.change_date_time >= %s ',
-                date_format(new DateTime('-14 days'), 'Ymd')
-            ) . 'ORDER BY change_event.change_date_time DESC '
-            . 'LIMIT 5';
-        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
-        $result = [];
-        foreach ($stream->iterateAllElements() as $googleAdsRow) {
-            $changeEvent = $googleAdsRow->getChangeEvent();
-            $oldResource = $changeEvent->getOldResource();
-            $newResource = $changeEvent->getNewResource();
-
-            $isResourceTypeKnown = true;
-            $oldResourceEntity = null;
-            $newResourceEntity = null;
-            switch ($changeEvent->getChangeResourceType()) {
-                case ChangeEventResourceType::AD:
-                    $oldResourceEntity = $oldResource->getAd();
-                    $newResourceEntity = $newResource->getAd();
-                    break;
-                case ChangeEventResourceType::AD_GROUP:
-                    $oldResourceEntity = $oldResource->getAdGroup();
-                    $newResourceEntity = $newResource->getAdGroup();
-                    break;
-                case ChangeEventResourceType::AD_GROUP_AD:
-                    $oldResourceEntity = $oldResource->getAdGroupAd();
-                    $newResourceEntity = $newResource->getAdGroupAd();
-                    break;
-                case ChangeEventResourceType::AD_GROUP_ASSET:
-                    $oldResourceEntity = $oldResource->getAdGroupAsset();
-                    $newResourceEntity = $newResource->getAdGroupAsset();
-                    break;
-                case ChangeEventResourceType::AD_GROUP_CRITERION:
-                    $oldResourceEntity = $oldResource->getAdGroupCriterion();
-                    $newResourceEntity = $newResource->getAdGroupCriterion();
-                    break;
-                case ChangeEventResourceType::AD_GROUP_BID_MODIFIER:
-                    $oldResourceEntity = $oldResource->getAdGroupBidModifier();
-                    $newResourceEntity = $newResource->getAdGroupBidModifier();
-                    break;
-                case ChangeEventResourceType::ASSET:
-                    $oldResourceEntity = $oldResource->getAsset();
-                    $newResourceEntity = $newResource->getAsset();
-                    break;
-                case ChangeEventResourceType::CAMPAIGN:
-                    $oldResourceEntity = $oldResource->getCampaign();
-                    $newResourceEntity = $newResource->getCampaign();
-                    break;
-                case ChangeEventResourceType::CAMPAIGN_ASSET:
-                    $oldResourceEntity = $oldResource->getCampaignAsset();
-                    $newResourceEntity = $newResource->getCampaignAsset();
-                    break;
-                case ChangeEventResourceType::CAMPAIGN_BUDGET:
-                    $oldResourceEntity = $oldResource->getCampaignBudget();
-                    $newResourceEntity = $newResource->getCampaignBudget();
-                    break;
-                case ChangeEventResourceType::CAMPAIGN_CRITERION:
-                    $oldResourceEntity = $oldResource->getCampaignCriterion();
-                    $newResourceEntity = $newResource->getCampaignCriterion();
-                    break;
-                case ChangeEventResourceType::AD_GROUP_FEED:
-                    $oldResourceEntity = $oldResource->getAdGroupFeed();
-                    $newResourceEntity = $newResource->getAdGroupFeed();
-                    break;
-                case ChangeEventResourceType::CAMPAIGN_FEED:
-                    $oldResourceEntity = $oldResource->getCampaignFeed();
-                    $newResourceEntity = $newResource->getCampaignFeed();
-                    break;
-                case ChangeEventResourceType::CUSTOMER_ASSET:
-                    $oldResourceEntity = $oldResource->getCustomerAsset();
-                    $newResourceEntity = $newResource->getCustomerAsset();
-                    break;
-                case ChangeEventResourceType::FEED:
-                    $oldResourceEntity = $oldResource->getFeed();
-                    $newResourceEntity = $newResource->getFeed();
-                    break;
-                case ChangeEventResourceType::FEED_ITEM:
-                    $oldResourceEntity = $oldResource->getFeedItem();
-                    $newResourceEntity = $newResource->getFeedItem();
-                    break;
-                default:
-                    $isResourceTypeKnown = false;
-                    break;
-            }
-            if (!$isResourceTypeKnown) {
-                printf(
-                    "Unknown change_resource_type %s.%s",
-                    ChangeEventResourceType::name($changeEvent->getChangeResourceType()),
-                    PHP_EOL
-                );
-            }
-            $resourceChangeOperation = $changeEvent->getResourceChangeOperation();
-            printf(
-                "On %s, user '%s' used interface '%s' to perform a(n) '%s' operation on a '%s' "
-                    . "with resource name '%s'.%s",
-                $changeEvent->getChangeDateTime(),
-                $changeEvent->getUserEmail(),
-                ChangeClientType::name($changeEvent->getClientType()),
-                ResourceChangeOperation::name($resourceChangeOperation),
-                ChangeEventResourceType::name($changeEvent->getChangeResourceType()),
-                $changeEvent->getChangeResourceName(),
-                '<br>'
-            );
-
-            if (
-                $resourceChangeOperation !== ResourceChangeOperation::CREATE
-                && $resourceChangeOperation !== ResourceChangeOperation::UPDATE
-            ) {
-                continue;
-            }
-            foreach ($changeEvent->getChangedFields()->getPaths() as $path) {
-                $newValueStr = self::convertToString(
-                    FieldMasks::getFieldValue($path, $newResourceEntity, true)
-                );
-                if ($resourceChangeOperation === ResourceChangeOperation::CREATE) {
-                    printf("'$path' set to '%s'.%s", $newValueStr, '<br>');
-                } elseif ($resourceChangeOperation === ResourceChangeOperation::UPDATE) {
-                    echo FieldMasks::getFieldValue($path, $oldResourceEntity, true);
-                    printf(
-                        "'$path' changed from '%s' to '%s'.%s",
-                        self::convertToString(
-                            FieldMasks::getFieldValue($path, $oldResourceEntity, true)
-                        ),
-                        $newValueStr,
-                        '<br>'
-                    );
-                }
-            }
-        }
-        //echo '<pre>'.print_r($data,1).'</pre>';
-        return $result;
-    }
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //사용
     public function landingGroup($title)
     {
         if (!$title) {
@@ -758,7 +579,7 @@ class GoogleAds
         }
         return null;
     }
-
+    //사용
     public function getAdsUseLanding($date = null)
     { //유효DB 개수 업데이트
         if ($date == null) {
@@ -861,124 +682,6 @@ class GoogleAds
         return $result;
     }
 
-    private function getExpandedTextAds($googleAdsServiceClient, $customerId = null, $adGroupId = null)
-    {
-
-        // Creates a query that retrieves expanded text ads.
-        $query =
-            'SELECT ad_group.id, '
-            . 'ad_group_ad.ad.id, '
-            . 'ad_group_ad.ad.expanded_text_ad.headline_part1, '
-            . 'ad_group_ad.ad.expanded_text_ad.headline_part2, '
-            . 'ad_group_ad.status '
-            . 'FROM ad_group_ad '
-            . 'WHERE ad_group_ad.ad.type = EXPANDED_TEXT_AD';
-        if ($adGroupId !== null) {
-            $query .= " AND ad_group.id = $adGroupId";
-        }
-
-        // Issues a search request by specifying page size.
-        $response =
-            $googleAdsServiceClient->search($customerId, $query, ['pageSize' => 1000]);
-
-        // Iterates over all rows in all pages and prints the requested field values for
-        // the expanded text ad in each row.
-        foreach ($response->iterateAllElements() as $googleAdsRow) {
-            /** @var GoogleAdsRow $googleAdsRow */
-            $ad = $googleAdsRow->getAdGroupAd()->getAd();
-            printf(
-                "Expanded text ad with ID %d, status '%s', and headline '%s - %s' was found in ad "
-                    . "group with ID %d.%s",
-                $ad->getId(),
-                AdGroupAdStatus::name($googleAdsRow->getAdGroupAd()->getStatus()),
-                $ad->getExpandedTextAd()->getHeadlinePart1(),
-                $ad->getExpandedTextAd()->getHeadlinePart2(),
-                $googleAdsRow->getAdGroup()->getId(),
-                PHP_EOL
-            );
-        }
-    }
-
-    private function getResponsiveSearchAds($googleAdsServiceClient, $customerId = null, $adGroupId = null)
-    {
-        // Creates a query that retrieves responsive search ads.
-        $query =
-            'SELECT ad_group.id, '
-            . 'ad_group_ad.ad.id, '
-            . 'ad_group_ad.ad.type, '
-            . 'ad_group_ad.ad.responsive_search_ad.headlines, '
-            . 'ad_group_ad.ad.responsive_search_ad.descriptions, '
-            . 'ad_group_ad.ad.responsive_display_ad.headlines, '
-            . 'ad_group_ad.ad.expanded_text_ad.headline_part1, '
-            . 'ad_group_ad.ad.expanded_text_ad.headline_part2, '
-            . 'ad_group_ad.status, '
-            . 'metrics.clicks, metrics.impressions, metrics.cost_micros '
-            . 'FROM ad_group_ad '
-            . 'WHERE '
-            //. 'WHERE ad_group_ad.ad.type = RESPONSIVE_SEARCH_AD '
-            . ' segments.date = "2020-06-05" '
-            . ' AND ad_group_ad.status != "REMOVED"';
-        if (!is_null($adGroupId)) {
-            $query .= " AND ad_group.id = $adGroupId";
-        }
-
-        // Issues a search request by specifying page size.
-        $response =
-            $googleAdsServiceClient->search($customerId, $query, ['pageSize' => 1000]);
-
-        // Iterates over all rows in all pages and prints the requested field values for
-        // the responsive search ad in each row.
-        $isEmptyResult = true;
-        foreach ($response->iterateAllElements() as $googleAdsRow) {
-            /** @var GoogleAdsRow $googleAdsRow */
-            $isEmptyResult = false;
-            $ad = $googleAdsRow->getAdGroupAd()->getAd();
-            $metric = $googleAdsRow->getMetrics();
-            $responsiveSearchAdInfo = $ad->getResponsiveSearchAd();
-            echo
-            $ad->getResourceName()
-                . '/' . AdGroupAdStatus::name($googleAdsRow->getAdGroupAd()->getStatus())
-                . '/' . AdType::name($ad->getType())
-                . '/' . $metric->getClicks()
-                . '/' . $metric->getImpressions()
-                . '/' . round($metric->getCostMicros() / 1000000)
-                . '<br/>';
-            /*
-            $responsiveSearchAdInfo = $ad->getResponsiveSearchAd();
-            printf(
-                'Headlines:%1$s%2$sDescriptions:%1$s%3$s%1$s',
-                PHP_EOL,
-                self::convertAdTextAssetsToString($responsiveSearchAdInfo->getHeadlines()),
-                self::convertAdTextAssetsToString($responsiveSearchAdInfo->getDescriptions())
-            );
-			*/
-        }
-        if ($isEmptyResult) {
-            print 'No responsive search ads were found.' . PHP_EOL;
-        }
-    }
-
-    /**
-     * Converts the list of AdTextAsset objects into a string representation.
-     *
-     * @param RepeatedField $assets the list of AdTextAsset objects
-     * @return string the string representation of the provided list of AdTextAsset objects
-     */
-    private static function convertAdTextAssetsToString(RepeatedField $assets): string
-    {
-        $result = '';
-        foreach ($assets as $asset) {
-            /** @var AdTextAsset $asset */
-            $result .= sprintf(
-                "\t%s pinned to %s.%s",
-                $asset->getText(),
-                ServedAssetFieldType::name($asset->getPinnedField()),
-                PHP_EOL
-            );
-        }
-        return $result;
-    }
-
     public static function exception_handler($e)
     {
         //echo nl2br(print_r($e,1));
@@ -986,47 +689,5 @@ class GoogleAds
         print_r($e);
         echo ('</xmp>');
         return true;
-    }
-
-    public function grid($data, $link = null)
-    {
-        if (empty($data)) {
-            echo '<p>null data</p>';
-            return;
-        }
-        $table = '';
-        foreach ($data as $row) {
-            if (is_array($row)) {
-                $table .= '<tr>';
-                foreach ($row as $key => $var) {
-                    if ($link) {
-                        foreach ($link as $k => $v) {
-                            if ($k == $key) {
-                                $var = str_replace('{' . $k . '}', $var, $v);
-                            }
-                        }
-                    }
-                    $table .= '<td>' . (is_object($var) ? $var->load() : $var) . '</td>';
-                }
-                $table .= '</tr>';
-            }
-        }
-        if (isset($row) && is_array($row)) {
-            $thead = '<thead><tr>';
-            foreach ($row as $key => $tmp) {
-                $thead .= '<th>' . $key . '</th>';
-            }
-            $thead .= '</tr></thead>';
-        } else {
-            $thead = '<thead><tr>';
-            $table = '<tr>';
-            foreach ($data as $k => $v) {
-                $thead .= '<th>' . $k . '</th>';
-                $table .= '<td>' . $v . '</td>';
-            }
-            $thead .= '</tr></thead>';
-            $table .= '</tr>';
-        }
-        echo '<table class="_dev_util_grid" border="1">' . $thead . $table . '</table>';
     }
 }
