@@ -96,7 +96,7 @@ class ChainsawKM
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 1. 광고계정 */
-    //사용
+     
     private function getAdAccountList()
     { //1.1 광고계정 리스트 조회
         $request = 'adAccounts';
@@ -104,7 +104,7 @@ class ChainsawKM
         $result = $this->getCall($request);
         return $result; //[id] => 41250 [name] => 강남조은눈안과 [memberType] => MASTER [config] => ON
     }
-    //사용
+     
     private function getAdAccount($adAccountId = '')
     { //1.2. 광고계정 조회
         $request = "adAccounts/{$adAccountId}";
@@ -112,7 +112,7 @@ class ChainsawKM
         $result = $this->getCall($request);
         return $result; //Array ( [id] => 41250 [name] => 강남조은눈안과 [ownerCompany] => Array ( [businessRegistrationNumber] => 220-88-36643 [name] => 주식회사 케어랩스 ) [advertiser] => Array ( [businessRegistrationNumber] => 104-90-96978 [name] => 강남조은눈안과 ) [type] => BUSINESS [config] => ON [isAdminStop] => [isOutOfBalance] => [statusDescription] => 운영중 )
     }
-    //사용
+     
     public function updateAdAccounts()
     { //전체 광고계정 업데이트
         $adAccountList = $this->getAdAccountList();
@@ -131,7 +131,7 @@ class ChainsawKM
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 2. 캠페인 */
-    //사용
+     
     private function getCampaigns($adAccountId)
     { //2.1. 캠페인 리스트 조회
         $request = 'campaigns';
@@ -140,7 +140,7 @@ class ChainsawKM
         $result = $this->getCall($request, $param);
         return $result; //Array ( [id] => 17550 [name] => ★썸네일피드 [type] => DISPLAY [userConfig] => ON )
     }
-    //사용
+     
     private function getCampaign($campaignId, $adAccountId = '')
     { //2.2. 캠페인 조회
         $request = "campaigns/{$campaignId}";
@@ -149,7 +149,7 @@ class ChainsawKM
         return $result; //Array ( [id] => 17550 [name] => ★썸네일피드 [adPurposeType] => INCREASE_WEB_VISITING [dailyBudgetAmount] => [config] => ON [isDailyBudgetAmountOver] => [statusDescription] => 운영중 )
     }
 
-    //사용
+     
     private function setCampaignDailyBudgetAmount($campaignId = '', $dailyBudgetAmount = null)
     { //2.4. 캠페인 일예산 수정
         $request = 'campaigns/dailyBudgetAmount';
@@ -160,7 +160,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function updateCampaigns()
     { //전체 캠페인 업데이트
         $accounts = $this->db->getAdAccounts();
@@ -202,7 +202,7 @@ class ChainsawKM
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 3. 광고그룹 */
-    //사용
+     
     public function getAdGroups($campaignId = '', $adAccountId = '')
     { //3.1. 광고그룹 리스트 조회
         $request = 'adGroups';
@@ -211,7 +211,7 @@ class ChainsawKM
         $result = $this->getCall($request, $param, '', 'GET', false);
         return $result; //Array ( [id] => 35443 [name] => 3514 [type] => DISPLAY [userConfig] => ON )
     }
-    //사용
+     
     public function getAdGroup($adGroupId, $adAccountId = '')
     { //3.2. 광고그룹 조회
         $request = "adGroups/{$adGroupId}";
@@ -221,7 +221,7 @@ class ChainsawKM
         return $result; //Array ( [id] => 35443 [name] => 3514 [pricingType] => CPC [pacing] => QUICK [bidStrategy] => MANUAL [dailyBudgetAmount] => 100000 [bidAmount] => 200 [config] => ON [isDailyBudgetAmountOver] => [isValidPeriod] => 1 [statusDescription] => 운영중 )
     }
 
-    //사용
+     
     public function setAdGroupOnOff($adGroupId = '', $config = 'ON', $adAccountId = '')
     { //3.3. 광고그룹 ON/OFF 수정
         $request = 'adGroups/onOff';
@@ -235,7 +235,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function setAdGroupsAiRun()
     { //광고그룹 AI 실행 예산수정 aiConfig2 - Ai 2
         $adGroups = $this->db->getAdGroups(['ON'], " AND aiConfig2 = 'ON'");
@@ -288,7 +288,7 @@ class ChainsawKM
         }
     }
 
-    //사용
+     
     private function setAdGroupDailyBudgetAmount($adGroupId = '', $dailyBudgetAmount = '10000')
     { //3.4. 광고그룹 일예산 수정
         $request = 'adGroups/dailyBudgetAmount';
@@ -299,7 +299,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function setAdGroupBidAmount($adGroupId = '', $bidAmount = '10000', $adAccountId = '')
     { //3.5. 광고그룹 최대 입찰금액 수정
         $request = 'adGroups/bidAmount';
@@ -314,7 +314,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function updateAdGroups()
     { //전체 광고그룹 업데이트
         $campaigns = $this->db->getCampaigns(["ON", "OFF"]);
@@ -382,7 +382,7 @@ class ChainsawKM
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 4. 소재 */
-    //사용
+     
     public function getCreatives($adGroupId, $adAccountId = '')
     { //4.1. 소재 리스트 조회
         $request = 'creatives';
@@ -392,7 +392,7 @@ class ChainsawKM
         return $result; //Array ( [id] => 716600 [name] => 3514 [type] => DISPLAY [config] => ON )
     }
 
-    //사용
+     
     public function getCreative($creativeId, $adAccountId = '')
     { //4.2. 소재 조회
         $request = "creatives/{$creativeId}";
@@ -401,7 +401,7 @@ class ChainsawKM
         return $result; //Array ( [id] => 716600 [creativeId] => 1470241 [name] => 3514 [format] => THUMBNAIL_FEED [bidAmount] => 130 [landingUrl] => http://hotevent.hotblood.co.kr/index.php/app_3514 [frequencyCap] => 2 [config] => ON [reviewStatus] => APPROVED [modifyReviewStatus] => NONE [statusDescription] => 운영중 )
     }
 
-    //사용
+     
     public function setCreativeOnOff($creativeId, $config = 'ON')
     { //4.3. 소재 ON/OFF
         $request = 'creatives/onOff';
@@ -415,145 +415,7 @@ class ChainsawKM
         return $result;
     }
 
-    public function setCreativeAiOnOff($creativeId = '', $config = 'ON', $type)
-    { //Ai On/Off
-        $param = array('creativeId' => $creativeId);
-        $data = array('config' => $config);
-        $result = $this->db->setCreativeAiOnOff($creativeId, $config, $type);
-        return $result;
-    }
-
-    public function setCreativeBidAmount($creativeId = '', $bidAmount = '0')
-    { //4.4. 소재 입찰금액 수정
-        $request = 'creatives/bidAmount';
-        $data = array('id' => $creativeId, 'bidAmount' => $bidAmount);
-        $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
-        if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param, $data, 'PUT');
-        if ($result['http_code'] == 200) {
-            $this->db->setCreativeBidAmount($creativeId, $bidAmount);
-            $result = $creativeId;
-        }
-        return $result;
-    }
-
-    public function setCreativeFrequencyCap($creativeId = '', $frequencyCap = '5')
-    { //4.5. 소재 프리퀀시 캡 수정 //v4에서 사용불가
-        $request = 'creatives';
-        $creative = $this->db->getCreativeById($creativeId);
-        $data = array('id' => $creativeId, 'adGroupId' => $creative['adgroup_id'], 'format' => $creative['format'], 'frequencyCap' => $frequencyCap);
-        $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
-        if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param, $data, 'PUT');
-        if ($result['http_code'] == 200) {
-            $this->db->setCreativeFrequencyCap($creativeId, $frequencyCap);
-            $result = $creativeId;
-        }
-        return $result;
-    }
-
-    public function setCreative($param = [], $adAccountId = '')
-    { //3. 소재 수정하기
-        $request = 'creatives';
-        if (!isset($param['id']) || !$param['id']) $this->error('소재 아이디를 지정해주십시오.');
-        if ($adAccountId)
-            $this->ad_account_id = $adAccountId;
-        else {
-            $adAccountId = $this->db->getAdAccountIdByCreativeId($param['id']);
-            if ($adAccountId) $this->ad_account_id = $adAccountId;
-        }
-
-        $creative = $this->getCreative($param['id'], $this->ad_account_id);
-
-        // echo '<pre>' . print_r($creative, 1) . '</pre>';
-        $cv = [
-            'adGroupId' => $creative['adGroupId'], 'format' => $creative['format']
-        ];
-
-        if($creative['format'] == 'IMAGE_NATIVE'){
-            if($creative['title'])
-                $cv['title'] = $creative['title']; 
-
-            if($creative['profileName'])
-                $cv['profileName'] = $creative['profileName']; 
-
-            if($creative['description'])
-                $cv['description'] = $creative['description']; 
-
-            if($creative['actionButton'])
-                $cv['actionButton'] = $creative['actionButton']; 
-        }
-        
-        if($creative['altText'])
-            $cv['altText'] = $creative['altText'];
-        if($creative['landingInfo']['landingType'] == 'BIZ_FORM') {
-            $cv['landingInfo']['landingType'] = $creative['landingInfo']['landingType'];
-            $cv['landingInfo']['bizFormId'] = $creative['landingInfo']['bizFormId'];
-        } else {
-            if($creative['pcLandingUrl'])
-                $cv['pcLandingUrl'] = $creative['pcLandingUrl'];
-            if($creative['mobileLandingUrl'])
-                $cv['mobileLandingUrl'] = $creative['mobileLandingUrl'];
-            if($creative['rspvLandingUrl'])
-                $cv['rspvLandingUrl'] = $creative['rspvLandingUrl'];         
-        }
-        if ($creative['messageElement'])
-            $cv['messageElement'] = $creative['messageElement'];
-
-        $data = array_merge($param, $cv);
-        // print_r($data);
-        $result = $this->getCall($request, NULL, $data, 'PUT', true);
-        // echo '<pre>' . print_r($result, 1) . '</pre>';
-
-        if ($result['id'] == $param['id'])
-            $this->db->setCreative($param);
-        return $result;
-    }
-
-    public function getAdview($adViewId, $adAccountId)
-    { //폼 정보 조회
-        $request = "https://apis.moment.kakao.com/openapi/v4/adViews/$adViewId";
-        $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, null, null, 'GET');
-        return $result;
-    }
-
-    public function getBizformList($adAccountId)
-    { //폼 정보 조회
-        $request = "https://apis.moment.kakao.com/openapi/v4/creatives/landing/talkBizForms";
-        $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, null, null, 'GET');
-        return $result;
-    }
-
-    public function getBulkCreatives($adAccountId)
-    {
-        $request = 'https://apis.moment.kakao.com/openapi/beta/creatives/search';
-        $this->ad_account_id = $adAccountId;
-        $page = 0;
-        $put_data = [["filterType" => "USER_CONFIG", "values" => ["ON", "OFF"]]];
-        while ($page >= 0) {
-            // echo '<p>'.$page.'</p>';
-            $param = ['page' => $page, 'size' => 1000];
-            $response = $this->getCall($request, $param, $put_data, 'PUT');
-            // echo '<pre>'.print_r($response,1).'</pre>';
-            if (count($response['content']) > 0) {
-                foreach ($response['content'] as $row) {
-                    if (trim($row['pcLandingUrl']))
-                        $row['landingUrl'] = $row['pcLandingUrl'];
-                    if (trim($row['mobileLandingUrl']))
-                        $row['landingUrl'] = $row['mobileLandingUrl'];
-                    if (trim($row['rspvLandingUrl']))
-                        $row['landingUrl'] = $row['rspvLandingUrl'];
-                    $row['adgroup_id'] = $row['adGroupId'];
-                    $this->db->updateCreative($row);
-                }
-            }
-            $page = ($page + 1 < $response['totalPages']) ? $page + 1 : -1;
-        }
-        return $result;
-    }
-    //사용
+     
     public function updateCreatives()
     { //전체 소재 업데이트
         $adgroups = $this->db->getAdGroups(["ON", "OFF"]);
@@ -619,16 +481,9 @@ class ChainsawKM
         return $result;
     }
 
-    public function updateBulkCreatives()
-    { //전체 소재 업데이트
-        $accounts = $this->db->getAdAccounts();
-        foreach ($accounts->getResultArray() as $account) {
-            $this->getBulkCreatives($account['id']);
-        }
-    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 5. 보고서 */
-    //사용
+     
     public function getAdGroupReport($adGroupId, $level = 'AD_GROUP', $datePreset = 'TODAY', $dimension = 'CREATIVE_FORMAT', $metrics = 'BASIC')
     { //5.3. 광고그룹 보고서 조회
         $request = 'adGroups/report';
@@ -648,7 +503,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     private function getCreativeReport($creativeId, $datePreset = 'TODAY', $dimension = 'CREATIVE_FORMAT', $metrics = 'BASIC')
     { //5.4. 소재 보고서 조회 //3034514
         $request = 'creatives/report';
@@ -670,22 +525,14 @@ class ChainsawKM
         return $result;
     }
 
-    public function getBizForms($adAccountId)
-    {
-        $request = 'creatives/landing/talkBizForms';
-        if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request);
-        return $result;
-    }
-
-    //사용
+     
     public function updateBizform()
     {
         require __DIR__ . '/bizformapi.php';
         new ChainsawKMBF();
     }
 
-    //사용
+     
     public function moveToAppsubscribe()
     { //잠재고객 > app_subscribe 테이블로 이동
         $ads = $this->db->getBizFormUserResponse();
@@ -755,7 +602,7 @@ class ChainsawKM
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //사용
+     
     public function updateCreativesReportBasic($datePreset = 'TODAY', $dimension = 'CREATIVE_FORMAT', $metrics = 'BASIC')
     { //전체 소재 보고서 BASIC 업데이트
         $adgroups = $this->db->getAdGroups(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
@@ -811,7 +658,7 @@ class ChainsawKM
         
         return $result;
     }
-    //사용
+     
     public function updateHourReportBasic($datePreset = 'TODAY', $dimension = 'HOUR', $metrics = 'BASIC')
     { //소재별 보고서 BASIC 업데이트
         $creatives = $this->db->getCreatives(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
@@ -868,7 +715,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function autoAiOn() {
         $adgroups = $this->db->getInitCreatives();
         $step = 1;
@@ -889,7 +736,7 @@ class ChainsawKM
         }
     }
 
-    //사용
+     
     public function autoCreativeOnOff($onoff='on') {
     /*
     1. 디비 0개 소재명의 디비단가 소진 > 해당 소재 off 익일 00시 on
@@ -916,27 +763,7 @@ class ChainsawKM
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public function updateName($data)
-    {
-        if (!trim($data['id']) || !trim($data['type'])) {
-            return false;
-        }
-        switch ($data['type']) {
-            case 'campaign':
-                $result = $this->setCampaign($data);
-                break;
-            case 'adset':
-                $result = $this->setAdGroup($data);
-                break;
-            case 'ad':
-                $result = $this->setCreative($data);
-                break;
-        }
-        return $result;
-    }
-
-    //사용
+     
     public function landingGroup($data)
     {
         if (!$data['name']) {
@@ -1031,7 +858,7 @@ class ChainsawKM
         return null;
     }
 
-    //사용
+     
     public function updateReportByDate($sdate = null, $edate = null)
     { //이미 입력된 리포트데이터를 다시 업데이트 함
         if (is_null($sdate) || is_null($edate))
@@ -1067,7 +894,7 @@ class ChainsawKM
         
         return $result;
     }
-    //사용
+     
     public function getCreativesUseLanding($date = null)
     { //유효DB 개수 업데이트
         if ($date == null) {
@@ -1171,7 +998,7 @@ class ChainsawKM
         return $result;
     }
 
-    //사용
+     
     public function setDailyBudgetAmount($data)
     {
         switch ($data['type']) {
@@ -1211,7 +1038,7 @@ class ChainsawKM
         }
     }
 
-    //사용
+     
     public function autoLimitBudget($data = [])
     {
         if (!isset($data['date'])) $data['date'] = date('Y-m-d');
@@ -1242,7 +1069,7 @@ class ChainsawKM
         }
     }
 
-    //사용
+     
     public function autoLimitBudgetReset($data = [])
     { //23시 55분에 예산 리셋
         if (!isset($data['date'])) $data['date'] = date('Y-m-d');
@@ -1269,7 +1096,7 @@ class ChainsawKM
             }
         }
     }
-    //사용
+     
     public function autoLimitBidAmount($data = [])
     {
         /*
@@ -1340,7 +1167,7 @@ class ChainsawKM
         }
     }
 
-    //사용
+     
     public function autoLimitBidAmountReset($data = [])
     { //23시 55분에 ON
         if (!isset($data['date'])) {

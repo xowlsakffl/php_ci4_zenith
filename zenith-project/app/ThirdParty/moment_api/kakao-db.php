@@ -43,6 +43,7 @@ class KMDB
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     
     public function getAdAccounts($config = 'ON', $is_update = 1, $order = false)
     {
         $sql = "SELECT * FROM mm_ad_account WHERE 1";
@@ -56,6 +57,7 @@ class KMDB
 
         return $result;
     }
+     
     public function updateAdAccount($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
@@ -72,6 +74,7 @@ class KMDB
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
+     
     public function updateAdAccounts($data)
     { //광고계정 목록 저장
 
@@ -79,7 +82,7 @@ class KMDB
             if ($row['id']) $this->updateAdAccount($row);
         }
     }
-
+     
     public function getCampaigns($config = ['ON'])
     {
         $sql = "SELECT A.* FROM mm_campaign AS A LEFT JOIN mm_ad_account AS B ON A.ad_account_id = B.id WHERE B.is_update = 1";
@@ -89,7 +92,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function 
     getAutoLimitBudgetCampaign($data)
     {
@@ -107,22 +110,13 @@ class KMDB
         return $result;
     }
 
-    public function getAutoLimitBudgetCampaignHistory($interval = 3)
-    {
-        $sql = "SELECT D.name AS account_name, C.name AS campaign_name, A.* 
-                FROM mm_campaign_autobudget AS A, mm_campaign AS C, mm_ad_account AS D 
-                WHERE A.date >= DATE_SUB(NOW(), INTERVAL 3 DAY) AND A.campaign_id = C.id AND D.id = C.ad_account_id
-                ORDER BY A.reg_date DESC";
-        $result = $this->db_query($sql, true);
-        return $result;
-    }
-
+     
     public function setAutoLimitBudgetCampaign($data)
     {
         $sql = "INSERT INTO mm_campaign_autobudget(campaign_id, date, set_db, valid_db, set_budget, reg_date) VALUES('{$data['id']}', '{$data['date']}', '{$data['set_db']}', '{$data['valid_db']}', '{$data['budget']}', NOW()) ";
         $result = $this->db_query($sql, true);
     }
-
+     
     public function getCampaignById($id)
     {
         if (is_null($id)) return NULL;
@@ -131,7 +125,7 @@ class KMDB
         $row = $result->getResult();
         return $row;
     }
-
+     
     public function updateCampaign($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
@@ -143,20 +137,7 @@ class KMDB
         return $result;
     }
 
-    public function setCampaignOnOff($campaignId, $config)
-    {
-        $sql = "UPDATE mm_campaign SET config = '{$config}' WHERE id = {$campaignId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
-    public function setCampaignAutoBudgetOnOff($campaignId, $autoBudget)
-    {
-        $sql = "UPDATE mm_campaign SET autoBudget = '{$autoBudget}' WHERE id = {$campaignId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
+     
     public function setCampaignDailyBudgetAmount($id, $budget)
     {
         if ($budget == '') $budget = NULL;
@@ -164,7 +145,7 @@ class KMDB
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
-
+     
     public function setCampaign($data)
     {
         foreach ($data as $key => $val) $q[] = "{$key} = '{$val}'";
@@ -173,7 +154,7 @@ class KMDB
         $result = $this->db_query($sql);
         return $result;
     }
-
+     
     public function updateCampaigns($data)
     { //캠페인 목록 저장
 
@@ -184,7 +165,7 @@ class KMDB
             }
         }
     }
-
+     
     public function getAdGroups($config = null, $orderby = "")
     {
         $sql = "SELECT A.*, B.dailyBudgetAmount AS campaign_dailyBudgetAmount, B.ad_account_id, C.name AS account_name
@@ -201,7 +182,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function getAdAccountIdByAdGroupId($id)
     {
         if (is_null($id)) return NULL;
@@ -216,7 +197,7 @@ class KMDB
         $ad_account_id = $row['ad_account_id'];
         return $ad_account_id;
     }
-
+     
     public function updateAdGroup($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
@@ -229,7 +210,7 @@ class KMDB
         // echo "<p>{$sql}</p>";
         return $result;
     }
-
+     
     public function setAdGroupOnOff($adgroupId, $config)
     {
         $sql = "UPDATE mm_adgroup SET config = '{$config}' WHERE id = {$adgroupId}";
@@ -237,27 +218,21 @@ class KMDB
         return $result;
     }
 
-    public function setAdGroupAiOnOff($adgroupId, $config, $type)
-    {
-        $sql = "UPDATE mm_adgroup SET {$type} = '{$config}' WHERE id = {$adgroupId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
+     
     public function setAdGroupDailyBudgetAmount($id, $budget)
     {
         $sql = "UPDATE mm_adgroup SET dailyBudgetAmount = '{$budget}' WHERE id = {$id}";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
-
+     
     public function setAdGroupBidAmount($adgroupId, $bidAmount)
     {
         $sql = "UPDATE mm_adgroup SET bidAmount = {$bidAmount} WHERE id = {$adgroupId}";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
-
+     
     public function setAdGroup($data)
     {
         foreach ($data as $key => $val) $q[] = "{$key} = '{$val}'";
@@ -266,7 +241,7 @@ class KMDB
         $result = $this->db_query($sql);
         return $result;
     }
-
+     
     public function updateAdGroups($data)
     { //광고그룹 목록 저장
         if(isset($data) && count($data)) {
@@ -280,16 +255,7 @@ class KMDB
         }
     }
 
-    public function getAutoLimitBidAmountAdGroupHistory($interval = 3)
-    {
-        $sql = "SELECT D.name AS account_name, C.name AS campaign_name, B.name AS name, A.msg, A.reg_date 
-                FROM mm_adgroup_autobidamount AS A, mm_adgroup AS B, mm_campaign AS C, mm_ad_account AS D 
-                WHERE A.date >= DATE_SUB(NOW(), INTERVAL {$interval} DAY) AND A.adgroup_id = B.id AND B.campaign_id = C.id AND D.id = C.ad_account_id
-                ORDER BY A.reg_date DESC";
-        $result = $this->db_query($sql, true);
-        return $result;
-    }
-
+     
     public function getAutoLimitBidAmountAdGroup($data)
     {
         $sql = "SELECT A.ad_account_id, 
@@ -324,7 +290,7 @@ class KMDB
         $result = $this->db_query($sql, true);
         return $result;
     }
-
+     
     public function setAutoLimitBidAmountAdGroup($data)
     {
         $sql = "INSERT INTO mm_adgroup_autobidamount(adgroup_id, date, level, msg, reg_date) VALUES('{$data['id']}', '{$data['date']}', '{$data['level']}', '{$data['msg']}', NOW()) ";
@@ -332,7 +298,7 @@ class KMDB
         $result = $this->db_query($sql, true);
         return $result;
     }
-
+     
     public function getCreatives($config = ['ON'])
     {
         $sql = "SELECT A.*, C.ad_account_id FROM mm_creative AS A
@@ -349,7 +315,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function getAdAccountIdByCreativeId($id)
     {
         if (is_null($id)) return NULL;
@@ -367,15 +333,7 @@ class KMDB
         return $ad_account_id;
     }
 
-    public function getCreativeById($id)
-    {
-        if (is_null($id)) return NULL;
-        $sql = "SELECT * FROM mm_creative WHERE id = {$id}";
-        $result = $this->db_query($sql);
-        $row = $result->getResult();
-        return $row;
-    }
-
+     
     public function updateCreative($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
@@ -390,32 +348,21 @@ class KMDB
         // echo "<p>{$sql}</p>";
         return $result;
     }
-
+     
     public function setCreativeOnOff($creativeId, $config)
     {
         $sql = "UPDATE mm_creative SET config = '{$config}' WHERE id = {$creativeId}";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
-
+     
     public function insertCreativeAutoOnOff($creative, $set) {
         $sql = "INSERT INTO mm_creative_autoonoff(creative_id, date, type, msg, reg_date) VALUES({$creative['id']}, NOW(), '{$creative['aitype']}', '{$set}', NOW());";
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
 
-    public function getCreativeAutoOnOffHistory($interval = 3) {
-        $sql = "SELECT maa.name AS account_name, mc.name AS creative_name, mca.* 
-                FROM mm_creative_autoonoff AS mca
-                LEFT JOIN mm_creative AS mc ON mca.creative_id = mc.id
-                LEFT JOIN mm_adgroup AS ma ON ma.id = mc.adgroup_id
-                LEFT JOIN mm_campaign AS mcn ON mcn.id = ma.campaign_id
-                LEFT JOIN mm_ad_account AS maa ON maa.id = mcn.ad_account_id
-                WHERE mca.date>= DATE_SUB(NOW(), INTERVAL {$interval} DAY) ORDER BY mca.reg_date DESC;";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
+     
     public function getAutoCreativeOnOff($type) {
         $sql = "SELECT maa.name AS account_name, maa.config AS account_config, mcm.name AS campaign_name, mcm.config AS campaign_config, ma.config AS adgroup_config, mc.id AS id, mc.name AS creative_name, mc.config AS creative_config, mcrb.date, mdc.db_price, mdc.db_count, mdc.margin, mcrb.cost, mcrb.sales, ROUND(mdc.margin/mcrb.sales*100,2) AS margin_ratio, (CASE WHEN mdc.db_count = 0 AND mdc.db_price <= mcrb.cost THEN '1' WHEN mdc.db_count >= 1 AND mdc.margin/mcrb.sales*100 <= 0 THEN '2' END) AS aitype
                     FROM mm_creative AS mc 
@@ -430,27 +377,7 @@ class KMDB
         return $result;
     }
 
-    public function setCreativeAiOnOff($creativeId, $config, $type)
-    {
-        $sql = "UPDATE mm_creative SET {$type} = '{$config}' WHERE id = {$creativeId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
-    public function setCreativeFrequencyCap($creativeId, $frequencyCap)
-    {
-        $sql = "UPDATE mm_creative SET frequencyCap = {$frequencyCap} WHERE id = {$creativeId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
-    public function setCreativeBidAmount($creativeId, $bidAmount)
-    {
-        $sql = "UPDATE mm_creative SET bidAmount = {$bidAmount} WHERE id = {$creativeId}";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        return $result;
-    }
-
+     
     public function setCreative($data)
     {
         foreach ($data as $key => $val) $q[] = "{$key} = '{$val}'";
@@ -459,7 +386,7 @@ class KMDB
         $result = $this->db_query($sql);
         return $result;
     }
-
+     
     public function updateCreatives($data)
     { //소재 목록 저장
         if (is_array($data) && count($data) > 0) {
@@ -471,7 +398,7 @@ class KMDB
             }
         }
     }
-
+     
     public function getInitCreatives() {
         $sql = "SELECT mcrb.date AS report_date, mcrb.update_time AS report_update_time, maa.name AS account_name, mc2.id AS campaign_id, mc2.name AS campaign_name, mc2.type AS campaign_type, ma.id AS adgroup_id, ma.name AS adgroup_name, mc.id AS creative_id, mc.name AS creative_name, mc.create_time AS creative_create_time
                 FROM mm_creative_report_basic AS mcrb
@@ -484,7 +411,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function getCreativeReportBasic($query = "")
     {
         $sql = "SELECT B.id AS adgroup_id, report.id, report.date, report.imp, report.imp, report.click, report.cost, creative.name, creative.landingUrl
@@ -502,7 +429,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function updateCreativeReportBasic($row)
     {
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
@@ -515,6 +442,7 @@ class KMDB
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
         return $result;
     }
+     
     public function updateCreativesReportBasic($data)
     { //소재 목록 저장
         if ($data) {
@@ -526,7 +454,7 @@ class KMDB
             }
         }
     }
-
+     
     public function updateReport($data)
     {
         if ($data->creative_id && $data->date) {
@@ -539,7 +467,7 @@ class KMDB
         }
         return false;
     }
-
+     
     public function getAppSubscribe($data, $date)
     {
         if (!$data['db_prefix']) {
@@ -550,14 +478,14 @@ class KMDB
         $num_rows = $res->getNumRow();
         return $num_rows;
     }
-
+     
     public function allAiOn($data) {
         $sql = "UPDATE mm_campaign SET autoBudget = 'ON' WHERE id = {$data['campaign_id']} AND autoBudget = 'OFF'";
         $result = $this->db_query($sql);
         $sql = "UPDATE mm_adgroup SET aiConfig = 'ON', aiConfig2 = 'ON' WHERE id = {$data['adgroup_id']} AND aiConfig = 'OFF' AND aiConfig2 = 'OFF'";
         $result = $this->db_query($sql);
     }
-
+     
     public function insertDbCount($data, $date)
     {
         foreach ($data as $key => $row) {
@@ -571,7 +499,7 @@ class KMDB
             }
         }
     }
-
+     
     public function getDbCount($ad_id, $date)
     {
         if (!$ad_id || !$date) return NULL;
@@ -580,7 +508,7 @@ class KMDB
         if (!$result) return null;
         return $result->getResultArray();
     }
-
+     
     public function insertToSubscribe($row)
     {
         $sql = "INSERT INTO app_subscribe(group_id, event_seq, site, name, email, gender, age, phone, add1, add2, add3, add4, add5, add6, addr, reg_date, deleted, fb_ad_lead_id, enc_status)
@@ -595,7 +523,7 @@ class KMDB
             echo $this->zenith->error;
         }
     }
-
+     
     public function getBizformQuestion($bizformId, $itemId)
     {
         $sql = "SELECT bizform_id, id, title FROM mm_bizform_items WHERE bizform_id = '{$bizformId}' AND id = '{$itemId}'";
@@ -603,7 +531,7 @@ class KMDB
         if (!$result->getNumRow()) return null;
         return $result->getResultArray();
     }
-
+     
     public function getBizformUserResponse()
     {
         $sql = "SELECT ur.*, mc.name, mc.id
@@ -615,7 +543,7 @@ class KMDB
 
         return $result;
     }
-
+     
     public function getBizformUpdateList()
     {
         $sql = "SELECT ei.creative_id, ei.bizform_apikey, mc.id, mc.bizFormId, mcp.name, ma.name, mc.name
@@ -638,7 +566,7 @@ class KMDB
         }
         return $data;
     }
-
+     
     public function updateBizform($data)
     {
         $row = $data['data'];
@@ -651,7 +579,7 @@ class KMDB
             $this->updateBizFormItems($row['id'], $row['bizformItems']);
         }
     }
-
+     
     public function updateBizFormItems($bizformId, $data)
     {
         if(@count($data) <= 0) return;
@@ -664,7 +592,7 @@ class KMDB
             $this->db_query($sql, true);
         }
     }
-
+     
     public function updateBizFormUserResponse($creative_id, $bizformId, $data)
     {
         if ($data) {
@@ -767,7 +695,7 @@ class KMDB
         }
         //echo '<br>'.PHP_EOL;
     }
-
+     
     public function getMemo($p)
     {
         $sql = "SELECT * FROM mm_memo WHERE id = '{$p['id']}' AND type = '{$p['type']}' ORDER BY datetime DESC";
@@ -782,7 +710,7 @@ class KMDB
         }
         return $memo;
     }
-
+     
     public function addMemo($data)
     {
         $data['memo'] = $this->db->escape($data['memo']);

@@ -12,7 +12,7 @@ class ChainsawKMBF
         $this->db = new KMDB();
         $this->updateBizform();
     }
-    //사용
+     
     private function updateBizform()
     {
         $bizforms = $this->db->getBizformUpdateList();
@@ -30,7 +30,7 @@ class ChainsawKMBF
             $this->db->updateBizformUserResponse($row['id'], $row['bizFormId'], $info['userResponse']['data']['content']);
         }
     }
-    //사용
+     
     private function getBizformInfo($bizformId, $api_key)
     {
         $this->bizformId = $bizformId;
@@ -46,19 +46,19 @@ class ChainsawKMBF
 
         return $data;
     }
-    //사용
+     
     private function getBizform()
     { //폼 정보 조회
         $url = "https://open-api-talk-biz-form.kakao.com/api/v1/open-api/bizforms/{$this->bizformId}";
         return $this->curl($url, $this->api_key);
     }
-    //사용
+     
     private function getUserResponseDist()
     { //문항별 결과 조회
         $url = "https://open-api-talk-biz-form.kakao.com/api/v1/open-api/bizforms/{$this->bizformId}/user-responses-dist";
         return $this->curl($url, $this->api_key);
     }
-    //사용
+     
     private function getUserResponse()
     { //응답자별 결과
         $url = "https://open-api-talk-biz-form.kakao.com/api/v1/open-api/bizforms/{$this->bizformId}/user-responses";
