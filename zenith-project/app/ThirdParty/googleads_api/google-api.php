@@ -76,7 +76,7 @@ class GoogleAds
         $this->db = new GADB();
         $this->oAuth2Credential = (new OAuth2TokenBuilder())->fromFile(__DIR__ . "/google_ads_php.ini")->build();
     }
-    //사용
+      
     private function setCustomerId($customerId = null)
     {
         $this->googleAdsClient = (new GoogleAdsClientBuilder())
@@ -85,7 +85,7 @@ class GoogleAds
             ->withLoginCustomerId($customerId ?? $this->manageCustomerId)
             ->build();
     }
-    //사용
+      
     public function getAccounts($loginCustomerId = null)
     {
         self::setCustomerId();
@@ -115,7 +115,7 @@ class GoogleAds
             $this->db->updateAccount($data);
         }
     }
-    //사용
+      
     public function getAccountBudgets($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -141,7 +141,7 @@ class GoogleAds
         }
     }
 
-    //사용
+      
     private static function createCustomerClientToHierarchy(
         ?int $loginCustomerId,
         int $rootCustomerId
@@ -193,7 +193,7 @@ class GoogleAds
         return is_null($rootCustomerClient) ? null
             : [$rootCustomerClient->getId() => $customerIdsToChildAccounts];
     }
-    //사용
+      
     private static function getAccessibleCustomers(GoogleAdsClient $googleAdsClient): array
     {
         $accessibleCustomerIds = [];
@@ -207,7 +207,7 @@ class GoogleAds
 
         return $accessibleCustomerIds;
     }
-    //사용
+      
     private function printAccountHierarchy(
         CustomerClient $customerClient,
         array $customerIdsToChildAccounts,
@@ -238,7 +238,7 @@ class GoogleAds
         }
         return $data;
     }
-    //사용
+      
     public function getCampaigns($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -278,7 +278,7 @@ class GoogleAds
             return strval($value);
         }
     }
-    //사용
+      
     public function getAdGroups($loginCustomerId = null, $customerId = null, $campaignId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -321,7 +321,7 @@ class GoogleAds
         //echo '<pre>'.print_r($data,1).'</pre>';
         return $result;
     }
-    //사용
+      
     public function getAds($loginCustomerId = null, $customerId = null, $adGroupId = null, $date = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -404,7 +404,7 @@ class GoogleAds
         }
         return $result;
     }
-    //사용
+      
     public function getAsset($loginCustomerId = null, $customerId = null)
     {
         self::setCustomerId($loginCustomerId);
@@ -455,7 +455,7 @@ class GoogleAds
         }
         return $result;
     }
-    //사용
+      
     public function getAll($date = null)
     {
         $this->getAccounts();
@@ -498,7 +498,7 @@ class GoogleAds
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //사용
+      
     public function landingGroup($title)
     {
         if (!$title) {
@@ -579,7 +579,7 @@ class GoogleAds
         }
         return null;
     }
-    //사용
+      
     public function getAdsUseLanding($date = null)
     { //유효DB 개수 업데이트
         if ($date == null) {
