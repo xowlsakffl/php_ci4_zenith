@@ -106,9 +106,7 @@ $(function(){
         'stx': $('#stx').val(),
     };
 
-    getAdv(data);
-    getMedia(data);
-    getEvent(data);
+    getLead(data);
     getList(data);
     getStatusCount(data);
     function getList(data = []){
@@ -225,86 +223,53 @@ $(function(){
         });
     }
 
-    function getAdv(data = []){
+    function getLead(data = []){
         $.ajax({
             type: "get",
-            url: "<?=base_url()?>/integrate/advertiser",
+            url: "<?=base_url()?>/integrate/lead",
             data: data,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(result){
-                var html = '';
-                // data 값을 반복하여 HTML 코드 생성
-                $.each(result, function(index, item){
-                    html += '<div class="col">';
-                    html += '<div class="inner">';
-                    html += '<button type="button" id="advertiser_btn" class="advertiser_btn" value="'+item.seq+'">' + item.advertiser + '</button>';
-                    html += '<div class="progress">';
-                    html += '<div class="txt">' + item.total + '</div>';
-                    html += '</div>';
-                    html += '</div>';
-                    html += '</div>';
+                var adv = '';
+                var media = '';
+                var event = '';
+                $.each(result.adv, function(index, item){
+                    adv += '<div class="col">';
+                    adv += '<div class="inner">';
+                    adv += '<button type="button" id="advertiser_btn" class="advertiser_btn" value="'+item.seq+'">' + item.advertiser + '</button>';
+                    adv += '<div class="progress">';
+                    adv += '<div class="txt">' + item.total + '</div>';
+                    adv += '</div>';
+                    adv += '</div>';
+                    adv += '</div>';
+                });          
+     
+                $.each(result.media, function(index, item){
+                    media += '<div class="col">';
+                    media += '<div class="inner">';
+                    media += '<button type="button" id="media_btn" class="media_btn" value="'+item.media_seq+'">' + item.media_name + '</button>';
+                    media += '<div class="progress">';
+                    media += '<div class="txt">' + item.total + '</div>';
+                    media += '</div>';
+                    media += '</div>';
+                    media += '</div>';
+                });      
+      
+                $.each(result.event, function(index, item){
+                    event += '<div class="col">';
+                    event += '<div class="inner">';
+                    event += '<button type="button" id="event_btn" class="event_btn" value="'+item.info_seq+'">' + item.event + '</button>';
+                    event += '<div class="progress">';
+                    event += '<div class="txt">' + item.total + '</div>';
+                    event += '</div>';
+                    event += '</div>';
+                    event += '</div>';
                 });
 
-                $('#advertiser').html(html);
-            },
-            error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
-            }
-        });
-    }
-    
-    function getMedia(data = []){
-        $.ajax({
-            type: "get",
-            url: "<?=base_url()?>/integrate/media",
-            data: data,
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(result){
-                var html = '';
-                // data 값을 반복하여 HTML 코드 생성
-                $.each(result, function(index, item){
-                    html += '<div class="col">';
-                    html += '<div class="inner">';
-                    html += '<button type="button" id="media_btn" class="media_btn" value="'+item.media_seq+'">' + item.media_name + '</button>';
-                    html += '<div class="progress">';
-                    html += '<div class="txt">' + item.total + '</div>';
-                    html += '</div>';
-                    html += '</div>';
-                    html += '</div>';
-                });
-
-                $('#media').html(html);
-            },
-            error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
-            }
-        });
-    }
-
-    function getEvent(data = []){
-        $.ajax({
-            type: "get",
-            url: "<?=base_url()?>/integrate/event",
-            data: data,
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(result){
-                var html = '';
-                // data 값을 반복하여 HTML 코드 생성
-                $.each(result, function(index, item){
-                    html += '<div class="col">';
-                    html += '<div class="inner">';
-                    html += '<button type="button" id="event_btn" class="event_btn" value="'+item.info_seq+'">' + item.event + '</button>';
-                    html += '<div class="progress">';
-                    html += '<div class="txt">' + item.total + '</div>';
-                    html += '</div>';
-                    html += '</div>';
-                    html += '</div>';
-                });
-
-                $('#evt').html(html);
+                $('#advertiser').html(adv);
+                $('#media').html(media);
+                $('#evt').html(event);
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );

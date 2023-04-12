@@ -134,39 +134,24 @@ class ApiIntegrateController extends BaseController
         //}
     }
 
-    public function getAdvertiser()
+    public function getLead()
     {
         $param = [
             'sdate' => $this->request->getGet('sdate'),
             'edate' => $this->request->getGet('edate'),
             'stx' => $this->request->getGet('stx'),
         ];
-        $result = $this->integrate->getAdvertiser($param);
+        $adv = $this->integrate->getAdvertiser($param);
+        $media = $this->integrate->getMedia($param);
+        $event = $this->integrate->getEvent($param);
 
-        return $this->respond($result);
-    }
-
-    public function getMedia()
-    {
-        $param = [
-            'sdate' => $this->request->getGet('sdate'),
-            'edate' => $this->request->getGet('edate'),
-            'stx' => $this->request->getGet('stx'),
+        $result = [
+            'adv' => $adv,
+            'media' => $media,
+            'event' => $event,
         ];
-        $result = $this->integrate->getMedia($param);
 
         return $this->respond($result);
     }
 
-    public function getEvent()
-    {
-        $param = [
-            'sdate' => $this->request->getGet('sdate'),
-            'edate' => $this->request->getGet('edate'),
-            'stx' => $this->request->getGet('stx'),
-        ];
-        $result = $this->integrate->getEvent($param);
-
-        return $this->respond($result);
-    }
 }
