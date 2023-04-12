@@ -2,7 +2,7 @@
 
 <?= $this->section('title') ?><?= lang('Auth.register') ?> <?= $this->endSection() ?>
 
-<?= $this->section('guestContent') ?>
+<?= $this->section('content') ?>
 <div class="row container-fluid agree-container">
     <div class="card col-lg-6 col-12">
     <form action="" method="post">  
