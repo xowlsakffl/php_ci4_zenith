@@ -15,39 +15,114 @@ class IntegrateModel extends Model
     public function getEventLead($data)
     {
         $builder = $this->zenith->table('event_information as info');
-        $builder->select("info.seq as seq, adv.seq AS adv_seq, adv.name AS advertiser, med.seq as media_seq, med.media, adv.is_stop, info.seq AS info_seq, info.description AS tab_name, dec_data(el.phone) as dec_phone, el.*");
+        $builder->select("
+        info.seq as info_seq, 
+        adv.seq AS adv_seq, 
+        adv.name AS advertiser, 
+        med.seq as media_seq, 
+        med.media, adv.is_stop, 
+        info.description AS tab_name, 
+        dec_data(el.phone) as dec_phone, 
+        el.*
+        ");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
-        if(isset($data['adv_seq'])){
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('adv.name', $data['stx']);
+            $builder->orLike('info.seq', $data['stx']);
+            $builder->orLike('med.media', $data['stx']);
+            $builder->orLike('info.description', $data['stx']);
+            $builder->orLike('el.name', $data['stx']);
+            $builder->orLike('el.branch', $data['stx']);
+            $builder->orLike('el.add1', $data['stx']);
+            $builder->orLike('el.add2', $data['stx']);
+            $builder->orLike('el.add3', $data['stx']);
+            $builder->orLike('el.add4', $data['stx']);
+            $builder->orLike('el.add5', $data['stx']);
+            $builder->groupEnd();
+        }
+
+        if(!empty($data['adv_seq'])){
             $builder->whereIn('adv.seq', $data['adv_seq']);
         }
 
-        if(isset($data['media'])){
+        if(!empty($data['media'])){
             $builder->whereIn('med.seq', $data['media']);
         }
 
-        if(isset($data['event'])){
+        if(!empty($data['event'])){
             $builder->whereIn('info.seq', $data['event']);
         }
-        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
-        $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        $builder->orderBy('el.seq', 'DESC');
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
 
         // limit 적용한 쿼리
+        $builder->orderBy('el.seq', 'DESC');
         $builder->limit($data['length'], $data['start']);
 
         // 결과 반환
         $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();
-        
+
         return [
             'data' => $result,
             'allCount' => $resultNoLimit
         ];
+    }
+
+    public function getEventLeadCount($data)
+    {
+        $builder = $this->zenith->table('event_information as info');
+        $builder->select("
+        adv.seq as adv_seq, 
+        med.seq as med_seq, 
+        info.seq as info_seq, 
+        count(el.seq) as countAll
+        ");
+        $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
+        $builder->join('event_media as med', 'info.media = med.seq', 'left');
+        $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
+        $builder->where('el.is_deleted', 0);
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('adv.name', $data['stx']);
+            $builder->orLike('info.seq', $data['stx']);
+            $builder->orLike('med.media', $data['stx']);
+            $builder->orLike('info.description', $data['stx']);
+            $builder->orLike('el.name', $data['stx']);
+            $builder->orLike('el.branch', $data['stx']);
+            $builder->orLike('el.add1', $data['stx']);
+            $builder->orLike('el.add2', $data['stx']);
+            $builder->orLike('el.add3', $data['stx']);
+            $builder->orLike('el.add4', $data['stx']);
+            $builder->orLike('el.add5', $data['stx']);
+            $builder->groupEnd();
+        }
+
+        if(!empty($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
+        }
+
+        if(!empty($data['media'])){
+            $builder->whereIn('med.seq', $data['media']);
+        }
+
+        if(!empty($data['event'])){
+            $builder->whereIn('info.seq', $data['event']);
+        }
+        $builder->groupBy(['adv.seq', 'med.seq', 'info.seq']);
+        $result = $builder->get()->getResultArray();
+        
+        return $result;
     }
     
     public function getAdvertiser($data)
@@ -62,9 +137,6 @@ class IntegrateModel extends Model
         $builder->where('el.status !=', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        if(isset($data['adv_seq'])){
-            $builder->whereIn('adv.seq', $data['adv_seq']);
-        }
         $builder->groupBy('advertiser');
         $builder->orderBy('advertiser');
         $builder->distinct();
@@ -94,7 +166,7 @@ class IntegrateModel extends Model
     public function getEvent($data)
     {
         $builder = $this->zenith->table('event_information info');
-        $builder->select('info.seq as event_seq, info.description as event, COUNT(el.seq) as total');
+        $builder->select('info.seq as info_seq, info.description as event, COUNT(el.seq) as total');
         $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -131,19 +203,37 @@ class IntegrateModel extends Model
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left'); 
         $builder->where('el.is_deleted', 0);
-        if(isset($data['adv_seq'])){
+        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('adv.name', $data['stx']);
+            $builder->orLike('info.seq', $data['stx']);
+            $builder->orLike('med.media', $data['stx']);
+            $builder->orLike('info.description', $data['stx']);
+            $builder->orLike('el.name', $data['stx']);
+            $builder->orLike('el.branch', $data['stx']);
+            $builder->orLike('el.add1', $data['stx']);
+            $builder->orLike('el.add2', $data['stx']);
+            $builder->orLike('el.add3', $data['stx']);
+            $builder->orLike('el.add4', $data['stx']);
+            $builder->orLike('el.add5', $data['stx']);
+            $builder->groupEnd();
+        }
+        
+        if(!empty($data['adv_seq'])){
             $builder->whereIn('adv.seq', $data['adv_seq']);
         }
 
-        if(isset($data['media'])){
+        if(!empty($data['media'])){
             $builder->whereIn('med.seq', $data['media']);
         }
 
-        if(isset($data['event'])){
+        if(!empty($data['event'])){
             $builder->whereIn('info.seq', $data['event']);
         }
-        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
-        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+        
         $builder->orderBy('el.seq', 'DESC');
         $result = $builder->get()->getResultArray();
 

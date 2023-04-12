@@ -87,6 +87,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('advertiser', 'Api\ApiIntegrateController::getAdvertiser');
         $routes->get('media', 'Api\ApiIntegrateController::getMedia');
         $routes->get('event', 'Api\ApiIntegrateController::getEvent');
+        $routes->get('leadcount', 'Api\ApiIntegrateController::getEventLeadCount');
+        $routes->get('statuscount', 'Api\ApiIntegrateController::getStatusCount');
     });
 });
 
