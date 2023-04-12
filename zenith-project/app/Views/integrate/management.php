@@ -31,19 +31,19 @@
     </div>
 
     <div class="search-wrap">
-        <div class="term d-flex align-items-center">
-            <input type="text" name="sdate" id="sdate" readonly="readonly" value="<?=date('Y-m-d')?>">
-            <button type="button"><i class="bi bi-calendar2-week"></i></button>
-            <span> ~ </span>
-            <input type="text" name="edate" id="edate" readonly="readonly" value="<?=date('Y-m-d')?>">
-            <button type="button"><i class="bi bi-calendar2-week"></i></button>
-        </div>
-        <div class="input">
-            <input type="text" name="stx" id="stx">
-        </div>
-        <div class="input">
-            <button class="btn-primary" id="search_btn">조회</button>
-        </div>
+        <form class="search d-flex justify-content-center">
+            <div class="term d-flex align-items-center">
+                <input type="text" name="sdate" id="sdate" readonly="readonly" value="<?=date('Y-m-d')?>">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <span> ~ </span>
+                <input type="text" name="edate" id="edate" readonly="readonly" value="<?=date('Y-m-d')?>">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+            </div>
+            <div class="input">
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn">조회</button>
+            </div>
+        </form>
     </div>
     <div class="section client-list">
         <h3 class="content-title toggle">
