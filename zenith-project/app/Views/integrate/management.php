@@ -41,7 +41,7 @@
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" id="search_btn">조회</button>
+                <button class="btn-primary" id="search_btn" type="button">조회</button>
             </div>
         </form>
     </div>
