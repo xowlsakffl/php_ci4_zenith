@@ -34,7 +34,7 @@ service('auth')->routes($routes);
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
-//관리자, 최고관리자, 개발자, 일반사용자
+//관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
     $routes->get('/home', 'HomeController::index');
