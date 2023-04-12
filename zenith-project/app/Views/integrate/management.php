@@ -161,7 +161,7 @@ $(function(){
         });
     }
 
-    function getLeadCount(data = [], button){
+    function getLeadCount(data = []){
         $.ajax({
             type: "get",
             url: "<?=base_url()?>/integrate/leadcount",
@@ -183,6 +183,7 @@ $(function(){
             'media':[],
             'event':[],
         };
+        console.log(data)
         console.log(data.length, $('.client-list button').length);
         $('.client-list button').removeClass('on');
         $.each(data, function(idx, row) {

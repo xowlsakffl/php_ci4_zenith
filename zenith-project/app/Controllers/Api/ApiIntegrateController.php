@@ -149,6 +149,7 @@ class ApiIntegrateController extends BaseController
             'advertiser' => $adv,
             'media' => $media,
             'event' => $event,
+            'count' => count($adv) + count($media) + count($event),
         ];
 
         return $this->respond($result);

@@ -137,8 +137,8 @@ class IntegrateModel extends Model
         $builder->where('el.status !=', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        $builder->groupBy('advertiser');
-        $builder->orderBy('advertiser');
+        $builder->groupBy('adv.seq');
+        $builder->orderBy('adv.seq');
         $builder->distinct();
         $result = $builder->get()->getResultArray();
         return $result;
