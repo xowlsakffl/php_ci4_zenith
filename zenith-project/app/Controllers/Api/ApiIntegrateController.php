@@ -146,7 +146,7 @@ class ApiIntegrateController extends BaseController
         $event = $this->integrate->getEvent($param);
 
         $result = [
-            'adv' => $adv,
+            'advertiser' => $adv,
             'media' => $media,
             'event' => $event,
         ];

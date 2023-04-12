@@ -561,7 +561,6 @@ use FacebookAds\Logger\CurlLogger;
     }
 
     // 개별 캠페인 조회 업데이트
-      
     public function updateCampaigns($data = null)
     {
         $params = array(
@@ -799,6 +798,155 @@ use FacebookAds\Logger\CurlLogger;
 
         // // $accounts = $this->getFBPages();
         // $this->db->updatePages($accounts);
+        return $result;
+    }
+
+    public function landingGroup($title)
+    {
+        if (!$title) {
+            return null;
+        }
+        preg_match_all('/.+\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
+        $db_prefix = '';
+        switch ($matches[9][0]) {
+            case 'fer':
+                $media = '이벤트 랜딩';
+                if ($matches[1][0]) {
+                    $db_prefix = 'evt_';
+                }
+                break;
+            case 'fercpm':
+                $media = '이벤트 랜딩_cpm';
+                if ($matches[1][0]) {
+                    $db_prefix = 'evt_';
+                }
+                break;
+            case 'ler':
+                $media = '이벤트 잠재고객';
+                if ($matches[1][0]) {
+                    $db_prefix = 'evt_';
+                }
+                break;
+            case 'lercpm':
+                $media = '이벤트 잠재고객_cpm';
+                if ($matches[1][0]) {
+                    $db_prefix = 'evt_';
+                }
+                break;
+            case 'cpm':
+                $media = 'cpm';
+                $db_prefix = '';
+                break;
+            default:
+                $media = '';
+                $db_prefix = '';
+                break;
+        }
+        $result = array(
+            'name' => '', 'media' => '', 'db_prefix' => '', 'event_id' => '', 'app_id' => '', 'site' => '', 'db_price' => 0, 'period_ad' => ''
+        );
+        if ($media) {
+            $result['name']         = $matches[0][0];
+            $result['media']        = $media;
+            $result['db_prefix']    = $db_prefix;
+            $result['event_id']     = $matches[1][0];
+            $result['app_id']       = $db_prefix . $matches[1][0];
+            $result['site']         = $matches[3][0];
+            $result['db_price']     = $matches[6][0];
+            $result['period_ad']    = $matches[12][0];
+            return $result;
+        }
+        return null;
+    }
+
+    public function getAdsUseLanding($date = null)
+    {
+        //유효DB 개수 업데이트
+        if ($date == null) {
+            $date = date('Y-m-d');
+        }
+        $ads = $this->db->getAdLeads($date);
+        if (!$ads->num_rows) {
+            return null;
+        }
+        $i = 0;
+        while ($row = $ads->fetch_assoc()) {
+            $landing = $this->landingGroup($row['ad_name']);
+            if ($landing['media']) {
+                $result[$i]['date'] = $date;
+                $result[$i]['ad_id'] = $row['ad_id'];
+                $result[$i]['spend'] = $row['spend'];
+                $result[$i]['name'] = $landing['name'];
+                $result[$i]['event_id'] = $landing['event_id'];
+                $result[$i]['app_id'] = $landing['app_id'];
+                $result[$i]['site'] = $landing['site'];
+                $result[$i]['db_price'] = $landing['db_price'];
+                $result[$i]['media_code'] = $landing['media_code'];
+                $result[$i]['period_ad'] = $landing['period_ad'];
+                $result[$i]['media'] = $landing['media'];
+                $result[$i]['db_prefix'] = $landing['db_prefix'];
+                if (!preg_match('/cpm/', $landing['media'])) {
+                    if (!$landing['app_id']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): APP_ID 미입력' . PHP_EOL;
+                    if (!$landing['db_price']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
+                }
+                $i++;
+            } else {
+                if (preg_match('/&[a-z]+/', $row['ad_name'])) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
+            }
+        }
+        $this->exception_handler($error);
+        if (is_array($result)) {
+            foreach ($result as $i => $data) {
+                $result[$i]['count'] = 0;
+                $result[$i]['sales'] = 0;
+                $result[$i]['margin'] = 0;
+                $sales = 0;
+                if ($data['app_id']) {
+                    $dbcount = $this->db->getDbCount($data['ad_id'], $date);
+                    $rows = $this->db->getAppSubscribe($data, $date);
+                    $result[$i]['count'] = $rows;
+                    $db_price = $data['db_price'];
+                    if ($dbcount['db_price'] && $date != date('Y-m-d'))
+                        $db_price = $result[$i]['db_price'] = $dbcount['db_price'];
+                    /* 수익, 매출액 계산 */
+                    /*=============================== 2018-11-19
+                    fhrcpm /fhspcpm/ jhrcpm
+                    유효db수는 불러오지만 수익,매출0
+
+                    cpm
+                    우효db 0 / 수익/ 매출0
+
+                    ^25 = *0.25
+                    */
+                    $initZero = false;
+                    if (preg_match('/cpm/i', $data['media'])) { //app_id 가 있는 cpm (fhrm, fhspcpm, jhrcpm)의 계산을 무효화
+                        $initZero = true;
+                    }
+                    if ($db_price) {
+                        if (!$initZero)
+                            $sales = $db_price * $rows;
+                        $insight_data = new stdClass();
+                        $insight_data->ad_id = $data['ad_id'];
+                        $insight_data->date = $date;
+                        $insight_data->data['sales'] = $sales;
+                        $result[$i]['sales'] = $sales;
+                        $this->db->updateInsight($insight_data);
+                    }
+                    if (!$initZero)
+                        $result[$i]['margin'] = $sales - $data['spend'];
+                }
+                if ($data['period_ad']) {
+                    $result[$i]['margin'] = $data['spend'] * ('0.' . $data['period_ad']);
+                }
+            }
+            $this->db->insertLeadsCount($result, $date);
+            // usort($result, function($a, $b) {
+            //  return $b['event_id'] <=> $a['event_id'];
+            // });
+            if (!$rows) {
+                unset($result[$i]);
+            }
+        }
         return $result;
     }
 

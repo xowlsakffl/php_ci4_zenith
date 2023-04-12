@@ -49,19 +49,19 @@
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 광고주
         </h3>
-        <div class="row" id="advertiser"></div>
+        <div class="row" id="advertiser-list"></div>
     </div>
     <div class="section client-list">
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 매체
         </h3>
-        <div class="row" id="media"></div>
+        <div class="row" id="media-list"></div>
     </div>
     <div class="section client-list">
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 이벤트 구분
         </h3>
-        <div class="row" id="evt"></div>
+        <div class="row" id="event-list"></div>
     </div>
 
     <div>
@@ -168,39 +168,40 @@ $(function(){
             data: data,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            success: function(result){  
-                /* console.log(result)  
-                const advCount = result.reduce((acc, curr) => {
-                    const index = acc.findIndex((item) => item.adv_seq === curr.adv_seq);
-                    if (index === -1) {
-                        acc.push({
-                        adv_seq: curr.adv_seq,
-                        countAll: parseInt(curr.countAll),
-                        });
-                    } else {
-                        acc[index].countAll += parseInt(curr.countAll);
-                    }
-                    return acc;
-                }, []); */
-
-                console.log(advCount)
-                /* $.each(result, function(index, item){
-                    if(button === 'advertiser_btn'){
-                        $('.media_btn[value="'+item.med_seq+'"]').addClass('active')
-                        $('.event_btn[value="'+item.info_seq+'"]').addClass('active')
-                    }else if(button === 'media_btn'){
-                        $('.advertiser_btn[value="'+item.adv_seq+'"]').addClass('active')
-                        $('.event_btn[value="'+item.info_seq+'"]').addClass('active')
-                    }else{
-                        $('.advertiser_btn[value="'+item.adv_seq+'"]').addClass('active')
-                        $('.media_btn[value="'+item.med_seq+'"]').addClass('active')
-                    }               
-                }); */
+            success: function(data){  
+                setLeadCount(data);
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
             }
         });
+    }
+
+    function setLeadCount(data) {
+        let cnt = {
+            'advertiser':[],
+            'media':[],
+            'event':[],
+        };
+        console.log(data.length, $('.client-list button').length);
+        $('.client-list button').removeClass('on');
+        $.each(data, function(idx, row) {
+            $('#advertiser-list .col[data-seq="'+ row.adv_seq +'"] button, #media-list .col[data-seq="'+ row.med_seq +'"] button, #event-list .col[data-seq="'+ row.info_seq +'"] button').addClass('on');
+            if(typeof(cnt['advertiser'][row.adv_seq]) == 'undefined') cnt['advertiser'][row.adv_seq] = 0;
+            if(typeof(cnt['media'][row.med_seq]) == 'undefined') cnt['media'][row.med_seq] = 0;
+            if(typeof(cnt['event'][row.info_seq]) == 'undefined') cnt['event'][row.info_seq] = 0;
+            cnt['advertiser'][row.adv_seq] += parseInt(row.countAll);
+            cnt['media'][row.med_seq] += parseInt(row.countAll);
+            cnt['event'][row.info_seq] += parseInt(row.countAll);
+        });
+        $('.client-list .col .txt').empty();
+        $.each(cnt, function(type, row) {
+            var $container = $('#'+type+'-list');
+            $.each(row, function(seq, cnt) {
+                if(typeof(cnt) == 'undefined') return true;
+                $('.col[data-seq="'+ seq +'"] .txt', $container).html(cnt);
+            })
+        })
     }
 
     function getStatusCount(data = []){
@@ -211,7 +212,6 @@ $(function(){
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(result){     
-                console.log(result)    
                 $('.statusCount').empty();
                 $.each(result[0], function(key, value) {
                     $('.statusCount').append('<dl><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
@@ -223,6 +223,21 @@ $(function(){
         });
     }
 
+    function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
+        $.each(data, function(type, row) {
+            var html = "";
+            $.each(row, function(idx, v) {
+                html += '<div class="col" data-seq="'+v.seq+'"><div class="inner">';
+                html += '<button type="button" value="'+v.seq+'">' + v.name + '</button>';
+                html += '<div class="progress">';
+                html += '<div class="txt">' + v.total + '</div>';
+                html += '</div>';
+                html += '</div></div>';
+            });
+            $('#'+type+'-list').html(html);
+        });
+    }
+
     function getLead(data = []){
         $.ajax({
             type: "get",
@@ -230,46 +245,8 @@ $(function(){
             data: data,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
-            success: function(result){
-                var adv = '';
-                var media = '';
-                var event = '';
-                $.each(result.adv, function(index, item){
-                    adv += '<div class="col">';
-                    adv += '<div class="inner">';
-                    adv += '<button type="button" id="advertiser_btn" class="advertiser_btn" value="'+item.seq+'">' + item.advertiser + '</button>';
-                    adv += '<div class="progress">';
-                    adv += '<div class="txt">' + item.total + '</div>';
-                    adv += '</div>';
-                    adv += '</div>';
-                    adv += '</div>';
-                });          
-     
-                $.each(result.media, function(index, item){
-                    media += '<div class="col">';
-                    media += '<div class="inner">';
-                    media += '<button type="button" id="media_btn" class="media_btn" value="'+item.media_seq+'">' + item.media_name + '</button>';
-                    media += '<div class="progress">';
-                    media += '<div class="txt">' + item.total + '</div>';
-                    media += '</div>';
-                    media += '</div>';
-                    media += '</div>';
-                });      
-      
-                $.each(result.event, function(index, item){
-                    event += '<div class="col">';
-                    event += '<div class="inner">';
-                    event += '<button type="button" id="event_btn" class="event_btn" value="'+item.info_seq+'">' + item.event + '</button>';
-                    event += '<div class="progress">';
-                    event += '<div class="txt">' + item.total + '</div>';
-                    event += '</div>';
-                    event += '</div>';
-                    event += '</div>';
-                });
-
-                $('#advertiser').html(adv);
-                $('#media').html(media);
-                $('#evt').html(event);
+            success: function(data){
+                setButtons(data);
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
@@ -277,19 +254,18 @@ $(function(){
         });
     }
 
-    $('body').on('click', '.advertiser_btn, .media_btn, .event_btn', function() {
-        $(this).toggleClass('active')
+    $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
+        $(this).toggleClass('active');
 
-        advertiser = $('.advertiser_btn.active').map(function(){return $(this).val();}).get();
-		media = $('.media_btn.active').map(function(){return $(this).val();}).get();
-		event = $('.event_btn.active').map(function(){return $(this).val();}).get();
+        advertiser = $('#advertiser-list button.active').map(function(){return $(this).val();}).get();
+		media = $('#media-list button.active').map(function(){return $(this).val();}).get();
+		event = $('#event-list button.active').map(function(){return $(this).val();}).get();
 
         activeArray = {
             'adv_seq': advertiser,
             'media': media,
             'event': event
         };
-        console.log(activeArray);
         data = Object.assign(data, activeArray);
 
 		getLeadCount(data, $(this).attr('id'));

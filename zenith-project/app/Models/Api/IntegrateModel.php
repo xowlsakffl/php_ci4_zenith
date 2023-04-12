@@ -128,7 +128,7 @@ class IntegrateModel extends Model
     public function getAdvertiser($data)
     {
         $builder = $this->zenith->table('event_advertiser adv');
-        $builder->select('adv.seq as seq, adv.name as advertiser, COUNT(el.seq) as total');
+        $builder->select('adv.seq as seq, adv.name as name, COUNT(el.seq) as total');
         $builder->join('event_information info', 'info.advertiser = adv.seq AND adv.is_stop = 0', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -147,7 +147,7 @@ class IntegrateModel extends Model
     public function getMedia($data)
     {
         $builder = $this->zenith->table('event_media med');
-        $builder->select('med.seq as media_seq, med.media as media_name, COUNT(el.seq) as total');
+        $builder->select('med.seq as seq, med.media as name, COUNT(el.seq) as total');
         $builder->join('event_information info', 'info.media = med.seq', 'left');
         $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
@@ -166,7 +166,7 @@ class IntegrateModel extends Model
     public function getEvent($data)
     {
         $builder = $this->zenith->table('event_information info');
-        $builder->select('info.seq as info_seq, info.description as event, COUNT(el.seq) as total');
+        $builder->select('info.seq as seq, info.description as name, COUNT(el.seq) as total');
         $builder->join('event_advertiser adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');

@@ -3,14 +3,43 @@ namespace App\Controllers\Advertisement;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Controller;
 
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
+
 class Facebook extends Controller
 {
     private $chainsaw;
 
-    public function __construct(...$param)
+    public function __construct()
     {
         include APPPATH."/ThirdParty/facebook_api/facebook-api.php";
         $this->chainsaw = new \ChainsawFB();       
+    }
+
+    public function initController(
+        RequestInterface $request,
+        ResponseInterface $response,
+        LoggerInterface $logger
+    ) {
+        $date = "";
+        $today = date('Y-m-d');
+        $argv = @$request->getServer()['argv'];
+        $method = $argv[2];
+        $params = @array_slice($argv, 3);
+        if(!@count($params)) return;
+        foreach($params as $v) {
+            $value = preg_replace('/[^0-9\-]+/', '', $v);
+            if(preg_match('/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/', $value)) { //request argument에 날짜형식이 있는지 체크
+                $date = $v;
+                break;
+            }
+        }
+        $hour = date("G"); //24-hour format of an hour without leading zeros
+        if($date == $today && ($hour >= 0 && $hour <= 7)) {
+            CLI::write("당일 0시~7시는 자동업데이트를 사용할 수 없습니다.", "light_purple");
+            exit;
+        }
     }
 
     public function getAccounts() {

@@ -127,3 +127,4 @@ nb-configuration.xml
 
 
 /public/static/node_modules
+node_modules/*
