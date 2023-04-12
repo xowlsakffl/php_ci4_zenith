@@ -1,8 +1,7 @@
 <?=$this->extend('templates/front.php');?>
 
-<!--타이틀-->
 <?=$this->section('title');?>
-    CHAIN 열혈광고 - 광고관리/페이스북
+    CHAIN 열혈광고 - 광고 관리 / 카카오 모먼트
 <?=$this->endSection();?>
 
 <!--헤더-->
@@ -20,8 +19,8 @@
 <?=$this->section('content');?>
 <div class="sub-contents-wrap">
     <div class="title-area">
-        <h2 class="page-title">페이스북 광고관리</h2>
-        <p class="title-disc">숫자 중심의 퍼포먼스 마케팅에 집중! 사람들이 어떤 콘텐츠에 반응하는가? 비용 대비 얼만큼의 성과가 있는가?</p>
+        <h2 class="page-title">카카오 모먼트 광고관리</h2>
+        <p class="title-disc">광고주별 매체의 기본적인 광고 합성/종료/수정의 기능을 제공하고 있으며, 추가적으로 CHAIN에서 개발한 스마트하게 광고를 최적화 시켜주는 기능도 함께 이용할 수 있습니다.</p>
     </div>
 
     <div class="search-wrap">
@@ -56,6 +55,10 @@
                 <dd>1,234,123</dd>
             </dl>
             <dl class="col">
+                <dt>매체비</dt>
+                <dd>1,234,123</dd>
+            </dl>
+            <dl class="col">
                 <dt>DB수</dt>
                 <dd>61</dd>
             </dl>
@@ -68,34 +71,18 @@
                 <dd>7.34</dd>
             </dl>
             <dl class="col">
+                <dt>수익율</dt>
+                <dd>7.34</dd>
+            </dl>
+            <dl class="col">
                 <dt>매출</dt>
                 <dd>23,456,900</dd>
             </dl>
         </div>
     </div>
 
-    <div class="client-list biz">
-        <h3><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3>
-        <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button">열혈 패밀리</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">케어랩스5</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">케어랩스7</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="client-list advertiser">
-        <h3><i class="bi bi-chevron-down"></i> 광고주</h3>
+    <div class="section client-list advertiser">
+        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
         <div class="row">
             <div class="col">
                 <div class="inner">
@@ -241,10 +228,10 @@
                 <button class="nav-link active" id="campaign-tab" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" type="button" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" type="button" role="tab" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
+                <button class="nav-link" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" type="button" role="tab" aria-controls="set-tab-pane" aria-selected="false">광고 그룹</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane" type="button" role="tab" aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
+                <button class="nav-link" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane" type="button" role="tab" aria-controls="advertisement-tab-pane" aria-selected="false">소재</button>
             </li>
         </ul>
         <div class="tab-content">
@@ -256,12 +243,11 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-default">
                         <colgroup>
-                            <col style="width:10%">
-                            <col style="width:5.5%">
-                            <col style="width:5%">
-                            <col style="width:5%">
+                            <col>
+                            <col style="width:7%">
+                            <col style="width:7%">
                             <col style="width:7%">
                             <col style="width:6%">
                             <col style="width:4%">
@@ -279,7 +265,6 @@
                             <tr>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
-                                <th scope="col">예산 <br>ai</th>
                                 <th scope="col">목표 <br>ai</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
@@ -298,7 +283,6 @@
                         <tbody>
                             <tr>
                                 <th scope="col" class="text-center">캠페인 11건 결과</th>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td>￦22,345,222</td>
@@ -324,92 +308,26 @@
                                         <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
                                     </div>
                                 </th>
-                                <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
+                                <td class="align-top">
+                                    <select name="" class="form-select">
+                                        <option value="">활성</option>
+                                        <option value=""></option>
+                                        <option value=""></option>
+                                        <option value=""></option>
+                                    </select>
                                     <div class="btn-area">
                                         <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
                                     </div>
                                 </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>￦15,345</td>
-                                <td>￦-15,678</td>
-                                <td>0%</td>
-                                <td>￦0</td>
-                                <td>631</td>
-                                <td>3</td>
-                                <td>￦5,345</td>
-                                <td>0.48%</td>
-                                <td>0%</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="check01">
-                                        <label class="form-check-label" for="check01">[02.22][케랩7_마디척병원_부위별통증] evt_5721 @15 진선_주말OFF_규칙</label>
-                                    </div>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
-                                    </div>
-                                </th>
                                 <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
-                                    </div>
+                                    <select name="" class="form-select">
+                                        <option value="">활성</option>
+                                        <option value=""></option>
+                                        <option value=""></option>
+                                        <option value=""></option>
+                                    </select>
                                 </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>￦15,345</td>
-                                <td>￦-15,678</td>
-                                <td>0%</td>
-                                <td>￦0</td>
-                                <td>631</td>
-                                <td>3</td>
-                                <td>￦5,345</td>
-                                <td>0.48%</td>
-                                <td>0%</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="check01">
-                                        <label class="form-check-label" for="check01">[02.22][케랩7_마디척병원_부위별통증] evt_5721 @15 진선_주말OFF_규칙</label>
-                                    </div>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
-                                    </div>
-                                </th>
-                                <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
-                                    </div>
-                                </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
+                                <td>￦100,000</td>
                                 <td>0</td>
                                 <td>0</td>
                                 <td>￦15,345</td>
@@ -427,10 +345,10 @@
                 </div>
             </div>
             <div class="tab-pane" id="set-tab-pane" role="tabpanel" aria-labelledby="set-tab">
-                광고 세트
+                광고 그룹
             </div>
             <div class="tab-pane" id="advertisement-tab-pane" role="tabpanel" aria-labelledby="advertisement-tab">
-                광고
+                소재
             </div>
         </div>
     </div>
