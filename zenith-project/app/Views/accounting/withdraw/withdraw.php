@@ -1,7 +1,7 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('title');?>
-CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
+CHAIN 열혈광고 - 회계 관리 / 출금요청
 <?=$this->endSection();?>
 
 <!--헤더-->
@@ -19,8 +19,8 @@ CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
 <?=$this->section('content');?>
 <div class="sub-contents-wrap">
     <div class="title-area">
-        <h2 class="page-title">세금계산서 요청</h2>
-        <p class="title-disc">세금계산서 발행을 경영지원실에 요청하세요~ 나연님, 서진님 고생이 많으십니다.</p>
+        <h2 class="page-title">출금요청</h2>
+        <p class="title-disc">출금이 필요한 거래처를 경영지원실에 요청하세요~ 나연님, 서진님 고생이 많으십니다.</p>
     </div>
 
     <div class="search-wrap">
@@ -108,71 +108,75 @@ CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <a href="/accounting/taxList"><button type="button" class="btn btn-danger">업체목록(세금계산서)</button></a>
-            <a href="#"><button type="button" class="btn btn-danger">글쓰기(세금계산서)</button></a>
+            <a href="/accounting/withdrawList"><button type="button" class="btn btn-danger">업체목록(출금요청)</button></a>
+            <a href="#"><button type="button" class="btn btn-danger">글쓰기(출금요청)</button></a>
             <a href="#"><button type="button" class="btn btn-danger">엑셀백업</button></a>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover table-default">
+            <table class="table table-striped table-hover table-default table-sm">
                 <colgroup>
                     <col style="width:3%">
                     <col style="width:8%">
                     <col style="width:5%">
                     <col style="width:5%">
-                    <col style="width:15%">
                     <col style="width:10%">
-                    <col style="width:5%">
+                    <col style="width:8%">
+                    <col style="width:10%">
                     <col style="">
-                    <col style="width:8%">
-                    <col style="width:8%">
+                    <col style="width:10%">
+                    <col style="">
                     <col style="width:5%">
                     <col style="width:5%">
+                    <col style="width:8%">
                 </colgroup>
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">번호</th>
-                        <th scope="col">발행일자</th>
+                        <th scope="col">작성일</th>
                         <th scope="col">작성자</th>
                         <th scope="col">구분</th>
-                        <th scope="col">사업자명</th>
-                        <th scope="col">사업자등록번호</th>
-                        <th scope="col">대표자명</th>
-                        <th scope="col">내역</th>
-                        <th scope="col">공급가액</th>
+                        <th scope="col">거래처명(예금주명)</th>
+                        <th scope="col">은행</th>
+                        <th scope="col">계좌번호</th>
+                        <th scope="col">내역(자세히)</th>
                         <th scope="col">총금액(VAT 포함)</th>
                         <th scope="col">비고</th>
+                        <th scope="col">결제현황</th>
                         <th scope="col">결과</th>
+                        <th scope="col">출금완료일</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="p-0">845</td>
-                        <td>2023-03-13</td>
+                        <td>2023-03-13 18:34:39</td>
                         <td>김혜린</td>
-                        <td>입금완료</td>
+                        <td>광고비</td>
                         <td>우주마켓_MOBON</td>
-                        <td>234-45-12456</td>
-                        <td>이주옥</td>
+                        <td>국민은행</td>
+                        <td>174892038457684</td>
                         <td>인라이플_모비온_우주마켓 광고비 지출결의</td>
-                        <td>1,100,000</td>
                         <td>1,100,000</td>
                         <td></td>
-                        <td>완료</td>
+                        <td>진행중</td>
+                        <td>진행중</td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td class="p-0">845</td>
-                        <td>2023-03-13</td>
+                        <td>845</td>
+                        <td>2023-03-13 18:34:39</td>
                         <td>김혜린</td>
-                        <td>입금완료</td>
+                        <td>광고비</td>
                         <td>우주마켓_MOBON</td>
-                        <td>234-45-12456</td>
-                        <td>이주옥</td>
+                        <td>국민은행</td>
+                        <td>174892038457684</td>
                         <td>인라이플_모비온_우주마켓 광고비 지출결의</td>
                         <td>1,100,000</td>
-                        <td>1,100,000</td>
-                        <td>2/28 재발행 예정</td>
+                        <td></td>
+                        <td class="text-primary">완료</td>
                         <td>완료</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>

@@ -77,9 +77,15 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('company/belong/(:num)', 'CompanyController::belong/$1');//소속 변경
         $routes->put('company/belong', 'CompanyController::updateCompanies');
     });
-    
-    $routes->get('advertisements/facebook', 'AdvertisementController::facebook');
 
+    // 광고관리
+    $routes->group('advertisements', static function($routes){   
+        $routes->get('facebook', 'AdvertisementManager\AdvertisementController::facebook');
+        $routes->get('kakao', 'AdvertisementManager\AdvertisementController::kakao');
+        $routes->get('google', 'AdvertisementManager\AdvertisementController::google');
+        $routes->get('etc', 'AdvertisementManager\AdvertisementController::etc');
+    });
+    
     // 통합 DB관리
     $routes->group('integrate', static function($routes){   
         $routes->get('management', 'Api\ApiIntegrateController::index');
@@ -87,6 +93,29 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('lead', 'Api\ApiIntegrateController::getLead');
         $routes->get('leadcount', 'Api\ApiIntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Api\ApiIntegrateController::getStatusCount');
+    });
+
+    // 회계 관리
+    $routes->group('accounting', static function($routes){   
+        $routes->get('tax', 'Accounting\TaxController::tax');
+        $routes->get('taxList', 'Accounting\TaxController::taxList');
+        $routes->get('unpaid', 'Accounting\UnpaidController::unpaid');
+        $routes->get('withdraw', 'Accounting\WithdrawController::withdraw');
+        $routes->get('withdrawList', 'Accounting\WithdrawController::withdrawList');
+    });
+
+    // 인사 관리
+    $routes->group('humanresource', static function($routes){   
+        $routes->get('management', 'HumanResource\HumanResourceController::humanResource');
+    });
+
+    // 이벤트
+    $routes->group('eventManage', static function($routes){   
+        $routes->get('event', 'EventManage\EventController::event');
+        $routes->get('advertiser', 'EventManage\AdvertiserController::advertiser');
+        $routes->get('media', 'EventManage\MediaController::media');
+        $routes->get('change', 'EventManage\ChangeController::change');
+        $routes->get('exel', 'EventManage\ExelController::exel');
     });
 });
 

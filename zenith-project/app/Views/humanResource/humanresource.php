@@ -1,4 +1,4 @@
-<?=$this->extend('templates/front_example.php');?>
+<?=$this->extend('templates/front.php');?>
 
 <?=$this->section('title');?>
     CHAIN 열혈광고 - 인사관리 / 시간차 관리
