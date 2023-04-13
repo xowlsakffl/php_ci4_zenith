@@ -48,16 +48,16 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['advertiser']);
+        if(!empty($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.seq', $data['media']);
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.seq', $data['event']);
         }
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
@@ -80,9 +80,9 @@ class IntegrateModel extends Model
     {
         $builder = $this->zenith->table('event_information as info');
         $builder->select("
-        adv.name as adv_name, 
-        med.media as med_name, 
-        info.description as info_name, 
+        adv.seq as adv_seq, 
+        med.seq as med_seq, 
+        info.seq as info_seq, 
         count(el.seq) as countAll
         ");
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
@@ -91,9 +91,7 @@ class IntegrateModel extends Model
         $builder->where('el.is_deleted', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        $builder->where('adv.name !=', '');
-        $builder->where('med.media !=', '');
-        $builder->where('info.description !=', '');
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('adv.name', $data['stx']);
@@ -110,18 +108,18 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['advertiser']);
+        if(!empty($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.seq', $data['media']);
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.seq', $data['event']);
         }
-        $builder->groupBy(['info.description']);
+        $builder->groupBy(['adv.seq', 'med.seq', 'info.seq']);
         $result = $builder->get()->getResultArray();
         
         return $result;
@@ -135,12 +133,12 @@ class IntegrateModel extends Model
         $builder->join('event_media med', 'info.media = med.seq', 'left');
         $builder->join('event_leads as el', 'el.event_seq = info.seq', 'left');
         $builder->where('el.is_deleted', 0);
-        $builder->where('adv.name !=', '');
+        $builder->where('advertiser !=', '');
         $builder->where('el.status !=', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        $builder->groupBy('adv.name');
-        $builder->orderBy('adv.name');
+        $builder->groupBy('adv.seq');
+        $builder->orderBy('adv.seq');
         $builder->distinct();
         $result = $builder->get()->getResultArray();
         return $result;
@@ -224,16 +222,16 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
         
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['advertiser']);
+        if(!empty($data['adv_seq'])){
+            $builder->whereIn('adv.seq', $data['adv_seq']);
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.seq', $data['media']);
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.seq', $data['event']);
         }
         
         $builder->orderBy('el.seq', 'DESC');
