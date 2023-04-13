@@ -24,7 +24,7 @@ class ApiIntegrateController extends BaseController
     public function getList()
     {
 
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
                 'length' => $this->request->getGet('length'),
                 'start' => $this->request->getGet('start'),
@@ -46,7 +46,6 @@ class ApiIntegrateController extends BaseController
                 }
                 for($i2=1;$i2<6;$i2++){
                     if(!empty($row['add'.$i2])){		
-                        //2020109 정문숙 / 기타에 파일경로가 있으면 파일보기로 설정
                         if(strpos($row['add'.$i2], "uploads")){
                             $href = "<a href='".str_replace("./","https://event.hotblood.co.kr/uploads/",$row['add'.$i2])."' target='_blank'>[파일보기]</a>";
                             $etc[] = $href;
@@ -77,8 +76,6 @@ class ApiIntegrateController extends BaseController
                 $row['add'][] = $add;
             }
 
-            
-
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],
@@ -87,9 +84,9 @@ class ApiIntegrateController extends BaseController
             ];
 
             return $this->respond($result);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     public function getEventLeadCount()
@@ -141,15 +138,7 @@ class ApiIntegrateController extends BaseController
             'edate' => $this->request->getGet('edate'),
             'stx' => $this->request->getGet('stx'),
         ];
-        $adv = $this->integrate->getAdvertiser($param);
-        $media = $this->integrate->getMedia($param);
-        $event = $this->integrate->getEvent($param);
-
-        $result = [
-            'advertiser' => $adv,
-            'media' => $media,
-            'event' => $event,
-        ];
+        $result = $this->integrate->getFirstCount($param);
 
         return $this->respond($result);
     }

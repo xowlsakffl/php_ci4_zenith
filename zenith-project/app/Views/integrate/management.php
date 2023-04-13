@@ -107,8 +107,8 @@ $(function(){
     };
 
     getLead(data);
-    getList(data);
     getStatusCount(data);
+    getList(data);
     function getList(data = []){
         $('#deviceTable').DataTable({
             "processing" : true,
