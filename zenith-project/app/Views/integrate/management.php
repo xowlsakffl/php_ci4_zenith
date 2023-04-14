@@ -33,10 +33,10 @@
     <div class="search-wrap">
         <form class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" readonly="readonly" value="<?=date('Y-m-d')?>">
+                <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" readonly="readonly" value="<?=date('Y-m-d')?>">
+                <input type="text" name="edate" id="edate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
@@ -100,9 +100,10 @@
 <?=$this->section('script');?>
 <script>
 $(function(){
+    var currentDate = new Date();
     var data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
+        'sdate': $('#sdate').val() || currentDate.toISOString().slice(0,10),
+        'edate': $('#edate').val() || currentDate.toISOString().slice(0,10),
         'stx': $('#stx').val(),
     };
 

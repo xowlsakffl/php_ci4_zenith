@@ -3,7 +3,7 @@
 namespace App\Controllers\Integrate;
 
 use App\Controllers\BaseController;
-use App\Models\Api\IntegrateModel;
+use App\Models\Integrate\IntegrateModel;
 use CodeIgniter\API\ResponseTrait;
 
 class IntegrateController extends BaseController
