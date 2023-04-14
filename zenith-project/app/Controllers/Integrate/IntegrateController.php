@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers\Integrate;
 
 use App\Controllers\BaseController;
 use App\Models\Api\IntegrateModel;
 use CodeIgniter\API\ResponseTrait;
 
-class ApiIntegrateController extends BaseController
+class IntegrateController extends BaseController
 {
     use ResponseTrait;
     
@@ -92,7 +92,7 @@ class ApiIntegrateController extends BaseController
     public function getEventLeadCount()
     {
 
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
@@ -134,15 +134,15 @@ class ApiIntegrateController extends BaseController
                 'event' => $event_counts,
             ];
             return $this->respond($result);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     public function getLead()
     {
 
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
@@ -185,9 +185,9 @@ class ApiIntegrateController extends BaseController
             ];
 
             return $this->respond($result);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     public function getStatusCount()

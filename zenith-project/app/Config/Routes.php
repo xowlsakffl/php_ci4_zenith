@@ -80,19 +80,22 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 광고관리
     $routes->group('advertisements', static function($routes){   
-        $routes->get('facebook', 'AdvertisementManager\AdvertisementController::facebook');
-        $routes->get('kakao', 'AdvertisementManager\AdvertisementController::kakao');
-        $routes->get('google', 'AdvertisementManager\AdvertisementController::google');
-        $routes->get('etc', 'AdvertisementManager\AdvertisementController::etc');
+        $routes->get('facebook', 'AdvertisementManager\AdvFacebookManagerController::index');
+        
+        $routes->get('kakao', 'AdvertisementManager\AdvKakaoManagerController::index');
+
+        $routes->get('google', 'AdvertisementManager\AdvGoogleManagerController::index');
+
+        $routes->get('etc', 'AdvertisementManager\AdvEtcManagerController::index');
     });
     
     // 통합 DB관리
     $routes->group('integrate', static function($routes){   
-        $routes->get('management', 'Api\ApiIntegrateController::index');
-        $routes->get('list', 'Api\ApiIntegrateController::getList');
-        $routes->get('lead', 'Api\ApiIntegrateController::getLead');
-        $routes->get('leadcount', 'Api\ApiIntegrateController::getEventLeadCount');
-        $routes->get('statuscount', 'Api\ApiIntegrateController::getStatusCount');
+        $routes->get('management', 'Integrate\IntegrateController::index');
+        $routes->get('list', 'Integrate\IntegrateController::getList');
+        $routes->get('lead', 'Integrate\IntegrateController::getLead');
+        $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
+        $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
     });
 
     // 회계 관리
