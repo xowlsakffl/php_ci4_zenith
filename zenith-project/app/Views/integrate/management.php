@@ -178,31 +178,15 @@ $(function(){
     }
 
     function setLeadCount(data) {
-        let cnt = {
-            'advertiser':[],
-            'media':[],
-            'event':[],
-        };
-        console.log(data)
-        console.log(data.length, $('.client-list button').length);
         $('.client-list button').removeClass('on');
-        $.each(data, function(idx, row) {
-            $('#advertiser-list .col[data-seq="'+ row.adv_seq +'"] button, #media-list .col[data-seq="'+ row.med_seq +'"] button, #event-list .col[data-seq="'+ row.info_seq +'"] button').addClass('on');
-            if(typeof(cnt['advertiser'][row.adv_seq]) == 'undefined') cnt['advertiser'][row.adv_seq] = 0;
-            if(typeof(cnt['media'][row.med_seq]) == 'undefined') cnt['media'][row.med_seq] = 0;
-            if(typeof(cnt['event'][row.info_seq]) == 'undefined') cnt['event'][row.info_seq] = 0;
-            cnt['advertiser'][row.adv_seq] += parseInt(row.countAll);
-            cnt['media'][row.med_seq] += parseInt(row.countAll);
-            cnt['event'][row.info_seq] += parseInt(row.countAll);
-        });
         $('.client-list .col .txt').empty();
-        $.each(cnt, function(type, row) {
+        $.each(data, function(type, row) {
             var $container = $('#'+type+'-list');
-            $.each(row, function(seq, cnt) {
-                if(typeof(cnt) == 'undefined') return true;
-                $('.col[data-seq="'+ seq +'"] .txt', $container).html(cnt);
-            })
-        })
+            $.each(row, function(idx, v) {
+                button = $('#'+type+'-list .col[data-name="'+ idx +'"] button, #'+type+'-list .col[data-name="'+ idx +'"] button, #'+type+'-list .col[data-name="'+ idx +'"] button').addClass('on');
+                button.siblings('.progress').children('.txt').text(v.countAll);
+            });
+        });
     }
 
     function getStatusCount(data = []){
@@ -224,14 +208,14 @@ $(function(){
         });
     }
 
-    function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
+    function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
         $.each(data, function(type, row) {
             var html = "";
             $.each(row, function(idx, v) {
-                html += '<div class="col" data-seq="'+v.seq+'"><div class="inner">';
-                html += '<button type="button" value="'+v.seq+'">' + v.name + '</button>';
+                html += '<div class="col" data-name="'+idx+'"><div class="inner">';
+                html += '<button type="button" value="'+idx+'">' + idx + '</button>';
                 html += '<div class="progress">';
-                html += '<div class="txt">' + v.total + '</div>';
+                html += '<div class="txt">' + v.countAll + '</div>';
                 html += '</div>';
                 html += '</div></div>';
             });
@@ -263,13 +247,13 @@ $(function(){
 		event = $('#event-list button.active').map(function(){return $(this).val();}).get();
 
         activeArray = {
-            'adv_seq': advertiser,
+            'adv': advertiser,
             'media': media,
             'event': event
         };
         data = Object.assign(data, activeArray);
 
-		getLeadCount(data, $(this).attr('id'));
+		getLeadCount(data);
         getStatusCount(data);
         $('#deviceTable').DataTable().destroy();
         getList(data);

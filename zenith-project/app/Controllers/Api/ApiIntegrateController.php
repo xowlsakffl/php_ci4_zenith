@@ -32,7 +32,7 @@ class ApiIntegrateController extends BaseController
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
                 'stx' => $this->request->getGet('stx'),
-                'adv_seq' => $this->request->getGet('adv_seq'),
+                'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
@@ -92,17 +92,97 @@ class ApiIntegrateController extends BaseController
     public function getEventLeadCount()
     {
 
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
                 'stx' => $this->request->getGet('stx'),
-                'adv_seq' => $this->request->getGet('adv_seq'),
+                'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
 
-            $result = $this->integrate->getEventLeadCount($param);
+            $data = $this->integrate->getEventLeadCount($param);
+
+            $adv_counts = array();
+            $med_counts = array();
+            $event_counts = array();
+            foreach ($data as $row) {
+                if (!array_key_exists($row['adv_name'], $adv_counts)) {
+                    $adv_counts[$row['adv_name']] = array(
+                        'countAll' => 0
+                    );
+                }
+
+                if (!array_key_exists($row['med_name'], $med_counts)) {
+                    $med_counts[$row['med_name']] = array(
+                        'countAll' => 0
+                    );
+                }
+
+                $event_counts[$row['event']] = array(
+                    'countAll' => $row['countAll'],
+                );
+
+                $adv_counts[$row['adv_name']]['countAll'] += $row['countAll'];
+                $med_counts[$row['med_name']]['countAll'] += $row['countAll'];
+            }
+
+            $result = [
+                'advertiser' => $adv_counts,
+                'media' => $med_counts,
+                'event' => $event_counts,
+            ];
+            return $this->respond($result);
+        //}else{
+            return $this->fail("잘못된 요청");
+        //}
+    }
+
+    public function getLead()
+    {
+
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $param = [
+                'sdate' => $this->request->getGet('sdate'),
+                'edate' => $this->request->getGet('edate'),
+            ];
+
+            $data = $this->integrate->getFirstLeadCount($param);
+
+            $adv_counts = array();
+            $med_counts = array();
+            $event_counts = array();
+            foreach ($data as $row) {
+                
+                if (!array_key_exists($row['adv_name'], $adv_counts)) {
+                    $adv_counts[$row['adv_name']] = array(
+                        'name' => $row['adv_name'],
+                        'countAll' => 0
+                    );
+                }
+
+                if (!array_key_exists($row['med_name'], $med_counts)) {
+                    $med_counts[$row['med_name']] = array(
+                        'name' => $row['med_name'],
+                        'countAll' => 0
+                    );
+                }
+
+                $event_counts[$row['event']] = array(
+                    'name' => $row['event'],
+                    'countAll' => $row['countAll'],
+                );
+
+                $adv_counts[$row['adv_name']]['countAll'] += $row['countAll'];
+                $med_counts[$row['med_name']]['countAll'] += $row['countAll'];
+            }
+
+            $result = [
+                'advertiser' => $adv_counts,
+                'media' => $med_counts,
+                'event' => $event_counts,
+            ];
 
             return $this->respond($result);
         //}else{
@@ -113,12 +193,12 @@ class ApiIntegrateController extends BaseController
     public function getStatusCount()
     {
 
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
                 'stx' => $this->request->getGet('stx'),
-                'adv_seq' => $this->request->getGet('adv_seq'),
+                'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
@@ -126,21 +206,8 @@ class ApiIntegrateController extends BaseController
             $result = $this->integrate->getStatusCount($param);
 
             return $this->respond($result);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
-
-    public function getLead()
-    {
-        $param = [
-            'sdate' => $this->request->getGet('sdate'),
-            'edate' => $this->request->getGet('edate'),
-            'stx' => $this->request->getGet('stx'),
-        ];
-        $result = $this->integrate->getFirstCount($param);
-
-        return $this->respond($result);
-    }
-
 }
