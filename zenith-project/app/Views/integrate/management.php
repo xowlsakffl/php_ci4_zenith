@@ -102,8 +102,8 @@
 $(function(){
     var currentDate = new Date();
     var data = {
-        'sdate': $('#sdate').val() || currentDate.toISOString().slice(0,10),
-        'edate': $('#edate').val() || currentDate.toISOString().slice(0,10),
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
         'stx': $('#stx').val(),
     };
 

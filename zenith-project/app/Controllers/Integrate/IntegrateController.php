@@ -29,8 +29,8 @@ class IntegrateController extends BaseController
                 'length' => $this->request->getGet('length'),
                 'start' => $this->request->getGet('start'),
                 'draw' => $this->request->getGet('draw'),
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
@@ -94,8 +94,8 @@ class IntegrateController extends BaseController
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
@@ -144,8 +144,8 @@ class IntegrateController extends BaseController
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
             ];
 
             $data = $this->integrate->getFirstLeadCount($param);
@@ -195,8 +195,8 @@ class IntegrateController extends BaseController
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
