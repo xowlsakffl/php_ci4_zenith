@@ -253,7 +253,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="tbl-list">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:5.5%">
@@ -436,7 +436,58 @@
 
 <!--스크립트-->
 <?=$this->section('script');?>
-<script></script>
+<script>
+function getTable(args) {
+	$('#deviceTable').DataTable({
+        "processing" : true,
+        "searching": false,
+        "ordering": true,
+        "ajax": {
+            "url": "<?=base_url()?>/integrate/list",
+            "data": data,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+        },
+        "columns": [
+            { "data": null },
+            { "data": "info_seq" },
+            { "data": "advertiser" },
+            { "data": "media" },
+            { "data": "tab_name" },
+            { "data": "name" },
+            { "data": "dec_phone" },
+            { "data": "age" },
+            { "data": "gender" },
+            { "data": "add" },
+            { "data": null, "defaultContent": ""},
+            { "data": "site" },
+            { "data": "reg_date", },
+        ],
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "info": "현재 _START_ - _END_ / _TOTAL_건",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+            "paginate": {
+                "next": "다음",
+                "previous": "이전"
+            }
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
+    });
+}
+
+</script>
 <?=$this->endSection();?>
 
 <!--푸터-->
