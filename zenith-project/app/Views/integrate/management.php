@@ -100,7 +100,6 @@
 <?=$this->section('script');?>
 <script>
 $(function(){
-    var currentDate = new Date();
     var data = {
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),

@@ -7,6 +7,8 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -38,35 +40,35 @@
         <div class="detail row d-flex justify-content-center">
             <dl class="col">
                 <dt>노출수</dt>
-                <dd>34,456</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>클릭수</dt>
-                <dd>809</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>클릭율</dt>
-                <dd>1.09</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>지출액</dt>
-                <dd>1,234,123</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>DB수</dt>
-                <dd>61</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>DB당 단가</dt>
-                <dd>45,234</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>전환율</dt>
-                <dd>7.34</dd>
+                <dd></dd>
             </dl>
             <dl class="col">
                 <dt>매출</dt>
-                <dd>23,456,900</dd>
+                <dd></dd>
             </dl>
         </div>
     </div>
@@ -76,17 +78,17 @@
         <div class="row">
             <div class="col">
                 <div class="inner">
-                    <button type="button">열혈 패밀리</button>
+                    <button type="button" class="act-tab act-316991668497111" data="316991668497111">열혈 패밀리</button>
                 </div>
             </div>
             <div class="col">
                 <div class="inner">
-                    <button type="button">케어랩스5</button>
+                    <button type="button" class="act-tab act-2859468974281473" data="2859468974281473">케어랩스5</button>
                 </div>
             </div>
             <div class="col">
                 <div class="inner">
-                    <button type="button">케어랩스7</button>
+                    <button type="button" class="act-tab act-213123902836946" data="213123902836946">케어랩스7</button>
                 </div>
             </div>
         </div>
@@ -94,7 +96,7 @@
     <div class="client-list advertiser">
         <h3><i class="bi bi-chevron-down"></i> 광고주</h3>
         <div class="row">
-            <div class="col">
+            <!-- <div class="col">
                 <div class="inner">
                     <button type="button" class="active alert">[대전]상상의원_가나다라마마다먀라</button>
                     <div class="progress">
@@ -102,133 +104,8 @@
                         <div class="txt">14/170</div>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="alert">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">거무타</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">마디척병원○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
+            </div> -->
+            
         </div>
     </div>
 
@@ -292,133 +169,27 @@
                                 <th scope="col">DB <br>전환률</th>
                             </tr>
                         </thead>
+                        <thead>
+                            <tr id="total">
+                                <td id="total-count"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="total-budget"></td>
+                                <td id="avg-cpa"></td>
+                                <td id="total-unique_total"></td>
+                                <td id="total-spend"></td>
+                                <td id="total-margin"></td>
+                                <td id="avg_margin_ratio"></td>
+                                <td id="total-sales"></td>
+                                <td id="total-impressions"></td>
+                                <td id="total-inline_link_clicks"></td>
+                                <td id="avg-cpc"></td>
+                                <td id="avg-ctr"></td>
+                                <td id="avg-cvr"></td>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr>
-                                <th scope="col" class="text-center">캠페인 11건 결과</th>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>￦22,345,222</td>
-                                <td>￦30,342</td>
-                                <td>515</td>
-                                <td>￦18,345,342</td>
-                                <td>￦6,235,666</td>
-                                <td>29.45%</td>
-                                <td>￦21,345,678</td>
-                                <td>654,345</td>
-                                <td>9,457</td>
-                                <td>￦1,778</td>
-                                <td>1.13%</td>
-                                <td>6.34%</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="check01">
-                                        <label class="form-check-label" for="check01">[02.22][케랩7_마디척병원_부위별통증] evt_5721 @15 진선_주말OFF_규칙</label>
-                                    </div>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
-                                    </div>
-                                </th>
-                                <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
-                                    </div>
-                                </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>￦15,345</td>
-                                <td>￦-15,678</td>
-                                <td>0%</td>
-                                <td>￦0</td>
-                                <td>631</td>
-                                <td>3</td>
-                                <td>￦5,345</td>
-                                <td>0.48%</td>
-                                <td>0%</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="check01">
-                                        <label class="form-check-label" for="check01">[02.22][케랩7_마디척병원_부위별통증] evt_5721 @15 진선_주말OFF_규칙</label>
-                                    </div>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
-                                    </div>
-                                </th>
-                                <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
-                                    </div>
-                                </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>￦15,345</td>
-                                <td>￦-15,678</td>
-                                <td>0%</td>
-                                <td>￦0</td>
-                                <td>631</td>
-                                <td>3</td>
-                                <td>￦5,345</td>
-                                <td>0.48%</td>
-                                <td>0%</td>
-                            </tr>
-                            <tr>
-                                <th scope="col">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="check01">
-                                        <label class="form-check-label" for="check01">[02.22][케랩7_마디척병원_부위별통증] evt_5721 @15 진선_주말OFF_규칙</label>
-                                    </div>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-paper"><i class="bi bi-file-text"></i></button>
-                                    </div>
-                                </th>
-                                <td>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm">활성</button>
-                                    <div class="btn-area">
-                                        <button type="button" class="btn btn-outline-secondary btn-reflesh"><i class="bi bi-arrow-counterclockwise"></i>새로고침</button>
-                                    </div>
-                                </td>
-                                <td>ON</td>
-                                <td>ON</td>
-                                <td>￦100,000
-                                    <div class="btn-area d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-up-short"></i></button>
-                                        <button type="button" class="btn btn-secondary btn-arrow"><i class="bi bi-arrow-down-short"></i></button>
-                                    </div>
-                                </td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>￦15,345</td>
-                                <td>￦-15,678</td>
-                                <td>0%</td>
-                                <td>￦0</td>
-                                <td>631</td>
-                                <td>3</td>
-                                <td>￦5,345</td>
-                                <td>0.48%</td>
-                                <td>0%</td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -437,53 +208,190 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
+var args = {
+    'sdate': $('#sdate').val(),
+    'edate': $('#edate').val(),
+    'stx': $('#stx').val(),
+};
+
+getAccount(args);
+getTable(args);
+
+function getAccount(args){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/facebook/accounts",
+        data: args,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            var html = '';
+            var set_ratio = '';
+            $.each(data, function(idx, v) {               
+                if(v.db_count){
+                    set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
+                }
+
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" class="">'+v.name+set_ratio+'</button></div></div>';
+            });
+
+            $('.advertiser .row').html(html);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
 function getTable(args) {
-	$('#deviceTable').DataTable({
+	$('#tbl-list').DataTable({
         "processing" : true,
         "searching": false,
         "ordering": true,
+        "bLengthChange" : false, 
+        "paging": false,
+        "info": false,
         "ajax": {
-            "url": "<?=base_url()?>/integrate/list",
-            "data": data,
+            "url": "<?=base_url()?>/advertisements/facebook/campaigns",
+            "data": args,
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
+            "dataSrc": function(res){
+                $('#total-count').text(res.campaigns.length+"건");
+                $('#total-budget').text(res.total.budget.toLocaleString('ko-KR'));
+                $('#avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $('#total-unique_total').text(res.total.unique_total);
+                $('#total-spend').text(res.total.spend.toLocaleString('ko-KR'));
+                $('#total-margin').text(res.total.margin.toLocaleString('ko-KR'));
+                $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100);
+                $('#total-sales').text(res.total.sales.toLocaleString('ko-KR'));
+                $('#total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $('#total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $('#avg-cpc').text(Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100);
+
+                return res.campaigns;
+            }
         },
         "columns": [
-            { "data": null },
-            { "data": "info_seq" },
-            { "data": "advertiser" },
-            { "data": "media" },
-            { "data": "tab_name" },
             { "data": "name" },
-            { "data": "dec_phone" },
-            { "data": "age" },
-            { "data": "gender" },
-            { "data": "add" },
-            { "data": null, "defaultContent": ""},
-            { "data": "site" },
-            { "data": "reg_date", },
+            { "data": "status" },
+            { "data": "optimization_campaign" },
+            { "data": "ai2_status" },
+            { 
+                "data": "budget", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        budget = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        budget = "";
+                    }
+                    return budget;
+                }
+            }, //예산
+            { 
+                "data": "cpa",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpa = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpa = "";
+                    }
+                    return cpa;
+                }
+            }, //현재 DB단가
+            { "data": "unique_total" }, //유효DB수
+            { 
+                "data": "spend",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        spend = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        spend = "";
+                    }
+                    return spend;
+                }
+            }, //지출액
+            { 
+                "data": "margin",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        margin = "";
+                    }
+                    return margin;
+                }
+            }, //수익
+            { 
+                "data": "margin_ratio",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin_ratio = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        margin_ratio = "";
+                    }
+                    return margin_ratio;
+                }
+            }, //수익률
+            { 
+                "data": "sales",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        sales = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        sales = "";
+                    }
+                    return sales;
+                }
+            }, //매출액
+            { 
+                "data": "impressions", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        impressions = "";
+                    }
+                    return impressions;
+                }
+            }, //노출수
+            { 
+                "data": "inline_link_clicks", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        inline_link_clicks = "";
+                    }
+                    return inline_link_clicks;
+                }
+            }, //링크클릭
+            { 
+                "data": "cpc", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpc = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpc = "";
+                    }
+                    return cpc;
+                }
+            }, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", }, //클릭율 (노출 대비 클릭한 비율)
+            { "data": "cvr", }, //전환율
         ],
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
             "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "info": "현재 _START_ - _END_ / _TOTAL_건",
             "infoEmpty": "데이터 없음",
             "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
             "search": "에서 검색: ",
             "zeroRecords": "일치하는 데이터가 없어요.",
             "loadingRecords": "로딩중...",
-            "paginate": {
-                "next": "다음",
-                "previous": "이전"
-            }
         },
-        "rowCallback": function(row, data, index) {
-            var api = this.api();
-            var startIndex = api.page() * api.page.len();
-            var seq = startIndex + index + 1;
-            $('td:eq(0)', row).html(seq);
-        }
     });
 }
 
