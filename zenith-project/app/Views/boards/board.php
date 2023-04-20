@@ -1,5 +1,19 @@
 <?=$this->extend('templates/front.php');?>
+<!--타이틀-->
+<?=$this->section('title');?>
+    CHAIN 열혈광고 - 게시판
+<?=$this->endSection();?>
 
+<!--헤더-->
+<?=$this->section('header');?>
+<script src="/static/js/twbsPagination.js"></script>
+<?=$this->endSection();?>
+
+<!--바디-->
+<?=$this->section('body');?>
+<?=$this->endSection();?>
+
+<!--컨텐츠영역-->
 <?=$this->section('content');?>
     <!--content-->
     <div class="container-md">
@@ -459,4 +473,7 @@ $('body').on('click', '#DataResetBtn', function(){
 
 
 </script>
+<?=$this->endSection();?>
+<!--푸터-->
+<?=$this->section('footer');?>
 <?=$this->endSection();?>

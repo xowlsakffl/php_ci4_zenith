@@ -109,6 +109,54 @@ class AdvFacebookManagerModel extends Model
 		} */
 	}
 
+	public function getAds($data)
+	{
+		$builder = $this->facebook->table('fb_campaign A');
+		$builder->select('C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, 0 AS total, 0 AS unique_total, 0 AS budget, SUM(D.sales) AS sales');
+		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
+		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
+		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
+		$builder->join('fb_adcreative E', 'D.ad_id = E.ad_id', 'left');
+
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+        }
+
+		$builder->groupBy('C.ad_id');
+		$builder->orderBy('D.create_date', 'desc');
+		$builder->orderBy('C.ad_name', 'asc');
+		$result = $builder->get()->getResultArray();
+
+		return $result;
+		/* // Adset IDs
+		if (@count($args['ids'][1]) > 0) {
+			$adsets = "'" . implode("','", $args['ids'][1]) . "'";
+			$sql .= " AND C.adset_id IN (" . $adsets . ")";
+		}
+		// Accounts IDs or Campaign IDs
+		else if (@count($args['accounts']) > 0 || @count($args['businesses']) > 0 || @count($args['ids'][0]) > 0) {
+			$sql = "SELECT  C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating,
+					SUM(D.impressions) impressions, SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend,
+					0 AS total, 0 AS unique_total, 0 AS budget, sum(D.sales) as sales
+				FROM fb_ad_account F, fb_campaign A, fb_adset B, fb_ad C, fb_ad_insight_history D LEFt JOIN fb_adcreative E ON D.ad_id = E.ad_id
+				WHERE A.campaign_id = B.campaign_id AND B.adset_id = C.adset_id AND C.ad_id = D.ad_id AND A.account_id = F.ad_account_id";
+
+			if (@count($args['ids'][0]) > 0) {
+				$campaigns = "'" . implode("','", $args['ids'][0]) . "'";
+				$sql .= " AND A.campaign_id IN (" . $campaigns . ")";
+			}
+			if (@count($args['businesses']) > 0) {
+				$businesses = "'" . implode("','", $args['businesses']) . "'";
+				$sql .= " AND F.business_id IN (" . $businesses . ")";
+			}
+			if (@count($args['accounts']) > 0) {
+				$accounts = "'" . implode("','", $args['accounts']) . "'";
+				$sql .= " AND A.account_id IN (" . $accounts . ")";
+			}
+		} */
+	}
+
     public function getStatuses($param, $result, $dates)
     {
         foreach ($result as $row) {

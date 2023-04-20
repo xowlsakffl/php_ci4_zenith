@@ -85,12 +85,12 @@ class AdvFacebookManagerController extends BaseController
                 'type' => $this->request->getGet('type'),
             ];
             
-            if($arg['type'] == 'campaigns'){
-                $result = $this->getCampaigns($arg);
+            if($arg['type'] == 'ads'){
+                $result = $this->getAds($arg);
             }else if($arg['type'] == 'adsets'){
                 $result = $this->getAdSets($arg);
             }else{
-                
+                $result = $this->getCampaigns($arg);
             }
 
             return $this->respond($result);
@@ -99,91 +99,12 @@ class AdvFacebookManagerController extends BaseController
         }
     }
 
-    public function getCampaigns($arg)
+    private function getCampaigns($arg)
     {
             $campaigns = $this->facebook->getCampaigns($arg);
             $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
-            
-            $total = [];
-            $total['impressions'] = 0;
-            $total['inline_link_clicks'] = 0;
-            $total['spend'] = 0;
-            $total['margin'] = 0;
-            $total['unique_total'] = 0;
-            $total['sales'] = 0;
-            $total['budget'] = 0;
-            $total['cpc'] = 0;
-            $total['ctr'] = 0;
-            $total['cpa'] = 0;
-            $total['cvr'] = 0;
-            $total['margin_ratio'] = 0;
-            $total['expect_db'] = 0;
-            foreach($campaigns as $campaign){
-                $total['impressions'] +=$campaign['impressions'];
-                $total['inline_link_clicks'] +=$campaign['inline_link_clicks'];
-                $total['spend'] +=$campaign['spend'];
-                $total['margin'] +=$campaign['margin'];
-                $total['unique_total'] +=$campaign['unique_total'];
-                $total['sales'] +=$campaign['sales'];
-                $total['budget'] +=$campaign['budget'];
-                $total['cpc'] +=$campaign['cpc'];
-                $total['ctr'] +=$campaign['ctr'];
-                $total['cpa'] +=$campaign['cpa'];
-                $total['cvr'] +=$campaign['cvr'];
-                $total['margin_ratio'] +=$campaign['margin_ratio'];
-
-                //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
-                if($total['inline_link_clicks'] > 0){
-                    $total['avg_cpc'] = $total['spend'] / $total['inline_link_clicks'];
-                }else{
-                    $total['avg_cpc'] = 0;
-                }
-
-                //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
-                $total['avg_ctr'] = ($total['inline_link_clicks'] / $total['impressions']) * 100;
-
-                //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
-                if($total['unique_total'] > 0){
-                    $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
-                }else{
-                    $total['avg_cpa'] = 0;
-                }
-
-                //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
-                if ($total['inline_link_clicks'] > 0) {
-                    $total['avg_cvr'] = ($total['unique_total'] / $total['inline_link_clicks']) * 100;
-                } else {
-                    $total['avg_cvr'] = 0;
-                } 	
-
-                //수익률 = (수익/매출액)*100
-                if ($total['sales'] > 0) {
-                    $total['avg_margin_ratio'] = ($total['margin'] / $total['sales']) * 100;
-                } else {
-                    $total['avg_margin_ratio'] = 0;
-                } 
-
-                if ($campaign['status'] == 'ACTIVE' && $campaign['unique_total']){
-                    $total['expect_db'] += round($campaign['budget'] / $campaign['cpa']);
-                }
-                        
-                // 수익이 마이너스면 빨간색으로 표시
-                /* if ($total['margins'] <= 0) {
-                    $margin_minus = "margin_minus";
-                } else {
-                    $margin_minus = "";
-                } */
-
-                // 수익률이 20%이하면  빨간색으로 표시
-                /* if ($avg_margin_ratio < 20 && $avg_margin_ratio <> 0) {
-                    $margin_ratio_minus = "margin_ratio_minus";
-                } else {
-                    $margin_ratio_minus = "";
-                } */
-            }
-            /* if (isset($args['is_multisort']) && $args['is_multisort'] === true)
-                $campaigns = $this->sort($campaigns, $args['sort']); */
-
+            $total = $this->getTotal($campaigns);
+           
             $result = [
                 'total' => $total,
                 'campaigns' => $campaigns,
@@ -192,13 +113,29 @@ class AdvFacebookManagerController extends BaseController
             return $result;
     }
 
-    public function getAdSets($arg)
+    private function getAdSets($arg)
     {
         $adsets = $this->facebook->getAdSets($arg);
         $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+        $total = $this->getTotal($adsets);
 
         $result = [
+            'total' => $total,
             'adsets' => $adsets
+        ];
+
+        return $result;
+    }
+
+    private function getAds($arg)
+    {
+        $ads = $this->facebook->getAds($arg);
+        $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+        $total = $this->getTotal($ads);
+
+        $result = [
+            'total' => $total,
+            'ads' => $ads
         ];
 
         return $result;
@@ -214,5 +151,88 @@ class AdvFacebookManagerController extends BaseController
         $data = array_unique($data);
 
         return $data;
+    }
+
+    private function getTotal($datas)
+    {
+        $total = [];
+        $total['impressions'] = 0;
+        $total['inline_link_clicks'] = 0;
+        $total['spend'] = 0;
+        $total['margin'] = 0;
+        $total['unique_total'] = 0;
+        $total['sales'] = 0;
+        $total['budget'] = 0;
+        $total['cpc'] = 0;
+        $total['ctr'] = 0;
+        $total['cpa'] = 0;
+        $total['cvr'] = 0;
+        $total['margin_ratio'] = 0;
+        $total['expect_db'] = 0;
+        foreach($datas as $data){
+            $total['impressions'] +=$data['impressions'];
+            $total['inline_link_clicks'] +=$data['inline_link_clicks'];
+            $total['spend'] +=$data['spend'];
+            $total['margin'] +=$data['margin'];
+            $total['unique_total'] +=$data['unique_total'];
+            $total['sales'] +=$data['sales'];
+            $total['budget'] +=$data['budget'];
+            $total['cpc'] +=$data['cpc'];
+            $total['ctr'] +=$data['ctr'];
+            $total['cpa'] +=$data['cpa'];
+            $total['cvr'] +=$data['cvr'];
+            $total['margin_ratio'] +=$data['margin_ratio'];
+
+            //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
+            if($total['inline_link_clicks'] > 0){
+                $total['avg_cpc'] = $total['spend'] / $total['inline_link_clicks'];
+            }else{
+                $total['avg_cpc'] = 0;
+            }
+
+            //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
+            $total['avg_ctr'] = ($total['inline_link_clicks'] / $total['impressions']) * 100;
+
+            //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
+            if($total['unique_total'] > 0){
+                $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
+            }else{
+                $total['avg_cpa'] = 0;
+            }
+
+            //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
+            if ($total['inline_link_clicks'] > 0) {
+                $total['avg_cvr'] = ($total['unique_total'] / $total['inline_link_clicks']) * 100;
+            } else {
+                $total['avg_cvr'] = 0;
+            } 	
+
+            //수익률 = (수익/매출액)*100
+            if ($total['sales'] > 0) {
+                $total['avg_margin_ratio'] = ($total['margin'] / $total['sales']) * 100;
+            } else {
+                $total['avg_margin_ratio'] = 0;
+            } 
+
+            if ($data['status'] == 'ACTIVE' && $data['unique_total']){
+                $total['expect_db'] += round($data['budget'] / $data['cpa']);
+            }
+                    
+            // 수익이 마이너스면 빨간색으로 표시
+            /* if ($total['margins'] <= 0) {
+                $margin_minus = "margin_minus";
+            } else {
+                $margin_minus = "";
+            } */
+
+            // 수익률이 20%이하면  빨간색으로 표시
+            /* if ($avg_margin_ratio < 20 && $avg_margin_ratio <> 0) {
+                $margin_ratio_minus = "margin_ratio_minus";
+            } else {
+                $margin_ratio_minus = "";
+            } */
+        }
+
+        return $total;
     }
 }

@@ -16,7 +16,6 @@
     <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/node_modules/moment/moment.js"></script>
     <script src="/static/node_modules/daterangepicker/daterangepicker.js"></script>
-    <script src="/static/js/twbsPagination.js"></script>
     <script src="/static/js/ui.js"></script>
     <script src="/static/js/index.js"></script>
     <?=$this->renderSection('header')?>

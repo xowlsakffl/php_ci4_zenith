@@ -1,5 +1,20 @@
 <?=$this->extend('templates/front.php');?>
 
+<!--타이틀-->
+<?=$this->section('title');?>
+    CHAIN 열혈광고 - 사용자 관리
+<?=$this->endSection();?>
+
+<!--헤더-->
+<?=$this->section('header');?>
+<script src="/static/js/twbsPagination.js"></script>
+<?=$this->endSection();?>
+
+<!--바디-->
+<?=$this->section('body');?>
+<?=$this->endSection();?>
+
+<!--컨텐츠영역-->
 <?=$this->section('content');?>
 <div class="container-md">
     <h1 class="font-weight-bold mb-5">사용자 소속 변경</h1>
@@ -66,4 +81,7 @@ $('body').on('click', '#userCompanyUpdate', function(){
 });
 
 </script>
+<?=$this->endSection();?>
+<!--푸터-->
+<?=$this->section('footer');?>
 <?=$this->endSection();?>

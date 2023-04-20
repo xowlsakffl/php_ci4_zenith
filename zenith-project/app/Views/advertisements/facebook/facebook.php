@@ -110,27 +110,26 @@
     </div>
 
     <div class="tab-wrap">
-        <ul class="nav nav-tabs" role="tablist">
+        <ul class="nav nav-tabs" id="tab-list" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link active" id="campaign-tab" value="campaigns" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" type="button" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
+                <button class="nav-link tab-link active" value="campaigns" type="button" id="campaign-tab" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" id="set-tab"  value="adsets" data-bs-toggle="tab" data-bs-target="#set-tab-pane" type="button" role="tab" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
+                <button class="nav-link tab-link" value="adsets" type="button" role="tab" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="ads" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane" type="button" role="tab" aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
+                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane"  aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
             </li>
         </ul>
         <div class="tab-content">
+            <div class="btn-wrap">
+                <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
+                <button type="button" class="btn btn-outline-danger">데이터 비교</button>
+                <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
+            </div>
             <div class="tab-pane active" id="campaign-tab-pane" role="tabpanel" aria-labelledby="campaign-tab">
-                <div class="btn-wrap">
-                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
-                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
-                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
-                </div>
-
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tbl-list">
+                    <table class="table table-striped table-hover" id="campaigns-table">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:5.5%">
@@ -196,20 +195,13 @@
             </div>
 
             <div class="tab-pane" id="set-tab-pane" role="tabpanel" aria-labelledby="set-tab">
-                <div class="btn-wrap">
-                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
-                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
-                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
-                </div>
-
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tbl-list">
+                    <table class="table table-striped table-hover" id="adsets-table">
                         <colgroup>
                             <col style="width:10%">
-                            <col style="width:5.5%">
-                            <col style="width:5%">
-                            <col style="width:5%">
-                            <col style="width:7%">
+                            <col style="width:7.5%">
+                            <col style="width:7.5%">
+                            <col style="width:7.5%">
                             <col style="width:6%">
                             <col style="width:4%">
                             <col style="width:7.5%">
@@ -224,10 +216,9 @@
                         </colgroup>
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">캠페인명</th>
+                                <th scope="col">광고세트명</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산 <br>ai</th>
-                                <th scope="col">목표 <br>ai</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
                                 <th scope="col">유효 <br>DB</th>
@@ -245,7 +236,6 @@
                         <thead>
                             <tr id="total">
                                 <td id="total-count"></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td id="total-budget"></td>
@@ -268,21 +258,12 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="advertisement-tab-pane" role="tabpanel" aria-labelledby="advertisement-tab">
-                <div class="btn-wrap">
-                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
-                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
-                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
-                </div>
-
+            <div class="tab-pane" role="tabpanel" id="advertisement-tab-pane" aria-labelledby="advertisement-tab">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tbl-list">
+                    <table class="table table-striped table-hover" id="ads-table">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:5.5%">
-                            <col style="width:5%">
-                            <col style="width:5%">
-                            <col style="width:7%">
                             <col style="width:6%">
                             <col style="width:4%">
                             <col style="width:7.5%">
@@ -297,11 +278,8 @@
                         </colgroup>
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">캠페인명</th>
+                                <th scope="col">광고명</th>
                                 <th scope="col">상태</th>
-                                <th scope="col">예산 <br>ai</th>
-                                <th scope="col">목표 <br>ai</th>
-                                <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
                                 <th scope="col">유효 <br>DB</th>
                                 <th scope="col">지출액</th>
@@ -319,9 +297,6 @@
                             <tr id="total">
                                 <td id="total-count"></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="total-budget"></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -358,7 +333,7 @@ args.type = 'campaigns';
 
 setDate();
 getAccount(args);
-getTable(args);
+getCampaigns(args);
 
 function getAccount(args){
     $.ajax({
@@ -386,11 +361,8 @@ function getAccount(args){
     });
 }
 
-function getTable(args) {
-    if(args.type == 'campaigns'){
-
-    }
-	$('#tbl-list').DataTable({
+function getCampaigns(args) {
+	$('#campaigns-table').DataTable({
         "processing" : true,
         "searching": false,
         "ordering": true,
@@ -405,19 +377,19 @@ function getTable(args) {
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
-                $('#total-count').text(res.campaigns.length+"건");
-                $('#total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
-                $('#avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $('#total-unique_total').text(res.total.unique_total);
-                $('#total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
-                $('#total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
-                $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-                $('#total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $('#total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $('#total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
-                $('#avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
-                $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-                $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+                $('#campaigns-table #total-count').text("캠페인 "+res.campaigns.length+"건 결과");
+                $('#campaigns-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $('#campaigns-table #total-unique_total').text(res.total.unique_total);
+                $('#campaigns-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $('#campaigns-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $('#campaigns-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
 
                 return res.campaigns;
             }
@@ -438,6 +410,307 @@ function getTable(args) {
                     return budget;
                 }
             }, //예산
+            { 
+                "data": "cpa",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpa = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpa = "";
+                    }
+                    return cpa;
+                }
+            }, //현재 DB단가
+            { "data": "unique_total" }, //유효DB수
+            { 
+                "data": "spend",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        spend = "";
+                    }
+                    return spend;
+                }
+            }, //지출액
+            { 
+                "data": "margin",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        margin = "";
+                    }
+                    return margin;
+                }
+            }, //수익
+            { 
+                "data": "margin_ratio",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                    }else{
+                        margin_ratio = "";
+                    }
+                    return margin_ratio;
+                }
+            }, //수익률
+            { 
+                "data": "sales",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        sales = "";
+                    }
+                    return sales;
+                }
+            }, //매출액
+            { 
+                "data": "impressions", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        impressions = "";
+                    }
+                    return impressions;
+                }
+            }, //노출수
+            { 
+                "data": "inline_link_clicks", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        inline_link_clicks = "";
+                    }
+                    return inline_link_clicks;
+                }
+            }, //링크클릭
+            { 
+                "data": "cpc", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpc = "";
+                    }
+                    return cpc;
+                }
+            }, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", }, //클릭율 (노출 대비 클릭한 비율)
+            { 
+                "data": "cvr", 
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                }
+            }, //전환율
+        ],
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+        },
+    });
+}
+
+function getAdsets(args) {
+	$('#adsets-table').DataTable({
+        "processing" : true,
+        "searching": false,
+        "ordering": true,
+        "bLengthChange" : false, 
+        "bDestroy": true,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/advertisements/facebook/data",
+            "data": args,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                $('#adsets-table #total-count').text("광고세트 "+res.adsets.length+"건 결과");
+                $('#adsets-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
+                $('#adsets-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $('#adsets-table #total-unique_total').text(res.total.unique_total);
+                $('#adsets-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $('#adsets-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $('#adsets-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $('#adsets-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
+                $('#adsets-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $('#adsets-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $('#adsets-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#adsets-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $('#adsets-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+
+                return res.adsets;
+            }
+        },
+        "columns": [
+            { "data": "name" },
+            { "data": "status" },
+            { "data": "optimization_adset" },
+            { 
+                "data": "budget", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        budget = "";
+                    }
+                    return budget;
+                }
+            }, //예산
+            { 
+                "data": "cpa",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpa = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpa = "";
+                    }
+                    return cpa;
+                }
+            }, //현재 DB단가
+            { "data": "unique_total" }, //유효DB수
+            { 
+                "data": "spend",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        spend = "";
+                    }
+                    return spend;
+                }
+            }, //지출액
+            { 
+                "data": "margin",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        margin = "";
+                    }
+                    return margin;
+                }
+            }, //수익
+            { 
+                "data": "margin_ratio",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                    }else{
+                        margin_ratio = "";
+                    }
+                    return margin_ratio;
+                }
+            }, //수익률
+            { 
+                "data": "sales",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        sales = "";
+                    }
+                    return sales;
+                }
+            }, //매출액
+            { 
+                "data": "impressions", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        impressions = "";
+                    }
+                    return impressions;
+                }
+            }, //노출수
+            { 
+                "data": "inline_link_clicks", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        inline_link_clicks = "";
+                    }
+                    return inline_link_clicks;
+                }
+            }, //링크클릭
+            { 
+                "data": "cpc", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpc = "";
+                    }
+                    return cpc;
+                }
+            }, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", }, //클릭율 (노출 대비 클릭한 비율)
+            { 
+                "data": "cvr", 
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                }
+            }, //전환율
+        ],
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+        },
+    });
+}
+
+function getAds(args) {
+	$('#ads-table').DataTable({
+        "processing" : true,
+        "searching": false,
+        "ordering": true,
+        "bLengthChange" : false, 
+        "bDestroy": true,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/advertisements/facebook/data",
+            "data": args,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                $('#ads-table #total-count').text("광고 "+res.ads.length+"건 결과");
+                $('#ads-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $('#ads-table #total-unique_total').text(res.total.unique_total);
+                $('#ads-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $('#ads-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $('#ads-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $('#ads-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
+                $('#ads-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $('#ads-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $('#ads-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#ads-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $('#ads-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+
+                return res.ads;
+            }
+        },
+        "columns": [
+            { "data": "name" },
+            { "data": "status" },
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -595,11 +868,20 @@ function setDate(){
     });
 }
 
-$('body').on('click', '.tab-link', function() {
-    type = $(this).val();
-    args.type = type;
-    console.log(args)
-    getTable(args);
+$('body').on('click', '.tab-link', function(){
+    var tabVal = $(this).val();
+    args.type = tabVal;
+    console.log(args.type);
+    switch (args.type) {
+    case "ads":
+        getAds(args);
+        break;
+    case "adsets":
+        getAdsets(args);
+        break;
+    default:
+        getCampaigns(args);
+    } 
 });
 
 </script>
