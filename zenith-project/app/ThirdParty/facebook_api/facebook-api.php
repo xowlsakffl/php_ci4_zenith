@@ -803,57 +803,25 @@ use FacebookAds\Logger\CurlLogger;
 
     public function landingGroup($title)
     {
-        if (!$title) {
-            return null;
-        }
+        if (!$title) return null;
         preg_match_all('/.+\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
-        $db_prefix = '';
         switch ($matches[9][0]) {
-            case 'fer':
-                $media = '이벤트 랜딩';
-                if ($matches[1][0]) {
-                    $db_prefix = 'evt_';
-                }
-                break;
-            case 'fercpm':
-                $media = '이벤트 랜딩_cpm';
-                if ($matches[1][0]) {
-                    $db_prefix = 'evt_';
-                }
-                break;
-            case 'ler':
-                $media = '이벤트 잠재고객';
-                if ($matches[1][0]) {
-                    $db_prefix = 'evt_';
-                }
-                break;
-            case 'lercpm':
-                $media = '이벤트 잠재고객_cpm';
-                if ($matches[1][0]) {
-                    $db_prefix = 'evt_';
-                }
-                break;
-            case 'cpm':
-                $media = 'cpm';
-                $db_prefix = '';
-                break;
-            default:
-                $media = '';
-                $db_prefix = '';
-                break;
+            case 'fer': $media = '이벤트 랜딩'; break;
+            case 'fercpm': $media = '이벤트 랜딩_cpm'; break;
+            case 'ler': $media = '이벤트 잠재고객'; break;
+            case 'lercpm': $media = '이벤트 잠재고객_cpm'; break;
+            case 'cpm': $media = 'cpm'; break;
+            default: $media = '';break;
         }
-        $result = array(
-            'name' => '', 'media' => '', 'db_prefix' => '', 'event_id' => '', 'app_id' => '', 'site' => '', 'db_price' => 0, 'period_ad' => ''
-        );
         if ($media) {
-            $result['name']         = $matches[0][0];
-            $result['media']        = $media;
-            $result['db_prefix']    = $db_prefix;
-            $result['event_id']     = $matches[1][0];
-            $result['app_id']       = $db_prefix . $matches[1][0];
-            $result['site']         = $matches[3][0];
-            $result['db_price']     = $matches[6][0];
-            $result['period_ad']    = $matches[12][0];
+            $result = [
+                'name' => $matches[0][0]
+                ,'media' => $media
+                ,'event_seq' => $matches[1][0]
+                ,'site' => $matches[3][0]
+                ,'db_price' => $matches[6][0]
+                ,'period_ad' => $matches[12][0]
+            ];
             return $result;
         }
         return null;
@@ -866,86 +834,72 @@ use FacebookAds\Logger\CurlLogger;
             $date = date('Y-m-d');
         }
         $ads = $this->db->getAdLeads($date);
-        if (!$ads->num_rows) {
+        if (!$ads->getNumRows()) {
             return null;
         }
-        $i = 0;
-        while ($row = $ads->fetch_assoc()) {
-            $landing = $this->landingGroup($row['ad_name']);
-            if ($landing['media']) {
-                $result[$i]['date'] = $date;
-                $result[$i]['ad_id'] = $row['ad_id'];
-                $result[$i]['spend'] = $row['spend'];
-                $result[$i]['name'] = $landing['name'];
-                $result[$i]['event_id'] = $landing['event_id'];
-                $result[$i]['app_id'] = $landing['app_id'];
-                $result[$i]['site'] = $landing['site'];
-                $result[$i]['db_price'] = $landing['db_price'];
-                $result[$i]['media_code'] = $landing['media_code'];
-                $result[$i]['period_ad'] = $landing['period_ad'];
-                $result[$i]['media'] = $landing['media'];
-                $result[$i]['db_prefix'] = $landing['db_prefix'];
-                if (!preg_match('/cpm/', $landing['media'])) {
-                    if (!$landing['app_id']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): APP_ID 미입력' . PHP_EOL;
-                    if (!$landing['db_price']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
-                }
-                $i++;
-            } else {
-                if (preg_match('/&[a-z]+/', $row['ad_name'])) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
+        $result = [];
+        foreach($ads->getResultArray() as $row) {
+            $error = [];
+            // CLI::showProgress($step++, $total);
+            $landing = $this->landingGroup($row['ad_name']); //소재와 이벤트 매칭
+            $data = [];
+            $data = [
+                 'date' => $date
+                ,'ad_id' => $row['ad_id']
+                ,'spend' => $row['spend']
+            ];
+            $data = @array_merge($data, $landing);
+            if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
+                if (!$landing['event_seq']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 이벤트번호 미입력' . PHP_EOL;
+                if (!$landing['db_price']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
             }
-        }
-        $this->exception_handler($error);
-        if (is_array($result)) {
-            foreach ($result as $i => $data) {
-                $result[$i]['count'] = 0;
-                $result[$i]['sales'] = 0;
-                $result[$i]['margin'] = 0;
-                $sales = 0;
-                if ($data['app_id']) {
-                    $dbcount = $this->db->getDbCount($data['ad_id'], $date);
-                    $rows = $this->db->getAppSubscribe($data, $date);
-                    $result[$i]['count'] = $rows;
-                    $db_price = $data['db_price'];
-                    if ($dbcount['db_price'] && $date != date('Y-m-d'))
-                        $db_price = $result[$i]['db_price'] = $dbcount['db_price'];
-                    /* 수익, 매출액 계산 */
-                    /*=============================== 2018-11-19
-                    fhrcpm /fhspcpm/ jhrcpm
-                    유효db수는 불러오지만 수익,매출0
-
-                    cpm
-                    우효db 0 / 수익/ 매출0
-
-                    ^25 = *0.25
-                    */
-                    $initZero = false;
-                    if (preg_match('/cpm/i', $data['media'])) { //app_id 가 있는 cpm (fhrm, fhspcpm, jhrcpm)의 계산을 무효화
-                        $initZero = true;
-                    }
-                    if ($db_price) {
-                        if (!$initZero)
-                            $sales = $db_price * $rows;
-                        $insight_data = new stdClass();
-                        $insight_data->ad_id = $data['ad_id'];
-                        $insight_data->date = $date;
-                        $insight_data->data['sales'] = $sales;
-                        $result[$i]['sales'] = $sales;
-                        $this->db->updateInsight($insight_data);
-                    }
-                    if (!$initZero)
-                        $result[$i]['margin'] = $sales - $data['spend'];
-                }
-                if ($data['period_ad']) {
-                    $result[$i]['margin'] = $data['spend'] * ('0.' . $data['period_ad']);
+            if(is_null($landing) && preg_match('/&[a-z]+/', $row['ad_name'])) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
+            if(count($error)) foreach($error as $err) CLI::write("{$err}", "light_purple");
+            if(is_null($landing)) continue;
+            $dp = $this->db->getDbPrice($data);
+            $leads = $this->db->getAppSubscribe($data);
+            $cpm = false;
+            if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
+            if(!is_null($leads)) {
+                if(!$leads->getNumRows() && !$cpm) continue;
+            }
+            $db_price = $data['db_price'];
+            if(isset($dp['db_price']) && $data['date'] != date('Y-m-d'))
+                $db_price = $data['db_price'] = $dp['db_price'];
+            /* 
+            *수익, 매출액 계산
+            !xxxcpm - 유효db n / 수익,매출0
+            !cpm - 유효db 0 / 수익,매출0
+            !period - ^25 = *0.25
+            */
+            $period_margin = 0;
+            if(!$data['event_seq'] && $data['media']) {
+                if($data['period_ad']) $period_margin = $data['spend'] * ('0.' . $data['period_ad']);
+                $data['data'][] = ['hour' => "",'count' => "",'sales' => "",'margin' => $period_margin];
+            }
+            $initZero = false;
+            if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
+                $initZero = true;
+            if(!is_null($leads)) {
+                foreach($leads->getResultArray() as $row) {
+                    $sales = $margin = 0;
+                    $db_count = $row['db_count'];
+                    if($db_price) $sales = $db_price * $db_count;
+                    $margin = $sales - $data['spend'];
+                    if($initZero) $margin = $sales = 0;
+                    if($data['media'] === 'cpm') $db_count = 0;
+                    if($period_margin !== 0) $margin = $period_margin;
+                    $data['data'][] = [
+                        'hour' => $row['hour']
+                        ,'count' => $db_count
+                        ,'sales' => $sales
+                        ,'margin' => $margin
+                    ];
+                    $result = array_merge($result, $data);
                 }
             }
-            $this->db->insertLeadsCount($result, $date);
-            // usort($result, function($a, $b) {
-            //  return $b['event_id'] <=> $a['event_id'];
-            // });
-            if (!$rows) {
-                unset($result[$i]);
-            }
+            if(isset($data['ad_id']))
+                $this->db->updateInsight($data);
         }
         return $result;
     }

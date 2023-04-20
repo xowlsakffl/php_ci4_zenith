@@ -6,6 +6,8 @@ use CodeIgniter\Controller;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use DateInterval;
+use DatePeriod;
 
 class Facebook extends Controller
 {
@@ -86,6 +88,23 @@ class Facebook extends Controller
         $updateAdsets = $this->chainsaw->updateAdsets($getAds);
         $updateCampaigns = $this->chainsaw->updateCampaigns($updateAdsets);
         */
+    }
+
+    public function updateDB($sdate = null, $edate = null) {
+        CLI::clearScreen();
+        if($sdate == null)
+            $sdate = CLI::prompt("유효DB 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
+        if($edate == null)
+            $edate = CLI::prompt("유효DB 업데이트 할 종료날짜를 입력해주세요.", $sdate);
+        $sdate = date_create($sdate);
+        $edate = date_create(date('Y-m-d', strtotime($edate.'+1 days')));
+        $interval = DateInterval::createFromDateString('1 day');
+        $date_range = new DatePeriod($sdate, $interval, $edate);
+        foreach($date_range as $date) {
+            $date = $date->format('Y-m-d');
+            CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
+            $this->chainsaw->getAdsUseLanding($date);
+        }
     }
 
     public function updateAds() {
