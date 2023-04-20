@@ -371,7 +371,7 @@ function getCampaigns(args) {
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>advertisements/facebook/data",
+            "url": "<?=base_url()?>/advertisements/facebook/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
@@ -529,7 +529,7 @@ function getAdsets(args) {
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>advertisements/facebook/data",
+            "url": "<?=base_url()?>/advertisements/facebook/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
@@ -686,7 +686,7 @@ function getAds(args) {
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>advertisements/facebook/data",
+            "url": "<?=base_url()?>/advertisements/facebook/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
