@@ -75,15 +75,32 @@ class AdvFacebookManagerController extends BaseController
         }
     }
 
-    public function getCampaigns()
-    {
+    public function getData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'dates' => [
                     'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
+                'type' => $this->request->getGet('type'),
             ];
+            
+            if($arg['type'] == 'campaigns'){
+                $result = $this->getCampaigns($arg);
+            }else if($arg['type'] == 'adsets'){
+                $result = $this->getAdSets($arg);
+            }else{
+                
+            }
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getCampaigns($arg)
+    {
             $campaigns = $this->facebook->getCampaigns($arg);
             $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
             
@@ -172,10 +189,19 @@ class AdvFacebookManagerController extends BaseController
                 'campaigns' => $campaigns,
             ];
 
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        }
+            return $result;
+    }
+
+    public function getAdSets($arg)
+    {
+        $adsets = $this->facebook->getAdSets($arg);
+        $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+
+        $result = [
+            'adsets' => $adsets
+        ];
+
+        return $result;
     }
 
     private function getDisapprovalByAccount()

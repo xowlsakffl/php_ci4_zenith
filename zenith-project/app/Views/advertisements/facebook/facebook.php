@@ -112,13 +112,13 @@
     <div class="tab-wrap">
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="campaign-tab" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" type="button" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
+                <button class="nav-link tab-link active" id="campaign-tab" value="campaigns" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" type="button" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" type="button" role="tab" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
+                <button class="nav-link tab-link" id="set-tab"  value="adsets" data-bs-toggle="tab" data-bs-target="#set-tab-pane" type="button" role="tab" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane" type="button" role="tab" aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
+                <button class="nav-link tab-link" value="ads" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane" type="button" role="tab" aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
             </li>
         </ul>
         <div class="tab-content">
@@ -194,11 +194,151 @@
                     </table>
                 </div>
             </div>
+
             <div class="tab-pane" id="set-tab-pane" role="tabpanel" aria-labelledby="set-tab">
-                광고 세트
+                <div class="btn-wrap">
+                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
+                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
+                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tbl-list">
+                        <colgroup>
+                            <col style="width:10%">
+                            <col style="width:5.5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:7%">
+                            <col style="width:6%">
+                            <col style="width:4%">
+                            <col style="width:7.5%">
+                            <col style="width:7.5%">
+                            <col style="width:5.5%">
+                            <col style="width:7.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:6.5%">
+                        </colgroup>
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">캠페인명</th>
+                                <th scope="col">상태</th>
+                                <th scope="col">예산 <br>ai</th>
+                                <th scope="col">목표 <br>ai</th>
+                                <th scope="col">예산</th>
+                                <th scope="col">현재 <br>DB단가</th>
+                                <th scope="col">유효 <br>DB</th>
+                                <th scope="col">지출액</th>
+                                <th scope="col">수익</th>
+                                <th scope="col">수익률</th>
+                                <th scope="col">매출액</th>
+                                <th scope="col">노출수</th>
+                                <th scope="col">링크클릭</th>
+                                <th scope="col">CPC</th>
+                                <th scope="col">CTR</th>
+                                <th scope="col">DB <br>전환률</th>
+                            </tr>
+                        </thead>
+                        <thead>
+                            <tr id="total">
+                                <td id="total-count"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="total-budget"></td>
+                                <td id="avg-cpa"></td>
+                                <td id="total-unique_total"></td>
+                                <td id="total-spend"></td>
+                                <td id="total-margin"></td>
+                                <td id="avg_margin_ratio"></td>
+                                <td id="total-sales"></td>
+                                <td id="total-impressions"></td>
+                                <td id="total-inline_link_clicks"></td>
+                                <td id="avg-cpc"></td>
+                                <td id="avg-ctr"></td>
+                                <td id="avg-cvr"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
             <div class="tab-pane" id="advertisement-tab-pane" role="tabpanel" aria-labelledby="advertisement-tab">
-                광고
+                <div class="btn-wrap">
+                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
+                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
+                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tbl-list">
+                        <colgroup>
+                            <col style="width:10%">
+                            <col style="width:5.5%">
+                            <col style="width:5%">
+                            <col style="width:5%">
+                            <col style="width:7%">
+                            <col style="width:6%">
+                            <col style="width:4%">
+                            <col style="width:7.5%">
+                            <col style="width:7.5%">
+                            <col style="width:5.5%">
+                            <col style="width:7.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:6.5%">
+                        </colgroup>
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">캠페인명</th>
+                                <th scope="col">상태</th>
+                                <th scope="col">예산 <br>ai</th>
+                                <th scope="col">목표 <br>ai</th>
+                                <th scope="col">예산</th>
+                                <th scope="col">현재 <br>DB단가</th>
+                                <th scope="col">유효 <br>DB</th>
+                                <th scope="col">지출액</th>
+                                <th scope="col">수익</th>
+                                <th scope="col">수익률</th>
+                                <th scope="col">매출액</th>
+                                <th scope="col">노출수</th>
+                                <th scope="col">링크클릭</th>
+                                <th scope="col">CPC</th>
+                                <th scope="col">CTR</th>
+                                <th scope="col">DB <br>전환률</th>
+                            </tr>
+                        </thead>
+                        <thead>
+                            <tr id="total">
+                                <td id="total-count"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="total-budget"></td>
+                                <td id="avg-cpa"></td>
+                                <td id="total-unique_total"></td>
+                                <td id="total-spend"></td>
+                                <td id="total-margin"></td>
+                                <td id="avg_margin_ratio"></td>
+                                <td id="total-sales"></td>
+                                <td id="total-impressions"></td>
+                                <td id="total-inline_link_clicks"></td>
+                                <td id="avg-cpc"></td>
+                                <td id="avg-ctr"></td>
+                                <td id="avg-cvr"></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -208,12 +348,15 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
+var today = moment().format('YYYY-MM-DD');
 var args = {
     'sdate': $('#sdate').val(),
     'edate': $('#edate').val(),
     'stx': $('#stx').val(),
 };
+args.type = 'campaigns';
 
+setDate();
 getAccount(args);
 getTable(args);
 
@@ -244,33 +387,37 @@ function getAccount(args){
 }
 
 function getTable(args) {
+    if(args.type == 'campaigns'){
+
+    }
 	$('#tbl-list').DataTable({
         "processing" : true,
         "searching": false,
         "ordering": true,
         "bLengthChange" : false, 
+        "bDestroy": true,
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>/advertisements/facebook/campaigns",
+            "url": "<?=base_url()?>/advertisements/facebook/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
                 $('#total-count').text(res.campaigns.length+"건");
-                $('#total-budget').text(res.total.budget.toLocaleString('ko-KR'));
+                $('#total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 $('#avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
                 $('#total-unique_total').text(res.total.unique_total);
-                $('#total-spend').text(res.total.spend.toLocaleString('ko-KR'));
-                $('#total-margin').text(res.total.margin.toLocaleString('ko-KR'));
-                $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100);
-                $('#total-sales').text(res.total.sales.toLocaleString('ko-KR'));
+                $('#total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $('#total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $('#total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
                 $('#total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
                 $('#total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
-                $('#avg-cpc').text(Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
                 $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-                $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100);
+                $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
 
                 return res.campaigns;
             }
@@ -284,7 +431,7 @@ function getTable(args) {
                 "data": "budget", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        budget = parseInt(data).toLocaleString('ko-KR');  
+                        budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
                         budget = "";
                     }
@@ -307,7 +454,7 @@ function getTable(args) {
                 "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        spend = parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
                         spend = "";
                     }
@@ -318,7 +465,7 @@ function getTable(args) {
                 "data": "margin",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin = parseInt(data).toLocaleString('ko-KR');  
+                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
                         margin = "";
                     }
@@ -329,7 +476,7 @@ function getTable(args) {
                 "data": "margin_ratio",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin_ratio = parseInt(data).toLocaleString('ko-KR');  
+                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                     }else{
                         margin_ratio = "";
                     }
@@ -340,7 +487,7 @@ function getTable(args) {
                 "data": "sales",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        sales = parseInt(data).toLocaleString('ko-KR');  
+                        sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
                         sales = "";
                     }
@@ -373,7 +520,7 @@ function getTable(args) {
                 "data": "cpc", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cpc = parseInt(data).toLocaleString('ko-KR');  
+                        cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
                         cpc = "";
                     }
@@ -381,7 +528,12 @@ function getTable(args) {
                 }
             }, //클릭당단가 (1회 클릭당 비용)
             { "data": "ctr", }, //클릭율 (노출 대비 클릭한 비율)
-            { "data": "cvr", }, //전환율
+            { 
+                "data": "cvr", 
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                }
+            }, //전환율
         ],
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
@@ -395,11 +547,8 @@ function getTable(args) {
     });
 }
 
-
-
-
-if($('#sdate, #edate').length){
-    var currentDate = moment().format("YYYY-MM-DD");
+function setDate(){
+    $('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷
@@ -445,6 +594,14 @@ if($('#sdate, #edate').length){
     
     });
 }
+
+$('body').on('click', '.tab-link', function() {
+    type = $(this).val();
+    args.type = type;
+    console.log(args)
+    getTable(args);
+});
+
 </script>
 <?=$this->endSection();?>
 

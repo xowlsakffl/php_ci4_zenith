@@ -58,17 +58,56 @@ class AdvFacebookManagerModel extends Model
         }
 
         $builder->groupBy('A.campaign_id');
-
-        if(!empty($data['sort'])){
+		$builder->orderBy('D.create_date', 'desc');
+        /* if(!empty($data['sort'])){
             $builder->orderBy('D.create_date', 'desc');
         }else{
             $builder->orderBy('D.create_date', 'desc');
-        }
+        } */
 
         $builder->orderBy('A.campaign_name', 'asc');
         $result = $builder->get()->getResultArray();
         return $result;
     }
+
+	public function getAdsets($data)
+	{
+		$builder = $this->facebook->table('fb_campaign A');
+		$builder->select('B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, 0 AS total, 0 AS unique_total, B.budget, SUM(D.sales) as sales');
+		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
+		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
+		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
+
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+        }
+
+		$builder->groupBy('B.adset_id');
+		$builder->orderBy('D.create_date', 'desc');
+		$builder->orderBy('B.adset_name', 'asc');
+		$result = $builder->get()->getResultArray();
+
+		return $result;
+		/* if (@count($args['ids'][0]) > 0) {
+			$campaigns = "'" . implode("','", $args['ids'][0]) . "'";
+			$sql .= " AND B.campaign_id IN (" . $campaigns . ")";
+		} else if (@count($args['accounts']) > 0 || @count($args['businesses']) > 0) {
+			$sql = "SELECT  B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status,
+					COUNT(C.ad_id) ads, SUM(D.impressions) impressions,
+					SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, 0 AS total, 0 AS unique_total, B.budget, sum(D.sales) as sales
+				FROM fb_campaign A, fb_adset B, fb_ad C, fb_ad_insight_history D, fb_ad_account E
+				WHERE A.campaign_id = B.campaign_id AND B.adset_id = C.adset_id AND C.ad_id = D.ad_id AND A.account_id = E.ad_account_id";
+			if (count($args['businesses']) > 0) {
+				$businesses = "'" . implode("','", $args['businesses']) . "'";
+				$sql .= " AND E.business_id IN (" . $businesses . ")";
+			}
+			if (count($args['accounts']) > 0) {
+				$accounts = "'" . implode("','", $args['accounts']) . "'";
+				$sql .= " AND A.account_id IN (" . $accounts . ")";
+			}
+		} */
+	}
 
     public function getStatuses($param, $result, $dates)
     {
@@ -190,6 +229,7 @@ class AdvFacebookManagerModel extends Model
     
     private function getEventStat_hotevent($id, $sdate, $edate)
 	{
+		/*테이블 변경 임시*/
 		$ad_id = explode(",", $id);
         $builder = $this->facebook->table('fb_lead_count');
         $builder->select('SUM(db_count) as unique_total, SUM(margin) as margin');
@@ -290,6 +330,7 @@ class AdvFacebookManagerModel extends Model
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id', 'left');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id', 'left');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
+		/*테이블변경 임시*/
 		$builder->join('fb_lead_count E', 'C.ad_id = E.ad_id AND D.date = E.date', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
