@@ -254,10 +254,8 @@ class AdvFacebookManagerModel extends Model
 					$row['budget_txt'] = '';
 					break;
 			}
-
-			$rows[] = $row;
         }
-        return $rows;
+        return $result;
     }
     
     // 정파고 on/off 확인
