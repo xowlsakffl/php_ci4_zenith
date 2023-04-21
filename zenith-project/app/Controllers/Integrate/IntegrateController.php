@@ -25,19 +25,19 @@ class IntegrateController extends BaseController
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $param = [
+            $arg = [
                 'length' => $this->request->getGet('length'),
                 'start' => $this->request->getGet('start'),
                 'draw' => $this->request->getGet('draw'),
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
 
-            $result = $this->integrate->getEventLead($param);
+            $result = $this->integrate->getEventLead($arg);
 
             foreach($result['data'] as &$row){
                 $etc = [];
@@ -80,7 +80,7 @@ class IntegrateController extends BaseController
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],
                 'recordsFiltered' => $result['allCount'],
-                'draw' => intval($param['draw']),
+                'draw' => intval($arg['draw']),
             ];
 
             return $this->respond($result);
@@ -93,16 +93,16 @@ class IntegrateController extends BaseController
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+            $arg = [
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
 
-            $data = $this->integrate->getEventLeadCount($param);
+            $data = $this->integrate->getEventLeadCount($arg);
 
             $adv_counts = array();
             $med_counts = array();
@@ -143,12 +143,12 @@ class IntegrateController extends BaseController
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+            $arg = [
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
             ];
 
-            $data = $this->integrate->getFirstLeadCount($param);
+            $data = $this->integrate->getFirstLeadCount($arg);
 
             $adv_counts = array();
             $med_counts = array();
@@ -194,16 +194,16 @@ class IntegrateController extends BaseController
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $param = [
-                'sdate' => $this->request->getGet('sdate'),
-                'edate' => $this->request->getGet('edate'),
+            $arg = [
+                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 'stx' => $this->request->getGet('stx'),
                 'adv' => $this->request->getGet('adv'),
                 'media' => $this->request->getGet('media'),
                 'event' => $this->request->getGet('event'),
             ];
 
-            $result = $this->integrate->getStatusCount($param);
+            $result = $this->integrate->getStatusCount($arg);
 
             return $this->respond($result);
         }else{

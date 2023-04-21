@@ -8,7 +8,7 @@ class KMDB
     {
         $this->db = \Config\Database::connect('kakao');
         $this->db2 = \Config\Database::connect('ro_kakao');
-        //$this->zenith = \Config\Database::connect();
+        $this->zenith = \Config\Database::connect();
         //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
 
@@ -455,28 +455,18 @@ class KMDB
         }
     }
      
-    public function updateReport($data)
+    public function getAppSubscribe($data)
     {
-        if ($data->creative_id && $data->date) {
-
-            foreach ($data->data as $field => $value) {
-                $query[] = "{$field} = '{$value}'";
-            }
-            $sql = "UPDATE mm_creative_report_basic SET " . implode(',', $query) . " WHERE id = {$data->creative_id} AND date = '{$data->date}'";
-            $this->db_query($sql);
-        }
-        return false;
-    }
-     
-    public function getAppSubscribe($data, $date)
-    {
-        if (!$data['db_prefix']) {
-            return 0;
-        }
-        $sql = "SELECT * FROM app_subscribe WHERE group_id = '{$data['app_id']}' AND status = 1 AND site = '{$data['site']}' AND DATE_FORMAT(reg_date, '%Y-%m-%d') = '{$date}' AND deleted = 0";
-        $res = $this->zenith->query($sql);
-        $num_rows = $res->getNumRow();
-        return $num_rows;
+        if (!$data['event_seq']) return null;
+        $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
+                FROM `zenith`.`event_leads`
+                WHERE `reg_timestamp` >= unix_timestamp('{$data['date']}')
+                AND `status` = 1 AND `is_deleted` = 0
+                AND `event_seq` = {$data['event_seq']} AND `site` = '{$data['site']}' AND DATE_FORMAT(`reg_date`, '%Y-%m-%d') = '{$data['date']}'
+                GROUP BY `event_seq`, `site`, HOUR(from_unixtime(reg_timestamp))";
+                // echo $sql.PHP_EOL;
+        $result = $this->zenith->query($sql);
+        return $result;
     }
      
     public function allAiOn($data) {
@@ -485,25 +475,42 @@ class KMDB
         $sql = "UPDATE mm_adgroup SET aiConfig = 'ON', aiConfig2 = 'ON' WHERE id = {$data['adgroup_id']} AND aiConfig = 'OFF' AND aiConfig2 = 'OFF'";
         $result = $this->db_query($sql);
     }
-     
-    public function insertDbCount($data, $date)
+
+    public function getAdLeads($date)
     {
-        foreach ($data as $key => $row) {
+        $sql = "SELECT report.id, CONCAT('{',GROUP_CONCAT('\"',report.`hour`,'\":',report.cost),'}') AS cost_data, creative.name, creative.landingUrl
+                FROM mm_creative_report_basic AS report
+                        LEFT JOIN mm_creative AS creative
+                            ON report.id = creative.id
+                        LEFT JOIN mm_adgroup AS B
+                            ON creative.adgroup_id = B.id
+                        LEFT JOIN mm_campaign AS C
+                            ON B.campaign_id = C.id
+                        LEFT JOIN mm_ad_account AS D
+                            ON C.ad_account_id = D.id
+                    WHERE D.is_update = 1 AND report.date = '{$date}' GROUP BY report.id";
+        $result = $this->db_query($sql);
+
+        return $result;
+    }
+
+    public function updateReport($data)
+    {
+        $row = $data;
+        foreach($row['data'] as $v) {
             if ($row['creative_id']) {
-                $sql = "INSERT INTO mm_db_count (creative_id, event_id, site, media, db_price, db_count, margin, date, create_time)
-                        VALUES ('{$row['creative_id']}', '{$row['app_id']}', '{$row['site']}', '{$row['media']}', '{$row['db_price']}', '{$row['count']}', '{$row['margin']}', '{$date}', NOW())
-                        ON DUPLICATE KEY
-                        UPDATE creative_id = '{$row['creative_id']}', event_id = '{$row['app_id']}', site = '{$row['site']}', media = '{$row['media']}', db_price = '{$row['db_price']}', db_count = '{$row['count']}', margin = '{$row['margin']}', date = '{$date}', update_time = NOW();";
-                // echo $sql.'<br>';
-                $result = $this->db_query($sql);
+                $sql = "UPDATE `z_moment`.`mm_creative_report_basic` 
+                SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_time` = NOW()
+                WHERE `id` = '{$row['creative_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
+                $this->db_query($sql, true);
             }
         }
     }
      
-    public function getDbCount($ad_id, $date)
+    public function getDbPrice($data)
     {
-        if (!$ad_id || !$date) return NULL;
-        $sql = "SELECT * FROM mm_db_count WHERE creative_id = '{$ad_id}' AND date = '{$date}'";
+        if (!$data['creative_id'] || !$data['date']) return NULL;
+        $sql = "SELECT id, date, db_price FROM `z_moment`.`mm_creative_report_basic` WHERE `id` = '{$data['creative_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
         $result = $this->db_query($sql);
         if (!$result) return null;
         return $result->getResultArray();

@@ -261,7 +261,7 @@ class GADB
 
 	public function getAdLeads($date)
 	{
-		$sql = "SELECT his.ad_id, his.cost, ad.code, ad.finalUrl, ac.name AS campaign_name
+		$sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.cost),'}') AS spend_data, ad.code, ad.finalUrl, ac.name AS campaign_name
 				FROM
 					`aw_ad_report_history` AS his
 					LEFT JOIN aw_ad AS ad ON his.ad_id = ad.id
@@ -273,29 +273,40 @@ class GADB
 		return $result;
 	}
 
-	public function insertDbCount($data, $date)
-	{
-		foreach ($data as $key => $row) {
-			if ($row['ad_id']) {
-				$sql = "INSERT INTO aw_db_count (ad_id, event_id, site, media, db_price, db_count, margin, date, create_time)
-                        VALUES ('{$row['ad_id']}', '{$row['app_id']}', '{$row['site']}', '{$row['media']}', '{$row['db_price']}', '{$row['count']}', '{$row['margin']}', '{$date}', NOW())
-                        ON DUPLICATE KEY
-                        UPDATE ad_id = '{$row['ad_id']}', event_id = '{$row['app_id']}', site = '{$row['site']}', media = '{$row['media']}', db_price = '{$row['db_price']}', db_count = '{$row['count']}', margin = '{$row['margin']}', date = '{$date}', update_time = NOW();";
-				//echo $sql.'<br>';
-				$result = $this->db_query($sql, true);
-			}
-		}
-	}
+	public function getDbPrice($data)
+    {
+        if (!$data['ad_id'] || !$data['date']) return NULL;
+        $sql = "SELECT ad_id, date, db_price FROM `z_adwords`.`aw_ad_report_history` WHERE `ad_id` = '{$data['ad_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
+        $result = $this->db_query($sql);
+        if (!$result) return null;
+        return $result->getResultArray();
+    }
+
+    public function getAppSubscribe($data)
+    {
+        if (!$data['event_seq']) return null;
+        $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
+                FROM `zenith`.`event_leads`
+                WHERE `reg_timestamp` >= unix_timestamp('{$data['date']}')
+                AND `status` = 1 AND `is_deleted` = 0
+                AND `event_seq` = {$data['event_seq']} AND `site` = '{$data['site']}' AND DATE_FORMAT(`reg_date`, '%Y-%m-%d') = '{$data['date']}'
+                GROUP BY `event_seq`, `site`, HOUR(from_unixtime(reg_timestamp))";
+        $result = $this->zenith->query($sql);
+        return $result;
+    }
 
 	public function updateReport($data)
-	{
-		if ($data->ad_id && $data->date) {
-			foreach ($data->data as $field => $value) $query[] = "{$field} = '{$value}'";
-			$sql = "UPDATE aw_ad_report_history SET " . implode(',', $query) . " WHERE ad_id = {$data->ad_id} AND date = '{$data->date}'";
-			$this->db_query($sql);
-		}
-		return false;
-	}
+    {
+        $row = $data;
+        foreach($row['data'] as $v) {
+            if ($row['ad_id']) {
+                $sql = "UPDATE `z_adwords`.`aw_ad_report_history` 
+                SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_time` = NOW()
+                WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
+                $this->db_query($sql, true);
+            }
+        }
+    }
 
 	public function db_query($sql, $error = false)
 	{

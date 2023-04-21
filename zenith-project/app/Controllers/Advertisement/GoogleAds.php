@@ -3,6 +3,8 @@ namespace App\Controllers\Advertisement;
 
 use App\Controllers\BaseController;
 use CodeIgniter\CLI\CLI;
+use DateInterval;
+use DatePeriod;
 
 class GoogleAds extends BaseController
 {
@@ -30,12 +32,20 @@ class GoogleAds extends BaseController
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트 완료", "yellow");
     }
     
-    public function getAdsUseLanding()
-    {
+    public function updateDB($sdate = null, $edate = null) {
         CLI::clearScreen();
-        CLI::write("유효DB 개수 업데이트를 진행합니다.", "light_red");
-        $date = CLI::prompt("유효DB 개수를 수신할 날짜를 입력해주세요.", date('Y-m-d'));
-        $this->chainsaw->getAdsUseLanding($date);
-        CLI::write("유효DB 개수 업데이트 완료", "yellow");
+        if($sdate == null)
+            $sdate = CLI::prompt("유효DB 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
+        if($edate == null)
+            $edate = CLI::prompt("유효DB 업데이트 할 종료날짜를 입력해주세요.", $sdate);
+        $sdate = date_create($sdate);
+        $edate = date_create(date('Y-m-d', strtotime($edate.'+1 days')));
+        $interval = DateInterval::createFromDateString('1 day');
+        $date_range = new DatePeriod($sdate, $interval, $edate);
+        foreach($date_range as $date) {
+            $date = $date->format('Y-m-d');
+            CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
+            $this->chainsaw->getAdsUseLanding($date);
+        }
     }
 }

@@ -589,6 +589,60 @@ class FBDB extends Config
         }
     }
 
+    public function updateInsight($data)
+    {
+        $row = $data;
+        if(!$row['data']) return;
+        foreach($row['data'] as $v) {
+            if ($row['ad_id']) {
+                $sql = "UPDATE `z_facebook`.`fb_ad_insight_history` 
+                SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_date` = NOW()
+                WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
+                $this->db_query($sql, true);
+            }
+        }
+    }
+
+    public function getAdLeads($date)
+    {
+        $sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.spend),'}') AS spend_data, ad.ad_name, adset.adset_name, campaign.campaign_name
+                FROM `z_facebook`.`fb_ad_insight_history` AS his
+                    LEFT JOIN `z_facebook`.fb_ad AS ad
+                        ON his.ad_id = ad.ad_id
+                    LEFT JOIN `z_facebook`.fb_adset AS adset
+                        ON adset.adset_id = ad.adset_id
+                    LEFT JOIN `z_facebook`.fb_campaign AS campaign
+                        ON adset.campaign_id = campaign.campaign_id
+                    LEFT JOIN `z_facebook`.fb_ad_account AS account
+                        ON campaign.account_id = account.ad_account_id
+                WHERE his.date = '{$date}' AND account.perm = 1 GROUP BY his.ad_id;";
+        $result = $this->db_query($sql);
+
+        return $result;
+    }
+
+    public function getDbPrice($data)
+    {
+        if (!$data['ad_id'] || !$data['date']) return NULL;
+        $sql = "SELECT ad_id, date, db_price FROM `z_facebook`.`fb_ad_insight_history` WHERE `ad_id` = '{$data['ad_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
+        $result = $this->db_query($sql);
+        if (!$result) return null;
+        return $result->getResultArray();
+    }
+
+    public function getAppSubscribe($data)
+    {
+        if (!$data['event_seq']) return null;
+        $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
+                FROM `zenith`.`event_leads`
+                WHERE `reg_timestamp` >= unix_timestamp('{$data['date']}')
+                AND `status` = 1 AND `is_deleted` = 0
+                AND `event_seq` = {$data['event_seq']} AND `site` = '{$data['site']}' AND DATE_FORMAT(`reg_date`, '%Y-%m-%d') = '{$data['date']}'
+                GROUP BY `event_seq`, `site`, HOUR(from_unixtime(reg_timestamp))";
+        $result = $this->zenith->query($sql);
+        return $result;
+    }
+
     public function db_query($sql, $error = false)
     {
         if (!$sql) return false;

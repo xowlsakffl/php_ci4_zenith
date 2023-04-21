@@ -4,6 +4,8 @@ namespace App\Controllers\Advertisement;
 
 use CodeIgniter\CLI\CLI;
 use App\Controllers\BaseController;
+use DateInterval;
+use DatePeriod;
 
 class KakaoMoment extends BaseController
 {
@@ -109,13 +111,21 @@ class KakaoMoment extends BaseController
     }
 
     //유효DB 개수 업데이트
-    public function getCreativesUseLanding()
-    { 
+    public function updateDB($sdate = null, $edate = null) {
         CLI::clearScreen();
-        CLI::write("유효DB 개수 업데이트를 진행합니다.", "light_red");
-        $date = CLI::prompt("유효DB 개수 수신할 날짜를 입력해주세요.", date('Y-m-d'));
-        $this->chainsaw->getCreativesUseLanding($date);
-        CLI::write("유효DB 개수 업데이트 완료", "yellow");
+        if($sdate == null)
+            $sdate = CLI::prompt("유효DB 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
+        if($edate == null)
+            $edate = CLI::prompt("유효DB 업데이트 할 종료날짜를 입력해주세요.", $sdate);
+        $sdate = date_create($sdate);
+        $edate = date_create(date('Y-m-d', strtotime($edate.'+1 days')));
+        $interval = DateInterval::createFromDateString('1 day');
+        $date_range = new DatePeriod($sdate, $interval, $edate);
+        foreach($date_range as $date) {
+            $date = $date->format('Y-m-d');
+            CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
+            $this->chainsaw->getCreativesUseLanding($date);
+        }
     }
 
     //리포트데이터를 업데이트
