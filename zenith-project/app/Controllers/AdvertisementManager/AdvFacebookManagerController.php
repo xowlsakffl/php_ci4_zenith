@@ -40,6 +40,7 @@ class AdvFacebookManagerController extends BaseController
                     'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
+                'businesses' => $this->request->getGet('businesses'),
             ];
 
             $accounts = $this->facebook->getAccounts($arg);
@@ -83,6 +84,9 @@ class AdvFacebookManagerController extends BaseController
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
                 'type' => $this->request->getGet('type'),
+                'businesses' => $this->request->getGet('businesses'),
+                'accounts' => $this->request->getGet('accounts'),
+                'stx' => $this->request->getGet('stx'),
             ];
             
             if($arg['type'] == 'ads'){

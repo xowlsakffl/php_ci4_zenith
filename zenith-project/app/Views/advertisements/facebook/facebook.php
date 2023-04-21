@@ -78,17 +78,17 @@
         <div class="row">
             <div class="col">
                 <div class="inner">
-                    <button type="button" class="act-tab act-316991668497111" data="316991668497111">열혈 패밀리</button>
+                    <button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button>
                 </div>
             </div>
             <div class="col">
                 <div class="inner">
-                    <button type="button" class="act-tab act-2859468974281473" data="2859468974281473">케어랩스5</button>
+                    <button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button>
                 </div>
             </div>
             <div class="col">
                 <div class="inner">
-                    <button type="button" class="act-tab act-213123902836946" data="213123902836946">케어랩스7</button>
+                    <button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button>
                 </div>
             </div>
         </div>
@@ -327,7 +327,6 @@ var today = moment().format('YYYY-MM-DD');
 var args = {
     'sdate': $('#sdate').val(),
     'edate': $('#edate').val(),
-    'stx': $('#stx').val(),
 };
 args.type = 'campaigns';
 
@@ -343,6 +342,7 @@ function getAccount(args){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
+            $('.advertiser .row').empty();
             var html = '';
             var set_ratio = '';
             $.each(data, function(idx, v) {               
@@ -350,7 +350,7 @@ function getAccount(args){
                     set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
                 }
 
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" class="">'+v.name+set_ratio+'</button></div></div>';
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" id="account_btn" class="filter_btn">'+v.name+set_ratio+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
@@ -397,7 +397,7 @@ function getCampaigns(args) {
         "columns": [
             { "data": "name" },
             { "data": "status" },
-            { "data": "optimization_campaign" },
+            { "data": null, "defaultContent": ""},
             { "data": "ai2_status" },
             { 
                 "data": "budget", 
@@ -555,7 +555,7 @@ function getAdsets(args) {
         "columns": [
             { "data": "name" },
             { "data": "status" },
-            { "data": "optimization_adset" },
+            { "data": null, "defaultContent": ""},
             { 
                 "data": "budget", 
                 "render": function (data, type, row) {
@@ -869,10 +869,61 @@ function setDate(){
 }
 
 $('body').on('click', '.tab-link', function(){
+    args.stx = "";
     var tabVal = $(this).val();
     args.type = tabVal;
-    console.log(args.type);
+
     switch (args.type) {
+    case "ads":
+        getAds(args);
+        break;
+    case "adsets":
+        getAdsets(args);
+        break;
+    default:
+        getCampaigns(args);
+    } 
+});
+
+$('body').on('click', '.client-list h3', function(){
+    $(this).siblings('.row').slideToggle();
+});
+
+$('body').on('click', '#business_btn, #account_btn', function(){
+    $(this).toggleClass("active");
+    tab = $('.tab-link.active').val();
+    business = $('#business_btn.active').map(function(){return $(this).val();}).get();
+    accounts = $('#account_btn.active').map(function(){return $(this).val();}).get();
+
+    args.businesses = business;
+    args.accounts = accounts;
+    if ($(this).attr('id') === 'business_btn') {
+        getAccount(args);
+    }
+    switch (tab) {
+    case "ads":
+        getAds(args);
+        break;
+    case "adsets":
+        getAdsets(args);
+        break;
+    default:
+        getCampaigns(args);
+    } 
+});
+
+$('body').on('click', '#search_btn', function() {
+    tab = $('.tab-link.active').val();
+    args = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'type': tab,
+    };
+    
+    getAccount(args);
+
+    switch (tab) {
     case "ads":
         getAds(args);
         break;
