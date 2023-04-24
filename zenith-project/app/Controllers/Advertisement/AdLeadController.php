@@ -72,13 +72,13 @@ class AdLeadController extends BaseController
             if ($landing['event_id']) {
                 $result['event_seq'] = $landing['event_id'];
                 $result['site'] = $landing['site'];
-                $result['name'] = $row['nickname'];
+                $result['name'] = addslashes($row['nickname']);
                 $result['phone'] = $phone;
-                $result['add1'] = $add1;
-                $result['add2'] = $add2;
-                $result['add3'] = $add3;
-                $result['add4'] = $add4;
-                $result['add5'] = $add5;
+                $result['add1'] = addslashes($add1);
+                $result['add2'] = addslashes($add2);
+                $result['add3'] = addslashes($add3);
+                $result['add4'] = addslashes($add4);
+                $result['add5'] = addslashes($add5);
                 $result['reg_date'] = $row['create_time'];
                 $result['id'] = $row['seq'];   
                 $result['encUserId'] = $row['encUserId'];
@@ -171,15 +171,15 @@ class AdLeadController extends BaseController
             if ($landing['event_id']) {
                 $result['event_seq'] = $landing['event_id'];
                 $result['site'] = $landing['site'];
-                $result['name'] = $full_name;
+                $result['name'] = addslashes($full_name);
                 $result['gender'] = $gender;
                 $result['age'] = $age;
                 $result['phone'] = $phone;
-                $result['add1'] = $add1;
-                $result['add2'] = $add2;
-                $result['add3'] = $add3;
-                $result['add4'] = $add4;
-                $result['add5'] = $add5;
+                $result['add1'] = addslashes($add1);
+                $result['add2'] = addslashes($add2);
+                $result['add3'] = addslashes($add3);
+                $result['add4'] = addslashes($add4);
+                $result['add5'] = addslashes($add5);
                 $result['addr'] = $addr;
                 $result['reg_date'] = $row['created_time'];
                 $result['id'] = $row['id'];            
