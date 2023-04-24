@@ -374,7 +374,7 @@ class AdvFacebookManagerModel extends Model
 
 	public function getChartReport($data)
 	{
-		$builder = $this->facebook->table('fb_ad_insight_history A')
+		$builder = $this->facebook->table('fb_ad_insight_history A');
         $builder->select('A.date, 
                 SUM(A.impressions) AS impressions,
                 SUM(A.inline_link_clicks) AS clicks,
@@ -402,8 +402,8 @@ class AdvFacebookManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-
-		/* if ($data['advertiser']) {
+		/*
+		if ($data['advertiser']) {
 			$advertiser = explode(',', preg_replace('/\^$/', '', $data['advertiser']));
 			$query = ' AND (F.ad_account_id = "' . implode('" OR F.ad_account_id = "', $advertiser) . '")';
 		} else {
@@ -426,6 +426,5 @@ class AdvFacebookManagerModel extends Model
 			$adsets = "'" . implode("','", $args['ids'][1]) . "'";
 			$query .= " AND D.adset_id IN (" . $adsets . ")";
 		} */
-
 	}
 }

@@ -140,8 +140,6 @@ $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead
 //테스트
 $routes->get('example/(:any)', 'ExampleController::view/$1');
 
-
-
 /*
  * --------------------------------------------------------------------
  * Additional Routing
