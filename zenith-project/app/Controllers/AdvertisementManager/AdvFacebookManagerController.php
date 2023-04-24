@@ -21,17 +21,6 @@ class AdvFacebookManagerController extends BaseController
         return view('advertisements/facebook/facebook');
     }
 
-    public function getAdAccount()
-    {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $result = $this->facebook->getAdAccounts();
-
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        }
-    }
-
     public function getAccounts()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
@@ -101,6 +90,17 @@ class AdvFacebookManagerController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    public function getChartReport($arg)
+    {
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+
+            $res = $this->facebook->getChartReport($arg);
+            //return $this->respond($result);
+        //}else{
+            //return $this->fail("잘못된 요청");
+        //}
     }
 
     private function getCampaigns($arg)

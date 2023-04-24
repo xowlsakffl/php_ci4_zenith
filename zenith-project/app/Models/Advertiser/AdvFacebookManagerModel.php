@@ -13,18 +13,6 @@ class AdvFacebookManagerModel extends Model
         $this->facebook = \Config\Database::connect('facebook');
         $this->ro_facebook = \Config\Database::connect('ro_facebook');
     }
-
-    public function getAdAccounts()
-    {
-        $builder = $this->facebook->table('fb_ad_account');
-        $builder->select("*");
-        $builder->where('status', 1);
-        $builder->where('perm', 1);
-        $builder->where('pixel_id IS NOT NULL');
-        $result = $builder->get()->getResultArray();
-        
-        return $result;
-    }
     
     public function getCampaigns($data)
     {
@@ -379,6 +367,35 @@ class AdvFacebookManagerModel extends Model
 		$builder->where('ad.status', 'ACTIVE');
 		$builder->where('ad.created_time >=', '2022-01-01 00:00:00');
 		$builder->orderBy('ad.created_time', 'DESC');
+		$result = $builder->get()->getResultArray();
+
+        return $result;
+	}
+
+	public function getChartReport($data)
+	{
+		$builder = $this->facebook->table('fb_ad_insight_history A')
+        $builder->select('A.date, 
+                SUM(A.impressions) AS impressions,
+                SUM(A.inline_link_clicks) AS clicks,
+                (SUM(A.inline_link_clicks) / SUM(A.impressions)) * 100 AS click_ratio,
+                (SUM(B.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
+                SUM(A.spend) AS spend,
+                SUM(B.db_count) AS unique_total,
+                IFNULL(SUM(A.spend) / SUM(B.db_count), 0) AS unique_one_price,
+                SUM(B.db_price) AS unit_price,
+                SUM(A.sales) AS price,
+                SUM(B.margin) AS profit,
+                (SUM(B.db_price * B.db_count) - SUM(A.spend)) / SUM(B.db_price * B.db_count) * 100 AS per');
+        $builder->join('fb_lead_count B', 'A.ad_id = B.ad_id AND B.date BETWEEN ' . $this->facebook->escape($data['s_date']) . ' AND ' . $this->facebook->escape($data['e_date']) . ' AND A.date = B.date', 'left');
+        $builder->join('fb_ad C', 'A.ad_id = C.ad_id', 'left');
+        $builder->join('fb_adset D', 'C.adset_id = D.adset_id', 'left');
+        $builder->join('fb_campaign E', 'D.campaign_id = E.campaign_id', 'left');
+        $builder->join('fb_ad_account F', 'E.account_id = F.ad_account_id', 'left');
+        $builder->where('A.date BETWEEN ' . $this->facebook->escape($data['s_date']) . ' AND ' . $this->facebook->escape($data['e_date']));
+		$builder->groupBy(['C.ad_id, A.date']);
+		$builder->orderBy('A.date', 'ASC');
+		$builder->orderBy('F.name', 'ASC');
 		$result = $builder->get()->getResultArray();
 
         return $result;
