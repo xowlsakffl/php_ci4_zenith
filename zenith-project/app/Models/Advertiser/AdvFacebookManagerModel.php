@@ -374,7 +374,7 @@ class AdvFacebookManagerModel extends Model
 
 	public function getChartReport($data)
 	{
-		$builder = $this->facebook->table('fb_ad_insight_history A')
+		/* $builder = $this->facebook->table('fb_ad_insight_history A')
         $builder->select('A.date, 
                 SUM(A.impressions) AS impressions,
                 SUM(A.inline_link_clicks) AS clicks,
@@ -398,6 +398,6 @@ class AdvFacebookManagerModel extends Model
 		$builder->orderBy('F.name', 'ASC');
 		$result = $builder->get()->getResultArray();
 
-        return $result;
+        return $result; */
 	}
 }
