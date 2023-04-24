@@ -92,11 +92,37 @@ class AdvFacebookManagerController extends BaseController
         }
     }
 
-    public function getChartReport($arg)
+    public function getChartReport()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = [
+                'dates' => [
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                ],
+            ];
 
             $res = $this->facebook->getChartReport($arg);
+
+            $term_days = (strtotime($arg['dates']['edate']) - strtotime($arg['dates']['sdate'])) / 60 / 60 / 24 + 1;
+            $adv_count = 0;
+            $columnIndex = 0;
+            $data = [];
+            foreach($res as $row) {
+                $data[] = $row;
+                if ($row['name'] && !in_array($row['name'], $report['adv_list']))
+                    $report['adv_list'][$adv_count++] = $row['name'];
+                foreach ($row as $col => $val) {
+                    if ($val == NULL) $val = "0";
+                    $total[$col][$columnIndex] = $val;
+                }
+                $columnIndex++;
+            }
+
+            
+            
+            
+            //dd($res);
             //return $this->respond($result);
         //}else{
             //return $this->fail("잘못된 요청");

@@ -379,25 +379,53 @@ class AdvFacebookManagerModel extends Model
                 SUM(A.impressions) AS impressions,
                 SUM(A.inline_link_clicks) AS clicks,
                 (SUM(A.inline_link_clicks) / SUM(A.impressions)) * 100 AS click_ratio,
-                (SUM(B.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
+                (SUM(A.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
                 SUM(A.spend) AS spend,
-                SUM(B.db_count) AS unique_total,
-                IFNULL(SUM(A.spend) / SUM(B.db_count), 0) AS unique_one_price,
-                SUM(B.db_price) AS unit_price,
+                SUM(A.db_count) AS unique_total,
+                IFNULL(SUM(A.spend) / SUM(A.db_count), 0) AS unique_one_price,
+                SUM(A.db_price) AS unit_price,
                 SUM(A.sales) AS price,
-                SUM(B.margin) AS profit,
-                (SUM(B.db_price * B.db_count) - SUM(A.spend)) / SUM(B.db_price * B.db_count) * 100 AS per');
-        $builder->join('fb_lead_count B', 'A.ad_id = B.ad_id AND B.date BETWEEN ' . $this->facebook->escape($data['s_date']) . ' AND ' . $this->facebook->escape($data['e_date']) . ' AND A.date = B.date', 'left');
-        $builder->join('fb_ad C', 'A.ad_id = C.ad_id', 'left');
-        $builder->join('fb_adset D', 'C.adset_id = D.adset_id', 'left');
-        $builder->join('fb_campaign E', 'D.campaign_id = E.campaign_id', 'left');
-        $builder->join('fb_ad_account F', 'E.account_id = F.ad_account_id', 'left');
-        $builder->where('A.date BETWEEN ' . $this->facebook->escape($data['s_date']) . ' AND ' . $this->facebook->escape($data['e_date']));
-		$builder->groupBy(['C.ad_id, A.date']);
+                SUM(A.margin) AS profit,
+                (SUM(A.db_price * A.db_count) - SUM(A.spend)) / SUM(A.db_price * A.db_count) * 100 AS per');
+        $builder->join('fb_ad B', 'A.ad_id = B.ad_id', 'left');
+        $builder->join('fb_adset C', 'B.adset_id = C.adset_id', 'left');
+        $builder->join('fb_campaign D', 'C.campaign_id = D.campaign_id', 'left');
+        $builder->join('fb_ad_account E', 'D.account_id = E.ad_account_id', 'left');
+
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        } 
+
+		$builder->groupBy('A.date');
 		$builder->orderBy('A.date', 'ASC');
-		$builder->orderBy('F.name', 'ASC');
 		$result = $builder->get()->getResultArray();
 
         return $result;
+
+		/* if ($data['advertiser']) {
+			$advertiser = explode(',', preg_replace('/\^$/', '', $data['advertiser']));
+			$query = ' AND (F.ad_account_id = "' . implode('" OR F.ad_account_id = "', $advertiser) . '")';
+		} else {
+			$select = '';
+			$advertiser = array('전체');
+			$group = 'GROUP BY A.date';
+			$order = 'ORDER BY A.date ASC';
+		}
+
+		$args = json_decode(stripslashes($data['args']), true);
+		if (@count($args['businesses']) > 0) {
+			$businesses = "'" . implode("','", $args['businesses']) . "'";
+			$query .= " AND F.business_id IN (" . $businesses . ")";
+		}
+		if (@count($args['ids'][0]) > 0) {
+			$campaigns = "'" . implode("','", $args['ids'][0]) . "'";
+			$query .= " AND E.campaign_id IN (" . $campaigns . ")";
+		}
+		if (@count($args['ids'][1]) > 0) {
+			$adsets = "'" . implode("','", $args['ids'][1]) . "'";
+			$query .= " AND D.adset_id IN (" . $adsets . ")";
+		} */
+
 	}
 }

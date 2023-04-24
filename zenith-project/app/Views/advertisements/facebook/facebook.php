@@ -331,8 +331,25 @@ var args = {
 args.type = 'campaigns';
 
 setDate();
+//getChartReport(args);
 getAccount(args);
 getCampaigns(args);
+
+function getChartReport(args){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/facebook/report",
+        data: args,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            console.log(data)
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
 
 function getAccount(args){
     $.ajax({
