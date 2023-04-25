@@ -39,10 +39,12 @@ class Calc {
 //	}
 
 	public static function margin_ratio($margin, $sales) { //수익률 = (수익/매출액)*100
-		if($sales > 0){
-			$result =($margin / $sales)*100;
+		if($sales > 0) {
+			$result = ($margin / $sales)*100;
 			return round($result,2);
 		}
+
+		return 0;
 	}
 
 	public static function cpa($unique, $spend) { //CPA(Cost Per Action: DB단가(전환당 비용)) = 지출액/유효db
@@ -50,6 +52,8 @@ class Calc {
 			$result = $spend / $unique;
 			return round($result);
 		}
+
+		return 0;
 	}
 
 	public static function cvr($unique, $inline_link_clicks) { //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100

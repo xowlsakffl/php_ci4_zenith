@@ -92,12 +92,105 @@ class AdvFacebookManagerController extends BaseController
         }
     }
 
-    public function getChartReport($arg)
+    public function getChartReport()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = [
+                'dates' => [
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                ],
+                'businesses' => $this->request->getGet('businesses'),
+                'accounts' => $this->request->getGet('accounts'),
+            ];
 
             $res = $this->facebook->getChartReport($arg);
-            //return $this->respond($result);
+            $term_days = (strtotime($arg['dates']['edate']) - strtotime($arg['dates']['sdate'])) / 60 / 60 / 24 + 1;
+            $report = array(
+                'term' => [
+                    "sdate" => $arg['dates']['sdate'], 
+                    "edate" => $arg['dates']['edate'], 
+                    'days' => $term_days
+                ],
+                'adv_list' => array()
+            );
+            $adv_count = 0;
+            $columnIndex = 0;
+            $data = [];
+            foreach($res as $row) {
+                $data[] = $row;
+                if (isset($row['name']) && !in_array($row['name'], $report['adv_list']))
+                    $report['adv_list'][$adv_count++] = $row['name'];
+                foreach ($row as $col => $val) {
+                    if ($val == NULL) $val = "0";
+                    $total[$col][$columnIndex] = $val;
+                }
+                $columnIndex++;
+            }
+            
+            $report['adv_list'] = array_unique($report['adv_list']);
+            sort($report['adv_list']);
+            $sdate = $report['term']['sdate'];
+            $day = 0;
+            foreach ($data as $row) { //row 재정리
+                if (!isset($fields)) $fields = array_keys($row);
+                if (!isset($row['name'])) $row['name'] = '전체';
+                foreach ($row as $f => $v) {
+                    if ($f != 'name' && $f != 'date') {
+                        $result[$row['name']][$row['date']][$f] = $v;
+                    }
+                }
+            }
+            $fields = $this->array_remove_keys($fields, array('date', 'name'));
+            for ($i = 0; $i < $term_days; $i++) { //빈날짜 삽입
+                $c_date = date('Y-m-d', strtotime($sdate . "+$i day"));
+                foreach ($result as $name => $row) {
+                    if (!array_key_exists($c_date, $row)) {
+                        foreach ($fields as $f) $result[$name][$c_date][$f] = 0;
+                    }
+                    ksort($result[$name]);
+                }
+            }
+            if (!count($report['adv_list'])) $report['adv_list'][] = '전체';
+            $adv_cnt = count($report['adv_list']);
+            for ($idx = 0; $idx < $report['term']['days'] * $adv_cnt; $idx++) {
+                $adv_idx = $idx % $adv_cnt;
+                $r_idx = floor($idx / $adv_cnt);
+                $adv_name = $report['adv_list'][$adv_idx];
+                $adv_date = date('Y-m-d', strtotime($report['term']['sdate'] . " +{$r_idx} day"));
+                $report['name'][$idx] = $adv_name;
+                $report['date'][$idx] = $adv_date;
+                foreach ($fields as $f) {
+                    @$report[$f][$idx] = $result[$adv_name][$adv_date][$f];
+                }
+            }
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+    
+            $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+            $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
+            if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
+            }
+            $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+            if ($report['clicks_sum'] != 0) {
+                $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
+            } else {
+                $report['cpc'] = 0;
+            }
+            $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+            if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
+            }
+            if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
+            }
+            $report['price_sum'] = array_sum($total['price']); //총 매출액
+            $report['profit_sum'] = array_sum($total['profit']); //총 수익
+            if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
+            }
+
+            return $this->respond($report);
         //}else{
             //return $this->fail("잘못된 요청");
         //}
@@ -105,16 +198,16 @@ class AdvFacebookManagerController extends BaseController
 
     private function getCampaigns($arg)
     {
-            $campaigns = $this->facebook->getCampaigns($arg);
-            $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
-            $total = $this->getTotal($campaigns);
-           
-            $result = [
-                'total' => $total,
-                'campaigns' => $campaigns,
-            ];
+        $campaigns = $this->facebook->getCampaigns($arg);
+        $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
+        $total = $this->getTotal($campaigns);
+        
+        $result = [
+            'total' => $total,
+            'campaigns' => $campaigns,
+        ];
 
-            return $result;
+        return $result;
     }
 
     private function getAdSets($arg)
@@ -238,5 +331,15 @@ class AdvFacebookManagerController extends BaseController
         }
 
         return $total;
+    }
+
+    private function array_remove_keys($array, $keys)
+    {
+        $assocKeys = array();
+        foreach ($keys as $key) {
+            $assocKeys[$key] = true;
+        }
+
+        return array_diff_key($array, $assocKeys);
     }
 }

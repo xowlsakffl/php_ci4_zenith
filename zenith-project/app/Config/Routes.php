@@ -84,6 +84,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
             $routes->get('accounts', 'AdvertisementManager\AdvFacebookManagerController::getAccounts');
             $routes->get('data', 'AdvertisementManager\AdvFacebookManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getChartReport');
         });
         
         
@@ -138,8 +139,6 @@ $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead
 
 //테스트
 $routes->get('example/(:any)', 'ExampleController::view/$1');
-
-
 
 /*
  * --------------------------------------------------------------------

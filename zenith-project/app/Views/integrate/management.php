@@ -186,9 +186,11 @@ function setLeadCount(data) {
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
         var $container = $('#'+type+'-list');
-        $.each(row, function(idx, v) {
-            button = $('#'+type+'-list .col[data-name="'+ idx +'"] button, #'+type+'-list .col[data-name="'+ idx +'"] button, #'+type+'-list .col[data-name="'+ idx +'"] button').addClass('on');
+        $.each(row, function(name, v) {
+            button = $('#'+type+'-list .col[data-name="'+ name +'"] button');
             button.siblings('.progress').children('.txt').text(v.countAll);
+            if($('#'+type+'-list .col').length == Object.keys(data[type]).length) return true;
+            button.addClass('on');
         });
     });
 }
@@ -211,7 +213,34 @@ function getStatusCount(data = []){
         }
     });
 }
-
+function fontAutoResize() { //.client-list button 항목 가변폰트 적용
+    $('.client-list .col').each(function(i, el) {
+        var $el = $(el);
+        var button = $('button', el);
+        button.css({
+            'white-space': 'nowrap',
+            'overflow-x': 'auto',
+            'font-size': '100%'
+        });
+        var i = 0;
+        var btn_width = Math.round(button.width());
+        // console.log(button.val(), btn_scr_w, btn_width);
+        while(button[0].scrollWidth / 2 >= btn_width) {
+            var size = parseFloat(button.css('font-size')) / 16 * 100;
+            button.css({'font-size': --size+'%'});
+            // console.log(button.css('font-size'), size)
+            if(button.css('font-size') < 8 || i > 60) break;
+            i++;
+        }
+        button.css({
+            'white-space': 'normal',
+            'overflow-x': 'auto'
+        });
+    });
+}
+$(window).resize(function() {
+    fontAutoResize();
+});
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
     $.each(data, function(type, row) {
         var html = "";
@@ -225,8 +254,9 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         });
         $('#'+type+'-list').html(html);
     });
+    fontAutoResize();
 }
-
+		
 function getLead(data = []){
     $.ajax({
         type: "get",

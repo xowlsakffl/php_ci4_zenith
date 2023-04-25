@@ -8,11 +8,17 @@ use CodeIgniter\CLI\CLI;
 
 class AdLeadController extends BaseController
 {
-    protected $adlead;
+    protected $adlead, $facebook, $google, $kakao;
 
     public function __construct()
     {
+        include APPPATH."/ThirdParty/facebook_api/facebook-api.php";
+        include APPPATH."/ThirdParty/moment_api/kakao-api.php";
+        include APPPATH."/ThirdParty/googleads_api/google-api.php";
         $this->adlead = model(AdLeadModel::class); 
+        $this->facebook = new \ChainsawFB();
+        $this->google = new \GoogleAds();
+        $this->kakao = new \ChainsawKM();
     }
 
     public function sendToEventLead()
@@ -36,7 +42,7 @@ class AdLeadController extends BaseController
         CLI::write("카카오 모먼트 잠재고객 업데이트를 시작합니다.", "yellow");
         foreach($moment_ads as $row){  
             CLI::showProgress($step++, $total);
-            $landing = $this->landingGroupKakao($row);
+            $landing = $this->kakao->landingGroup($row);
             if(is_null($landing)) {
                 CLI::print('비즈폼 매칭 오류 발생 : ' . $row . '');
                 continue;
@@ -102,7 +108,7 @@ class AdLeadController extends BaseController
         CLI::write("페이스북 잠재고객 업데이트를 시작합니다.", "yellow");
         foreach($facebook_ads as $row){  
             CLI::showProgress($step++, $total);
-            $landing = $this->landingGroupFacebook($row['ad_name']);
+            $landing = $this->facebook->landingGroup($row['ad_name']);
             //이름
             $full_name = $row['full_name'];
             if (!$full_name || $full_name == null) {
@@ -192,65 +198,6 @@ class AdLeadController extends BaseController
     }
 
     private function sendToEventLeadFromGoogle()
-    {
-    }
-
-    private function landingGroupFacebook($title)
-    {
-        if (!$title) {
-            return null;
-        }
-        preg_match_all('/.+\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
-        $db_prefix = '';
-
-        $result = array(
-            'name' => '', 'event_id' => '', 'site' => '', 'db_price' => 0, 'period_ad' => ''
-        );
-
-        $result['name']         = $matches[0][0];
-        $result['event_id']     = $matches[1][0];
-        $result['site']         = $matches[3][0];
-        $result['db_price']     = $matches[6][0];
-        $result['period_ad']    = $matches[12][0];
-        return $result;
-    }
-
-    private function landingGroupKakao($data)
-    {
-        if (!$data['name']) {
-            return null;
-        }
-        preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $data['name'], $matches);
-        // $data['landingUrl'] = 'http://hotevent.hotblood.co.kr/event_spin/event_62.php';
-
-        if(isset($data['landingUrl'])){
-            if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
-                $urls = parse_url($data['landingUrl']);
-                parse_str($urls['query'], $urls['qs']);
-                $event_id = @array_pop(explode('/', $urls['path']));
-                $site = @$urls['qs']['site'];
-
-                if($urls['qs']['site'] != $matches[4][0]) //제목 site값 우선
-                $site = $matches[4][0];
-            }
-        } else {
-            $event_id = $matches[2][0];
-            $site = $matches[4][0];
-        }
-        
-        $result = array(
-            'name' => '', 'event_id' => '', 'site' => '', 'db_price' => 0, 'period_ad' => ''
-        );
-        $result['name']         = $matches[0][0];
-        $result['event_id']     = $event_id;
-        $result['site']         = $site;
-        $result['db_price']     = $matches[7][0];
-        $result['period_ad']    = $matches[13][0];
-        $result['url']          = @$data['landingUrl'];
-        return $result;
-    }
-
-    private function landingGroupGoogle($data)
     {
     }
 }
