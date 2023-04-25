@@ -146,6 +146,7 @@
                             <tr>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
+                                <th scope="col">예산 <br>ai</th>
                                 <th scope="col">목표 <br>ai</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
@@ -379,8 +380,8 @@ function getAccount(args){
     });
 }
 
-function getCampaigns(args) {
-	$('#campaigns-table').DataTable({
+function getDataTable(tableId, columns, args){
+    $(tableId).DataTable({
         "processing" : true,
         "searching": false,
         "ordering": true,
@@ -396,31 +397,54 @@ function getCampaigns(args) {
             "dataType": "json",
             "dataSrc": function(res){
                 if(res.total.margin < 0){
-                    $('#campaigns-table #total-margin').css('color', 'red');
+                    $(tableId+' #total-margin').css('color', 'red');
                 }
                 
                 if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
-                    $('#campaigns-table #avg_margin_ratio').css('color', 'red');
+                    $(tableId+' #avg_margin_ratio').css('color', 'red');
                 }
 
-                $('#campaigns-table #total-count').text("캠페인 "+res.campaigns.length+"건 결과");
-                $('#campaigns-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
-                $('#campaigns-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $('#campaigns-table #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-                $('#campaigns-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
-                $('#campaigns-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
-                $('#campaigns-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-                $('#campaigns-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $('#campaigns-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $('#campaigns-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
-                $('#campaigns-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
-                $('#campaigns-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-                $('#campaigns-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+                $(tableId+' #total-count').text(res.data.length+"건 결과");
+                $(tableId+' #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
 
-                return res.campaigns;
+                if(tableId == '#campaigns-table'){
+                    $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+                    $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
+                }else if(tableId == '#adsets-table'){
+                    $(tableId+' #total-unique_total').text(res.total.unique_total);
+                    $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
+                }else{
+                    $(tableId+' #total-unique_total').text(res.total.unique_total);
+                }
+
+                $(tableId+' #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
+                $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $(tableId+' #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $(tableId+' #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+
+                return res.data;
             }
         },
-        "columns": [
+        "columns": columns,
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+        },
+    });
+}
+
+function getCampaigns(args) {
+    getDataTable('#campaigns-table', [
             { "data": "name" },
             { "data": "status" },
             { "data": null, "defaultContent": ""},
@@ -542,61 +566,11 @@ function getCampaigns(args) {
                     return data+'\u0025';
                 }
             }, //전환율
-        ],
-        "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "infoEmpty": "데이터 없음",
-            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-            "search": "에서 검색: ",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-        },
-    });
+        ], args);
 }
 
 function getAdsets(args) {
-	$('#adsets-table').DataTable({
-        "processing" : true,
-        "searching": false,
-        "ordering": true,
-        "bLengthChange" : false, 
-        "bDestroy": true,
-        "paging": false,
-        "info": false,
-        "ajax": {
-            "url": "<?=base_url()?>/advertisements/facebook/data",
-            "data": args,
-            "type": "GET",
-            "contentType": "application/json",
-            "dataType": "json",
-            "dataSrc": function(res){
-                if(res.total.margin < 0){
-                    $('#adsets-table #total-margin').css('color', 'red');
-                }
-                
-                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
-                    $('#adsets-table #avg_margin_ratio').css('color', 'red');
-                }
-                
-                $('#adsets-table #total-count').text("광고세트 "+res.adsets.length+"건 결과");
-                $('#adsets-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
-                $('#adsets-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $('#adsets-table #total-unique_total').text(res.total.unique_total);
-                $('#adsets-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
-                $('#adsets-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
-                $('#adsets-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-                $('#adsets-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $('#adsets-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $('#adsets-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
-                $('#adsets-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
-                $('#adsets-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-                $('#adsets-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
-
-                return res.adsets;
-            }
-        },
-        "columns": [
+    getDataTable('#adsets-table', [
             { "data": "name" },
             { "data": "status" },
             { "data": null, "defaultContent": ""},
@@ -717,60 +691,11 @@ function getAdsets(args) {
                     return data+'\u0025';
                 }
             }, //전환율
-        ],
-        "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "infoEmpty": "데이터 없음",
-            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-            "search": "에서 검색: ",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-        },
-    });
+        ], args);
 }
 
 function getAds(args) {
-	$('#ads-table').DataTable({
-        "processing" : true,
-        "searching": false,
-        "ordering": true,
-        "bLengthChange" : false, 
-        "bDestroy": true,
-        "paging": false,
-        "info": false,
-        "ajax": {
-            "url": "<?=base_url()?>/advertisements/facebook/data",
-            "data": args,
-            "type": "GET",
-            "contentType": "application/json",
-            "dataType": "json",
-            "dataSrc": function(res){
-                if(res.total.margin < 0){
-                    $('#ads-table #total-margin').css('color', 'red');
-                }
-                
-                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
-                    $('#ads-table #avg_margin_ratio').css('color', 'red');
-                }
-
-                $('#ads-table #total-count').text("광고 "+res.ads.length+"건 결과");
-                $('#ads-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $('#ads-table #total-unique_total').text(res.total.unique_total);
-                $('#ads-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
-                $('#ads-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
-                $('#ads-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-                $('#ads-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $('#ads-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $('#ads-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
-                $('#ads-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
-                $('#ads-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-                $('#ads-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
-
-                return res.ads;
-            }
-        },
-        "columns": [
+    getDataTable('#ads-table', [
             { "data": "name" },
             { "data": "status" },
             { 
@@ -879,17 +804,7 @@ function getAds(args) {
                     return data+'\u0025';
                 }
             }, //전환율
-        ],
-        "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "infoEmpty": "데이터 없음",
-            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-            "search": "에서 검색: ",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-        },
-    });
+        ], args);
 }
 
 function setDate(){

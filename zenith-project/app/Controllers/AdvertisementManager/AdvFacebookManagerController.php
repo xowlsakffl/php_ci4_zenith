@@ -204,7 +204,7 @@ class AdvFacebookManagerController extends BaseController
         
         $result = [
             'total' => $total,
-            'campaigns' => $campaigns,
+            'data' => $campaigns,
         ];
 
         return $result;
@@ -218,7 +218,7 @@ class AdvFacebookManagerController extends BaseController
 
         $result = [
             'total' => $total,
-            'adsets' => $adsets
+            'data' => $adsets
         ];
 
         return $result;
@@ -232,7 +232,7 @@ class AdvFacebookManagerController extends BaseController
 
         $result = [
             'total' => $total,
-            'ads' => $ads
+            'data' => $ads
         ];
 
         return $result;

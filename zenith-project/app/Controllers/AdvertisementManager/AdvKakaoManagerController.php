@@ -73,7 +73,6 @@ class AdvKakaoManagerController extends BaseController
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
                 'type' => $this->request->getGet('type'),
-                'businesses' => $this->request->getGet('businesses'),
                 'accounts' => $this->request->getGet('accounts'),
                 'stx' => $this->request->getGet('stx'),
             ];
@@ -91,7 +90,7 @@ class AdvKakaoManagerController extends BaseController
             return $this->fail("잘못된 요청");
         }
     }
-    
+
     public function getChartReport()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
