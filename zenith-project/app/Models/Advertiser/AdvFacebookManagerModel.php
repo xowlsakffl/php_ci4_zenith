@@ -247,7 +247,7 @@ class AdvFacebookManagerModel extends Model
     }
     
     // 정파고 on/off 확인
-	private function getOptimization($param, $id)
+	/* private function getOptimization($param, $id)
 	{
 		if ($param == "campaigns") { //캠페인단 ai
             $builder = $this->facebook->table('fb_optimization_campaign');
@@ -323,7 +323,7 @@ class AdvFacebookManagerModel extends Model
 			}
 		}
 	}
-
+ */
     public function getAccounts($data)
 	{
         $builder = $this->facebook->table('fb_ad_account F');
@@ -396,6 +396,14 @@ class AdvFacebookManagerModel extends Model
             $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
             $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         } 
+
+		if(!empty($data['businesses'])){
+			$builder->whereIn('E.business_id', $data['businesses']);
+        }
+
+		if(!empty($data['accounts'])){
+			$builder->whereIn('D.account_id', $data['accounts']);
+        }
 
 		$builder->groupBy('A.date');
 		$builder->orderBy('A.date', 'ASC');

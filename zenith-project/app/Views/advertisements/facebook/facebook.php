@@ -40,35 +40,39 @@
         <div class="detail row d-flex justify-content-center">
             <dl class="col">
                 <dt>노출수</dt>
-                <dd></dd>
+                <dd id="impressions_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>클릭수</dt>
-                <dd></dd>
+                <dd id="clicks_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>클릭율</dt>
-                <dd></dd>
+                <dd id="click_ratio_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>지출액</dt>
-                <dd></dd>
+                <dd id="spend_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>DB수</dt>
-                <dd></dd>
+                <dd id="unique_total_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>DB당 단가</dt>
-                <dd></dd>
+                <dd id="unique_one_price_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>전환율</dt>
-                <dd></dd>
+                <dd id="conversion_ratio_sum"></dd>
+            </dl>
+            <dl class="col">
+                <dt>수익률</dt>
+                <dd id="per_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>매출</dt>
-                <dd></dd>
+                <dd id="price_01_sum"></dd>
             </dl>
         </div>
     </div>
@@ -331,7 +335,7 @@ var args = {
 args.type = 'campaigns';
 
 setDate();
-//getChartReport(args);
+getChartReport(args);
 getAccount(args);
 getCampaigns(args);
 
@@ -343,7 +347,15 @@ function getChartReport(args){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            console.log(data)
+            $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
+            $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
+            $('#click_ratio_sum').text(data.click_ratio_sum);
+            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
+            $('#unique_total_sum').text(data.unique_total_sum);
+            $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
+            $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
+            $('#per_sum').text(data.per_sum);
+            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -394,6 +406,14 @@ function getCampaigns(args) {
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
+                if(res.total.margin < 0){
+                    $('#campaigns-table #total-margin').css('color', 'red');
+                }
+                
+                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
+                    $('#campaigns-table #avg_margin_ratio').css('color', 'red');
+                }
+
                 $('#campaigns-table #total-count').text("캠페인 "+res.campaigns.length+"건 결과");
                 $('#campaigns-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 $('#campaigns-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
@@ -454,7 +474,12 @@ function getCampaigns(args) {
                 "data": "margin",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        if(data < 0){
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
+                        }
                     }else{
                         margin = "";
                     }
@@ -465,7 +490,12 @@ function getCampaigns(args) {
                 "data": "margin_ratio",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        if(data < 20 && data != 0){
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        }
                     }else{
                         margin_ratio = "";
                     }
@@ -552,6 +582,14 @@ function getAdsets(args) {
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
+                if(res.total.margin < 0){
+                    $('#adsets-table #total-margin').css('color', 'red');
+                }
+                
+                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
+                    $('#adsets-table #avg_margin_ratio').css('color', 'red');
+                }
+                
                 $('#adsets-table #total-count').text("광고세트 "+res.adsets.length+"건 결과");
                 $('#adsets-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 $('#adsets-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
@@ -709,6 +747,14 @@ function getAds(args) {
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
+                if(res.total.margin < 0){
+                    $('#ads-table #total-margin').css('color', 'red');
+                }
+                
+                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
+                    $('#ads-table #avg_margin_ratio').css('color', 'red');
+                }
+
                 $('#ads-table #total-count').text("광고 "+res.ads.length+"건 결과");
                 $('#ads-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
                 $('#ads-table #total-unique_total').text(res.total.unique_total);
@@ -765,7 +811,7 @@ function getAds(args) {
             { 
                 "data": "margin_ratio",
                 "render": function (data, type, row) {
-                    if (data !== null) {
+                    if (data !== null) {                    
                         margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                     }else{
                         margin_ratio = "";
@@ -907,16 +953,22 @@ $('body').on('click', '.client-list h3', function(){
 });
 
 $('body').on('click', '#business_btn, #account_btn', function(){
+    if ($(this).attr('id') === 'business_btn') {
+        $('#account_btn').removeClass('active')
+    }
+
     $(this).toggleClass("active");
     tab = $('.tab-link.active').val();
     business = $('#business_btn.active').map(function(){return $(this).val();}).get();
     accounts = $('#account_btn.active').map(function(){return $(this).val();}).get();
-
     args.businesses = business;
     args.accounts = accounts;
+    
     if ($(this).attr('id') === 'business_btn') {
+        args.accounts = [];
         getAccount(args);
     }
+    getChartReport(args);
     switch (tab) {
     case "ads":
         getAds(args);
@@ -929,6 +981,7 @@ $('body').on('click', '#business_btn, #account_btn', function(){
     } 
 });
 
+
 $('body').on('click', '#search_btn', function() {
     tab = $('.tab-link.active').val();
     args = {
@@ -938,6 +991,7 @@ $('body').on('click', '#search_btn', function() {
         'type': tab,
     };
     
+    getChartReport(args);
     getAccount(args);
 
     switch (tab) {
