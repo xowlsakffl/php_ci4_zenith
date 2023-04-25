@@ -314,20 +314,6 @@ class AdvFacebookManagerController extends BaseController
             if ($data['status'] == 'ACTIVE' && $data['unique_total']){
                 $total['expect_db'] += round($data['budget'] / $data['cpa']);
             }
-                    
-            // 수익이 마이너스면 빨간색으로 표시
-            /* if ($total['margins'] <= 0) {
-                $margin_minus = "margin_minus";
-            } else {
-                $margin_minus = "";
-            } */
-
-            // 수익률이 20%이하면  빨간색으로 표시
-            /* if ($avg_margin_ratio < 20 && $avg_margin_ratio <> 0) {
-                $margin_ratio_minus = "margin_ratio_minus";
-            } else {
-                $margin_ratio_minus = "";
-            } */
         }
 
         return $total;

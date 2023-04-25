@@ -6,9 +6,8 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script>
-    console.log('header')
-</script>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -26,57 +25,53 @@
     <div class="search-wrap">
         <form class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text">
+                <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text">
+                <input type="text" name="edate" id="edate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
-                <input class="" type="text" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" type="submit">조회</button>
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="button">조회</button>
             </div>
         </form>
         <div class="detail row d-flex justify-content-center">
             <dl class="col">
                 <dt>노출수</dt>
-                <dd>34,456</dd>
+                <dd id="impressions_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>클릭수</dt>
-                <dd>809</dd>
+                <dd id="clicks_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>클릭율</dt>
-                <dd>1.09</dd>
+                <dd id="click_ratio_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>지출액</dt>
-                <dd>1,234,123</dd>
-            </dl>
-            <dl class="col">
-                <dt>매체비</dt>
-                <dd>1,234,123</dd>
+                <dd id="spend_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>DB수</dt>
-                <dd>61</dd>
+                <dd id="unique_total_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>DB당 단가</dt>
-                <dd>45,234</dd>
+                <dd id="unique_one_price_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>전환율</dt>
-                <dd>7.34</dd>
+                <dd id="conversion_ratio_sum"></dd>
             </dl>
             <dl class="col">
-                <dt>수익율</dt>
-                <dd>7.34</dd>
+                <dt>수익률</dt>
+                <dd id="per_sum"></dd>
             </dl>
             <dl class="col">
                 <dt>매출</dt>
-                <dd>23,456,900</dd>
+                <dd id="price_01_sum"></dd>
             </dl>
         </div>
     </div>
@@ -87,132 +82,6 @@
             <div class="col">
                 <div class="inner">
                     <button type="button" class="active alert">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="alert">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="active">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">거무타</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">마디척병원○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[전국]상상의원_주름보톡스2*</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">플란치과_임플○</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button">비결뷰티센터</button>
                     <div class="progress">
                         <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
                         <div class="txt">14/170</div>
@@ -357,7 +226,245 @@
 
 <!--스크립트-->
 <?=$this->section('script');?>
-<script></script>
+<script>
+var today = moment().format('YYYY-MM-DD');
+var args = {
+    'sdate': $('#sdate').val(),
+    'edate': $('#edate').val(),
+};
+args.type = 'campaigns';
+
+setDate();
+getChartReport(args);
+getAccount(args);
+getCampaigns(args);
+
+function getChartReport(args){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/facebook/report",
+        data: args,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
+            $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
+            $('#click_ratio_sum').text(data.click_ratio_sum);
+            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
+            $('#unique_total_sum').text(data.unique_total_sum);
+            $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
+            $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
+            $('#per_sum').text(data.per_sum);
+            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function getAccount(args){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/facebook/accounts",
+        data: args,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            $('.advertiser .row').empty();
+            var html = '';
+            var set_ratio = '';
+            $.each(data, function(idx, v) {               
+                if(v.db_count){
+                    set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
+                }
+
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" id="account_btn" class="filter_btn">'+v.name+set_ratio+'</button></div></div>';
+            });
+
+            $('.advertiser .row').html(html);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+function getCampaigns(args) {
+	$('#campaigns-table').DataTable({
+        "processing" : true,
+        "searching": false,
+        "ordering": true,
+        "bLengthChange" : false, 
+        "bDestroy": true,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/advertisements/kakao/data",
+            "data": args,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                if(res.total.margin < 0){
+                    $('#campaigns-table #total-margin').css('color', 'red');
+                }
+                
+                if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
+                    $('#campaigns-table #avg_margin_ratio').css('color', 'red');
+                }
+
+                $('#campaigns-table #total-count').text("캠페인 "+res.campaigns.length+"건 결과");
+                $('#campaigns-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $('#campaigns-table #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+                $('#campaigns-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+                $('#campaigns-table #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
+                $('#campaigns-table #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $('#campaigns-table #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+                $('#campaigns-table #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+
+                return res.campaigns;
+            }
+        },
+        "columns": [
+            { "data": "name" },
+            { "data": "status" },
+            { "data": null, "defaultContent": ""},
+            { "data": "ai2_status" },
+            { 
+                "data": "budget", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        budget = "";
+                    }
+                    return budget;
+                }
+            }, //예산
+            { 
+                "data": "cpa",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpa = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpa = "";
+                    }
+                    return cpa;
+                }
+            }, //현재 DB단가
+            { "data": "unique_total" }, //유효DB수
+            { 
+                "data": "spend",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        spend = "";
+                    }
+                    return spend;
+                }
+            }, //지출액
+            { 
+                "data": "margin",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        if(data < 0){
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
+                        }
+                    }else{
+                        margin = "";
+                    }
+                    return margin;
+                }
+            }, //수익
+            { 
+                "data": "margin_ratio",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        if(data < 20 && data != 0){
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        }
+                    }else{
+                        margin_ratio = "";
+                    }
+                    return margin_ratio;
+                }
+            }, //수익률
+            { 
+                "data": "sales",
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        sales = "";
+                    }
+                    return sales;
+                }
+            }, //매출액
+            { 
+                "data": "impressions", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        impressions = "";
+                    }
+                    return impressions;
+                }
+            }, //노출수
+            { 
+                "data": "inline_link_clicks", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        inline_link_clicks = "";
+                    }
+                    return inline_link_clicks;
+                }
+            }, //링크클릭
+            { 
+                "data": "cpc", 
+                "render": function (data, type, row) {
+                    if (data !== null) {
+                        cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                    }else{
+                        cpc = "";
+                    }
+                    return cpc;
+                }
+            }, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", }, //클릭율 (노출 대비 클릭한 비율)
+            { 
+                "data": "cvr", 
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                }
+            }, //전환율
+        ],
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
+            "infoEmpty": "데이터 없음",
+            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
+            "search": "에서 검색: ",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+        },
+    });
+}
+</script>
 <?=$this->endSection();?>
 
 <!--푸터-->

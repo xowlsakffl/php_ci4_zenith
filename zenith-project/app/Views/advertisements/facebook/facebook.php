@@ -100,16 +100,6 @@
     <div class="client-list advertiser">
         <h3><i class="bi bi-chevron-down"></i> 광고주</h3>
         <div class="row">
-            <!-- <div class="col">
-                <div class="inner">
-                    <button type="button" class="active alert">[대전]상상의원_가나다라마마다먀라</button>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width:calc(14 / 170 * 100%)"></div>
-                        <div class="txt">14/170</div>
-                    </div>
-                </div>
-            </div> -->
-            
         </div>
     </div>
 
@@ -156,7 +146,6 @@
                             <tr>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
-                                <th scope="col">예산 <br>ai</th>
                                 <th scope="col">목표 <br>ai</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
@@ -417,7 +406,7 @@ function getCampaigns(args) {
                 $('#campaigns-table #total-count').text("캠페인 "+res.campaigns.length+"건 결과");
                 $('#campaigns-table #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 $('#campaigns-table #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $('#campaigns-table #total-unique_total').text(res.total.unique_total);
+                $('#campaigns-table #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
                 $('#campaigns-table #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
                 $('#campaigns-table #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $('#campaigns-table #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
