@@ -44,4 +44,26 @@ class AdvKakaoManagerModel extends Model
         $result = $builder->get()->getResultArray();
         return $result;
 	}
+
+    public function getAccounts($data)
+	{
+        $builder = $this->kakao->table('mm_ad_account F');
+		$builder->select('F.id, F.name, F.config');
+        $builder->join('mm_campaign A', 'F.id = A.ad_account_id', 'left');
+        $builder->join('mm_adgroup B', 'A.id = B.campaign_id', 'left');
+        $builder->join('mm_creative C', 'B.id = C.adgroup_id', 'left');
+		$builder->join('mm_creative_report_basic D', 'C.id = D.id', 'left');
+
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+        } 
+
+        $builder->where('F.name !=', '');
+        $builder->groupBy('F.id');
+        $builder->orderBy('F.name', 'asc');
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+	}
 }

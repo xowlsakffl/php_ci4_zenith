@@ -32,32 +32,7 @@ class AdvKakaoManagerController extends BaseController
                 'businesses' => $this->request->getGet('businesses'),
             ];
 
-            $accounts = $this->facebook->getAccounts($arg);
-            $getDisapprovalByAccount = $this->getDisapprovalByAccount();
-            foreach ($accounts as &$account) {
-                
-                $account['class'] = [];
-                $account['db_ratio'] = '';
-
-                if ($account['status'] != 1) 
-                    array_push($account['class'], 'tag-inactive');
-                /* if (in_array($account['ad_account_id'], $arg['accounts'])) 
-                    array_push($account['class'], 'active'); */
-                if (in_array($account['ad_account_id'], $getDisapprovalByAccount)) 
-                    array_push($account['class'], 'disapproval');
-
-                $account['db_count'] = $account['db_count'] * $account['date_count'];
-
-                if($account['db_sum'] && $account['db_count']) 
-                $account['db_ratio'] = round($account['db_sum'] / $account['db_count'] * 100,1);
-                
-                if($account['db_ratio'] >= 100) { 
-                    $account['db_ratio'] = 100; 
-                    array_push($account['class'], 'over');
-                }
-
-                if(!$account['db_sum']) $account['db_sum'] = 0;    
-            }
+            $accounts = $this->kakao->getAccounts($arg);
 
             return $this->respond($accounts);
         }else{
@@ -91,7 +66,7 @@ class AdvKakaoManagerController extends BaseController
         }
     }
 
-    public function getChartReport()
+    public function getReport()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
@@ -103,7 +78,7 @@ class AdvKakaoManagerController extends BaseController
                 'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->facebook->getChartReport($arg);
+            $res = $this->facebook->getReport($arg);
             $term_days = (strtotime($arg['dates']['edate']) - strtotime($arg['dates']['sdate'])) / 60 / 60 / 24 + 1;
             $report = array(
                 'term' => [

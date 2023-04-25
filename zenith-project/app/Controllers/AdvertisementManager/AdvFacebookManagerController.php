@@ -92,7 +92,7 @@ class AdvFacebookManagerController extends BaseController
         }
     }
 
-    public function getChartReport()
+    public function getReport()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
@@ -104,7 +104,7 @@ class AdvFacebookManagerController extends BaseController
                 'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->facebook->getChartReport($arg);
+            $res = $this->facebook->getReport($arg);
             $term_days = (strtotime($arg['dates']['edate']) - strtotime($arg['dates']['sdate'])) / 60 / 60 / 24 + 1;
             $report = array(
                 'term' => [

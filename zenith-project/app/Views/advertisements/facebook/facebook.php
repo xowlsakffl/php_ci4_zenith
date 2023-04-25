@@ -325,11 +325,11 @@ var args = {
 args.type = 'campaigns';
 
 setDate();
-getChartReport(args);
+getReport(args);
 getAccount(args);
 getCampaigns(args);
 
-function getChartReport(args){
+function getReport(args){
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/advertisements/facebook/report",

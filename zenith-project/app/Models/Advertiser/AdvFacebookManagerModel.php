@@ -372,7 +372,7 @@ class AdvFacebookManagerModel extends Model
         return $result;
 	}
 
-	public function getChartReport($data)
+	public function getReport($data)
 	{
 		$builder = $this->facebook->table('fb_ad_insight_history A');
         $builder->select('A.date, 

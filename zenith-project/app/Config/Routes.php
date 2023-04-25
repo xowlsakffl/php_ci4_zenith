@@ -84,14 +84,14 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
             $routes->get('accounts', 'AdvertisementManager\AdvFacebookManagerController::getAccounts');
             $routes->get('data', 'AdvertisementManager\AdvFacebookManagerController::getData');
-            $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getChartReport');
+            $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
         });
 
         $routes->group('kakao', static function($routes){
             $routes->get('', 'AdvertisementManager\AdvKakaoManagerController::index');
             $routes->get('accounts', 'AdvertisementManager\AdvKakaoManagerController::getAccounts');
             $routes->get('data', 'AdvertisementManager\AdvKakaoManagerController::getData');
-            $routes->get('report', 'AdvertisementManager\AdvKakaoManagerController::getChartReport');
+            $routes->get('report', 'AdvertisementManager\AdvKakaoManagerController::getReport');
         });
         
 

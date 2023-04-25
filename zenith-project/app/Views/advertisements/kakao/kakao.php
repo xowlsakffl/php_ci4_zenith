@@ -235,9 +235,9 @@ var args = {
 args.type = 'campaigns';
 
 setDate();
-getChartReport(args);
+//getChartReport(args);
 getAccount(args);
-getCampaigns(args);
+//getCampaigns(args);
 
 function getChartReport(args){
     $.ajax({
@@ -266,7 +266,7 @@ function getChartReport(args){
 function getAccount(args){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/facebook/accounts",
+        url: "<?=base_url()?>/advertisements/kakao/accounts",
         data: args,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -462,6 +462,54 @@ function getCampaigns(args) {
             "zeroRecords": "일치하는 데이터가 없어요.",
             "loadingRecords": "로딩중...",
         },
+    });
+}
+
+function setDate(){
+    $('#sdate, #edate').val(today);
+    $('#sdate, #edate').daterangepicker({
+        locale: {
+                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        alwaysShowCalendars: true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        maxDate: new Date(),
+        autoUpdateInput: false,
+        ranges: {
+            '오늘': [moment(), moment()],
+            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '지난 일주일': [moment().subtract(6, 'days'), moment()],
+            '지난 한달': [moment().subtract(29, 'days'), moment()],
+            '이번달': [moment().startOf('month'), moment().endOf('month')],
+        }
+    }, function(start, end, label) {
+        // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
+        // Lets update the fields manually this event fires on selection of range
+        startDate = start.format('YYYY-MM-DD'); // selected start
+        endDate = end.format('YYYY-MM-DD'); // selected end
+
+        $checkinInput = $('#sdate');
+        $checkoutInput = $('#edate');
+
+        // Updating Fields with selected dates
+        $checkinInput.val(startDate);
+        $checkoutInput.val(endDate);
+
+        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+        var checkOutPicker = $checkoutInput.data('daterangepicker');
+        checkOutPicker.setStartDate(startDate);
+        checkOutPicker.setEndDate(endDate);
+
+        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+        var checkInPicker = $checkinInput.data('daterangepicker');
+        checkInPicker.setStartDate($checkinInput.val(startDate));
+        checkInPicker.setEndDate(endDate);
+    
     });
 }
 </script>
