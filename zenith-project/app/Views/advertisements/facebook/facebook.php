@@ -638,7 +638,12 @@ function getAdsets(args) {
                 "data": "margin",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        if(data < 0){
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
+                        }
                     }else{
                         margin = "";
                     }
@@ -649,7 +654,12 @@ function getAdsets(args) {
                 "data": "margin_ratio",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        if(data < 20 && data != 0){
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        }
                     }else{
                         margin_ratio = "";
                     }
@@ -790,7 +800,12 @@ function getAds(args) {
                 "data": "margin",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        if(data < 0){
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
+                        }
                     }else{
                         margin = "";
                     }
@@ -800,8 +815,13 @@ function getAds(args) {
             { 
                 "data": "margin_ratio",
                 "render": function (data, type, row) {
-                    if (data !== null) {                    
-                        margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                    if (data !== null) {
+                        if(data < 20 && data != 0){
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
+                        }
                     }else{
                         margin_ratio = "";
                     }
