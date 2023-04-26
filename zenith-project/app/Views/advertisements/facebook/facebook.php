@@ -190,7 +190,7 @@
 
             <div class="tab-pane" id="set-tab-pane" role="tabpanel" aria-labelledby="set-tab">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="adsets-table">
+                    <table class="table table-striped table-hover table-default" id="adsets-table">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:7.5%">
@@ -254,7 +254,7 @@
 
             <div class="tab-pane" role="tabpanel" id="advertisement-tab-pane" aria-labelledby="advertisement-tab">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="ads-table">
+                    <table class="table table-striped table-hover table-default" id="ads-table">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:5.5%">
