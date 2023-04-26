@@ -872,10 +872,6 @@ $('body').on('click', '.tab-link', function(){
     } 
 });
 
-$('body').on('click', '.client-list h3', function(){
-    $(this).siblings('.row').slideToggle();
-});
-
 $('body').on('click', '#business_btn, #account_btn', function(){
     if ($(this).attr('id') === 'business_btn') {
         $('#account_btn').removeClass('active')
@@ -892,7 +888,7 @@ $('body').on('click', '#business_btn, #account_btn', function(){
         args.accounts = [];
         getAccount(args);
     }
-    getChartReport(args);
+    getReport(args);
     switch (tab) {
     case "ads":
         getAds(args);
@@ -915,7 +911,7 @@ $('body').on('click', '#search_btn', function() {
         'type': tab,
     };
     
-    getChartReport(args);
+    getReport(args);
     getAccount(args);
 
     switch (tab) {
