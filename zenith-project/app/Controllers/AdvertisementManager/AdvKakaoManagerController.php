@@ -78,7 +78,7 @@ class AdvKakaoManagerController extends BaseController
                 'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->facebook->getReport($arg);
+            $res = $this->kakao->getReport($arg);
             $term_days = (strtotime($arg['dates']['edate']) - strtotime($arg['dates']['sdate'])) / 60 / 60 / 24 + 1;
             $report = array(
                 'term' => [
@@ -172,13 +172,13 @@ class AdvKakaoManagerController extends BaseController
 
     private function getCampaigns($arg)
     {
-        $campaigns = $this->facebook->getCampaigns($arg);
-        $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
+        $campaigns = $this->kakao->getCampaigns($arg);
+        $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['dates']);
         $total = $this->getTotal($campaigns);
         
         $result = [
             'total' => $total,
-            'campaigns' => $campaigns,
+            'data' => $campaigns,
         ];
 
         return $result;
@@ -186,13 +186,13 @@ class AdvKakaoManagerController extends BaseController
 
     private function getAdSets($arg)
     {
-        $adsets = $this->facebook->getAdSets($arg);
-        $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+        $adsets = $this->kakao->getAdSets($arg);
+        $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
         $total = $this->getTotal($adsets);
 
         $result = [
             'total' => $total,
-            'adsets' => $adsets
+            'data' => $adsets
         ];
 
         return $result;
@@ -200,13 +200,13 @@ class AdvKakaoManagerController extends BaseController
 
     private function getAds($arg)
     {
-        $ads = $this->facebook->getAds($arg);
-        $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+        $ads = $this->kakao->getAds($arg);
+        $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
         $total = $this->getTotal($ads);
 
         $result = [
             'total' => $total,
-            'ads' => $ads
+            'data' => $ads
         ];
 
         return $result;
@@ -214,7 +214,7 @@ class AdvKakaoManagerController extends BaseController
 
     private function getDisapprovalByAccount()
     {
-        $disapprovals = $this->facebook->getDisapproval();
+        $disapprovals = $this->kakao->getDisapproval();
         $data = [];
         foreach ($disapprovals as $row) {
             $data[] = $row['ad_account_id'];

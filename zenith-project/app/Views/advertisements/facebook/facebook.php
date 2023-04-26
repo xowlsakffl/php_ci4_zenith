@@ -78,7 +78,7 @@
     </div>
 
     <div class="client-list biz">
-        <h3><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3>
+        <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3>
         <div class="row">
             <div class="col">
                 <div class="inner">
@@ -98,7 +98,7 @@
         </div>
     </div>
     <div class="client-list advertiser">
-        <h3><i class="bi bi-chevron-down"></i> 광고주</h3>
+        <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 광고주</h3>
         <div class="row">
         </div>
     </div>
@@ -123,7 +123,7 @@
             </div>
             <div class="tab-pane active" id="campaign-tab-pane" role="tabpanel" aria-labelledby="campaign-tab">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="campaigns-table">
+                    <table class="table table-striped table-hover table-default" id="campaigns-table">
                         <colgroup>
                             <col style="width:10%">
                             <col style="width:5.5%">
@@ -380,7 +380,7 @@ function getAccount(args){
     });
 }
 
-function getDataTable(tableId, columns, args){
+function setDataTable(tableId, columns, args){
     $(tableId).DataTable({
         "processing" : true,
         "searching": false,
@@ -444,7 +444,7 @@ function getDataTable(tableId, columns, args){
 }
 
 function getCampaigns(args) {
-    getDataTable('#campaigns-table', [
+    setDataTable('#campaigns-table', [
             { "data": "name" },
             { "data": "status" },
             { "data": null, "defaultContent": ""},
@@ -570,7 +570,7 @@ function getCampaigns(args) {
 }
 
 function getAdsets(args) {
-    getDataTable('#adsets-table', [
+    setDataTable('#adsets-table', [
             { "data": "name" },
             { "data": "status" },
             { "data": null, "defaultContent": ""},
@@ -695,7 +695,7 @@ function getAdsets(args) {
 }
 
 function getAds(args) {
-    getDataTable('#ads-table', [
+    setDataTable('#ads-table', [
             { "data": "name" },
             { "data": "status" },
             { 
