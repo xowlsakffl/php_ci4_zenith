@@ -68,7 +68,7 @@ class AdvKakaoManagerController extends BaseController
 
     public function getReport()
     {
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'dates' => [
                     'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
@@ -112,9 +112,9 @@ class AdvKakaoManagerController extends BaseController
             }
 
             return $this->respond($report);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     private function getCampaigns($arg)
