@@ -41,8 +41,6 @@ class AdvFacebookManagerController extends BaseController
 
                 if ($account['status'] != 1) 
                     array_push($account['class'], 'tag-inactive');
-                /* if (in_array($account['ad_account_id'], $arg['accounts'])) 
-                    array_push($account['class'], 'active'); */
                 if (in_array($account['ad_account_id'], $getDisapprovalByAccount)) 
                     array_push($account['class'], 'disapproval');
 
@@ -118,30 +116,31 @@ class AdvFacebookManagerController extends BaseController
 
             $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
     
-            $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-            $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
-            if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
-                $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
+            if(!empty($res)){
+                $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+                $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
+                if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                    $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
+                }
+                $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+                if ($report['clicks_sum'] != 0) {
+                    $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
+                } else {
+                    $report['cpc'] = 0;
+                }
+                $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+                if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                    $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
+                }
+                if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                    $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
+                }
+                $report['price_sum'] = array_sum($total['price']); //총 매출액
+                $report['profit_sum'] = array_sum($total['profit']); //총 수익
+                if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                    $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
+                }
             }
-            $report['spend_sum'] = array_sum($total['spend']); //총 지출액
-            if ($report['clicks_sum'] != 0) {
-                $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
-            } else {
-                $report['cpc'] = 0;
-            }
-            $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
-            if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
-                $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
-            }
-            if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
-                $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
-            }
-            $report['price_sum'] = array_sum($total['price']); //총 매출액
-            $report['profit_sum'] = array_sum($total['profit']); //총 수익
-            if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
-                $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
-            }
-
             return $this->respond($report);
         //}else{
             //return $this->fail("잘못된 요청");

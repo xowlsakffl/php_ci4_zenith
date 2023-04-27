@@ -33,6 +33,14 @@ class AdvKakaoManagerController extends BaseController
             ];
 
             $accounts = $this->kakao->getAccounts($arg);
+            $getDisapprovalByAccount = $this->getDisapprovalByAccount();
+            foreach ($accounts as &$account) {
+                $account['class'] = [];
+                if($account['config'] == 'OFF' || $account['isAdminStop'] == 1)
+                    array_push($account['class'], 'tag-inactive');
+                if(is_array($getDisapprovalByAccount) && in_array($account['id'], $getDisapprovalByAccount))
+                    array_push($account['class'], 'disapproval');  
+            }
 
             return $this->respond($accounts);
         }else{
@@ -90,27 +98,28 @@ class AdvKakaoManagerController extends BaseController
             }
 
             $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
-    
-            $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-            $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
-            if($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
-                $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
-            }
-            $report['spend_sum'] = array_sum($total['spend']); //총 지출액
-            $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
-            $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
-            if($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
-                $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'],0); //총 db당 단가
-            }
-            if($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
-                $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100,2); //총 전환율
-            }
-            $report['price_sum'] = array_sum($total['price']); //총 매출액
-            $report['profit_sum'] = array_sum($total['profit']); //총 수익
-            if($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
-                $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100,2); //총 수익률
-            }
 
+            if(!empty($res)){
+                $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+                $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
+                if($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                    $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
+                }
+                $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+                $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
+                $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+                if($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                    $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'],0); //총 db당 단가
+                }
+                if($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                    $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100,2); //총 전환율
+                }
+                $report['price_sum'] = array_sum($total['price']); //총 매출액
+                $report['profit_sum'] = array_sum($total['profit']); //총 수익
+                if($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                    $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100,2); //총 수익률
+                }
+            }
             return $this->respond($report);
         }else{
             return $this->fail("잘못된 요청");
@@ -164,7 +173,7 @@ class AdvKakaoManagerController extends BaseController
         $disapprovals = $this->kakao->getDisapproval();
         $data = [];
         foreach ($disapprovals as $row) {
-            $data[] = $row['ad_account_id'];
+            $data[] = $row['account_id'];
         }
         $data = array_unique($data);
 

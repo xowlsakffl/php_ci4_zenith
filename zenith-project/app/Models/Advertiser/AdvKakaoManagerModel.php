@@ -136,7 +136,7 @@ class AdvKakaoManagerModel extends Model
     public function getAccounts($data)
 	{
         $builder = $this->kakao->table('mm_ad_account F');
-		$builder->select('F.id, F.name, F.config');
+		$builder->select('F.id, F.name, F.config, F.isAdminStop');
         $builder->join('mm_campaign A', 'F.id = A.ad_account_id');
         $builder->join('mm_adgroup B', 'A.id = B.campaign_id');
         $builder->join('mm_creative C', 'B.id = C.adgroup_id');
@@ -151,6 +151,28 @@ class AdvKakaoManagerModel extends Model
         $builder->groupBy('F.id');
         $builder->orderBy('F.name', 'asc');
         $result = $builder->get()->getResultArray();
+
+        return $result;
+	}
+
+    public function getDisapproval()
+	{
+        $builder = $this->kakao->table('mm_ad_account acc');
+		$builder->select('acc.id AS account_id, acc.name AS customer_name,
+        ac.id AS campaign_id, ac.name AS campaign_name,
+        ag.id AS adgroup_id, ag.name AS adgroup_name,
+        ad.id, ad.name, ad.landingUrl, ad.config, ad.reviewStatus, ad.creativeStatus, ad.create_time, ad.update_time');
+		$builder->join('mm_campaign ac', 'ac.ad_account_id = acc.id', 'left');
+		$builder->join('mm_adgroup ag', 'ag.campaign_id = ac.id', 'left');
+		$builder->join('mm_creative ad', 'ad.adgroup_id = ag.id', 'left');
+        $builder->where("(ad.reviewStatus = 'REJECTED' OR ad.reviewStatus = 'MODIFICATION_REJECTED')");
+        $builder->where('ad.creativeStatus is NOT NULL', NULL);
+        $builder->where('acc.config', 'ON');
+        $builder->where('ac.config', 'ON');
+        $builder->where('ag.config', 'ON');
+        $builder->where('ad.config', 'ON');
+        $builder->orderBy('ad.create_time', 'DESC');
+		$result = $builder->get()->getResultArray();
 
         return $result;
 	}

@@ -93,9 +93,15 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('data', 'AdvertisementManager\AdvKakaoManagerController::getData');
             $routes->get('report', 'AdvertisementManager\AdvKakaoManagerController::getReport');
         });
-        
 
-        $routes->get('google', 'AdvertisementManager\AdvGoogleManagerController::index');
+        $routes->group('google', static function($routes){
+            $routes->get('', 'AdvertisementManager\AdvGoogleManagerController::index');
+            $routes->get('manageaccounts', 'AdvertisementManager\AdvGoogleManagerController::getManageAccounts');
+            $routes->get('accounts', 'AdvertisementManager\AdvGoogleManagerController::getAccounts');
+            $routes->get('data', 'AdvertisementManager\AdvGoogleManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
+        });
+        
 
         $routes->get('etc', 'AdvertisementManager\AdvEtcManagerController::index');
     });

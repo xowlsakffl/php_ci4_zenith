@@ -8,6 +8,21 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<style>
+    .inner button.disapproval::after{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        content: "";
+        background: #ce1922;
+    }
+
+    .inner button.tag-inactive{
+        opacity: 0.5;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -25,15 +40,15 @@
     <div class="search-wrap">
         <form class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" readonly="readonly">
+                <input type="text">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" readonly="readonly">
+                <input type="text">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
-                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" id="search_btn" type="button">조회</button>
+                <input class="" type="text" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" type="submit">조회</button>
             </div>
         </form>
         <div class="detail row d-flex justify-content-center">
@@ -46,7 +61,7 @@
                 <dd id="clicks_sum"></dd>
             </dl>
             <dl class="col">
-                <dt>클릭율</dt>
+                <dt>클릭률</dt>
                 <dd id="click_ratio_sum"></dd>
             </dl>
             <dl class="col">
@@ -100,10 +115,10 @@
         </ul>
         <div class="tab-content">
             <div class="btn-wrap">
-                    <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
-                    <button type="button" class="btn btn-outline-danger">데이터 비교</button>
-                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
-                </div>
+                <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
+                <button type="button" class="btn btn-outline-danger">데이터 비교</button>
+                <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
+            </div>
             <div class="tab-pane active" id="campaign-tab-pane" role="tabpanel" aria-labelledby="campaign-tab">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-default" id="campaigns-table">
@@ -351,10 +366,11 @@ function getAccount(args){
         success: function(data){  
             $('.advertiser .row').empty();
             var html = '';
-            var set_ratio = '';
-            $.each(data, function(idx, v) {     
-                console.log(data);          
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
+            $.each(data, function(idx, v) {       
+                c = v.class;
+                c = c.join(' ');
+
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
@@ -489,7 +505,7 @@ function getCampaigns(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }
@@ -561,9 +577,9 @@ function getAdsets(args) {
                 "data": "aiConfig",
                 "render": function (data, type, row) {
                     html = '';
-                    html += `<select name="aiConfig" data-id="${row.id}" class="ai-select active-select ai-${row.aiConfig}">`;
+                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select ai-select active-select ai-${row.aiConfig}">`;
                     html += `<option value="OFF" ${row.aiConfig === 'OFF' ? 'selected' : ''}>X</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>O</option></select>`;
-                    html += `<select name="aiConfig" data-id="${row.id}" class="ai-select active-select ai-${row.aiConfig2}">`;
+                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select ai-select active-select ai-${row.aiConfig2}">`;
                     html += `<option value="OFF" ${row.aiConfig2 === 'OFF' ? 'selected' : ''}>X</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>O</option></select>`;
 
                     return html;
@@ -636,7 +652,7 @@ function getAdsets(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }
@@ -707,7 +723,7 @@ function getAds(args) {
                 "data": "config",
                 "render": function (data, type, row) {
                     html = '';
-                    html += `<select name="config" data-id="${row.id}" class="active-select">`;
+                    html += `<select name="config" data-id="${row.id}" class="form-select active-select">`;
                     html += `<option value="OFF" ${row.config === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.config === 'ON' ? 'selected' : ''}>활성</option></select>`;
 
                     return html;
@@ -717,7 +733,7 @@ function getAds(args) {
                 "data": "aiConfig",
                 "render": function (data, type, row) {
                     html = '';
-                    html += `<select name="aiConfig" data-id="${row.id}" class="active-select ai-${row.aiConfig}">`;
+                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select active-select ai-${row.aiConfig}">`;
                     html += `<option value="OFF" ${row.aiConfig === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>활성</option></select>`;
 
                     return html;
@@ -769,7 +785,7 @@ function getAds(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }

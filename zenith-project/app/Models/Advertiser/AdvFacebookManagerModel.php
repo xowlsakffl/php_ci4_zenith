@@ -17,7 +17,7 @@ class AdvFacebookManagerModel extends Model
     public function getCampaigns($data)
     {
         $builder = $this->facebook->table('fb_campaign A');
-        $builder->select('A.campaign_id AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, 0 AS total, 0 AS unique_total, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        $builder->select('A.campaign_id AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
         /* $builder->select('(SELECT COUNT(*) AS memos FROM fb_memo F WHERE A.campaign_id = F.id AND F.type = "campaign" AND DATE(F.datetime) >= DATE(NOW()) AND is_done = 0) AS memos'); */
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id');
@@ -53,7 +53,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAdsets($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, 0 AS total, 0 AS unique_total, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
@@ -107,7 +107,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAds($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, 0 AS total, 0 AS unique_total, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
@@ -384,29 +384,5 @@ class AdvFacebookManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-		/*
-		if ($data['advertiser']) {
-			$advertiser = explode(',', preg_replace('/\^$/', '', $data['advertiser']));
-			$query = ' AND (F.ad_account_id = "' . implode('" OR F.ad_account_id = "', $advertiser) . '")';
-		} else {
-			$select = '';
-			$advertiser = array('전체');
-			$group = 'GROUP BY A.date';
-			$order = 'ORDER BY A.date ASC';
-		}
-
-		$args = json_decode(stripslashes($data['args']), true);
-		if (@count($args['businesses']) > 0) {
-			$businesses = "'" . implode("','", $args['businesses']) . "'";
-			$query .= " AND F.business_id IN (" . $businesses . ")";
-		}
-		if (@count($args['ids'][0]) > 0) {
-			$campaigns = "'" . implode("','", $args['ids'][0]) . "'";
-			$query .= " AND E.campaign_id IN (" . $campaigns . ")";
-		}
-		if (@count($args['ids'][1]) > 0) {
-			$adsets = "'" . implode("','", $args['ids'][1]) . "'";
-			$query .= " AND D.adset_id IN (" . $adsets . ")";
-		} */
 	}
 }

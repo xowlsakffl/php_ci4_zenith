@@ -9,6 +9,21 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<style>
+    .inner button.disapproval::after{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        content: "";
+        background: #ce1922;
+    }
+
+    .inner button.tag-inactive{
+        opacity: 0.5;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -47,7 +62,7 @@
                 <dd id="clicks_sum"></dd>
             </dl>
             <dl class="col">
-                <dt>클릭율</dt>
+                <dt>클릭률</dt>
                 <dd id="click_ratio_sum"></dd>
             </dl>
             <dl class="col">
@@ -364,12 +379,15 @@ function getAccount(args){
             $('.advertiser .row').empty();
             var html = '';
             var set_ratio = '';
-            $.each(data, function(idx, v) {               
+            $.each(data, function(idx, v) {     
+                c = v.class;
+                c = c.join(' ');
+
                 if(v.db_count){
                     set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
                 }
 
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" id="account_btn" class="filter_btn">'+v.name+set_ratio+'</button></div></div>';
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.ad_account_id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+set_ratio+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
@@ -505,7 +523,7 @@ function getCampaigns(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }
@@ -630,7 +648,7 @@ function getAdsets(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }
@@ -743,7 +761,7 @@ function getAds(args) {
                     if (data !== null) {
                         if(data < 20 && data != 0){
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                            return '<span style="color:red">'+margin+'</span>';
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
                             margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
                         }
