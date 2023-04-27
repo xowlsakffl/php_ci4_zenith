@@ -40,15 +40,15 @@
     <div class="search-wrap">
         <form class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text">
+                <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text">
+                <input type="text" name="edate" id="edate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
-                <input class="" type="text" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" type="submit">조회</button>
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="button">조회</button>
             </div>
         </form>
         <div class="detail row d-flex justify-content-center">
