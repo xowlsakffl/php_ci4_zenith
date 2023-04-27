@@ -848,7 +848,6 @@ function setDate(){
             '이번달': [moment().startOf('month'), moment().endOf('month')],
         }
     }, function(start, end, label) {
-        // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
         // Lets update the fields manually this event fires on selection of range
         startDate = start.format('YYYY-MM-DD'); // selected start
         endDate = end.format('YYYY-MM-DD'); // selected end
