@@ -8,21 +8,6 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
-<style>
-    .inner button.disapproval::after{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        content: "";
-        background: #ce1922;
-    }
-
-    .inner button.tag-inactive{
-        opacity: 0.5;
-    }
-</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -302,14 +287,14 @@ var args = {
 args.type = 'campaigns';
 
 setDate();
-//getReport(args);
+getReport(args);
 getAccount(args);
-//getCampaigns(args);
+getCampaigns(args);
 
 function getReport(args){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/kakao/report",
+        url: "<?=base_url()?>/advertisements/naver/report",
         data: args,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -317,8 +302,7 @@ function getReport(args){
             $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
             $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
             $('#click_ratio_sum').text(data.click_ratio_sum);
-            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
-            $('#spend_ratio_sum').text(data.spend_ratio_sum.toLocaleString('ko-KR'));
+            $('#spend_sum').text(Math.floor(data.spend_sum).toLocaleString('ko-KR'));
             $('#unique_total_sum').text(data.unique_total_sum);
             $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
@@ -342,7 +326,7 @@ function getAccount(args){
             $('.advertiser .row').empty();
             var html = '';
             $.each(data, function(idx, v) {       
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+v.class+'">'+v.name+'</button></div></div>';
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.account_id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
@@ -363,7 +347,7 @@ function setDataTable(tableId, columns, args){
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>/advertisements/kakao/data",
+            "url": "<?=base_url()?>/advertisements/naver/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
@@ -379,15 +363,7 @@ function setDataTable(tableId, columns, args){
 
                 $(tableId+' #total-count').text(res.data.length+"건 결과");
                 $(tableId+' #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-
-                if(tableId == '#campaigns-table'){
-                    $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-                }else if(tableId == '#adsets-table'){
-                    $(tableId+' #total-unique_total').text(res.total.unique_total);
-                }else{
-                    $(tableId+' #total-unique_total').text(res.total.unique_total);
-                }
-
+                $(tableId+' #total-unique_total').text(res.total.unique_total);
                 $(tableId+' #total-spend').text('\u20A9'+res.total.cost.toLocaleString('ko-KR'));
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
@@ -417,19 +393,6 @@ function setDataTable(tableId, columns, args){
 function getCampaigns(args) {
     setDataTable('#campaigns-table', [
             { "data": "name" },
-            { "data": "config" },
-            { "data": "autoBudget" },
-            { 
-                "data": "dailyBudgetAmount", 
-                "render": function (data, type, row) {
-                    if (data !== null) {
-                        dailyBudgetAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                    }else{
-                        dailyBudgetAmount = "";
-                    }
-                    return dailyBudgetAmount;
-                }
-            }, //예산
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -491,7 +454,7 @@ function getCampaigns(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }
@@ -541,42 +504,7 @@ function getCampaigns(args) {
 
 function getAdsets(args) {
     setDataTable('#adsets-table', [
-            { "data": "name" },
-            { "data": "config" },
-            { 
-                "data": "aiConfig",
-                "render": function (data, type, row) {
-                    html = '';
-                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select ai-select active-select ai-${row.aiConfig}">`;
-                    html += `<option value="OFF" ${row.aiConfig === 'OFF' ? 'selected' : ''}>X</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>O</option></select>`;
-                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select ai-select active-select ai-${row.aiConfig2}">`;
-                    html += `<option value="OFF" ${row.aiConfig2 === 'OFF' ? 'selected' : ''}>X</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>O</option></select>`;
-
-                    return html;
-                }    
-            },
-            { 
-                "data": "dailyBudgetAmount", 
-                "render": function (data, type, row) {
-                    if (data !== null) {
-                        dailyBudgetAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                    }else{
-                        dailyBudgetAmount = "";
-                    }
-                    return dailyBudgetAmount;
-                }
-            }, //예산
-            { 
-                "data": "bidAmount", 
-                "render": function (data, type, row) {
-                    if (data !== null) {
-                        bidAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                    }else{
-                        bidAmount = "";
-                    }
-                    return bidAmount;
-                }
-            }, //예산
+        { "data": "name" },
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -638,7 +566,7 @@ function getAdsets(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }
@@ -688,28 +616,7 @@ function getAdsets(args) {
 
 function getAds(args) {
     setDataTable('#ads-table', [
-            { "data": "name" },
-            { 
-                "data": "config",
-                "render": function (data, type, row) {
-                    html = '';
-                    html += `<select name="config" data-id="${row.id}" class="form-select active-select">`;
-                    html += `<option value="OFF" ${row.config === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.config === 'ON' ? 'selected' : ''}>활성</option></select>`;
-
-                    return html;
-                }  
-            },
-            { 
-                "data": "aiConfig",
-                "render": function (data, type, row) {
-                    html = '';
-                    html += `<select name="aiConfig" data-id="${row.id}" class="form-select active-select ai-${row.aiConfig}">`;
-                    html += `<option value="OFF" ${row.aiConfig === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.aiConfig === 'ON' ? 'selected' : ''}>활성</option></select>`;
-
-                    return html;
-                }    
-            },
-            { "data": "frequencyCap" }, //프리퀀시캡
+        { "data": "name" },
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -771,7 +678,7 @@ function getAds(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }

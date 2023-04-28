@@ -19,11 +19,12 @@ class AdvNaverManagerModel extends Model
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('campaign_id AS id, campaign_name AS name, 
         COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impression, SUM(click) AS click, SUM(sales) AS cost, SUM(db_sales) AS sales, SUM(db_count) as unique_total');
-        $builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']);
+            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']); */
+            $builder->where('DATE(date) >=', '2023-04-27');
+            $builder->where('DATE(date) <=', '2023-04-27');
         }
 
         if(!empty($data['accounts'])){
@@ -45,14 +46,16 @@ class AdvNaverManagerModel extends Model
 
     public function getAdsets($data)
 	{
-		$builder = $this->kakao->table('gfa_ad_report_history');
+		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('adset_id AS id, adset_name AS name,
         COUNT(ad_id) AS ads, SUM(impression) AS impression,
         SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']);
+            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']); */
+            $builder->where('DATE(date) >=', '2023-04-27');
+            $builder->where('DATE(date) <=', '2023-04-27');
         }
 
         if(!empty($data['accounts'])){
@@ -74,12 +77,14 @@ class AdvNaverManagerModel extends Model
 
     public function getAds($data)
 	{
-		$builder = $this->kakao->table('gfa_ad_report_history');
+		$builder = $this->naver->table('gfa_ad_report_history');
 		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) impression, SUM(click) click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']);
+            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']); */
+            $builder->where('DATE(date) >=', '2023-04-27');
+            $builder->where('DATE(date) <=', '2023-04-27');
         }
 
         if(!empty($data['accounts'])){
@@ -120,11 +125,13 @@ class AdvNaverManagerModel extends Model
 	{
         $builder = $this->naver->table('gfa_ad_account A');
 		$builder->select('A.account_id, A.name');
-        $builder->join('gfa_ad_report_history B', 'A.account_id = B.account_id');
+        $builder->join('gfa_ad_report_history B', 'A.account_id = B.account_id', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(B.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(B.date) <=', $data['dates']['edate']);
+            /* $builder->where('DATE(B.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(B.date) <=', $data['dates']['edate']); */
+            $builder->where('DATE(B.date) >=', '2023-04-27');
+            $builder->where('DATE(B.date) <=', '2023-04-27');
         } 
 
         $builder->where('A.name !=', '');
@@ -137,14 +144,16 @@ class AdvNaverManagerModel extends Model
 
     public function getReport($data)
 	{
-		$builder = $this->kakao->table('gfa_ad_report_history A');
-        $builder->select('A.date, SUM(A.impression) AS impressions, SUM(A.click) AS clicks, (SUM(A.click) / SUM(A.impression)) * 100 AS click_ratio, (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio, SUM(A.sales)/1.1 AS spend, FLOOR(SUM(A.sales)/1.1 * 0.85) AS spend_ratio, SUM(A.db_count) AS unique_total, IFNULL(SUM(A.sales)/1.1 / SUM(A.db_count),0) AS unique_one_price, SUM(A.db_price) AS unit_price, SUM(A.db_sales) AS price, SUM(B.margin) AS profit,  
+		$builder = $this->naver->table('gfa_ad_report_history A');
+        $builder->select('A.date, SUM(A.impression) AS impressions, SUM(A.click) AS clicks, (SUM(A.click) / SUM(A.impression)) * 100 AS click_ratio, (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio, SUM(A.sales)/1.1 AS spend, FLOOR(SUM(A.sales)/1.1 * 0.85) AS spend_ratio, SUM(A.db_count) AS unique_total, IFNULL(SUM(A.sales)/1.1 / SUM(A.db_count),0) AS unique_one_price, SUM(A.db_price) AS unit_price, SUM(A.db_sales) AS price, SUM(A.margin) AS profit,  
         (SUM(A.db_price * A.db_count) - SUM(A.sales)/1.1) / SUM(A.db_price * A.db_count) * 100 AS per');
         $builder->join('gfa_ad_account B', 'A.account_id = B.account_id', 'left');
 
         if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+            /* $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']); */
+            $builder->where('DATE(A.date) >=', '2023-04-27');
+            $builder->where('DATE(A.date) <=', '2023-04-27');
         } 
 
 		if(!empty($data['accounts'])){
