@@ -241,6 +241,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
 $(window).resize(function() {
     fontAutoResize();
 });
+
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
     $.each(data, function(type, row) {
         var html = "";
@@ -260,7 +261,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
 function getLead(data = []){
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/integrate/lead",
+        url: "<?=base_url()?>/integrate/leadcount",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',

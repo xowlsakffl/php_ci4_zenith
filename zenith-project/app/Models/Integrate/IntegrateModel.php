@@ -140,31 +140,6 @@ class IntegrateModel extends Model
         return $result;
     }
 
-    public function getFirstLeadCount($data)
-    {
-        $builder = $this->zenith->table('event_leads as el');
-        $builder->select("
-        adv.name as adv_name,
-        med.media as med_name,
-        info.description as event,
-        count(el.seq) as countAll,
-        ");
-        $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
-        $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
-        $builder->join('event_media as med', 'info.media = med.seq', 'left');
-        $builder->where('el.is_deleted', 0);
-        $builder->where('adv.name !=', '');
-        $builder->where('med.media !=', '');
-        $builder->where('info.description !=', '');
-        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
-        $builder->where('DATE(el.reg_date) <=', $data['edate']);
-
-        $builder->groupBy(['adv.name', 'med.media', 'info.description']);
-        $result = $builder->get()->getResultArray();
-        
-        return $result;
-    }
-
     public function getStatusCount($data)
     {
         $builder = $this->zenith->table('event_leads as el');
