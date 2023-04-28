@@ -80,6 +80,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 광고관리
     $routes->group('advertisements', static function($routes){ 
+        $routes->get('', 'AdvertisementManager\AdvAllManagerController::index');
+
         $routes->group('facebook', static function($routes){
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
             $routes->get('accounts', 'AdvertisementManager\AdvFacebookManagerController::getAccounts');
@@ -100,6 +102,13 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('accounts', 'AdvertisementManager\AdvGoogleManagerController::getAccounts');
             $routes->get('data', 'AdvertisementManager\AdvGoogleManagerController::getData');
             $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
+        });
+
+        $routes->group('naver', static function($routes){
+            $routes->get('', 'AdvertisementManager\AdvNaverManagerController::index');
+            $routes->get('accounts', 'AdvertisementManager\AdvNaverManagerController::getAccounts');
+            $routes->get('data', 'AdvertisementManager\AdvNaverManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvNaverManagerController::getReport');
         });
         
 
