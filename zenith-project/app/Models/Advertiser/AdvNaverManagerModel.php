@@ -21,10 +21,8 @@ class AdvNaverManagerModel extends Model
         COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impression, SUM(click) AS click, SUM(sales) AS cost, SUM(db_sales) AS sales, SUM(db_count) as unique_total');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']); */
-            $builder->where('DATE(date) >=', '2023-04-27');
-            $builder->where('DATE(date) <=', '2023-04-27');
+            $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']);
         }
 
         if(!empty($data['accounts'])){
@@ -52,10 +50,8 @@ class AdvNaverManagerModel extends Model
         SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']); */
-            $builder->where('DATE(date) >=', '2023-04-27');
-            $builder->where('DATE(date) <=', '2023-04-27');
+            $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']);
         }
 
         if(!empty($data['accounts'])){
@@ -81,10 +77,8 @@ class AdvNaverManagerModel extends Model
 		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) impression, SUM(click) click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            /* $builder->where('DATE(date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(date) <=', $data['dates']['edate']); */
-            $builder->where('DATE(date) >=', '2023-04-27');
-            $builder->where('DATE(date) <=', '2023-04-27');
+            $builder->where('DATE(date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(date) <=', $data['dates']['edate']);
         }
 
         if(!empty($data['accounts'])){
@@ -128,10 +122,8 @@ class AdvNaverManagerModel extends Model
         $builder->join('gfa_ad_report_history B', 'A.account_id = B.account_id', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            /* $builder->where('DATE(B.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(B.date) <=', $data['dates']['edate']); */
-            $builder->where('DATE(B.date) >=', '2023-04-27');
-            $builder->where('DATE(B.date) <=', '2023-04-27');
+            $builder->where('DATE(B.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(B.date) <=', $data['dates']['edate']);
         } 
 
         $builder->where('A.name !=', '');
@@ -150,10 +142,8 @@ class AdvNaverManagerModel extends Model
         $builder->join('gfa_ad_account B', 'A.account_id = B.account_id', 'left');
 
         if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            /* $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']); */
-            $builder->where('DATE(A.date) >=', '2023-04-27');
-            $builder->where('DATE(A.date) <=', '2023-04-27');
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         } 
 
 		if(!empty($data['accounts'])){
