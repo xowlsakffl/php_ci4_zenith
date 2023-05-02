@@ -17,7 +17,7 @@ class AdvFacebookManagerModel extends Model
     public function getCampaigns($data)
     {
         $builder = $this->facebook->table('fb_campaign A');
-        $builder->select('A.campaign_id AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        $builder->select('A.campaign_id AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
         /* $builder->select('(SELECT COUNT(*) AS memos FROM fb_memo F WHERE A.campaign_id = F.id AND F.type = "campaign" AND DATE(F.datetime) >= DATE(NOW()) AND is_done = 0) AS memos'); */
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id');
@@ -53,7 +53,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAdsets($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
@@ -107,7 +107,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAds($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS inline_link_clicks, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('C.ad_id AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
@@ -200,10 +200,10 @@ class AdvFacebookManagerModel extends Model
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
 
-			$row['cpc'] = Calc::cpc($row['spend'], $row['inline_link_clicks']);	// 클릭당단가 (1회 클릭당 비용)
-			$row['ctr'] = Calc::ctr($row['inline_link_clicks'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
+			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
+			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
 			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
-			$row['cvr'] = Calc::cvr($row['unique_total'], $row['inline_link_clicks']);	//전환율
+			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
 
 			switch (!empty($row['budget_type'])) {
 				case 'daily':
@@ -351,7 +351,7 @@ class AdvFacebookManagerModel extends Model
 		$builder = $this->facebook->table('fb_ad_insight_history A');
         $builder->select('A.date, 
                 SUM(A.impressions) AS impressions,
-                SUM(A.inline_link_clicks) AS clicks,
+                SUM(A.inline_link_clicks) AS click,
                 (SUM(A.inline_link_clicks) / SUM(A.impressions)) * 100 AS click_ratio,
                 (SUM(A.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
                 SUM(A.spend) AS spend,

@@ -269,14 +269,4 @@ class AdvFacebookManagerController extends BaseController
 
         return $total;
     }
-
-    private function array_remove_keys($array, $keys)
-    {
-        $assocKeys = array();
-        foreach ($keys as $key) {
-            $assocKeys[$key] = true;
-        }
-
-        return array_diff_key($array, $assocKeys);
-    }
 }

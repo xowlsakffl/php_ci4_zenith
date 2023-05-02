@@ -81,6 +81,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     // 광고관리
     $routes->group('advertisements', static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvAllManagerController::index');
+        $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
+        $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
 
         $routes->group('facebook', static function($routes){
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
