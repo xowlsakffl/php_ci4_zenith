@@ -46,7 +46,7 @@ class AdLeadController extends BaseController
             if(is_null($landing)) {
                 CLI::print('비즈폼 매칭 오류 발생 : ' . $row . '');
                 continue;
-            }
+            }   
 
             //전화번호
             $phone = str_replace("+82010", "010", $row['phoneNumber']);
@@ -75,8 +75,8 @@ class AdLeadController extends BaseController
                 $acnt++;
             }
             $result = [];
-            if ($landing['event_id']) {
-                $result['event_seq'] = $landing['event_id'];
+            if ($landing['event_seq']) {
+                $result['event_seq'] = $landing['event_seq'];
                 $result['site'] = $landing['site'];
                 $result['name'] = addslashes($row['nickname']);
                 $result['phone'] = $phone;
@@ -88,11 +88,11 @@ class AdLeadController extends BaseController
                 $result['reg_date'] = $row['create_time'];
                 $result['id'] = $row['seq'];   
                 $result['encUserId'] = $row['encUserId'];
-                $result['bizFormId'] = $row['bizFormId'];         
-            }
-            
-            if (is_array($result)) {
-                $this->adlead->insertEventLeadKakao($result);
+                $result['bizFormId'] = $row['bizFormId'];        
+                
+                if (is_array($result)) {
+                    $this->adlead->insertEventLeadKakao($result);
+                }
             }
         }
     }
@@ -174,8 +174,8 @@ class AdLeadController extends BaseController
                 $add5 = "";
             }
 
-            if ($landing['event_id']) {
-                $result['event_seq'] = $landing['event_id'];
+            if ($landing['event_seq']) {
+                $result['event_seq'] = $landing['event_seq'];
                 $result['site'] = $landing['site'];
                 $result['name'] = addslashes($full_name);
                 $result['gender'] = $gender;
@@ -188,11 +188,11 @@ class AdLeadController extends BaseController
                 $result['add5'] = addslashes($add5);
                 $result['addr'] = $addr;
                 $result['reg_date'] = $row['created_time'];
-                $result['id'] = $row['id'];            
-            }
-
-            if (is_array($result)) {
-                $this->adlead->insertEventLeadFacebook($result);
+                $result['id'] = $row['id'];    
+                
+                if (is_array($result)) {
+                    $this->adlead->insertEventLeadFacebook($result);
+                }
             }
         }
     }

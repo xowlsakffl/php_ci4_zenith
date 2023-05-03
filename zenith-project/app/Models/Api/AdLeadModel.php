@@ -25,7 +25,7 @@ class AdLeadModel extends Model
                 ORDER BY ur.create_time ASC";
 
         $result = $this->kakao->query($sql)->getResultArray();
-
+        
         return $result;
     }
 

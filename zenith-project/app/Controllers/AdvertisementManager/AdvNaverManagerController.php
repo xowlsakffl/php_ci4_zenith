@@ -3,22 +3,22 @@
 namespace App\Controllers\AdvertisementManager;
 
 use App\Controllers\BaseController;
-use App\Models\Advertiser\AdvKakaoManagerModel;
+use App\Models\Advertiser\AdvNaverManagerModel;
 use CodeIgniter\API\ResponseTrait;
 
-class AdvKakaoManagerController extends BaseController
+class AdvNaverManagerController extends BaseController
 {
     use ResponseTrait;
     
-    protected $kakao;
+    protected $naver;
     public function __construct() 
     {
-        $this->kakao = model(AdvKakaoManagerModel::class);
+        $this->naver = model(AdvNaverManagerModel::class);
     }
     
     public function index()
     {
-        return view('advertisements/kakao/kakao');
+        return view('advertisements/naver/naver');
     }
 
     public function getAccounts()
@@ -29,18 +29,9 @@ class AdvKakaoManagerController extends BaseController
                     'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
-                'businesses' => $this->request->getGet('businesses'),
             ];
 
-            $accounts = $this->kakao->getAccounts($arg);
-            $getDisapprovalByAccount = $this->getDisapprovalByAccount();
-            foreach ($accounts as &$account) {
-                $account['class'] = [];
-                if($account['config'] == 'OFF' || $account['isAdminStop'] == 1)
-                    array_push($account['class'], 'tag-inactive');
-                if(is_array($getDisapprovalByAccount) && in_array($account['id'], $getDisapprovalByAccount))
-                    array_push($account['class'], 'disapproval');  
-            }
+            $accounts = $this->naver->getAccounts($arg);
 
             return $this->respond($accounts);
         }else{
@@ -85,7 +76,7 @@ class AdvKakaoManagerController extends BaseController
                 'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->kakao->getReport($arg);
+            $res = $this->naver->getReport($arg);
             $columnIndex = 0;
             $data = [];
             foreach($res as $row) {
@@ -106,7 +97,6 @@ class AdvKakaoManagerController extends BaseController
                     $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
                 }
                 $report['spend_sum'] = array_sum($total['spend']); //총 지출액
-                $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
                 $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
                 if($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
                     $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'],0); //총 db당 단가
@@ -128,8 +118,8 @@ class AdvKakaoManagerController extends BaseController
 
     private function getCampaigns($arg)
     {
-        $campaigns = $this->kakao->getCampaigns($arg);
-        $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['dates']);
+        $campaigns = $this->naver->getCampaigns($arg);
+        $campaigns = $this->naver->getStatuses("campaigns", $campaigns, $arg['dates']);
         $total = $this->getTotal($campaigns);
         
         $result = [
@@ -142,8 +132,8 @@ class AdvKakaoManagerController extends BaseController
 
     private function getAdSets($arg)
     {
-        $adsets = $this->kakao->getAdSets($arg);
-        $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
+        $adsets = $this->naver->getAdSets($arg);
+        $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['dates']);
         $total = $this->getTotal($adsets);
 
         $result = [
@@ -156,8 +146,8 @@ class AdvKakaoManagerController extends BaseController
 
     private function getAds($arg)
     {
-        $ads = $this->kakao->getAds($arg);
-        $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
+        $ads = $this->naver->getAds($arg);
+        $ads = $this->naver->getStatuses("ads", $ads, $arg['dates']);
         $total = $this->getTotal($ads);
 
         $result = [
@@ -168,28 +158,16 @@ class AdvKakaoManagerController extends BaseController
         return $result;
     }
 
-    private function getDisapprovalByAccount()
-    {
-        $disapprovals = $this->kakao->getDisapproval();
-        $data = [];
-        foreach ($disapprovals as $row) {
-            $data[] = $row['account_id'];
-        }
-        $data = array_unique($data);
-
-        return $data;
-    }
-
     private function getTotal($datas)
     {
         $total = [];
-        $total['impressions'] = 0;
+        $total['impression'] = 0;
         $total['click'] = 0;
-        $total['spend'] = 0;
+        $total['cost'] = 0;
         $total['margin'] = 0;
         $total['unique_total'] = 0;
         $total['sales'] = 0;
-        $total['budget'] = 0;
+        $total['dailyBudgetAmount'] = 0;
         $total['cpc'] = 0;
         $total['ctr'] = 0;
         $total['cpa'] = 0;
@@ -197,13 +175,14 @@ class AdvKakaoManagerController extends BaseController
         $total['margin_ratio'] = 0;
         $total['expect_db'] = 0;
         foreach($datas as $data){
-            $total['impressions'] +=$data['impressions'];
+            $total['margin'] = $data['sales'] - $data['cost'];
+
+            $total['impression'] +=$data['impression'];
             $total['click'] +=$data['click'];
-            $total['spend'] +=$data['spend'];
+            $total['cost'] +=$data['cost'];
             $total['margin'] +=$data['margin'];
             $total['unique_total'] +=$data['unique_total'];
             $total['sales'] +=$data['sales'];
-            $total['budget'] +=$data['budget'];
             $total['cpc'] +=$data['cpc'];
             $total['ctr'] +=$data['ctr'];
             $total['cpa'] +=$data['cpa'];
@@ -212,17 +191,17 @@ class AdvKakaoManagerController extends BaseController
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
             if($total['click'] > 0){
-                $total['avg_cpc'] = $total['spend'] / $total['click'];
+                $total['avg_cpc'] = $total['cost'] / $total['click'];
             }else{
                 $total['avg_cpc'] = 0;
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
-            $total['avg_ctr'] = ($total['click'] / $total['impressions']) * 100;
+            $total['avg_ctr'] = ($total['click'] / $total['impression']) * 100;
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
             if($total['unique_total'] > 0){
-                $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
+                $total['avg_cpa'] = $total['cost'] / $total['unique_total'];
             }else{
                 $total['avg_cpa'] = 0;
             }
@@ -240,23 +219,8 @@ class AdvKakaoManagerController extends BaseController
             } else {
                 $total['avg_margin_ratio'] = 0;
             } 
-
-            
-            if ($data['status'] == 'ON' && $data['unique_total']){
-                $total['expect_db'] += round($data['budget'] / $data['cpa']);
-            }
         }
 
         return $total;
-    }
-
-    private function array_remove_keys($array, $keys)
-    {
-        $assocKeys = array();
-        foreach ($keys as $key) {
-            $assocKeys[$key] = true;
-        }
-
-        return array_diff_key($array, $assocKeys);
     }
 }

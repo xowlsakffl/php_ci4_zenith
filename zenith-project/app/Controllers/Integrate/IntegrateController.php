@@ -139,57 +139,6 @@ class IntegrateController extends BaseController
         }
     }
 
-    public function getLead()
-    {
-
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-            ];
-
-            $data = $this->integrate->getFirstLeadCount($arg);
-
-            $adv_counts = array();
-            $med_counts = array();
-            $event_counts = array();
-            foreach ($data as $row) {
-                
-                if (!array_key_exists($row['adv_name'], $adv_counts)) {
-                    $adv_counts[$row['adv_name']] = array(
-                        'name' => $row['adv_name'],
-                        'countAll' => 0
-                    );
-                }
-
-                if (!array_key_exists($row['med_name'], $med_counts)) {
-                    $med_counts[$row['med_name']] = array(
-                        'name' => $row['med_name'],
-                        'countAll' => 0
-                    );
-                }
-
-                $event_counts[$row['event']] = array(
-                    'name' => $row['event'],
-                    'countAll' => $row['countAll'],
-                );
-
-                $adv_counts[$row['adv_name']]['countAll'] += $row['countAll'];
-                $med_counts[$row['med_name']]['countAll'] += $row['countAll'];
-            }
-
-            $result = [
-                'advertiser' => $adv_counts,
-                'media' => $med_counts,
-                'event' => $event_counts,
-            ];
-
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        }
-    }
-
     public function getStatusCount()
     {
 

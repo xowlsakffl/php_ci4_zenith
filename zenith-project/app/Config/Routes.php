@@ -80,18 +80,39 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 광고관리
     $routes->group('advertisements', static function($routes){ 
+        $routes->get('', 'AdvertisementManager\AdvAllManagerController::index');
+        $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
+        $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
+
         $routes->group('facebook', static function($routes){
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
             $routes->get('accounts', 'AdvertisementManager\AdvFacebookManagerController::getAccounts');
             $routes->get('data', 'AdvertisementManager\AdvFacebookManagerController::getData');
-            $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getChartReport');
+            $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
+        });
+
+        $routes->group('kakao', static function($routes){
+            $routes->get('', 'AdvertisementManager\AdvKakaoManagerController::index');
+            $routes->get('accounts', 'AdvertisementManager\AdvKakaoManagerController::getAccounts');
+            $routes->get('data', 'AdvertisementManager\AdvKakaoManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvKakaoManagerController::getReport');
+        });
+
+        $routes->group('google', static function($routes){
+            $routes->get('', 'AdvertisementManager\AdvGoogleManagerController::index');
+            $routes->get('manageaccounts', 'AdvertisementManager\AdvGoogleManagerController::getManageAccounts');
+            $routes->get('accounts', 'AdvertisementManager\AdvGoogleManagerController::getAccounts');
+            $routes->get('data', 'AdvertisementManager\AdvGoogleManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
+        });
+
+        $routes->group('naver', static function($routes){
+            $routes->get('', 'AdvertisementManager\AdvNaverManagerController::index');
+            $routes->get('accounts', 'AdvertisementManager\AdvNaverManagerController::getAccounts');
+            $routes->get('data', 'AdvertisementManager\AdvNaverManagerController::getData');
+            $routes->get('report', 'AdvertisementManager\AdvNaverManagerController::getReport');
         });
         
-        
-        
-        $routes->get('kakao', 'AdvertisementManager\AdvKakaoManagerController::index');
-
-        $routes->get('google', 'AdvertisementManager\AdvGoogleManagerController::index');
 
         $routes->get('etc', 'AdvertisementManager\AdvEtcManagerController::index');
     });

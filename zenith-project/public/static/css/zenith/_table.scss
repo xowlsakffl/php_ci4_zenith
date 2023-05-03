@@ -18,7 +18,7 @@
     }
     tbody{
         th{position:relative; padding:12px; font-weight:400; border-right:1px dashed #dfdfdf;}
-        td{position:relative; padding:12px 8px; text-align:center; vertical-align:middle;
+        td{position:relative; padding:12px 8px; text-align:center; vertical-align:middle; word-break:break-word;
             &:not(:last-child){border-right:1px dashed #dfdfdf;}
         }
     }

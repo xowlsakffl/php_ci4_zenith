@@ -806,10 +806,10 @@ class ChainsawKM
         if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
             $urls = parse_url($data['landingUrl']);
             parse_str($urls['query'], $urls['qs']);
-            $event_id = @array_pop(explode('/', $urls['path']));
+            $event_id = array_pop(explode('/', $urls['path']));
             $site = @$urls['qs']['site'];
         } else {
-            $event_id = @$matches[2][0];
+            $event_id = $matches[2][0];
             $site = @$matches[4][0];
         }
         if(@$urls['qs']['site'] != @$matches[4][0]) //제목 site값 우선
@@ -825,7 +825,7 @@ class ChainsawKM
                 default: $media = '';break;
             }
         }
-        // print_r($matches);
+
         if ($media) {
             $result['name']         = $matches[0][0];
             $result['media']        = $media;

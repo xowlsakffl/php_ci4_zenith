@@ -67,9 +67,9 @@
     <div>
         <div class="statusCount">
         </div>
-        <div class="row">
-            <table class="dataTable" id="deviceTable">
-                <thead>
+        <div class="row table-responsive">
+            <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
+                <thead class="table-dark">
                     <tr>
                         <th style="width:40px" class="first">#</th>
                         <th style="width:80px">이벤트번호</th>
@@ -106,7 +106,6 @@ $('#sdate, #edate').val(today);
 var data = {
     'sdate': $('#sdate').val(),
     'edate': $('#edate').val(),
-    'stx': $('#stx').val(),
 };
 
 setDate();
@@ -141,6 +140,7 @@ function getList(data = []){
             { "data": null, "defaultContent": ""},
             { "data": "site" },
             { "data": "reg_date", },
+            { "data": null, "defaultContent": ""},
         ],
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
@@ -241,6 +241,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
 $(window).resize(function() {
     fontAutoResize();
 });
+
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
     $.each(data, function(type, row) {
         var html = "";
@@ -260,7 +261,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
 function getLead(data = []){
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/integrate/lead",
+        url: "<?=base_url()?>/integrate/leadcount",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -274,6 +275,7 @@ function getLead(data = []){
 }
 
 function setDate(){
+    $('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷

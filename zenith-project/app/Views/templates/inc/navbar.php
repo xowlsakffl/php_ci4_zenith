@@ -9,10 +9,12 @@ $uri = current_url(true)->getPath();
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#ad" aria-expanded="false"><i class="bi bi-graph-up-arrow"></i>광고 관리</button>
                 <div class="collapse" id="ad">
-                    <ul class="btn-toggle-nav">                     
+                    <ul class="btn-toggle-nav">              
+                        <li><a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>">통합 보기</a></li>        
                         <li><a href="/advertisements/facebook" class="<?php if($uri === '/advertisements/facebook'){ echo "active";}?>">페이스북</a></li>                      
                         <li><a href="/advertisements/kakao" class="<?php if($uri === '/advertisements/kakao'){ echo "active";}?>">카카오 모먼트</a></li>
                         <li><a href="/advertisements/google" class="<?php if($uri === '/advertisements/google'){ echo "active";}?>">구글 애드워즈</a></li>
+                        <li><a href="/advertisements/naver" class="<?php if($uri === '/advertisements/naver'){ echo "active";}?>">네이버</a></li>
                         <li><a href="/advertisements/etc" class="<?php if($uri === '/advertisements/etc'){ echo "active";}?>">기타</a></li>
                     </ul>
                 </div>

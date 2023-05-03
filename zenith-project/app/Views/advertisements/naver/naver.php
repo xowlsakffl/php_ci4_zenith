@@ -1,28 +1,13 @@
 <?=$this->extend('templates/front.php');?>
 
 <?=$this->section('title');?>
-    CHAIN 열혈광고 - 광고 관리 / 구글 애드워즈
+    CHAIN 열혈광고 - 광고 관리 / 네이버
 <?=$this->endSection();?>
 
 <!--헤더-->
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
-<style>
-    .inner button.disapproval::after{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        content: "";
-        background: #ce1922;
-    }
-
-    .inner button.tag-inactive{
-        opacity: 0.5;
-    }
-</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -33,7 +18,7 @@
 <?=$this->section('content');?>
 <div class="sub-contents-wrap">
     <div class="title-area">
-        <h2 class="page-title">구글 애드워즈 광고관리</h2>
+        <h2 class="page-title">네이버 광고관리</h2>
         <p class="title-disc">광고주별 매체의 기본적인 광고 합성/종료/수정의 기능을 제공하고 있으며, 추가적으로 CHAIN에서 개발한 스마트하게 광고를 최적화 시켜주는 기능도 함께 이용할 수 있습니다.</p>
     </div>
 
@@ -81,10 +66,6 @@
                 <dd id="conversion_ratio_sum"></dd>
             </dl>
             <dl class="col">
-                <dt>수익</dt>
-                <dd id="profit_sum"></dd>
-            </dl>
-            <dl class="col">
                 <dt>수익률</dt>
                 <dd id="per_sum"></dd>
             </dl>
@@ -95,14 +76,10 @@
         </div>
     </div>
 
-    <div class="section client-list biz">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3>
-        <div class="row"></div>
-    </div>
-
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
-        <div class="row"></div>
+        <div class="row">
+        </div>
     </div>
 
     <div class="tab-wrap">
@@ -111,10 +88,10 @@
                 <button class="nav-link tab-link active" value="campaigns" type="button" id="campaign-tab" data-bs-toggle="tab" data-bs-target="#campaign-tab-pane" role="tab" aria-controls="campaign-tab-pane" aria-selected="true">캠페인</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="adsets" type="button" role="tab" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" aria-controls="set-tab-pane" aria-selected="false">광고 그룹</button>
+                <button class="nav-link tab-link" value="adsets" type="button" role="tab" id="set-tab" data-bs-toggle="tab" data-bs-target="#set-tab-pane" aria-controls="set-tab-pane" aria-selected="false">광고 세트</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane"  aria-controls="advertisement-tab-pane" aria-selected="false">소재</button>
+                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement-tab-pane"  aria-controls="advertisement-tab-pane" aria-selected="false">광고</button>
             </li>
         </ul>
         <div class="tab-content">
@@ -127,10 +104,10 @@
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-default" id="campaigns-table">
                         <colgroup>
-                            <col style="width:20%">
+                            <col>
                             <col style="width:7%">
                             <col style="width:7%">
-                            <col style="width:10%">
+                            <col style="width:7%">
                             <col style="width:6%">
                             <col style="width:4%">
                             <col style="width:7.5%">
@@ -146,9 +123,6 @@
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">캠페인명</th>
-                                <th scope="col">상태</th>
-                                <th scope="col">입찰 <br>유형</th>
-                                <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
                                 <th scope="col">유효 <br>DB</th>
                                 <th scope="col">지출액</th>
@@ -165,9 +139,6 @@
                         <thead>
                             <tr id="total">
                                 <td id="total-count"></td>
-                                <td></td>
-                                <td></td>
-                                <td id="total-budget"></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -189,14 +160,13 @@
             <div class="tab-pane" id="set-tab-pane" role="tabpanel" aria-labelledby="set-tab">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-default" id="adsets-table">
-                        <colgroup>
-                            <col style="width:10%">
+                    <colgroup>
+                            <col>
                             <col style="width:7%">
                             <col style="width:7%">
                             <col style="width:7%">
-                            <col style="width:7%">
-                            <col style="width:8%">
-                            <col style="width:8%">
+                            <col style="width:6%">
+                            <col style="width:4%">
                             <col style="width:7.5%">
                             <col style="width:7.5%">
                             <col style="width:5.5%">
@@ -204,12 +174,12 @@
                             <col style="width:5.5%">
                             <col style="width:5.5%">
                             <col style="width:5.5%">
+                            <col style="width:5.5%">
+                            <col style="width:6.5%">
                         </colgroup>
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">광고그룹명</th>
-                                <th scope="col">상태</th>
-                                <th scope="col">입찰가</th>
+                                <th scope="col">캠페인명</th>
                                 <th scope="col">현재 <br>DB단가</th>
                                 <th scope="col">유효 <br>DB</th>
                                 <th scope="col">지출액</th>
@@ -226,8 +196,6 @@
                         <thead>
                             <tr id="total">
                                 <td id="total-count"></td>
-                                <td></td>
-                                <td></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -249,12 +217,13 @@
             <div class="tab-pane" id="advertisement-tab-pane" role="tabpanel" aria-labelledby="advertisement-tab">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-default" id="ads-table">
-                        <colgroup>
-                            <col style="width:10%">
+                    <colgroup>
+                            <col>
                             <col style="width:7%">
                             <col style="width:7%">
                             <col style="width:7%">
                             <col style="width:6%">
+                            <col style="width:4%">
                             <col style="width:7.5%">
                             <col style="width:7.5%">
                             <col style="width:5.5%">
@@ -267,9 +236,7 @@
                         </colgroup>
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">광고명</th>
-                                <th scope="col">코드</th>
-                                <th scope="col">상태</th>
+                                <th scope="col">캠페인명</th>
                                 <th scope="col">현재 <br>DB단가</th>
                                 <th scope="col">유효 <br>DB</th>
                                 <th scope="col">지출액</th>
@@ -286,8 +253,6 @@
                         <thead>
                             <tr id="total">
                                 <td id="total-count"></td>
-                                <td></td>
-                                <td></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -323,14 +288,13 @@ args.type = 'campaigns';
 
 setDate();
 getReport(args);
-getManageAccount(args);
 getAccount(args);
 getCampaigns(args);
 
 function getReport(args){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/google/report",
+        url: "<?=base_url()?>/advertisements/naver/report",
         data: args,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -338,36 +302,12 @@ function getReport(args){
             $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
             $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
             $('#click_ratio_sum').text(data.click_ratio_sum);
-            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
+            $('#spend_sum').text(Math.floor(data.spend_sum).toLocaleString('ko-KR'));
             $('#unique_total_sum').text(data.unique_total_sum);
             $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
-            $('#profit_sum').text(data.profit_sum.toLocaleString('ko-KR'));
             $('#per_sum').text(data.per_sum);
-            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-}
-
-function getManageAccount(){
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/google/manageaccounts",
-        data: args,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            $('.biz .row').empty();
-            var html = '';
-            var set_ratio = '';
-            $.each(data, function(idx, v) {     
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.customerId+'" id="business_btn" class="filter_btn">'+v.name+'</button></div></div>';
-            });
-
-            $('.biz .row').html(html);
+            $('#price_01_sum').text(data.price_sum);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -378,23 +318,15 @@ function getManageAccount(){
 function getAccount(args){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/google/accounts",
+        url: "<?=base_url()?>/advertisements/naver/accounts",
         data: args,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
             $('.advertiser .row').empty();
             var html = '';
-            var set_ratio = '';
-            $.each(data, function(idx, v) {     
-                c = v.class;
-                c = c.join(' ');
-
-                if(v.db_count){
-                    set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
-                }
-
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+set_ratio+'</button></div></div>';
+            $.each(data, function(idx, v) {       
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.account_id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
@@ -415,7 +347,7 @@ function setDataTable(tableId, columns, args){
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>/advertisements/google/data",
+            "url": "<?=base_url()?>/advertisements/naver/data",
             "data": args,
             "type": "GET",
             "contentType": "application/json",
@@ -431,16 +363,7 @@ function setDataTable(tableId, columns, args){
 
                 $(tableId+' #total-count').text(res.data.length+"건 결과");
                 $(tableId+' #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-
-                if(tableId == '#campaigns-table'){
-                    $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-                    $(tableId+' #total-budget').text('\u20A9'+res.total.amount.toLocaleString('ko-KR'));
-                }else if(tableId == '#adsets-table'){
-                    $(tableId+' #total-unique_total').text(res.total.unique_total);
-                }else{
-                    $(tableId+' #total-unique_total').text(res.total.unique_total);
-                }
-
+                $(tableId+' #total-unique_total').text(res.total.unique_total);
                 $(tableId+' #total-spend').text('\u20A9'+res.total.cost.toLocaleString('ko-KR'));
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
@@ -470,19 +393,6 @@ function setDataTable(tableId, columns, args){
 function getCampaigns(args) {
     setDataTable('#campaigns-table', [
             { "data": "name" },
-            { "data": "status" },
-            { "data": "biddingStrategyType" },
-            { 
-                "data": "amount", 
-                "render": function (data, type, row) {
-                    if (data !== null) {
-                        amount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                    }else{
-                        amount = "";
-                    }
-                    return amount;
-                }
-            }, //예산
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -544,7 +454,7 @@ function getCampaigns(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }
@@ -594,9 +504,7 @@ function getCampaigns(args) {
 
 function getAdsets(args) {
     setDataTable('#adsets-table', [
-            { "data": "name" },
-            { "data": "status" },
-            { "data": "bidAmount" },
+        { "data": "name" },
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -658,7 +566,7 @@ function getAdsets(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }
@@ -708,9 +616,7 @@ function getAdsets(args) {
 
 function getAds(args) {
     setDataTable('#ads-table', [
-            { "data": "name" },
-            { "data": null, "defaultContent": "" },//code
-            { "data": "status" },
+        { "data": "name" },
             { 
                 "data": "cpa",
                 "render": function (data, type, row) {
@@ -772,7 +678,7 @@ function getAds(args) {
                     if (data !== null) {
                         sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        sales = "";
+                        sales = "\u20A90";
                     }
                     return sales;
                 }
@@ -843,7 +749,6 @@ function setDate(){
             '이번달': [moment().startOf('month'), moment().endOf('month')],
         }
     }, function(start, end, label) {
-        // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
         // Lets update the fields manually this event fires on selection of range
         startDate = start.format('YYYY-MM-DD'); // selected start
         endDate = end.format('YYYY-MM-DD'); // selected end
@@ -885,22 +790,13 @@ $('body').on('click', '.tab-link', function(){
     } 
 });
 
-$('body').on('click', '#business_btn, #account_btn', function(){
-    if ($(this).attr('id') === 'business_btn') {
-        $('#account_btn').removeClass('active')
-    }
+$('body').on('click', '#account_btn', function(){
 
     $(this).toggleClass("active");
     tab = $('.tab-link.active').val();
-    business = $('#business_btn.active').map(function(){return $(this).val();}).get();
     accounts = $('#account_btn.active').map(function(){return $(this).val();}).get();
-    args.businesses = business;
     args.accounts = accounts;
     
-    if ($(this).attr('id') === 'business_btn') {
-        args.accounts = [];
-        getAccount(args);
-    }
     getReport(args);
     switch (tab) {
     case "ads":
