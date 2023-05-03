@@ -118,7 +118,7 @@ class AdvFacebookManagerController extends BaseController
     
             if(!empty($res)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-                $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
+                $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
                 if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
                     $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
                 }
@@ -205,7 +205,7 @@ class AdvFacebookManagerController extends BaseController
     {
         $total = [];
         $total['impressions'] = 0;
-        $total['inline_link_clicks'] = 0;
+        $total['click'] = 0;
         $total['spend'] = 0;
         $total['margin'] = 0;
         $total['unique_total'] = 0;
@@ -219,7 +219,7 @@ class AdvFacebookManagerController extends BaseController
         $total['expect_db'] = 0;
         foreach($datas as $data){
             $total['impressions'] +=$data['impressions'];
-            $total['inline_link_clicks'] +=$data['inline_link_clicks'];
+            $total['click'] +=$data['click'];
             $total['spend'] +=$data['spend'];
             $total['margin'] +=$data['margin'];
             $total['unique_total'] +=$data['unique_total'];
@@ -232,14 +232,14 @@ class AdvFacebookManagerController extends BaseController
             $total['margin_ratio'] +=$data['margin_ratio'];
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
-            if($total['inline_link_clicks'] > 0){
-                $total['avg_cpc'] = $total['spend'] / $total['inline_link_clicks'];
+            if($total['click'] > 0){
+                $total['avg_cpc'] = $total['spend'] / $total['click'];
             }else{
                 $total['avg_cpc'] = 0;
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
-            $total['avg_ctr'] = ($total['inline_link_clicks'] / $total['impressions']) * 100;
+            $total['avg_ctr'] = ($total['click'] / $total['impressions']) * 100;
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
             if($total['unique_total'] > 0){
@@ -249,8 +249,8 @@ class AdvFacebookManagerController extends BaseController
             }
 
             //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
-            if ($total['inline_link_clicks'] > 0) {
-                $total['avg_cvr'] = ($total['unique_total'] / $total['inline_link_clicks']) * 100;
+            if ($total['click'] > 0) {
+                $total['avg_cvr'] = ($total['unique_total'] / $total['click']) * 100;
             } else {
                 $total['avg_cvr'] = 0;
             } 	

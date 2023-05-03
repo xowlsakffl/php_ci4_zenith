@@ -28,7 +28,7 @@ class AdvAllManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'media' => $this->request->getGet('media'),
                 'dates' => [
@@ -54,13 +54,13 @@ class AdvAllManagerController extends BaseController
                     $result = $this->getCampaigns($arg);
                     break;
                 default:
-                    return $this->fail("지원하지 않는 매체입니다.");
+                    return $this->fail("잘못된 요청");
             }
             
             return $this->respond($result);
-        }else{
+        //}else{
             return $this->fail("잘못된 요청");
-        }
+        //}
     }
 
     private function getCampaigns($arg)

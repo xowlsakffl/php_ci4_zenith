@@ -410,19 +410,19 @@ function setDataTable(tableId, columns, args){
 
                 if(tableId == '#campaigns-table'){
                     $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-                    $(tableId+' #total-budget').text('\u20A9'+res.total.dailyBudgetAmount.toLocaleString('ko-KR'));
+                    $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 }else if(tableId == '#adsets-table'){
                     $(tableId+' #total-unique_total').text(res.total.unique_total);
-                    $(tableId+' #total-budget').text('\u20A9'+res.total.dailyBudgetAmount.toLocaleString('ko-KR'));
+                    $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 }else{
                     $(tableId+' #total-unique_total').text(res.total.unique_total);
                 }
 
-                $(tableId+' #total-spend').text('\u20A9'+res.total.cost.toLocaleString('ko-KR'));
+                $(tableId+' #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
                 $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $(tableId+' #total-impressions').text(res.total.impression.toLocaleString('ko-KR'));
+                $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
                 $(tableId+' #total-inline_link_clicks').text(res.total.click.toLocaleString('ko-KR'));
                 $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
                 $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
@@ -447,7 +447,7 @@ function setDataTable(tableId, columns, args){
 function getCampaigns(args) {
     setDataTable('#campaigns-table', [
             { "data": "name" },
-            { "data": "config" },
+            { "data": "status" },
             { "data": "autoBudget" },
             { 
                 "data": "dailyBudgetAmount", 
@@ -572,7 +572,7 @@ function getCampaigns(args) {
 function getAdsets(args) {
     setDataTable('#adsets-table', [
             { "data": "name" },
-            { "data": "config" },
+            { "data": "status" },
             { 
                 "data": "aiConfig",
                 "render": function (data, type, row) {
@@ -720,11 +720,11 @@ function getAds(args) {
     setDataTable('#ads-table', [
             { "data": "name" },
             { 
-                "data": "config",
+                "data": "status",
                 "render": function (data, type, row) {
                     html = '';
-                    html += `<select name="config" data-id="${row.id}" class="form-select active-select">`;
-                    html += `<option value="OFF" ${row.config === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.config === 'ON' ? 'selected' : ''}>활성</option></select>`;
+                    html += `<select name="status" data-id="${row.id}" class="form-select active-select">`;
+                    html += `<option value="OFF" ${row.status === 'OFF' ? 'selected' : ''}>비활성</option><option value="ON" ${row.status === 'ON' ? 'selected' : ''}>활성</option></select>`;
 
                     return html;
                 }  

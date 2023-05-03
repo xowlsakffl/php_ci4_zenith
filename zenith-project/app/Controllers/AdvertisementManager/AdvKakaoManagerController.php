@@ -183,13 +183,13 @@ class AdvKakaoManagerController extends BaseController
     private function getTotal($datas)
     {
         $total = [];
-        $total['impression'] = 0;
+        $total['impressions'] = 0;
         $total['click'] = 0;
-        $total['cost'] = 0;
+        $total['spend'] = 0;
         $total['margin'] = 0;
         $total['unique_total'] = 0;
         $total['sales'] = 0;
-        $total['dailyBudgetAmount'] = 0;
+        $total['budget'] = 0;
         $total['cpc'] = 0;
         $total['ctr'] = 0;
         $total['cpa'] = 0;
@@ -197,13 +197,13 @@ class AdvKakaoManagerController extends BaseController
         $total['margin_ratio'] = 0;
         $total['expect_db'] = 0;
         foreach($datas as $data){
-            $total['impression'] +=$data['impression'];
+            $total['impressions'] +=$data['impressions'];
             $total['click'] +=$data['click'];
-            $total['cost'] +=$data['cost'];
+            $total['spend'] +=$data['spend'];
             $total['margin'] +=$data['margin'];
             $total['unique_total'] +=$data['unique_total'];
             $total['sales'] +=$data['sales'];
-            $total['dailyBudgetAmount'] +=$data['dailyBudgetAmount'];
+            $total['budget'] +=$data['budget'];
             $total['cpc'] +=$data['cpc'];
             $total['ctr'] +=$data['ctr'];
             $total['cpa'] +=$data['cpa'];
@@ -212,17 +212,17 @@ class AdvKakaoManagerController extends BaseController
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
             if($total['click'] > 0){
-                $total['avg_cpc'] = $total['cost'] / $total['click'];
+                $total['avg_cpc'] = $total['spend'] / $total['click'];
             }else{
                 $total['avg_cpc'] = 0;
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
-            $total['avg_ctr'] = ($total['click'] / $total['impression']) * 100;
+            $total['avg_ctr'] = ($total['click'] / $total['impressions']) * 100;
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
             if($total['unique_total'] > 0){
-                $total['avg_cpa'] = $total['cost'] / $total['unique_total'];
+                $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
             }else{
                 $total['avg_cpa'] = 0;
             }
@@ -242,8 +242,8 @@ class AdvKakaoManagerController extends BaseController
             } 
 
             
-            if ($data['config'] == 'ON' && $data['unique_total']){
-                $total['expect_db'] += round($data['dailyBudgetAmount'] / $data['cpa']);
+            if ($data['status'] == 'ON' && $data['unique_total']){
+                $total['expect_db'] += round($data['budget'] / $data['cpa']);
             }
         }
 

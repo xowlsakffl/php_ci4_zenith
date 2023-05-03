@@ -17,7 +17,7 @@ class AdvKakaoManagerModel extends Model
     public function getCampaigns($data)
 	{
 		$builder = $this->kakao->table('mm_campaign A');
-        $builder->select('E.name AS account_name, A.id AS id, A.name AS name, A.goal, A.config AS config, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS cost, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS dailyBudgetAmount, SUM(D.sales) AS sales, SUM(D.margin) as margin');
+        $builder->select('E.name AS account_name, A.id AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin');
         $builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
 		$builder->join('mm_adgroup B', 'A.id = B.campaign_id');
 		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
@@ -49,9 +49,9 @@ class AdvKakaoManagerModel extends Model
     public function getAdsets($data)
 	{
 		$builder = $this->kakao->table('mm_adgroup B');
-        $builder->select('B.id AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS config, B.aiConfig, B.aiConfig2, B.bidAmount,
+        $builder->select('B.id AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS status, B.aiConfig, B.aiConfig2, B.bidAmount,
         COUNT(C.id) creatives, SUM(D.imp) impressions,
-        SUM(D.click) click, SUM(D.cost) cost, SUM(D.db_count) as unique_total, B.dailyBudgetAmount, sum(D.sales) as sales, SUM(D.margin) as margin');
+        SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, B.dailyBudgetAmount AS budget, sum(D.sales) as sales, SUM(D.margin) as margin');
 		$builder->join('mm_campaign A', 'B.campaign_id = A.id');
 		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
 		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
@@ -81,8 +81,8 @@ class AdvKakaoManagerModel extends Model
     public function getAds($data)
 	{
 		$builder = $this->kakao->table('mm_creative C');
-		$builder->select('C.id AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS config, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
-        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) cost, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS dailyBudgetAmount');
+		$builder->select('C.id AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
+        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget');
         $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
         $builder->join('mm_campaign A', 'B.campaign_id = A.id');
 		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
@@ -125,9 +125,9 @@ class AdvKakaoManagerModel extends Model
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
-			$row['cpc'] = Calc::cpc($row['cost'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
+			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
 			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
-			$row['cpa'] = Calc::cpa($row['unique_total'], $row['cost']);	//DB단가(전환당 비용)
+			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
 			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
         }
         return $result;
@@ -161,7 +161,7 @@ class AdvKakaoManagerModel extends Model
 		$builder->select('acc.id AS account_id, acc.name AS customer_name,
         ac.id AS campaign_id, ac.name AS campaign_name,
         ag.id AS adgroup_id, ag.name AS adgroup_name,
-        ad.id, ad.name, ad.landingUrl, ad.config, ad.reviewStatus, ad.creativeStatus, ad.create_time, ad.update_time');
+        ad.id, ad.name, ad.landingUrl, ad.config AS status, ad.reviewStatus, ad.creativeStatus, ad.create_time, ad.update_time');
 		$builder->join('mm_campaign ac', 'ac.ad_account_id = acc.id', 'left');
 		$builder->join('mm_adgroup ag', 'ag.campaign_id = ac.id', 'left');
 		$builder->join('mm_creative ad', 'ad.adgroup_id = ag.id', 'left');

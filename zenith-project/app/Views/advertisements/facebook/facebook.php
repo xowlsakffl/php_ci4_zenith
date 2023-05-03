@@ -191,7 +191,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -255,7 +255,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -313,7 +313,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -360,7 +360,7 @@ function getReport(args){
             $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
             $('#per_sum').text(data.per_sum);
-            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
+            $('#price_01_sum').text(data.price_sum);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -440,7 +440,7 @@ function setDataTable(tableId, columns, args){
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
                 $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
                 $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $(tableId+' #total-inline_link_clicks').text(res.total.inline_link_clicks.toLocaleString('ko-KR'));
+                $(tableId+' #total-click').text(res.total.click.toLocaleString('ko-KR'));
                 $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
                 $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
                 $(tableId+' #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
@@ -556,14 +556,14 @@ function getCampaigns(args) {
                 }
             }, //노출수
             { 
-                "data": "inline_link_clicks", 
+                "data": "click", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                        click = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        inline_link_clicks = "";
+                        click = "";
                     }
-                    return inline_link_clicks;
+                    return click;
                 }
             }, //링크클릭
             { 
@@ -681,14 +681,14 @@ function getAdsets(args) {
                 }
             }, //노출수
             { 
-                "data": "inline_link_clicks", 
+                "data": "click", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                        click = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        inline_link_clicks = "";
+                        click = "";
                     }
-                    return inline_link_clicks;
+                    return click;
                 }
             }, //링크클릭
             { 
@@ -794,14 +794,14 @@ function getAds(args) {
                 }
             }, //노출수
             { 
-                "data": "inline_link_clicks", 
+                "data": "click", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        inline_link_clicks = parseInt(data).toLocaleString('ko-KR');  
+                        click = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        inline_link_clicks = "";
+                        click = "";
                     }
-                    return inline_link_clicks;
+                    return click;
                 }
             }, //링크클릭
             { 

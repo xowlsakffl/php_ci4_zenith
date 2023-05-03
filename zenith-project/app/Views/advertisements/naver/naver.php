@@ -307,7 +307,7 @@ function getReport(args){
             $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
             $('#per_sum').text(data.per_sum);
-            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
+            $('#price_01_sum').text(data.price_sum);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
