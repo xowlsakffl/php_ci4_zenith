@@ -445,7 +445,7 @@ function setDataTable(tableId, columns, args){
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
                 $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $(tableId+' #total-impressions').text(res.total.impression.toLocaleString('ko-KR'));
+                $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
                 $(tableId+' #total-inline_link_clicks').text(res.total.click.toLocaleString('ko-KR'));
                 $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
                 $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
@@ -550,14 +550,14 @@ function getCampaigns(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        impression = parseInt(data).toLocaleString('ko-KR');  
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 
@@ -664,14 +664,14 @@ function getAdsets(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
                         impression = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 
@@ -778,14 +778,14 @@ function getAds(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        impression = parseInt(data).toLocaleString('ko-KR');  
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 

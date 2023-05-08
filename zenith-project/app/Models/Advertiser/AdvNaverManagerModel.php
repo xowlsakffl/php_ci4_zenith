@@ -18,7 +18,7 @@ class AdvNaverManagerModel extends Model
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('campaign_id AS id, campaign_name AS name, 
-        COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impression, SUM(click) AS click, SUM(sales) AS cost, SUM(db_sales) AS sales, SUM(db_count) as unique_total');
+        COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impressions, SUM(click) AS click, SUM(sales) AS cost, SUM(db_sales) AS sales, SUM(db_count) as unique_total');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(date) >=', $data['dates']['sdate']);
@@ -46,7 +46,7 @@ class AdvNaverManagerModel extends Model
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('adset_id AS id, adset_name AS name,
-        COUNT(ad_id) AS ads, SUM(impression) AS impression,
+        COUNT(ad_id) AS ads, SUM(impression) AS impressions,
         SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
@@ -74,7 +74,7 @@ class AdvNaverManagerModel extends Model
     public function getAds($data)
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
-		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) impression, SUM(click) click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
+		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) AS impressions, SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(date) >=', $data['dates']['sdate']);
@@ -108,7 +108,7 @@ class AdvNaverManagerModel extends Model
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
 			$row['cpc'] = Calc::cpc($row['cost'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
-		 	$row['ctr'] = Calc::ctr($row['click'], $row['impression']);	// 클릭율 (노출 대비 클릭한 비율)
+		 	$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
 			$row['cpa'] = Calc::cpa($row['unique_total'], $row['cost']);	//DB단가(전환당 비용)
 		 	$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
         }

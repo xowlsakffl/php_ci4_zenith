@@ -18,7 +18,7 @@ class AdvGoogleManagerModel extends Model
     {
         $builder = $this->google->table('aw_campaign A');
         $builder->select('A.id AS id, A.name AS name, A.status AS status, A.is_updating, B.biddingStrategyType AS biddingStrategyType,
-        COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impression, SUM(D.clicks) AS click, SUM(D.cost) AS cost, D.ad_id, A.amount, sum(D.sales) as sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin');
         /* (SELECT COUNT(*) AS memos FROM aw_memo F WHERE A.id = F.id AND F.type = 'campaign' AND DATE(F.datetime) >= DATE(NOW())) AS memos */
         $builder->join('aw_adgroup B', 'A.id = B.campaignId');
         $builder->join('aw_ad C', 'B.id = C.adgroupId');
@@ -54,8 +54,8 @@ class AdvGoogleManagerModel extends Model
     public function getAdsets($data)
 	{
 		$builder = $this->google->table('aw_campaign A');
-		$builder->select('B.id AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impression,
-        SUM(D.clicks) click, SUM(D.cost) cost, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as amount');
+		$builder->select('B.id AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impressions,
+        SUM(D.clicks) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as budget');
 		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
 		$builder->join('aw_ad C', 'B.id = C.adgroupId');
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
@@ -95,7 +95,7 @@ class AdvGoogleManagerModel extends Model
 	{
 		$builder = $this->google->table('aw_campaign A');
 		$builder->select('A.id AS campaignId, C.id AS id, C.name AS name, C.code, C.status AS status, C.imageUrl, C.finalUrl, C.adType, C.mediaType, A.is_updating AS is_updating, C.imageUrl, C.assets,
-        SUM(D.impressions) impression, SUM(D.clicks) click, SUM(D.cost) cost, 0 AS amount, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        SUM(D.impressions) impressions, SUM(D.clicks) click, SUM(D.cost) spend, 0 AS budget, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
 		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
 		$builder->join('aw_ad C', 'B.id = C.adgroupId');
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
@@ -192,9 +192,9 @@ class AdvGoogleManagerModel extends Model
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
 
-			$row['cpc'] = Calc::cpc($row['cost'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
-			$row['ctr'] = Calc::ctr($row['click'], $row['impression']);	// 클릭율 (노출 대비 클릭한 비율)
-			$row['cpa'] = Calc::cpa($row['unique_total'], $row['cost']);	//DB단가(전환당 비용)
+			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
+			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
+			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
 			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
 
 			switch (!empty($row['biddingStrategyType'])) {
@@ -298,10 +298,10 @@ class AdvGoogleManagerModel extends Model
 		$builder = $this->google->table('aw_ad_report_history A');
         $builder->select('A.date, 
                 SUM(A.impressions) AS impressions,
-                SUM(A.clicks) AS clicks,
+                SUM(A.clicks) AS click,
                 (SUM(A.clicks) / SUM(A.impressions)) * 100 AS click_ratio,
                 (SUM(A.db_count) / SUM(A.clicks)) * 100 AS conversion_ratio,
-                SUM(A.cost) AS cost,
+                SUM(A.cost) AS spend,
                 SUM(A.db_count) AS unique_total,
                 IFNULL(SUM(A.cost) / SUM(A.db_count), 0) AS unique_one_price,
                 SUM(A.db_price) AS unit_price,
