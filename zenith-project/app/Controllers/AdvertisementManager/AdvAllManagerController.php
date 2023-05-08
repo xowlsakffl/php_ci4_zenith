@@ -27,15 +27,88 @@ class AdvAllManagerController extends BaseController
         return view('advertisements/manage');
     }
 
-    public function getData(){
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+    public function getReport()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'media' => $this->request->getGet('media'),
                 'dates' => [
-                    /* 'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'), */
-                    'sdate' => '2023-04-29',
-                    'edate' => '2023-04-29',
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                ],
+                'businesses' => $this->request->getGet('businesses'),
+                'accounts' => $this->request->getGet('accounts'),
+            ];
+
+            switch ($arg['media']) {
+                case 'facebook':
+                    $res = $this->facebook->getReport($arg);
+                    break;
+                case 'kakao':
+                    $res = $this->kakao->getReport($arg);
+                    break;
+                case 'google':
+                    $res = $this->google->getReport($arg);
+                    break;
+                case 'naver':
+                    $res = $this->naver->getReport($arg);
+                    break;
+                default:
+                    return $this->fail("지원하지 않는 매체입니다.");
+            }
+
+            $columnIndex = 0;
+            $data = [];
+            foreach($res as $row) {
+                $data[] = $row;
+                foreach ($row as $col => $val) {
+                    if ($val == NULL) $val = "0";
+                    $total[$col][$columnIndex] = $val;
+                }
+                $columnIndex++;
+            }
+
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+    
+            if(!empty($res)){
+                $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+                $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
+                if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                    $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
+                }
+                $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+                $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
+                if ($report['clicks_sum'] != 0) {
+                    $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
+                } else {
+                    $report['cpc'] = 0;
+                }
+                $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+                if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                    $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
+                }
+                if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                    $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
+                }
+                $report['price_sum'] = array_sum($total['price']); //총 매출액
+                $report['profit_sum'] = array_sum($total['profit']); //총 수익
+                if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                    $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
+                }
+            }
+            return $this->respond($report);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getData(){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = [
+                'media' => $this->request->getGet('media'),
+                'dates' => [
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
                 'type' => $this->request->getGet('type'),
                 'businesses' => $this->request->getGet('businesses'),
@@ -58,9 +131,9 @@ class AdvAllManagerController extends BaseController
             }
             
             return $this->respond($result);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     private function getCampaigns($arg)
@@ -98,8 +171,27 @@ class AdvAllManagerController extends BaseController
 
     private function getAdSets($arg)
     {
-        $adsets = $this->facebook->getAdSets($arg);
-        $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+        switch ($arg['media']) {
+            case 'facebook':
+                $adsets = $this->facebook->getAdsets($arg);
+                $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+                break;
+            case 'kakao':
+                $adsets = $this->kakao->getAdsets($arg);
+                $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
+                break;
+            case 'google':
+                $adsets = $this->google->getAdsets($arg);
+                $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);
+                break;
+            case 'naver':
+                $adsets = $this->naver->getAdsets($arg);
+                $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['dates']);
+                break;
+            default:
+                return $this->fail("지원하지 않는 매체입니다.");
+        }
+        
         $total = $this->getTotal($adsets);
 
         $result = [
@@ -112,8 +204,26 @@ class AdvAllManagerController extends BaseController
 
     private function getAds($arg)
     {
-        $ads = $this->facebook->getAds($arg);
-        $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+        switch ($arg['media']) {
+            case 'facebook':
+                $ads = $this->facebook->getAds($arg);
+                $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+                break;
+            case 'kakao':
+                $ads = $this->kakao->getAds($arg);
+                $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
+                break;
+            case 'google':
+                $ads = $this->google->getAds($arg);
+                $ads = $this->google->getStatuses("ads", $ads, $arg['dates']);
+                break;
+            case 'naver':
+                $ads = $this->naver->getAds($arg);
+                $ads = $this->naver->getStatuses("ads", $ads, $arg['dates']);
+                break;
+            default:
+                return $this->fail("지원하지 않는 매체입니다.");
+        }
         $total = $this->getTotal($ads);
 
         $result = [
@@ -199,10 +309,8 @@ class AdvAllManagerController extends BaseController
             $arg = [
                 'media' => $this->request->getGet('media'),
                 'dates' => [
-                    /* 'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'), */
-                    'sdate' => '2023-04-29',
-                    'edate' => '2023-04-29',
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
                 'businesses' => $this->request->getGet('businesses'),
                 
@@ -243,7 +351,7 @@ class AdvAllManagerController extends BaseController
 
             if ($account['status'] != 1) 
                 array_push($account['class'], 'tag-inactive');
-            if (in_array($account['ad_account_id'], $getDisapprovalByAccount)) 
+            if (in_array($account['id'], $getDisapprovalByAccount)) 
                 array_push($account['class'], 'disapproval');
 
             $account['db_count'] = $account['db_count'] * $account['date_count'];

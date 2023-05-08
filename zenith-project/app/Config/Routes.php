@@ -83,6 +83,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('', 'AdvertisementManager\AdvAllManagerController::index');
         $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
         $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
+        $routes->get('report', 'AdvertisementManager\AdvAllManagerController::getReport');
 
         $routes->group('facebook', static function($routes){
             $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');

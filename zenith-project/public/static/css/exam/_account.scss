@@ -29,3 +29,16 @@ $icon-pd:3.75rem; //60px
     }
     
 }
+
+.myPage-container{ 
+    h1{font-size:180%; font-weight:bold;}     
+    
+    .card{           
+        .card-body{
+            dl{display: flex; justify-content: flex-start; margin:1rem 0;}
+            dt{margin-right:0.5rem;}
+        &::after{content: ''; display: block; clear: both;}
+        }
+    }
+    button{float:right;}
+}

@@ -65,8 +65,10 @@
     </div>
 
     <div>
-        <div class="statusCount">
+        <div class="search-wrap my-5">
+            <div class="statusCount detail d-flex"></div>     
         </div>
+
         <div class="row table-responsive">
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
@@ -76,11 +78,11 @@
                         <th style="width:130px">광고주</th>
                         <th style="width:70px">매체</th>
                         <th style="width:120px">이벤트 구분</th>
-                        <th style="width:70px" >이름</th>
+                        <th style="width:60px" >이름</th>
                         <th style="width:100px">전화번호</th>
-                        <th style="width:50px">나이</th>
-                        <th style="width:50px" >성별</th>
-                        <th>기타</th>
+                        <th style="width:30px">나이</th>
+                        <th style="width:30px" >성별</th>
+                        <th style="width:70px">기타</th>
                         <th style="width:200px">상담내용</th>
                         <th style="width:60px">사이트</th>
                         <th style="width:80px">등록일</th>
@@ -205,7 +207,7 @@ function getStatusCount(data = []){
         success: function(result){     
             $('.statusCount').empty();
             $.each(result[0], function(key, value) {
-                $('.statusCount').append('<dl><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
+                $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
             });
         },
         error: function(error, status, msg){

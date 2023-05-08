@@ -136,7 +136,7 @@ class AdvKakaoManagerModel extends Model
     public function getAccounts($data)
 	{
         $builder = $this->kakao->table('mm_ad_account F');
-		$builder->select('F.id, F.name, F.config, F.isAdminStop');
+		$builder->select('F.id AS id, F.name, F.config, F.isAdminStop');
         $builder->join('mm_campaign A', 'F.id = A.ad_account_id');
         $builder->join('mm_adgroup B', 'A.id = B.campaign_id');
         $builder->join('mm_creative C', 'B.id = C.adgroup_id');
@@ -182,7 +182,7 @@ class AdvKakaoManagerModel extends Model
 		$builder = $this->kakao->table('mm_creative_report_basic A');
         $builder->select('A.date, A.update_time,
                 SUM(A.imp) AS impressions,
-                SUM(A.click) AS clicks,   
+                SUM(A.click) AS click,   
                 (SUM(A.click) / SUM(A.imp)) * 100 AS click_ratio, 
                 (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio,
                 SUM(A.cost) AS spend,

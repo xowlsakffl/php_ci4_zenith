@@ -301,7 +301,7 @@ class AdvFacebookManagerModel extends Model
     public function getAccounts($data)
 	{
         $builder = $this->facebook->table('fb_ad_account F');
-		$builder->select('F.business_id, F.ad_account_id, F.name, F.status, F.db_count, SUM(D.db_count) AS db_sum, COUNT(DISTINCT D.date) AS date_count');
+		$builder->select('F.business_id, F.ad_account_id AS id, F.name, F.status, F.db_count, SUM(D.db_count) AS db_sum, COUNT(DISTINCT D.date) AS date_count');
         $builder->join('fb_campaign A', 'F.ad_account_id = A.account_id', 'left');
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id', 'left');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id', 'left');

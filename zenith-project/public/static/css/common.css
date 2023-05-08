@@ -977,6 +977,7 @@ body {
   padding: 12px 8px;
   text-align: center;
   vertical-align: middle;
+  word-break: break-word;
 }
 .table-default tbody td:not(:last-child) {
   border-right: 1px dashed #dfdfdf;
@@ -1580,6 +1581,27 @@ body {
 }
 .register-container form .form-control:-webkit-autofill, .register-container form .form-control:-internal-autofill-selected {
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.myPage-container h1 {
+  font-size: 180%;
+  font-weight: bold;
+}
+.myPage-container .card .card-body dl {
+  display: flex;
+  justify-content: flex-start;
+  margin: 1rem 0;
+}
+.myPage-container .card .card-body dt {
+  margin-right: 0.5rem;
+}
+.myPage-container .card .card-body::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.myPage-container button {
+  float: right;
 }
 
 .agree-container {

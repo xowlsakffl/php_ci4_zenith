@@ -6,22 +6,10 @@
 
 <?=$this->section('content');?>
 <body>
-    <div class="sub-contents-wrap">
+    <div class="sub-contents-wrap myPage-container">
         <div class="title-area">
             <h2 class="page-title">마이 페이지</h2>
-        </div>
-        <!-- <header class="bg-dark py-1">
-            <nav class="container navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="#">마이 페이지</a>      
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">logout</a>
-                    </li> 
-                </ul>
-            </div>
-            </nav>
-        </header> -->
+        </div>       
 
         <main class="container my-5">
             <h1 class="text-center">Nick Name</h1>
@@ -32,13 +20,12 @@
                             <h3 class="card-title mb-0">Profile</h3>
                         </div>
                         <div class="card-body">
-                            <p><strong>아이디</strong> John Doe</p>
-                            <p><strong>이메일:</strong> john.doe@example.com</p>
-                            <p><strong>기존 비밀번호:</strong>
-                            <p><strong>신규 비밀번호:</strong>
-                            <p><strong>비밀번호 확인:</strong>
-                            <p><strong>전화번호:</strong> 010-0000-0000</p>
-                            <!-- <a href="#" class="btn btn-primary">수정완료</a> -->
+                            <dl><dt>아이디:</dt><dd>John Doe</dd> </dl>
+                            <dl><dt>이메일:</dt><dd>john.doe@example.com</dd> </dl>
+                            <dl><dt>기존 비밀번호:</dt><dd></dd></dl>
+                            <dl><dt>신규 비밀번호:</dt><dd></dd></dl>
+                            <dl><dt>비밀번호 확인:</dt><dd></dd></dl>
+                            <dl><dt>전화번호:</dt><dd>010-0000-0000</dd> </dl>
                             <button type="button" class="btn btn-primary">작성완료</button>
                         </div>
                     </div>
