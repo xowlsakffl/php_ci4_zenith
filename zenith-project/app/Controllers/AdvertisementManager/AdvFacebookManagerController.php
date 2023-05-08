@@ -41,7 +41,7 @@ class AdvFacebookManagerController extends BaseController
 
                 if ($account['status'] != 1) 
                     array_push($account['class'], 'tag-inactive');
-                if (in_array($account['ad_account_id'], $getDisapprovalByAccount)) 
+                if (in_array($account['id'], $getDisapprovalByAccount)) 
                     array_push($account['class'], 'disapproval');
 
                 $account['db_count'] = $account['db_count'] * $account['date_count'];
