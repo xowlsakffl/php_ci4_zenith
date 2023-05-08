@@ -36,6 +36,7 @@ $breakpoint-sm-mobile:300px;
 @import "exam/_userManage.scss";//회원관리
 @import "exam/_etc.scss";//기타 통합
 @import "exam/_account.scss";
+@import "exam/_pagenation.scss";
 
 @import "exam/practice/_agree.scss"; //개인정보 동의
 @import "exam/practice/_login_exam.scss"; //로그인,회원가입 연습

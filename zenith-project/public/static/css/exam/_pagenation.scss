@@ -1,0 +1,18 @@
+.dataTables_wrapper{
+    .dataTables_length{margin-bottom:2rem;}
+    .dataTables_length select{background-color:#fff; padding:4px 1rem; color:#ce1922;}
+
+    .dataTables_info{padding-top:2.755em;}
+    .dataTables_paginate{float:unset; text-align: center; padding-top:2.25em;
+        .paginate_button{position:relative;
+        &:hover::after{position:absolute; top:0; left:0; content: '여기'; width:3px; height: 3px; border-radius: 50%; background-color: #ce1922;}}
+        .paginate_button.current{color:#fff !important; background-color:red; border-color:transparent;}
+    }
+}
+
+@media screen and (max-width: 767px){
+    .dataTables_wrapper{
+        .dataTables_info{padding-top: 1.755em;}
+        .dataTables_paginate{ padding-top:1.25em;}
+    }
+}
