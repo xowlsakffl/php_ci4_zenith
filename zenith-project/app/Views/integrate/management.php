@@ -139,10 +139,20 @@ function getList(data = []){
             { "data": "age" },
             { "data": "gender" },
             { "data": "add" },
-            { "data": null, "defaultContent": ""},
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<textarea cols="3" rows="3"></textarea>';
+                }
+            },
             { "data": "site" },
             { "data": "reg_date", },
-            { "data": null, "defaultContent": ""},
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<select><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select><button id="save">저장</button><button id="delete">삭제</button>';
+                }
+            },
         ],
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
