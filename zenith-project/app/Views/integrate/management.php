@@ -82,8 +82,8 @@
                         <th style="width:100px">전화번호</th>
                         <th style="width:30px">나이</th>
                         <th style="width:30px" >성별</th>
-                        <th style="width:70px">기타</th>
-                        <th style="width:200px">상담내용</th>
+                        <th style="width:200px">기타</th>
+                        <th style="width:120px">상담내용</th>
                         <th style="width:60px">사이트</th>
                         <th style="width:80px">등록일</th>
                         <th class="last" style="width:60px">삭제</th>
@@ -142,7 +142,7 @@ function getList(data = []){
             { 
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<textarea cols="3" rows="3"></textarea>';
+                    return '<textarea cols="3" rows="3" class="consultation" readonly></textarea>';
                 }
             },
             { "data": "site" },
@@ -150,7 +150,7 @@ function getList(data = []){
             { 
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<select><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select><button id="save">저장</button><button id="delete">삭제</button>';
+                    return '<select class="data-del"><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select><button id="save" class="save">저장</button><button id="delete" class="delete">삭제</button>';
                 }
             },
         ],
@@ -175,8 +175,8 @@ function getList(data = []){
             $('td:eq(0)', row).html(seq);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
-         return "<span>현재 " + start + " - " + end + " / " + total + " 건</span>";
-      } 
+            return "현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        } 
     });
 }
 
@@ -371,6 +371,7 @@ $('body').on('click', '#search_btn', function() {
 });
 </script>
 <?=$this->endSection();?>
+
 <!--푸터-->
 <?=$this->section('footer');?>
 <?=$this->endSection();?>

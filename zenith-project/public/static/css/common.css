@@ -1672,6 +1672,34 @@ body {
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
   background-color: #fff;
 }
+.sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
+  padding: 0px;
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable select.data-del {
+  padding: 3px;
+  border-radius: 4px;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable button.save {
+  background-color: #009dff;
+  color: #fff;
+  margin-top: 0.25rem;
+  padding: 4px 17px;
+  border-radius: 4px;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable button.delete {
+  background-color: #000;
+  color: #fff;
+  margin-top: 0.25rem;
+  padding: 4px 17px;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable button.delete:hover {
+  background-color: red;
+}
 
 @media screen and (max-width: 767px) {
   .sub-contents-wrap .dataTables_wrapper .dataTables_info {

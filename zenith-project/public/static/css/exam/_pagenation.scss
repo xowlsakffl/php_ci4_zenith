@@ -21,7 +21,15 @@
                 &:active{background:none; border:none;}
             }            
         }
-        table.dataTable tbody tr{background-color: #fff;}
+        table.dataTable{
+            tbody tr{background-color:#fff;}
+            textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
+            select.data-del{padding:3px; border-radius:4px;}
+            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:4px 17px; border-radius:4px;}
+            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:4px 17px; border-radius:4px; transition:0.2s;
+                &:hover{background-color:red;}
+            }
+        }
     }
 }
 
