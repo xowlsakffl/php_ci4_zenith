@@ -1,4 +1,6 @@
 .table{
+    thead th{position:sticky; top:0; z-index:2;}
+
     .none{padding:50px 0; text-align:center;}
     .ico{display:inline-block; width:8px; height:8px; border-radius:50%;
         &.green{background:var(--bs-success);}
@@ -7,6 +9,8 @@
     .radio-wrap{
     }
 }
+.table-responsive{max-height:700px;}
+
 .table-default{table-layout:fixed; min-width:1400px;
     --bs-table-hover-bg:#ffebeb;
     --bs-table-striped-bg:rgba(0, 0, 0, .03);

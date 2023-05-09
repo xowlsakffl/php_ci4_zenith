@@ -227,7 +227,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         var i = 0;
         var btn_width = Math.round(button.width());
         // console.log(button.val(), btn_scr_w, btn_width);
-        while(button[0].scrollWidth / 2 >= btn_width) {
+        while((button[0].scrollWidth+10) / 2 >= btn_width) {
             var size = parseFloat(button.css('font-size')) / 16 * 100;
             button.css({'font-size': --size+'%'});
             // console.log(button.css('font-size'), size)
@@ -358,7 +358,6 @@ $('body').on('click', '#search_btn', function() {
 });
 </script>
 <?=$this->endSection();?>
-
 <!--푸터-->
 <?=$this->section('footer');?>
 <?=$this->endSection();?>
