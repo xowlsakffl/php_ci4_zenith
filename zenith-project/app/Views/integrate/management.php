@@ -371,7 +371,6 @@ $('body').on('click', '#search_btn', function() {
 });
 </script>
 <?=$this->endSection();?>
-
 <!--푸터-->
 <?=$this->section('footer');?>
 <?=$this->endSection();?>
