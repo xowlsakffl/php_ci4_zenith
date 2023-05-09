@@ -26,15 +26,6 @@
     .campaign-total td{
         text-align: center !important;
     }
-/*     table {
-  table-layout: fixed;
-}
-
-table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 </style>
 <?=$this->endSection();?>
 
@@ -224,20 +215,16 @@ function getReport(args){
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
             $('#reportData dl dd').text('')
-            $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
-            $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
-            $('#click_ratio_sum').text(data.click_ratio_sum);
-            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
-            if(data.spend_ratio_sum){
-                $('#spend_ratio_sum').text(data.spend_ratio_sum.toLocaleString('ko-KR'));//매체비
-            }
+            $('#impressions_sum').text(data.impressions_sum);//노출수
+            $('#clicks_sum').text(data.clicks_sum);//클릭수
+            $('#click_ratio_sum').text(data.click_ratio_sum);//클릭률
+            $('#spend_sum').text(data.spend_sum);//지출액
+            $('#spend_ratio_sum').text(data.spend_ratio_sum);//매체비
             $('#unique_total_sum').text(data.unique_total_sum);//DB수
-            $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));//DB당 단가
-            $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
-            $('#per_sum').text(data.per_sum);
-            if(data.price_sum){
-                $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
-            }
+            $('#unique_one_price_sum').text(data.unique_one_price_sum);//DB당 단가
+            $('#conversion_ratio_sum').text(data.conversion_ratio_sum);//전환율
+            $('#per_sum').text(data.per_sum);//수익률
+            $('#price_01_sum').text(data.price_sum);//매출
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -255,12 +242,17 @@ function getAccount(args){
         success: function(data){  
             $('.advertiser .row').empty();
             var html = '';
+            var set_ratio = '';
             $.each(data, function(idx, v) {       
                 if(args.media != 'naver'){
                     c = v.class;
                     c = c.join(' ');
                     
-                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+'</button></div></div>';
+                    if(v.db_count){
+                        set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
+                    }
+
+                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+set_ratio+'</button></div></div>';
                 }else{
                     html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
                 }
@@ -301,21 +293,21 @@ function setDataTable(tableId, columns, args){
                 }
 
                 $(tableId+' #total-count').text(res.data.length+"건 결과");
-                $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
-                $(tableId+' #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
+                $(tableId+' #total-budget').text('\u20A9'+res.total.budget);//예산
+                $(tableId+' #avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
                 if((args.media == 'facebook' || args.media == 'kakao') && args.type == 'campaigns'){
                     $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
                 }else{
                     $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div>');
                 }
                 
-                $(tableId+' #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
-                $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
+                $(tableId+' #total-spend').text('\u20A9'+res.total.spend);
+                $(tableId+' #total-margin').text('\u20A9'+res.total.margin);
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-                $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
-                $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $(tableId+' #total-click').text(res.total.click.toLocaleString('ko-KR'));
-                $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
+                $(tableId+' #total-sales').text('\u20A9'+res.total.sales);
+                $(tableId+' #total-impressions').text(res.total.impressions);
+                $(tableId+' #total-click').text(res.total.click);
+                $(tableId+' #avg-cpc').text('\u20A9'+res.total.avg_cpc);
                 $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
                 $(tableId+' #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
                 
@@ -346,7 +338,15 @@ function getCampaigns(args) {
              theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.campaign-total').html(theadTotal);
             setDataTable('#campaigns-table', [
-                    { "title" : "캠페인명", "data": "name", "width": "10%" },
+                    { 
+                        "title" : "캠페인명", 
+                        "data": "name", 
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                            return name;
+                        }
+                    },
                     { "title" : "상태", "data": "status", "width": "5%" },
                     { "title" : "목표Ai", "data": "autoBudget", "width": "5%"},
                     { 
@@ -355,7 +355,7 @@ function getCampaigns(args) {
                         "width": "9%",
                         "render": function (data, type, row) {
                             if (data !== null) {
-                                budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                                budget = '\u20A9'+data;  
                             }else{
                                 budget = "";
                             }
@@ -492,63 +492,60 @@ function getCampaigns(args) {
             theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.campaign-total').html(theadTotal);
             setDataTable('#campaigns-table', [
-                { "title" : "캠페인명", "data": "name", "width": "10%" },
-                { "title" : "상태", "data": "status", "width": "5%" },
-                { "title" : "입찰 유형", "data": "biddingStrategyType", "width": "5%" },
                 { 
-                    "title" : "예산",
+                    "title" : "캠페인명", 
+                    "data": "name", 
+                    "width": "10%",
+                    "render": function (data, type, row) {
+                        name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button><p class="sml_txt goal">'+row.adType+'</p>';
+                        return name;
+                    }
+                },
+                { 
+                    "title" : "상태", 
+                    "data": "status", 
+                    "width": "4%",
+                    "render": function (data, type, row) {
+                        status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ENABLED" '+(row.status === 'ENABLED' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인</span></button>';
+                        return status;
+                    }
+                },
+                { "title" : "입찰 유형", "data": "biddingStrategyType", "width": "4%" },
+                { 
+                    "title" : "예산", 
                     "data": "budget",
                     "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            budget = "";
-                        }
-                        return budget;
+                        return '\u20A9'+data;
                     }
                 },
                 { 
                     "title" : "현재 DB단가",
                     "data": "cpa",
-                    "width": "5%",
+                    "width": "7%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            cpa = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            cpa = "";
-                        }
-                        return cpa;
+                        return '\u20A9'+data;
                     }
                 },
-                { "title" : "유효 DB", "data": "unique_total", "width": "2%"},
+                { "title" : "유효 DB", "data": "unique_total", "width": "3%"},
                 { 
                     "title" : "지출액",
                     "data": "spend",
-                    "width": "7%",
+                    "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            spend = "";
-                        }
-                        return spend;
+                        return '\u20A9'+data;
                     }
                 },
                 { 
                     "title" : "수익",
                     "data": "margin",
-                    "width": "7%",
+                    "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            if(data < 0){
-                                margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                                return '<span style="color:red">'+margin+'</span>';
-                            }else{
-                                margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
-                            }
+                        if(data < 0){
+                            margin = '\u20A9'+data; 
+                            return '<span style="color:red">'+margin+'</span>';
                         }else{
-                            margin = "";
+                            margin = '\u20A9'+data; 
                         }
                         return margin;
                     }
@@ -558,69 +555,40 @@ function getCampaigns(args) {
                     "data": "margin_ratio",
                     "width": "5%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            if(data < 20 && data != 0){
-                                margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                                return '<span style="color:red">'+margin_ratio+'</span>';
-                            }else{
-                                margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
-                            }
+                        if(data < 20 && data != 0){
+                            margin_ratio = data+'\u0025';   
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
-                            margin_ratio = "";
+                            margin_ratio = data+'\u0025';   
                         }
+
                         return margin_ratio;
                     }
                 },
                 { 
-                    "title" : "매출액",
+                    "title" : "매출액", 
                     "data": "sales",
                     "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            sales = "";
-                        }
-                        return sales;
+                        return '\u20A9'+data;  
                     }
                 },
                 { 
                     "title" : "노출수",
                     "data": "impressions", 
-                    "width": "5%",
-                    "render": function (data, type, row) {
-                        if (data !== null) {
-                            impressions = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            impressions = "";
-                        }
-                        return impressions;
-                    }
+                    "width": "7%",
                 },
                 { 
                     "title" : "링크클릭",
                     "data": "click", 
                     "width": "5%",
-                    "render": function (data, type, row) {
-                        if (data !== null) {
-                            click = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            click = "";
-                        }
-                        return click;
-                    }
                 },
                 { 
                     "title" : "CPC",
                     "data": "cpc", 
                     "width": "5%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            cpc = "";
-                        }
-                        return cpc;
+                        return '\u20A9'+data;
                     }
                 }, //클릭당단가 (1회 클릭당 비용)
                 { "title" : "CTR", "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
@@ -638,48 +606,42 @@ function getCampaigns(args) {
             theadTotal = '<tr id="total"><td id="total-count"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.campaign-total').html(theadTotal);
             setDataTable('#campaigns-table', [
-                { "title" : "캠페인명", "data": "name", "width": "10%"},
+                { 
+                    "title" : "캠페인명", 
+                    "data": "name", 
+                    "width": "10%",
+                    "render": function (data, type, row) {
+                        name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label>';
+                        return name;
+                    }
+                },
                 { 
                     "title" : "현재 DB단가",
                     "data": "cpa",
-                    "width": "5%",
+                    "width": "7%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            cpa = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            cpa = "";
-                        }
-                        return cpa;
+                        return '\u20A9'+data;
                     }
                 },
-                { "title" : "유효 DB수", "data": "unique_total", "width": "2%" },
+                { "title" : "유효 DB수", "data": "unique_total", "width": "3%" },
                 { 
                     "title" : "지출액",
                     "data": "spend",
                     "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            spend = "";
-                        }
-                        return spend;
+                        return '\u20A9'+data;
                     }
                 },
                 { 
                     "title" : "수익",
                     "data": "margin",
-                    "width": "7%",
+                    "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            if(data < 0){
-                                margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                                return '<span style="color:red">'+margin+'</span>';
-                            }else{
-                                margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
-                            }
+                        if(data < 0){
+                            margin = '\u20A9'+data; 
+                            return '<span style="color:red">'+margin+'</span>';
                         }else{
-                            margin = "";
+                            margin = '\u20A9'+data; 
                         }
                         return margin;
                     }
@@ -689,16 +651,13 @@ function getCampaigns(args) {
                     "data": "margin_ratio",
                     "width": "5%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            if(data < 20 && data != 0){
-                                margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                                return '<span style="color:red">'+margin_ratio+'</span>';
-                            }else{
-                                margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
-                            }
+                        if(data < 20 && data != 0){
+                            margin_ratio = data+'\u0025';   
+                            return '<span style="color:red">'+margin_ratio+'</span>';
                         }else{
-                            margin_ratio = "";
+                            margin_ratio = data+'\u0025';   
                         }
+
                         return margin_ratio;
                     }
                 },
@@ -707,51 +666,25 @@ function getCampaigns(args) {
                     "data": "sales",
                     "width": "9%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            sales = "\u20A90";
-                        }
-                        return sales;
+                        return '\u20A9'+data;  
                     }
                 },
                 { 
                     "title" : "노출수",
                     "data": "impressions", 
-                    "width": "5%",
-                    "render": function (data, type, row) {
-                        if (data !== null) {
-                            impressions = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            impressions = "";
-                        }
-                        return impressions;
-                    }
+                    "width": "7%",
                 },
                 { 
                     "title" : "링크클릭",
                     "data": "click", 
                     "width": "5%",
-                    "render": function (data, type, row) {
-                        if (data !== null) {
-                            click = parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            click = "";
-                        }
-                        return click;
-                    }
                 },
                 { 
                     "title" : "CPC",
                     "data": "cpc", 
                     "width": "5%",
                     "render": function (data, type, row) {
-                        if (data !== null) {
-                            cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            cpc = "";
-                        }
-                        return cpc;
+                        return '\u20A9'+data;
                     }
                 }, //클릭당단가 (1회 클릭당 비용)
                 { "title" : "CTR", "data": "ctr", "width": "5%" }, //클릭율 (노출 대비 클릭한 비율)
@@ -772,66 +705,60 @@ function getCampaigns(args) {
             setDataTable('#campaigns-table', [
                     { 
                         "title" : "캠페인명", 
-                        "data": "name",
-                        "width": "10%"
+                        "data": "name", 
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                            return name;
+                        }
                     },
-                    { "title" : "상태", "data": "status", "width": "5%"},
-                    { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "5%"},
-                    { "title" : "목표Ai", "data": "ai2_status", "width": "5%" },
+                    { 
+                        "title" : "상태", 
+                        "data": "status", 
+                        "width": "4%",
+                        "render": function (data, type, row) {
+                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인</span></button>';
+                            return status;
+                        }
+                    },
+                    { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "4%"},
+                    { "title" : "목표Ai", "data": "ai2_status", "width": "4%"},
                     { 
                         "title" : "예산", 
                         "data": "budget", 
                         "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                budget = "";
-                            }
+                            budget = '<div class="budget" data-editable="true">'+'\u20A9'+row.budget+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
                             return budget;
                         }
                     },
                     { 
                         "title" : "현재 DB단가", 
                         "data": "cpa",
-                        "width": "5%",
+                        "width": "7%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                cpa = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                cpa = "";
-                            }
-                            return cpa;
+                            return '\u20A9'+data;
                         }
                     },
-                    { "title" : "유효 DB", "data": "unique_total", "width": "2%" },
+                    { "title" : "유효 DB", "data": "unique_total", "width": "3%" },
                     { 
                         "title" : "지출액", 
                         "data": "spend",
-                        "width": "7%",
+                        "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                spend = "";
-                            }
-                            return spend;
+                            return '\u20A9'+data;
                         }
                     },
                     { 
                         "title" : "수익", 
                         "data": "margin",
-                        "width": "7%",
+                        "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                if(data < 0){
-                                    margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                                    return '<span style="color:red">'+margin+'</span>';
-                                }else{
-                                    margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
-                                }
+                            if(data < 0){
+                                margin = '\u20A9'+data; 
+                                return '<span style="color:red">'+margin+'</span>';
                             }else{
-                                margin = "";
+                                margin = '\u20A9'+data; 
                             }
                             return margin;
                         }
@@ -841,16 +768,13 @@ function getCampaigns(args) {
                         "data": "margin_ratio",
                         "width": "5%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                if(data < 20 && data != 0){
-                                    margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                                    return '<span style="color:red">'+margin_ratio+'</span>';
-                                }else{
-                                    margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
-                                }
+                            if(data < 20 && data != 0){
+                                margin_ratio = data+'\u0025';   
+                                return '<span style="color:red">'+margin_ratio+'</span>';
                             }else{
-                                margin_ratio = "";
+                                margin_ratio = data+'\u0025';   
                             }
+
                             return margin_ratio;
                         }
                     },
@@ -859,51 +783,25 @@ function getCampaigns(args) {
                         "data": "sales",
                         "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                sales = "";
-                            }
-                            return sales;
+                            return '\u20A9'+data;  
                         }
                     },
                     { 
                         "title" : "노출수", 
                         "data": "impressions", 
-                        "width": "5%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                impressions = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                impressions = "";
-                            }
-                            return impressions;
-                        }
+                        "width": "7%",
                     },
                     { 
                         "title" : "링크클릭", 
                         "data": "click", 
                         "width": "5%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                click = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                click = "";
-                            }
-                            return click;
-                        }
                     },
                     { 
                         "title" : "CPC", 
                         "data": "cpc", 
                         "width": "5%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                cpc = "";
-                            }
-                            return cpc;
+                            return '\u20A9'+data;
                         }
                     }, //클릭당단가 (1회 클릭당 비용)
                     { "title" : "CTR", "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)

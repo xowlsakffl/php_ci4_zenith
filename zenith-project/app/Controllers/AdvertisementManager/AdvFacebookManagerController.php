@@ -37,7 +37,7 @@ class AdvFacebookManagerController extends BaseController
             foreach ($accounts as &$account) {
                 
                 $account['class'] = [];
-                $account['db_ratio'] = '';
+                $account['db_ratio'] = 0;
 
                 if ($account['status'] != 1) 
                     array_push($account['class'], 'tag-inactive');
@@ -114,7 +114,7 @@ class AdvFacebookManagerController extends BaseController
                 $columnIndex++;
             }
 
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = 0;
     
             if(!empty($res)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수

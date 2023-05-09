@@ -84,24 +84,6 @@ class AdvFacebookManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
 		return $result;
-		/* if (@count($args['ids'][0]) > 0) {
-			$campaigns = "'" . implode("','", $args['ids'][0]) . "'";
-			$sql .= " AND B.campaign_id IN (" . $campaigns . ")";
-		} else if (@count($args['accounts']) > 0 || @count($args['businesses']) > 0) {
-			$sql = "SELECT  B.adset_id AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status,
-					COUNT(C.ad_id) ads, SUM(D.impressions) impressions,
-					SUM(D.inline_link_clicks) inline_link_clicks, SUM(D.spend) spend, 0 AS total, 0 AS unique_total, B.budget, sum(D.sales) as sales
-				FROM fb_campaign A, fb_adset B, fb_ad C, fb_ad_insight_history D, fb_ad_account E
-				WHERE A.campaign_id = B.campaign_id AND B.adset_id = C.adset_id AND C.ad_id = D.ad_id AND A.account_id = E.ad_account_id";
-			if (count($args['businesses']) > 0) {
-				$businesses = "'" . implode("','", $args['businesses']) . "'";
-				$sql .= " AND E.business_id IN (" . $businesses . ")";
-			}
-			if (count($args['accounts']) > 0) {
-				$accounts = "'" . implode("','", $args['accounts']) . "'";
-				$sql .= " AND A.account_id IN (" . $accounts . ")";
-			}
-		} */
 	}
 
 	public function getAds($data)
