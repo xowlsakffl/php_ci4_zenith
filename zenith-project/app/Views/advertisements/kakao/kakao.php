@@ -450,14 +450,14 @@ function getCampaigns(args) {
             { "data": "status" },
             { "data": "autoBudget" },
             { 
-                "data": "dailyBudgetAmount", 
+                "data": "budget", 
                 "render": function (data, type, row) {
                     if (data !== null) {
                         dailyBudgetAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        dailyBudgetAmount = "";
+                        budget = "";
                     }
-                    return dailyBudgetAmount;
+                    return budget;
                 }
             }, //예산
             { 
@@ -473,14 +473,14 @@ function getCampaigns(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 
@@ -527,14 +527,14 @@ function getCampaigns(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        impression = parseInt(data).toLocaleString('ko-KR');  
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 
@@ -586,14 +586,14 @@ function getAdsets(args) {
                 }    
             },
             { 
-                "data": "dailyBudgetAmount", 
+                "data": "budget", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        dailyBudgetAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        dailyBudgetAmount = "";
+                        budget = "";
                     }
-                    return dailyBudgetAmount;
+                    return budget;
                 }
             }, //예산
             { 
@@ -620,14 +620,14 @@ function getAdsets(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 
@@ -674,14 +674,14 @@ function getAdsets(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        impression = parseInt(data).toLocaleString('ko-KR');  
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 
@@ -753,14 +753,14 @@ function getAds(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 
@@ -807,14 +807,14 @@ function getAds(args) {
                 }
             }, //매출액
             { 
-                "data": "impression", 
+                "data": "impressions", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        impression = parseInt(data).toLocaleString('ko-KR');  
+                        impressions = parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        impression = "";
+                        impressions = "";
                     }
-                    return impression;
+                    return impressions;
                 }
             }, //노출수
             { 

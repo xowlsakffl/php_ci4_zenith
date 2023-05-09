@@ -352,12 +352,12 @@ function getReport(args){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            $('#impressions_sum').text(data.impressions_sum.toLocaleString('ko-KR'));
-            $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
+            $('#impressions_sum').text(data.impressions_sum);
+            $('#clicks_sum').text(data.clicks_sum);
             $('#click_ratio_sum').text(data.click_ratio_sum);
-            $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
+            $('#spend_sum').text(data.spend_sum);
             $('#unique_total_sum').text(data.unique_total_sum);
-            $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));
+            $('#unique_one_price_sum').text(data.unique_one_price_sum);
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
             $('#per_sum').text(data.per_sum);
             $('#price_01_sum').text(data.price_sum);

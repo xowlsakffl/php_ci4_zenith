@@ -24,7 +24,7 @@
 <?=$this->endSection();?>
 
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap db-manage-contaniner">
     <div class="title-area">
         <h2 class="page-title">통합 DB 관리</h2>
         <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
@@ -163,7 +163,10 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
-        }
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+         return "<span>현재 " + start + " - " + end + " / " + total + " 건</span>";
+      } 
     });
 }
 
@@ -227,7 +230,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         var i = 0;
         var btn_width = Math.round(button.width());
         // console.log(button.val(), btn_scr_w, btn_width);
-        while(button[0].scrollWidth / 2 >= btn_width) {
+        while((button[0].scrollWidth+10) / 2 >= btn_width) {
             var size = parseFloat(button.css('font-size')) / 16 * 100;
             button.css({'font-size': --size+'%'});
             // console.log(button.css('font-size'), size)
@@ -358,7 +361,6 @@ $('body').on('click', '#search_btn', function() {
 });
 </script>
 <?=$this->endSection();?>
-
 <!--푸터-->
 <?=$this->section('footer');?>
 <?=$this->endSection();?>

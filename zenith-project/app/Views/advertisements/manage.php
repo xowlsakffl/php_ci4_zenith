@@ -228,12 +228,16 @@ function getReport(args){
             $('#clicks_sum').text(data.clicks_sum.toLocaleString('ko-KR'));
             $('#click_ratio_sum').text(data.click_ratio_sum);
             $('#spend_sum').text(data.spend_sum.toLocaleString('ko-KR'));
-            $('#spend_ratio_sum').text(data.spend_ratio_sum.toLocaleString('ko-KR'));//매체비
+            if(data.spend_ratio_sum){
+                $('#spend_ratio_sum').text(data.spend_ratio_sum.toLocaleString('ko-KR'));//매체비
+            }
             $('#unique_total_sum').text(data.unique_total_sum);//DB수
             $('#unique_one_price_sum').text(data.unique_one_price_sum.toLocaleString('ko-KR'));//DB당 단가
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);
             $('#per_sum').text(data.per_sum);
-            $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
+            if(data.price_sum){
+                $('#price_01_sum').text(data.price_sum.toLocaleString('ko-KR'));
+            }
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -252,10 +256,15 @@ function getAccount(args){
             $('.advertiser .row').empty();
             var html = '';
             $.each(data, function(idx, v) {       
-                c = v.class;
-                c = c.join(' ');
-
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+'</button></div></div>';
+                if(args.media != 'naver'){
+                    c = v.class;
+                    c = c.join(' ');
+                    
+                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+'</button></div></div>';
+                }else{
+                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
+                }
+                
             });
 
             $('.advertiser .row').html(html);
@@ -294,7 +303,12 @@ function setDataTable(tableId, columns, args){
                 $(tableId+' #total-count').text(res.data.length+"건 결과");
                 $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 $(tableId+' #avg-cpa').text(Math.round(res.total.avg_cpa).toLocaleString('ko-KR'));
-                $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+                if((args.media == 'facebook' || args.media == 'kakao') && args.type == 'campaigns'){
+                    $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+                }else{
+                    $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div>');
+                }
+                
                 $(tableId+' #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
@@ -641,15 +655,15 @@ function getCampaigns(args) {
                 { "title" : "유효 DB수", "data": "unique_total", "width": "2%" },
                 { 
                     "title" : "지출액",
-                    "data": "cost",
+                    "data": "spend",
                     "width": "9%",
                     "render": function (data, type, row) {
                         if (data !== null) {
-                            cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                         }else{
-                            cost = "";
+                            spend = "";
                         }
-                        return cost;
+                        return spend;
                     }
                 },
                 { 
@@ -1074,23 +1088,22 @@ function getAdsets(args) {
                 ], args);
             break;
         case "google":
-            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.adsets-total').html(theadTotal);
             setDataTable('#adsets-table', [
                 { "title" : "광고그룹명", "data": "name", "width": "10%" },
                 { "title" : "상태", "data": "status", "width": "5%" },
-                { "title" : "입찰 유형", "data": "biddingStrategyType", "width": "5%"},
                 { 
-                    "title" : "예산",
-                    "data": "budget", 
-                    "width": "9%",
+                    "title" : "입찰가",
+                    "data": "bidAmount",
+                    "width": "7%",
                     "render": function (data, type, row) {
                         if (data !== null) {
-                            budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            bidAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                         }else{
-                            budget = "";
+                            bidAmount = "";
                         }
-                        return budget;
+                        return bidAmount;
                     }
                 },
                 { 
@@ -1240,15 +1253,15 @@ function getAdsets(args) {
                 { "title" : "유효 DB수", "data": "unique_total", "width": "2%" },
                 { 
                     "title" : "지출액",
-                    "data": "cost",
+                    "data": "spend",
                     "width": "7%",
                     "render": function (data, type, row) {
                         if (data !== null) {
-                            cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                         }else{
-                            cost = "";
+                            spend = "";
                         }
-                        return cost;
+                        return spend;
                     }
                 },
                 { 
@@ -1516,32 +1529,7 @@ function getAds(args) {
                     { "title" : "광고명", "data": "name", "width": "10%" },
                     { "title" : "상태", "data": "status", "width": "5%" },
                     { "title" : "Ai", "data": "aiConfig", "width": "5%" },
-                    { 
-                        "title" : "예산", 
-                        "data": "budget", 
-                        "width": "9%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                budget = "";
-                            }
-                            return budget;
-                        }
-                    },
-                    { 
-                        "title" : "입찰금액", 
-                        "data": "bidAmount", 
-                        "width": "9%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                bidAmount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                bidAmount = "";
-                            }
-                            return bidAmount;
-                        }
-                    },
+                    { "title" : "프리퀀시캡", "data": "frequencyCap", "width": "3%" }, //프리퀀시캡
                     { 
                         "title" : "현재 DB단가", 
                         "data": "cpa",
@@ -1669,25 +1657,12 @@ function getAds(args) {
                 ], args);
             break;
         case "google":
-            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.ads-total').html(theadTotal);
             setDataTable('#ads-table', [
                 { "title" : "광고명", "data": "name", "width": "10%" },
+                { "title" : "코드", "data": null, "defaultContent": "", "width": "5%" },
                 { "title" : "상태", "data": "status", "width": "5%" },
-                { "title" : "입찰 유형", "data": "biddingStrategyType", "width": "5%" },
-                { 
-                    "title" : "예산",
-                    "data": "budget", 
-                    "width": "9%",
-                    "render": function (data, type, row) {
-                        if (data !== null) {
-                            budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                        }else{
-                            budget = "";
-                        }
-                        return budget;
-                    }
-                },
                 { 
                     "title" : "현재 DB단가",
                     "data": "cpa",
@@ -1835,15 +1810,15 @@ function getAds(args) {
                 { "title" : "유효 DB수", "data": "unique_total", "width": "3%" },
                 { 
                     "title" : "지출액",
-                    "data": "cost",
+                    "data": "spend",
                     "width": "7%",
                     "render": function (data, type, row) {
                         if (data !== null) {
-                            cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                            spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                         }else{
-                            cost = "";
+                            spend = "";
                         }
-                        return cost;
+                        return spend;
                     }
                 },
                 { 
@@ -1951,20 +1926,6 @@ function getAds(args) {
             setDataTable('#ads-table', [
                     { "title" : "광고명", "data": "name", "width": "10%" },
                     { "title" : "상태", "data": "status", "width": "5%" },
-                    { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "5%"},
-                    { 
-                        "title" : "예산", 
-                        "data": "budget", 
-                        "width": "9%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                budget = "";
-                            }
-                            return budget;
-                        }
-                    },
                     { 
                         "title" : "현재 DB단가", 
                         "data": "cpa",
