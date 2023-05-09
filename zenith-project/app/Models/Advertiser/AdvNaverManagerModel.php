@@ -18,7 +18,7 @@ class AdvNaverManagerModel extends Model
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('campaign_id AS id, campaign_name AS name, 
-        COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impressions, SUM(click) AS click, SUM(sales) AS cost, SUM(db_sales) AS sales, SUM(db_count) as unique_total');
+        COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impressions, SUM(click) AS click, SUM(sales) AS spend, SUM(db_sales) AS sales, SUM(db_count) as unique_total, 0 AS budget, 0 AS status');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(date) >=', $data['dates']['sdate']);
@@ -47,7 +47,7 @@ class AdvNaverManagerModel extends Model
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('adset_id AS id, adset_name AS name,
         COUNT(ad_id) AS ads, SUM(impression) AS impressions,
-        SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
+        SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS spend, SUM(db_sales) AS sales, 0 AS budget, 0 AS status');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(date) >=', $data['dates']['sdate']);
@@ -74,7 +74,7 @@ class AdvNaverManagerModel extends Model
     public function getAds($data)
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
-		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) AS impressions, SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS cost, SUM(db_sales) AS sales');
+		$builder->select('ad_id AS id, ad_name AS name, SUM(impression) AS impressions, SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS spend, SUM(db_sales) AS sales, 0 AS budget, 0 AS status');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(date) >=', $data['dates']['sdate']);
@@ -101,15 +101,15 @@ class AdvNaverManagerModel extends Model
     public function getStatuses($param, $result, $dates)
     {
         foreach ($result as &$row) {
-            $row['cost_ori'] = $row['cost'];
-			$row['cost'] = $row['cost']/1.1;
-            $row['margin'] = $row['sales'] - $row['cost'];
+            $row['cost_ori'] = $row['spend'];
+			$row['spend'] = $row['spend']/1.1;
+            $row['margin'] = $row['sales'] - $row['spend'];
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
-			$row['cpc'] = Calc::cpc($row['cost'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
+			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
 		 	$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
-			$row['cpa'] = Calc::cpa($row['unique_total'], $row['cost']);	//DB단가(전환당 비용)
+			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
 		 	$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
         }
         return $result;
@@ -118,7 +118,7 @@ class AdvNaverManagerModel extends Model
     public function getAccounts($data)
 	{
         $builder = $this->naver->table('gfa_ad_account A');
-		$builder->select('A.account_id, A.name');
+		$builder->select('A.account_id AS id, A.name');
         $builder->join('gfa_ad_report_history B', 'A.account_id = B.account_id', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
@@ -137,7 +137,7 @@ class AdvNaverManagerModel extends Model
     public function getReport($data)
 	{
 		$builder = $this->naver->table('gfa_ad_report_history A');
-        $builder->select('A.date, SUM(A.impression) AS impressions, SUM(A.click) AS clicks, (SUM(A.click) / SUM(A.impression)) * 100 AS click_ratio, (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio, SUM(A.sales)/1.1 AS spend, FLOOR(SUM(A.sales)/1.1 * 0.85) AS spend_ratio, SUM(A.db_count) AS unique_total, IFNULL(SUM(A.sales)/1.1 / SUM(A.db_count),0) AS unique_one_price, SUM(A.db_price) AS unit_price, SUM(A.db_sales) AS price, SUM(A.margin) AS profit,  
+        $builder->select('A.date, SUM(A.impression) AS impressions, SUM(A.click) AS click, (SUM(A.click) / SUM(A.impression)) * 100 AS click_ratio, (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio, SUM(A.sales)/1.1 AS spend, FLOOR(SUM(A.sales)/1.1 * 0.85) AS spend_ratio, SUM(A.db_count) AS unique_total, IFNULL(SUM(A.sales)/1.1 / SUM(A.db_count),0) AS unique_one_price, SUM(A.db_price) AS unit_price, SUM(A.db_sales) AS price, SUM(A.margin) AS profit,  
         (SUM(A.db_price * A.db_count) - SUM(A.sales)/1.1) / SUM(A.db_price * A.db_count) * 100 AS per');
         $builder->join('gfa_ad_account B', 'A.account_id = B.account_id', 'left');
 

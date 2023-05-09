@@ -175,7 +175,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -235,7 +235,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -295,7 +295,7 @@
                                 <td id="avg_margin_ratio"></td>
                                 <td id="total-sales"></td>
                                 <td id="total-impressions"></td>
-                                <td id="total-inline_link_clicks"></td>
+                                <td id="total-click"></td>
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
@@ -434,19 +434,19 @@ function setDataTable(tableId, columns, args){
 
                 if(tableId == '#campaigns-table'){
                     $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-                    $(tableId+' #total-budget').text('\u20A9'+res.total.amount.toLocaleString('ko-KR'));
+                    $(tableId+' #total-budget').text('\u20A9'+res.total.budget.toLocaleString('ko-KR'));
                 }else if(tableId == '#adsets-table'){
                     $(tableId+' #total-unique_total').text(res.total.unique_total);
                 }else{
                     $(tableId+' #total-unique_total').text(res.total.unique_total);
                 }
 
-                $(tableId+' #total-spend').text('\u20A9'+res.total.cost.toLocaleString('ko-KR'));
+                $(tableId+' #total-spend').text('\u20A9'+res.total.spend.toLocaleString('ko-KR'));
                 $(tableId+' #total-margin').text('\u20A9'+res.total.margin.toLocaleString('ko-KR'));
                 $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
                 $(tableId+' #total-sales').text('\u20A9'+res.total.sales.toLocaleString('ko-KR'));
                 $(tableId+' #total-impressions').text(res.total.impressions.toLocaleString('ko-KR'));
-                $(tableId+' #total-inline_link_clicks').text(res.total.click.toLocaleString('ko-KR'));
+                $(tableId+' #total-click').text(res.total.click.toLocaleString('ko-KR'));
                 $(tableId+' #avg-cpc').text('\u20A9'+Math.round(res.total.avg_cpc).toLocaleString('ko-KR'));
                 $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
                 $(tableId+' #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
@@ -473,14 +473,14 @@ function getCampaigns(args) {
             { "data": "status" },
             { "data": "biddingStrategyType" },
             { 
-                "data": "amount", 
+                "data": "budget", 
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        amount = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        budget = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        amount = "";
+                        budget = "";
                     }
-                    return amount;
+                    return budget;
                 }
             }, //예산
             { 
@@ -496,14 +496,14 @@ function getCampaigns(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 
@@ -610,14 +610,14 @@ function getAdsets(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 
@@ -724,14 +724,14 @@ function getAds(args) {
             }, //현재 DB단가
             { "data": "unique_total" }, //유효DB수
             { 
-                "data": "cost",
+                "data": "spend",
                 "render": function (data, type, row) {
                     if (data !== null) {
-                        cost = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
+                        spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
                     }else{
-                        cost = "";
+                        spend = "";
                     }
-                    return cost;
+                    return spend;
                 }
             }, //지출액
             { 

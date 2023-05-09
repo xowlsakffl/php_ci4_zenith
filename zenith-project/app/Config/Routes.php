@@ -38,6 +38,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
     $routes->get('/home', 'HomeController::index');
+    $routes->get('/home/report', 'HomeController::getReports');
     $routes->get('pages/(:any)', 'PageController::view/$1');
     // 회원 관리
     $routes->group('users', static function($routes){
