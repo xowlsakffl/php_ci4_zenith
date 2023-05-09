@@ -163,7 +163,10 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
-        }
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+         return "<span>현재 " + start + " - " + end + " / " + total + " 건</span>";
+      } 
     });
 }
 
