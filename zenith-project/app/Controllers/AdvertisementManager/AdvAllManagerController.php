@@ -183,6 +183,11 @@ class AdvAllManagerController extends BaseController
             case 'google':
                 $adsets = $this->google->getAdsets($arg);
                 $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);
+                foreach ($adsets as &$adset) {
+                    $adset['bidAmount'] = max([$adset['cpcBidAmount'],$adset['cpmBidAmount']]);
+                    if($adset['biddingStrategyType'] == '타겟 CPA')
+                        $adset['bidAmount'] = $adset['cpaBidAmount'];
+                }
                 break;
             case 'naver':
                 $adsets = $this->naver->getAdsets($arg);
