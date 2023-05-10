@@ -217,7 +217,6 @@ getReport(args);
 getAccount(args);
 getCampaigns(args);
 
-
 function getReport(args){
     $.ajax({
         type: "GET",
