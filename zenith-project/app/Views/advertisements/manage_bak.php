@@ -129,29 +129,11 @@
     </div>
 
     <div class="section client-list googlebiz">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3>
-        <div class="row"></div>
+        
     </div>
 
     <div class="section client-list facebookbiz">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3>
-        <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button>
-                </div>
-            </div>
-        </div>
+        
     </div>
 
     <div class="section client-list advertiser">
@@ -184,24 +166,6 @@
                         <thead class="table-dark campaign-head">
                         </thead>
                         <thead class="campaign-total">
-                            <tr id="total">
-                                <td id="total-count"></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td id="total-budget"></td>
-                                <td id="avg-cpa"></td>
-                                <td id="total-unique_total"></td>
-                                <td id="total-spend"></td>
-                                <td id="total-margin"></td>
-                                <td id="avg_margin_ratio"></td>
-                                <td id="total-sales"></td>
-                                <td id="total-impressions"></td>
-                                <td id="total-click"></td>
-                                <td id="avg-cpc"></td>
-                                <td id="avg-ctr"></td>
-                                <td id="avg-cvr"></td>
-                            </tr>
                         </thead>
                         <tbody>
                         </tbody>
@@ -295,7 +259,6 @@ function getGoogleManageAccount(){
             });
 
             $('.googlebiz .row').html(html);
-            $('.googlebiz').show();
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -305,7 +268,8 @@ function getGoogleManageAccount(){
 
 function getAccount(args){
     if(args.media == 'facebook'){
-        $('.googlebiz').hide();
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
+        $('.facebookbiz').html(html);
     }
     $.ajax({
         type: "GET",
@@ -402,112 +366,434 @@ function setDataTable(tableId, columns, args){
 }
 
 function getCampaigns(args) {
-    setDataTable('#campaigns-table', [
-            { 
-                "title" : "캠페인명", 
-                "data": "name", 
-                "width": "10%",
-                "render": function (data, type, row) {
-                    str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
+    if ( $.fn.DataTable.isDataTable('#campaigns-table') ) {
+        $('#campaigns-table').DataTable().clear().destroy();
+        $('.campaign-head').remove();
+        $('#campaigns-table').prepend('<thead class="table-dark campaign-head"></thead>');
+    }
+    switch (args.media) {
+        case "kakao":
+             theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            $('.campaign-total').html(theadTotal);
+            setDataTable('#campaigns-table', [
+                    { 
+                        "title" : "캠페인명", 
+                        "data": "name", 
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label>'+(row.goal === 'CONVERSION' ? '<p class="sml_txt goal">전환캠페인</p>' : '')+'<button class="btn-memo"><span class="blind">메모</span></button>';
+                            return name;
+                        }
+                    },
+                    { 
+                        "title" : "상태", 
+                        "data": "status",
+                        "width": "4%",
+                        "render": function (data, type, row) {
+                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="OFF" '+(row.status === 'OFF' ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === 'ON' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="">내역확인아이콘</span></button>';
+                            return status;
+                        }
+                    },
+                    { "title" : "목표Ai", "data": "autoBudget", "width": "4%"},
+                    { 
+                        "title" : "예산", 
+                        "data": "budget", 
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            if (parseInt(data) > 0) {
+                                budget = '\u20A9'+data;  
+                            }else{
+                                budget = "미설정";
+                            }
+                            return budget;
+                        }
+                    },
+                    { 
+                        "title" : "현재 DB단가", 
+                        "data": "cpa",
+                        "width": "7%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    },
+                    { "title" : "유효 DB", "data": "unique_total", "width": "2%" },
+                    { 
+                        "title" : "지출액", 
+                        "data": "spend",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    },
+                    { 
+                        "title" : "수익", 
+                        "data": "margin",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            if(data < 0){
+                                margin = '\u20A9'+data; 
+                                return '<span style="color:red">'+margin+'</span>';
+                            }else{
+                                margin = '\u20A9'+data; 
+                            }
+                            return margin;
+                        }
+                    },
+                    { 
+                        "title" : "수익률", 
+                        "data": "margin_ratio",
+                        "width": "5%",
+                        "render": function (data, type, row) {
+                            if(data < 20 && data != 0){
+                                margin_ratio = data+'\u0025';   
+                                return '<span style="color:red">'+margin_ratio+'</span>';
+                            }else{
+                                margin_ratio = data+'\u0025';   
+                            }
 
-                    name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
-                    return name;
-                }
-            },
-            { 
-                "title" : "상태", 
-                "data": "status", 
-                "width": "4%",
-                "render": function (data, type, row) {
-                    status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
-                    return status;
-                }
-            },
-            { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "4%"},
-            { "title" : "목표Ai", "data": null, "defaultContent": "", "width": "4%"},
-            { 
-                "title" : "예산", 
-                "data": "budget", 
-                "width": "9%",
-                "render": function (data, type, row) {
-                    budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
-                    return budget;
-                }
-            },
-            { 
-                "title" : "현재 DB단가", 
-                "data": "cpa",
-                "width": "7%",
-                "render": function (data, type, row) {
-                    return '\u20A9'+data;
-                }
-            },
-            { "title" : "유효 DB", "data": "unique_total", "width": "3%" },
-            { 
-                "title" : "지출액", 
-                "data": "spend",
-                "width": "9%",
-                "render": function (data, type, row) {
-                    return '\u20A9'+data;
-                }
-            },
-            { 
-                "title" : "수익", 
-                "data": "margin",
-                "width": "9%",
-                "render": function (data, type, row) {
-                    if(data < 0){
-                        margin = '\u20A9'+data; 
-                        return '<span style="color:red">'+margin+'</span>';
-                    }else{
-                        margin = '\u20A9'+data; 
+                            return margin_ratio;
+                        }
+                    },
+                    { 
+                        "title" : "매출액", 
+                        "data": "sales",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;  
+                        }
+                    },
+                    { "title" : "노출수", "data": "impressions", "width": "7%"},
+                    { "title" : "링크클릭", "data": "click", "width": "5%"},
+                    { 
+                        "title" : "CPC", 
+                        "data": "cpc",
+                        "width": "5%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    }, //클릭당단가 (1회 클릭당 비용)
+                    { "title" : "CTR", "data": "ctr", "width": "5%" }, //클릭율 (노출 대비 클릭한 비율)
+                    { 
+                        "title" : "전환율", 
+                        "data": "cvr", 
+                        "width": "3%",
+                        "render": function (data, type, row) {
+                            return data+'\u0025';
+                        }
+                    }, //전환율
+                ], args);
+            break;
+        case "google":
+            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            $('.campaign-total').html(theadTotal);
+            setDataTable('#campaigns-table', [
+                { 
+                    "title" : "캠페인명", 
+                    "data": "name", 
+                    "width": "10%",
+                    "render": function (data, type, row) {
+                        name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button><p class="sml_txt goal">'+row.adType+'</p>';
+                        return name;
                     }
-                    return margin;
-                }
-            },
-            { 
-                "title" : "수익률", 
-                "data": "margin_ratio",
-                "width": "5%",
-                "render": function (data, type, row) {
-                    if(data < 20 && data != 0){
-                        margin_ratio = data+'\u0025';   
-                        return '<span style="color:red">'+margin_ratio+'</span>';
-                    }else{
-                        margin_ratio = data+'\u0025';   
+                },
+                { 
+                    "title" : "상태", 
+                    "data": "status", 
+                    "width": "4%",
+                    "render": function (data, type, row) {
+                        status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ENABLED" '+(row.status === 'ENABLED' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                        return status;
                     }
+                },
+                { "title" : "입찰 유형", "data": "biddingStrategyType", "width": "4%" },
+                { 
+                    "title" : "예산", 
+                    "data": "budget",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        if (parseInt(data) > 0) {
+                            budget = '\u20A9'+data;  
+                        }else{
+                            budget = "미설정";
+                        }
+                        return budget;
+                    }
+                },
+                { 
+                    "title" : "현재 DB단가",
+                    "data": "cpa",
+                    "width": "7%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                },
+                { "title" : "유효 DB", "data": "unique_total", "width": "3%"},
+                { 
+                    "title" : "지출액",
+                    "data": "spend",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                },
+                { 
+                    "title" : "수익",
+                    "data": "margin",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        if(data < 0){
+                            margin = '\u20A9'+data; 
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+data; 
+                        }
+                        return margin;
+                    }
+                },
+                { 
+                    "title" : "수익률",
+                    "data": "margin_ratio",
+                    "width": "5%",
+                    "render": function (data, type, row) {
+                        if(data < 20 && data != 0){
+                            margin_ratio = data+'\u0025';   
+                            return '<span style="color:red">'+margin_ratio+'</span>';
+                        }else{
+                            margin_ratio = data+'\u0025';   
+                        }
 
-                    return margin_ratio;
-                }
-            },
-            { 
-                "title" : "매출액", 
-                "data": "sales",
-                "width": "9%",
-                "render": function (data, type, row) {
-                    return '\u20A9'+data;  
-                }
-            },
-            { "title" : "노출수", "data": "impressions", "width": "7%"},
-            { "title" : "링크클릭", "data": "click", "width": "5%"},
-            { 
-                "title" : "CPC", 
-                "data": "cpc", 
-                "width": "5%",
-                "render": function (data, type, row) {
-                    return '\u20A9'+data;
-                }
-            }, //클릭당단가 (1회 클릭당 비용)
-            { "title" : "CTR", "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-            { 
-                "title" : "전환율", 
-                "data": "cvr", 
-                "width": "3%",
-                "render": function (data, type, row) {
-                    return data+'\u0025';
-                }
-            }, //전환율
-        ], args);
+                        return margin_ratio;
+                    }
+                },
+                { 
+                    "title" : "매출액", 
+                    "data": "sales",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;  
+                    }
+                },
+                { "title" : "노출수","data": "impressions", "width": "7%"},
+                { "title" : "링크클릭","data": "click", "width": "5%"},
+                { 
+                    "title" : "CPC",
+                    "data": "cpc", 
+                    "width": "5%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                }, //클릭당단가 (1회 클릭당 비용)
+                { "title" : "CTR", "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
+                { 
+                    "title" : "전환률",
+                    "data": "cvr", 
+                    "width": "3%",
+                    "render": function (data, type, row) {
+                        return data+'\u0025';
+                    }
+                }, //전환율
+            ], args);
+            break;
+        case "naver":
+            theadTotal = '<tr id="total"><td id="total-count"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            $('.campaign-total').html(theadTotal);
+            setDataTable('#campaigns-table', [
+                { 
+                    "title" : "캠페인명", 
+                    "data": "name", 
+                    "width": "10%",
+                    "render": function (data, type, row) {
+                        name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label>';
+                        return name;
+                    }
+                },
+                { 
+                    "title" : "현재 DB단가",
+                    "data": "cpa",
+                    "width": "7%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                },
+                { "title" : "유효 DB수", "data": "unique_total", "width": "3%" },
+                { 
+                    "title" : "지출액",
+                    "data": "spend",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                },
+                { 
+                    "title" : "수익",
+                    "data": "margin",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        if(data < 0){
+                            margin = '\u20A9'+data; 
+                            return '<span style="color:red">'+margin+'</span>';
+                        }else{
+                            margin = '\u20A9'+data; 
+                        }
+                        return margin;
+                    }
+                },
+                { 
+                    "title" : "수익률",
+                    "data": "margin_ratio",
+                    "width": "5%",
+                    "render": function (data, type, row) {
+                        if(data < 20 && data != 0){
+                            margin_ratio = data+'\u0025';   
+                            return '<span style="color:red">'+margin_ratio+'</span>';
+                        }else{
+                            margin_ratio = data+'\u0025';   
+                        }
+
+                        return margin_ratio;
+                    }
+                },
+                { 
+                    "title" : "매출액",
+                    "data": "sales",
+                    "width": "9%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;  
+                    }
+                },
+                { "title" : "노출수","data": "impressions", "width": "7%"},
+                { "title" : "링크클릭","data": "click", "width": "5%"},
+                { 
+                    "title" : "CPC",
+                    "data": "cpc", 
+                    "width": "5%",
+                    "render": function (data, type, row) {
+                        return '\u20A9'+data;
+                    }
+                }, //클릭당단가 (1회 클릭당 비용)
+                { "title" : "CTR", "data": "ctr", "width": "5%" }, //클릭율 (노출 대비 클릭한 비율)
+                { 
+                    "title" : "전환율",
+                    "data": "cvr", 
+                    "width": "3%",
+                    "render": function (data, type, row) {
+                        return data+'\u0025';
+                    }
+                }, //전환율
+            ], args);
+            break;
+        default:
+            theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td></td><td id="total-budget"></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
+            $('.campaign-total').html(theadTotal);
+
+            setDataTable('#campaigns-table', [
+                    { 
+                        "title" : "캠페인명", 
+                        "data": "name", 
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
+
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                            return name;
+                        }
+                    },
+                    { 
+                        "title" : "상태", 
+                        "data": "status", 
+                        "width": "4%",
+                        "render": function (data, type, row) {
+                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                            return status;
+                        }
+                    },
+                    { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "4%"},
+                    { "title" : "목표Ai", "data": "ai2_status", "width": "4%"},
+                    { 
+                        "title" : "예산", 
+                        "data": "budget", 
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
+                            return budget;
+                        }
+                    },
+                    { 
+                        "title" : "현재 DB단가", 
+                        "data": "cpa",
+                        "width": "7%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    },
+                    { "title" : "유효 DB", "data": "unique_total", "width": "3%" },
+                    { 
+                        "title" : "지출액", 
+                        "data": "spend",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    },
+                    { 
+                        "title" : "수익", 
+                        "data": "margin",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            if(data < 0){
+                                margin = '\u20A9'+data; 
+                                return '<span style="color:red">'+margin+'</span>';
+                            }else{
+                                margin = '\u20A9'+data; 
+                            }
+                            return margin;
+                        }
+                    },
+                    { 
+                        "title" : "수익률", 
+                        "data": "margin_ratio",
+                        "width": "5%",
+                        "render": function (data, type, row) {
+                            if(data < 20 && data != 0){
+                                margin_ratio = data+'\u0025';   
+                                return '<span style="color:red">'+margin_ratio+'</span>';
+                            }else{
+                                margin_ratio = data+'\u0025';   
+                            }
+
+                            return margin_ratio;
+                        }
+                    },
+                    { 
+                        "title" : "매출액", 
+                        "data": "sales",
+                        "width": "9%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;  
+                        }
+                    },
+                    { "title" : "노출수", "data": "impressions", "width": "7%"},
+                    { "title" : "링크클릭", "data": "click", "width": "5%"},
+                    { 
+                        "title" : "CPC", 
+                        "data": "cpc", 
+                        "width": "5%",
+                        "render": function (data, type, row) {
+                            return '\u20A9'+data;
+                        }
+                    }, //클릭당단가 (1회 클릭당 비용)
+                    { "title" : "CTR", "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
+                    { 
+                        "title" : "전환율", 
+                        "data": "cvr", 
+                        "width": "3%",
+                        "render": function (data, type, row) {
+                            return data+'\u0025';
+                        }
+                    }, //전환율
+                ], args);
+    }
+    
 }
 
 function getAdsets(args) {
@@ -1705,8 +1991,6 @@ function setDate(){
 
 $('body').on('click', '.media_btn', function(){
     $('.advertiser .row').empty();
-    $('.googlebiz button').removeClass('active')
-    $('.facebookbiz button').removeClass('active')
     $('.media_btn').removeClass("active");
     $(this).addClass("active");
 
@@ -1717,16 +2001,19 @@ $('body').on('click', '.media_btn', function(){
     getReport(args);
     switch (args.media) {
     case "google":
-        $('.facebookbiz').hide();
+        $('.facebookbiz').empty();
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row"></div>'
+        $('.googlebiz').html(html);
         getGoogleManageAccount(args);
         break;
     case "facebook":
-        $('.googlebiz').hide();
-        $('.facebookbiz').show();
+        $('.googlebiz').empty();
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
+        $('.facebookbiz').html(html);
         break;
     default:
-        $('.googlebiz').hide();
-        $('.facebookbiz').hide();
+        $('.googlebiz').empty();
+        $('.facebookbiz').empty();
     } 
 
     getAccount(args);
