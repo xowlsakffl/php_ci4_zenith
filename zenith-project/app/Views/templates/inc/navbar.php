@@ -7,10 +7,10 @@ $uri = current_url(true)->getPath();
     <div class="nav-wrap">
         <ul class="nav flex-column">
             <li>
-                <a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>"><button><i class="bi bi-people-fill"></i>통합 광고 관리</button></a>
+                <a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>"><button><i class="bi bi-graph-up-arrow"></i>통합 광고관리</button></a>
             </li>
             <li>
-                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-people-fill"></i>통합 DB 관리</button></a>
+                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-people-fill"></i>통합 DB관리</button></a>
             </li>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
