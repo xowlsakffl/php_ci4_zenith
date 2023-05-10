@@ -132,6 +132,10 @@
         
     </div>
 
+    <div class="section client-list facebookbiz">
+        
+    </div>
+
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
         <div class="row">
@@ -263,6 +267,10 @@ function getGoogleManageAccount(){
 }
 
 function getAccount(args){
+    if(args.media == 'facebook'){
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
+        $('.facebookbiz').html(html);
+    }
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/advertisements/accounts",
@@ -1991,13 +1999,23 @@ $('body').on('click', '.media_btn', function(){
     args.accounts = [];
 
     getReport(args);
-    if(args.media == 'google'){
+    switch (args.media) {
+    case "google":
+        $('.facebookbiz').empty();
         html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row"></div>'
         $('.googlebiz').html(html);
         getGoogleManageAccount(args);
-    }else{
+        break;
+    case "facebook":
         $('.googlebiz').empty();
-    }
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
+        $('.facebookbiz').html(html);
+        break;
+    default:
+        $('.googlebiz').empty();
+        $('.facebookbiz').empty();
+    } 
+
     getAccount(args);
     switch (args.type) {
     case "ads":
@@ -2028,13 +2046,23 @@ $('body').on('click', '.tab-link', function(){
     } 
 });
 
-$('body').on('click', '#account_btn', function(){
+$('body').on('click', '#business_btn, #account_btn', function(){
+    if ($(this).attr('id') === 'business_btn') {
+        $('#account_btn').removeClass('active')
+    }
 
     $(this).toggleClass("active");
     tab = $('.tab-link.active').val();
+    business = $('#business_btn.active').map(function(){return $(this).val();}).get();
     accounts = $('#account_btn.active').map(function(){return $(this).val();}).get();
+    args.businesses = business;
     args.accounts = accounts;
     
+    if ($(this).attr('id') === 'business_btn') {
+        args.accounts = [];
+        getAccount(args);
+    }
+
     getReport(args);
     switch (tab) {
     case "ads":
