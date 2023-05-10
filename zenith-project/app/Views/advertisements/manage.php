@@ -26,6 +26,9 @@
     .campaign-total td{
         text-align: center !important;
     }
+    .hl-red{
+        color: red;
+    }
 </style>
 <?=$this->endSection();?>
 
@@ -343,21 +346,29 @@ function getCampaigns(args) {
                         "data": "name", 
                         "width": "10%",
                         "render": function (data, type, row) {
-                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label>'+(row.goal === 'CONVERSION' ? '<p class="sml_txt goal">전환캠페인</p>' : '')+'<button class="btn-memo"><span class="blind">메모</span></button>';
                             return name;
                         }
                     },
-                    { "title" : "상태", "data": "status", "width": "5%" },
-                    { "title" : "목표Ai", "data": "autoBudget", "width": "5%"},
+                    { 
+                        "title" : "상태", 
+                        "data": "status",
+                        "width": "4%",
+                        "render": function (data, type, row) {
+                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="OFF" '+(row.status === 'OFF' ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === 'ON' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="">내역확인아이콘</span></button>';
+                            return status;
+                        }
+                    },
+                    { "title" : "목표Ai", "data": "autoBudget", "width": "4%"},
                     { 
                         "title" : "예산", 
                         "data": "budget", 
                         "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
+                            if (parseInt(data) > 0) {
                                 budget = '\u20A9'+data;  
                             }else{
-                                budget = "";
+                                budget = "미설정";
                             }
                             return budget;
                         }
@@ -365,44 +376,30 @@ function getCampaigns(args) {
                     { 
                         "title" : "현재 DB단가", 
                         "data": "cpa",
-                        "width": "5%",
+                        "width": "7%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                cpa = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                cpa = "";
-                            }
-                            return cpa;
+                            return '\u20A9'+data;
                         }
                     },
                     { "title" : "유효 DB", "data": "unique_total", "width": "2%" },
                     { 
                         "title" : "지출액", 
                         "data": "spend",
-                        "width": "7%",
+                        "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                spend = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                spend = "";
-                            }
-                            return spend;
+                            return '\u20A9'+data;
                         }
                     },
                     { 
                         "title" : "수익", 
                         "data": "margin",
-                        "width": "7%",
+                        "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                if(data < 0){
-                                    margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                                    return '<span style="color:red">'+margin+'</span>';
-                                }else{
-                                    margin = '\u20A9'+parseInt(data).toLocaleString('ko-KR'); 
-                                }
+                            if(data < 0){
+                                margin = '\u20A9'+data; 
+                                return '<span style="color:red">'+margin+'</span>';
                             }else{
-                                margin = "";
+                                margin = '\u20A9'+data; 
                             }
                             return margin;
                         }
@@ -412,16 +409,13 @@ function getCampaigns(args) {
                         "data": "margin_ratio",
                         "width": "5%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                if(data < 20 && data != 0){
-                                    margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';   
-                                    return '<span style="color:red">'+margin_ratio+'</span>';
-                                }else{
-                                    margin_ratio = parseInt(data).toLocaleString('ko-KR')+'\u0025';  
-                                }
+                            if(data < 20 && data != 0){
+                                margin_ratio = data+'\u0025';   
+                                return '<span style="color:red">'+margin_ratio+'</span>';
                             }else{
-                                margin_ratio = "";
+                                margin_ratio = data+'\u0025';   
                             }
+
                             return margin_ratio;
                         }
                     },
@@ -430,51 +424,17 @@ function getCampaigns(args) {
                         "data": "sales",
                         "width": "9%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                sales = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                sales = "";
-                            }
-                            return sales;
+                            return '\u20A9'+data;  
                         }
                     },
-                    { 
-                        "title" : "노출수", 
-                        "data": "impressions", 
-                        "width": "5%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                impressions = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                impressions = "";
-                            }
-                            return impressions;
-                        }
-                    },
-                    { 
-                        "title" : "링크클릭", 
-                        "data": "click", 
-                        "width": "5%",
-                        "render": function (data, type, row) {
-                            if (data !== null) {
-                                click = parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                click = "";
-                            }
-                            return click;
-                        }
-                    },
+                    { "title" : "노출수", "data": "impressions", "width": "7%"},
+                    { "title" : "링크클릭", "data": "click", "width": "5%"},
                     { 
                         "title" : "CPC", 
                         "data": "cpc",
                         "width": "5%",
                         "render": function (data, type, row) {
-                            if (data !== null) {
-                                cpc = '\u20A9'+parseInt(data).toLocaleString('ko-KR');  
-                            }else{
-                                cpc = "";
-                            }
-                            return cpc;
+                            return '\u20A9'+data;
                         }
                     }, //클릭당단가 (1회 클릭당 비용)
                     { "title" : "CTR", "data": "ctr", "width": "5%" }, //클릭율 (노출 대비 클릭한 비율)
@@ -506,7 +466,7 @@ function getCampaigns(args) {
                     "data": "status", 
                     "width": "4%",
                     "render": function (data, type, row) {
-                        status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ENABLED" '+(row.status === 'ENABLED' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인</span></button>';
+                        status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ENABLED" '+(row.status === 'ENABLED' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                         return status;
                     }
                 },
@@ -516,7 +476,12 @@ function getCampaigns(args) {
                     "data": "budget",
                     "width": "9%",
                     "render": function (data, type, row) {
-                        return '\u20A9'+data;
+                        if (parseInt(data) > 0) {
+                            budget = '\u20A9'+data;  
+                        }else{
+                            budget = "미설정";
+                        }
+                        return budget;
                     }
                 },
                 { 
@@ -573,16 +538,8 @@ function getCampaigns(args) {
                         return '\u20A9'+data;  
                     }
                 },
-                { 
-                    "title" : "노출수",
-                    "data": "impressions", 
-                    "width": "7%",
-                },
-                { 
-                    "title" : "링크클릭",
-                    "data": "click", 
-                    "width": "5%",
-                },
+                { "title" : "노출수","data": "impressions", "width": "7%"},
+                { "title" : "링크클릭","data": "click", "width": "5%"},
                 { 
                     "title" : "CPC",
                     "data": "cpc", 
@@ -669,16 +626,8 @@ function getCampaigns(args) {
                         return '\u20A9'+data;  
                     }
                 },
-                { 
-                    "title" : "노출수",
-                    "data": "impressions", 
-                    "width": "7%",
-                },
-                { 
-                    "title" : "링크클릭",
-                    "data": "click", 
-                    "width": "5%",
-                },
+                { "title" : "노출수","data": "impressions", "width": "7%"},
+                { "title" : "링크클릭","data": "click", "width": "5%"},
                 { 
                     "title" : "CPC",
                     "data": "cpc", 
@@ -708,7 +657,9 @@ function getCampaigns(args) {
                         "data": "name", 
                         "width": "10%",
                         "render": function (data, type, row) {
-                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                            str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
+
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
                             return name;
                         }
                     },
@@ -717,7 +668,7 @@ function getCampaigns(args) {
                         "data": "status", 
                         "width": "4%",
                         "render": function (data, type, row) {
-                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인</span></button>';
+                            status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                             return status;
                         }
                     },
@@ -728,7 +679,7 @@ function getCampaigns(args) {
                         "data": "budget", 
                         "width": "9%",
                         "render": function (data, type, row) {
-                            budget = '<div class="budget" data-editable="true">'+'\u20A9'+row.budget+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
+                            budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
                             return budget;
                         }
                     },
@@ -786,16 +737,8 @@ function getCampaigns(args) {
                             return '\u20A9'+data;  
                         }
                     },
-                    { 
-                        "title" : "노출수", 
-                        "data": "impressions", 
-                        "width": "7%",
-                    },
-                    { 
-                        "title" : "링크클릭", 
-                        "data": "click", 
-                        "width": "5%",
-                    },
+                    { "title" : "노출수", "data": "impressions", "width": "7%"},
+                    { "title" : "링크클릭", "data": "click", "width": "5%"},
                     { 
                         "title" : "CPC", 
                         "data": "cpc", 
@@ -829,7 +772,7 @@ function getAdsets(args) {
              theadTotal = '<tr id="total"><td id="total-count"></td><td></td><td></td><td id="total-budget"></td><td></td><td id="avg-cpa"></td><td id="total-unique_total"></td><td id="total-spend"></td><td id="total-margin"></td><td id="avg_margin_ratio"></td><td id="total-sales"></td><td id="total-impressions"></td><td id="total-click"></td><td id="avg-cpc"></td><td id="avg-ctr"></td><td id="avg-cvr"></td></tr>';
             $('.adsets-total').html(theadTotal);
             setDataTable('#adsets-table', [
-                    { "title" : "광고그룹명", "data": "name" ,
+                    { "title" : "광고그룹명", "data": "name",
                         "width": "10%"},
                     { "title" : "상태", "data": "status", "width": "5%" },
                     { "title" : "Ai", "data": "aiConfig", "width": "5%"},

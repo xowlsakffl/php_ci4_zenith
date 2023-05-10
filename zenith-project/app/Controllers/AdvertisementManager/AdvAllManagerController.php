@@ -235,6 +235,15 @@ class AdvAllManagerController extends BaseController
             case 'facebook':
                 $adsets = $this->facebook->getAdsets($arg);
                 $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+                foreach ($adsets as $adset) {
+                    if(is_null($adset['budget'])) {
+                        $budget_editable = false;
+                        $adset['budget_txt'] = '캠페인예산사용';
+                    } else {
+                        $budget_editable = true;
+                        $adset['budget'] = '&#x20a9;'.number_format($adset['budget']);
+                    }
+                }
                 break;
             case 'kakao':
                 $adsets = $this->kakao->getAdsets($arg);
