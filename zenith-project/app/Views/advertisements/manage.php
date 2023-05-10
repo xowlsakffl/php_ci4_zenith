@@ -247,14 +247,14 @@ function getGoogleManageAccount(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            $('.googlebiz').empty();
-            var html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row">';
+            $('.googlebiz .row').empty();
+            var html = '';
             var set_ratio = '';
             $.each(data, function(idx, v) {     
                 html += '<div class="col"><div class="inner"><button type="button" value="'+v.customerId+'" id="business_btn" class="filter_btn">'+v.name+'</button></div></div>';
             });
-            html += '</div>';
-            $('.googlebiz').html(html);
+
+            $('.googlebiz .row').html(html);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -1991,13 +1991,14 @@ $('body').on('click', '.media_btn', function(){
     args.accounts = [];
 
     getReport(args);
-    getAccount(args);
     if(args.media == 'google'){
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row"></div>'
+        $('.googlebiz').html(html);
         getGoogleManageAccount(args);
     }else{
         $('.googlebiz').empty();
     }
-    
+    getAccount(args);
     switch (args.type) {
     case "ads":
         getAds(args);
