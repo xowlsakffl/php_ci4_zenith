@@ -406,6 +406,7 @@ class AdvAllManagerController extends BaseController
                     $accounts = $this->updateAccountsForKakao($accounts);
                     break;
                 case 'google':
+                    $accounts = $this->google->getManageAccounts($arg);
                     $accounts = $this->google->getAccounts($arg);
                     $accounts = $this->updateAccountsForGoogle($accounts);
                     break;

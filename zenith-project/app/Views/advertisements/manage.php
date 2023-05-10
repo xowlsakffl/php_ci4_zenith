@@ -128,6 +128,10 @@
         </div>
     </div>
 
+    <div class="section client-list googlebiz">
+        
+    </div>
+
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
         <div class="row">
@@ -228,6 +232,29 @@ function getReport(args){
             $('#conversion_ratio_sum').text(data.conversion_ratio_sum);//전환율
             $('#per_sum').text(data.per_sum);//수익률
             $('#price_01_sum').text(data.price_sum);//매출
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function getGoogleManageAccount(){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/google/manageaccounts",
+        data: args,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            $('.googlebiz').empty();
+            var html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row">';
+            var set_ratio = '';
+            $.each(data, function(idx, v) {     
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.customerId+'" id="business_btn" class="filter_btn">'+v.name+'</button></div></div>';
+            });
+            html += '</div>';
+            $('.googlebiz').html(html);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -1964,6 +1991,12 @@ $('body').on('click', '.media_btn', function(){
 
     getReport(args);
     getAccount(args);
+    if(args.media == 'google'){
+        getGoogleManageAccount(args);
+    }else{
+        $('.googlebiz').empty();
+    }
+    
     switch (args.type) {
     case "ads":
         getAds(args);
