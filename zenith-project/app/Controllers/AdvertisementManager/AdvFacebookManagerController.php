@@ -37,11 +37,11 @@ class AdvFacebookManagerController extends BaseController
             foreach ($accounts as &$account) {
                 
                 $account['class'] = [];
-                $account['db_ratio'] = '';
+                $account['db_ratio'] = 0;
 
                 if ($account['status'] != 1) 
                     array_push($account['class'], 'tag-inactive');
-                if (in_array($account['ad_account_id'], $getDisapprovalByAccount)) 
+                if (in_array($account['id'], $getDisapprovalByAccount)) 
                     array_push($account['class'], 'disapproval');
 
                 $account['db_count'] = $account['db_count'] * $account['date_count'];
@@ -114,7 +114,7 @@ class AdvFacebookManagerController extends BaseController
                 $columnIndex++;
             }
 
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = 0;
     
             if(!empty($res)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
@@ -131,6 +131,8 @@ class AdvFacebookManagerController extends BaseController
                 $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
                 if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
                     $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
+
+                    $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
                 }
                 if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
                     $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
@@ -140,6 +142,11 @@ class AdvFacebookManagerController extends BaseController
                 if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
                     $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
                 }
+
+                $report['impressions_sum'] = number_format($report['impressions_sum']);
+                $report['clicks_sum'] = number_format($report['clicks_sum']);
+                $report['spend_sum'] = number_format($report['spend_sum']);
+                $report['price_sum'] = number_format($report['price_sum']);
             }
             return $this->respond($report);
         }else{

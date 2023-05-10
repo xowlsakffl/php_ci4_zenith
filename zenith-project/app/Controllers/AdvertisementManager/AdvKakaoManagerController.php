@@ -101,7 +101,7 @@ class AdvKakaoManagerController extends BaseController
 
             if(!empty($res)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-                $report['clicks_sum'] = array_sum($total['clicks']); //총 클릭수
+                $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
                 if($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
                     $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
                 }

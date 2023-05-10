@@ -24,7 +24,7 @@
 <?=$this->endSection();?>
 
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap db-manage-contaniner">
     <div class="title-area">
         <h2 class="page-title">통합 DB 관리</h2>
         <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
@@ -82,10 +82,11 @@
                         <th style="width:100px">전화번호</th>
                         <th style="width:30px">나이</th>
                         <th style="width:30px" >성별</th>
-                        <th style="width:70px">기타</th>
-                        <th style="width:200px">상담내용</th>
+                        <th style="width:200px">기타</th>
+                        <th style="width:120px">상담내용</th>
                         <th style="width:60px">사이트</th>
-                        <th style="width:80px">등록일</th>
+                        <th style="width:100px">등록일</th>
+                        <th style="width:60px">인정기준</th>
                         <th class="last" style="width:60px">삭제</th>
                     </tr>
                 </thead>
@@ -139,10 +140,26 @@ function getList(data = []){
             { "data": "age" },
             { "data": "gender" },
             { "data": "add" },
-            { "data": null, "defaultContent": ""},
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<textarea cols="3" rows="3" class="consultation" readonly></textarea>';
+                }
+            },
             { "data": "site" },
             { "data": "reg_date", },
-            { "data": null, "defaultContent": ""},
+            { 
+                "data": 'criteria',
+                "render": function (data, type, row) {
+                    return '<select class="data-del"><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select>';
+                }
+            },
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<button id="save" class="save">저장</button><button id="delete" class="delete">삭제</button>';
+                }
+            },
         ],
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
@@ -163,7 +180,10 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
-        }
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+            return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        } 
     });
 }
 
@@ -227,7 +247,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         var i = 0;
         var btn_width = Math.round(button.width());
         // console.log(button.val(), btn_scr_w, btn_width);
-        while(button[0].scrollWidth / 2 >= btn_width) {
+        while((button[0].scrollWidth+10) / 2 >= btn_width) {
             var size = parseFloat(button.css('font-size')) / 16 * 100;
             button.css({'font-size': --size+'%'});
             // console.log(button.css('font-size'), size)

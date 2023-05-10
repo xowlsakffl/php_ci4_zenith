@@ -38,6 +38,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
     $routes->get('/home', 'HomeController::index');
+    $routes->get('/home/report', 'HomeController::getReports');
     $routes->get('pages/(:any)', 'PageController::view/$1');
     // 회원 관리
     $routes->group('users', static function($routes){
@@ -86,41 +87,22 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('report', 'AdvertisementManager\AdvAllManagerController::getReport');
 
         $routes->group('facebook', static function($routes){
-            $routes->get('', 'AdvertisementManager\AdvFacebookManagerController::index');
-            $routes->get('accounts', 'AdvertisementManager\AdvFacebookManagerController::getAccounts');
-            $routes->get('data', 'AdvertisementManager\AdvFacebookManagerController::getData');
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
         });
 
         $routes->group('kakao', static function($routes){
-            $routes->get('', 'AdvertisementManager\AdvKakaoManagerController::index');
-            $routes->get('accounts', 'AdvertisementManager\AdvKakaoManagerController::getAccounts');
-            $routes->get('data', 'AdvertisementManager\AdvKakaoManagerController::getData');
             $routes->get('report', 'AdvertisementManager\AdvKakaoManagerController::getReport');
         });
 
         $routes->group('google', static function($routes){
-            $routes->get('', 'AdvertisementManager\AdvGoogleManagerController::index');
             $routes->get('manageaccounts', 'AdvertisementManager\AdvGoogleManagerController::getManageAccounts');
-            $routes->get('accounts', 'AdvertisementManager\AdvGoogleManagerController::getAccounts');
-            $routes->get('data', 'AdvertisementManager\AdvGoogleManagerController::getData');
             $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
         });
-
-        $routes->group('naver', static function($routes){
-            $routes->get('', 'AdvertisementManager\AdvNaverManagerController::index');
-            $routes->get('accounts', 'AdvertisementManager\AdvNaverManagerController::getAccounts');
-            $routes->get('data', 'AdvertisementManager\AdvNaverManagerController::getData');
-            $routes->get('report', 'AdvertisementManager\AdvNaverManagerController::getReport');
-        });
-        
-
-        $routes->get('etc', 'AdvertisementManager\AdvEtcManagerController::index');
     });
     
     // 통합 DB관리
     $routes->group('integrate', static function($routes){   
-        $routes->get('management', 'Integrate\IntegrateController::index');
+        $routes->get('', 'Integrate\IntegrateController::index');
         $routes->get('list', 'Integrate\IntegrateController::getList');
         $routes->get('lead', 'Integrate\IntegrateController::getLead');
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
