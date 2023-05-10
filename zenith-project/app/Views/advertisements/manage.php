@@ -1982,6 +1982,7 @@ function setDate(){
 }
 
 $('body').on('click', '.media_btn', function(){
+    $('.advertiser .row').empty();
     $('.media_btn').removeClass("active");
     $(this).addClass("active");
 
