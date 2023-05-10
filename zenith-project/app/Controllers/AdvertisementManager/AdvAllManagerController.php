@@ -137,6 +137,18 @@ class AdvAllManagerController extends BaseController
                     return $this->fail("잘못된 요청");
             }
             
+            foreach ($result['data'] as &$value) {
+                $value['budget'] = number_format($value['budget']);
+                $value['impressions'] = number_format($value['impressions']);
+                $value['click'] = number_format($value['click']);
+                $value['spend'] = number_format($value['spend']);
+                $value['sales'] = number_format($value['sales']);
+                $value['unique_total'] = number_format($value['unique_total']);
+                $value['margin'] = number_format($value['margin']);
+                $value['cpa'] = number_format($value['cpa']);
+                $value['cpc'] = number_format($value['cpc']);
+            }
+
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -208,18 +220,6 @@ class AdvAllManagerController extends BaseController
         }
 
         $total = $this->getTotal($campaigns);
-
-        foreach ($campaigns as &$campaign) {
-            $campaign['budget'] = number_format($campaign['budget']);
-            $campaign['impressions'] = number_format($campaign['impressions']);
-            $campaign['click'] = number_format($campaign['click']);
-            $campaign['spend'] = number_format($campaign['spend']);
-            $campaign['sales'] = number_format($campaign['sales']);
-            $campaign['unique_total'] = number_format($campaign['unique_total']);
-            $campaign['margin'] = number_format($campaign['margin']);
-            $campaign['cpa'] = number_format($campaign['cpa']);
-            $campaign['cpc'] = number_format($campaign['cpc']);
-        }
         
         $result = [
             'total' => $total,
@@ -235,15 +235,6 @@ class AdvAllManagerController extends BaseController
             case 'facebook':
                 $adsets = $this->facebook->getAdsets($arg);
                 $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
-                foreach ($adsets as $adset) {
-                    if(is_null($adset['budget'])) {
-                        $budget_editable = false;
-                        $adset['budget_txt'] = '캠페인예산사용';
-                    } else {
-                        $budget_editable = true;
-                        $adset['budget'] = '&#x20a9;'.number_format($adset['budget']);
-                    }
-                }
                 break;
             case 'kakao':
                 $adsets = $this->kakao->getAdsets($arg);
@@ -393,7 +384,6 @@ class AdvAllManagerController extends BaseController
                     'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
                 ],
                 'businesses' => $this->request->getGet('businesses'),
-                
             ];
 
             switch ($arg['media']) {
