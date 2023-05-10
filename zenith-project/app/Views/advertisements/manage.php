@@ -1211,9 +1211,21 @@ function getAdsets(args) {
                     { 
                         "title" : "광고그룹명", 
                         "data": "name" ,
-                        "width": "10%"
+                        "width": "10%",
+                        "render": function (data, type, row) {
+                            name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.name+'</label>';
+                            return name;
+                        }
                     },
-                    { "title" : "상태", "data": "status", "width": "5%" },
+                    { 
+                        "title" : "상태", 
+                        "data": "status", 
+                        "width": "5%",
+                        "render": function (data, type, row) {
+                            status = '<i class="ico_status '+row.lsi_status+'"><span></span></i><select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                            return status;
+                        }
+                    },
                     { "title" : "예산Ai", "data": null, "defaultContent": "", "width": "5%"},
                     { 
                         "title" : "예산", 
