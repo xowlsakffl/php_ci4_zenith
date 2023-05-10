@@ -1,18 +1,58 @@
-.dataTables_wrapper{
-    .dataTables_length{margin-bottom:2rem;}
-    .dataTables_length select{background-color:#fff; padding:4px 1rem; color:#ce1922;}
+.sub-contents-wrap{
+    .dataTables_wrapper{max-height:600px;
+        .dataTables_length{margin-bottom:2rem;}
+        .dataTables_length select{background-color:#fff; padding:0.4rem 1rem;}
+    
+        .dataTables_info{padding-top:2.755em;
+            i.bi{color:red; padding-right:6px;}
+            span{color:#878787;}
+        }
 
-    .dataTables_info{padding-top:2.755em;}
-    .dataTables_paginate{float:unset; text-align: center; padding-top:2.25em;
-        .paginate_button{position:relative;
-        &:hover::after{position:absolute; top:0; left:0; content: '여기'; width:3px; height: 3px; border-radius: 50%; background-color: #ce1922;}}
-        .paginate_button.current{color:#fff !important; background-color:red; border-color:transparent;}
+        .dataTables_paginate{float:unset; text-align: center; padding-top:2.25em;  padding-bottom:2.25em;
+            .paginate_button{border:none;
+                &.disabled,
+                &.disabled:hover{color:#aaa !important;}
+
+                &:hover{color:red !important; border:none; background:none; transition:0.2s;}
+                &:not(.previous,.next,.current){position:relative;                   
+                    &:hover::before{position:absolute; top:-5px; left:47%; content: ''; width:4px; height:4px; background-color: red; transition:0.2s; border-radius: 50%;}
+                    &:hover::after{position:absolute; bottom:-5px; left:0%; content: ''; width:100%; height:2px; background-color: red; transition:0.2s; animation: hover-line 0.2s linear;}
+                }
+                &.current{
+                    color:#fff !important; background-color:red; border:none;
+                    &:hover{color:#fff !important; background-color:red; border:none;}
+                } 
+                &:active{background:none; border:none;}
+            }            
+        }
+        table.dataTable{
+            tbody tr{background-color:#fff;}
+            textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
+            select.data-del{padding:3px; border-radius:4px;}
+            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:4px 17px; border-radius:4px;}
+            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:4px 17px; border-radius:4px;
+                &:hover{background-color:red;}          
+            }
+        }
+    }
+}
+
+.db-manage-contaniner{
+    .search-wrap{border-radius: 10px;
+        .detail{border-top: none;}
     }
 }
 
 @media screen and (max-width: 767px){
-    .dataTables_wrapper{
-        .dataTables_info{padding-top: 1.755em;}
-        .dataTables_paginate{ padding-top:1.25em;}
-    }
+    .sub-contents-wrap{
+        .dataTables_wrapper{
+            .dataTables_info{padding-top: 1.755em;}
+            .dataTables_paginate{padding-top:1.25em;}
+        }
+    }    
+}
+
+@keyframes hover-line {
+    from {width: 0%;}
+    to {width: 100%;}
 }

@@ -210,6 +210,17 @@ class AdvGoogleManagerModel extends Model
 				case 'MAXIMIZE_CONVERSIONS' :
 					$row['biddingStrategyType'] = '전환수 최대화';
 					break;
+                /* //값이 뭔지 모름ㅠㅠ
+				case '' :
+					$row['biddingStrategyType'] = '검색 결과 위치 타겟';
+					break;
+				case '' :
+					$row['biddingStrategyType'] = '경쟁 광고보다 내 광고가 높은 순위에 게재되는 비율 타겟';
+					break;
+				case '' :
+					$row['biddingStrategyType'] = '타겟 노출 점유율';
+					break;
+				*/
                 case 'PAGE_ONE_PROMOTED' :
                     $row['biddingStrategyType'] = '향상된 CPC 입찰기능';
                     break;

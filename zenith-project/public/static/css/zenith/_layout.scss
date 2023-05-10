@@ -90,7 +90,7 @@ body{background:#f7f7f7;}
 @include medium{
     .wrap{min-width:580px;}
     .main-contents-wrap{padding:30px 30px 30px 70px;}
-    .left-side{position:fixed; z-index:1; width:40px; height:100%; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s;
+    .left-side{position:fixed; z-index:1; width:40px; height:100%; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s; z-index:99;
         .logo{margin:0 0 20px 45px;}
         &.open{width:240px;}
         .btn-menu{position:absolute; top:20px; left:10px; display:block; width:20px; height:20px; overflow:hidden; text-indent:-9999px; border-top:2px solid #fff;

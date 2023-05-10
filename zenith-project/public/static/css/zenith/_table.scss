@@ -1,4 +1,6 @@
 .table{
+    thead th{position:sticky; top:0; z-index:2;}
+
     .none{padding:50px 0; text-align:center;}
     .ico{display:inline-block; width:8px; height:8px; border-radius:50%;
         &.green{background:var(--bs-success);}

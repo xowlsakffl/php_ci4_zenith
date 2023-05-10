@@ -438,6 +438,7 @@ body {
     padding: 20px 0;
     border-radius: 0;
     transition: all 0.2s;
+    z-index: 99;
   }
   .left-side .logo {
     margin: 0 0 20px 45px;
@@ -932,6 +933,11 @@ body {
     background: #ce1922;
   }
 }
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
 .table .none {
   padding: 50px 0;
   text-align: center;
@@ -975,6 +981,7 @@ body {
   padding: 12px 8px;
   text-align: center;
   vertical-align: middle;
+  word-break: break-word;
 }
 .table-default tbody td:not(:last-child) {
   border-right: 1px dashed #dfdfdf;

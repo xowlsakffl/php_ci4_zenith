@@ -68,7 +68,7 @@ class AdvAllManagerController extends BaseController
                 $columnIndex++;
             }
 
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = 0;
     
             if(!empty($res)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
@@ -95,6 +95,13 @@ class AdvAllManagerController extends BaseController
                 if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
                     $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
                 }
+
+                $report['impressions_sum'] = number_format($report['impressions_sum']);
+                $report['clicks_sum'] = number_format($report['clicks_sum']);
+                $report['spend_sum'] = number_format($report['spend_sum']);
+                $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
+                $report['spend_ratio_sum'] = number_format($report['spend_ratio_sum']);
+                $report['price_sum'] = number_format($report['price_sum']);
             }
             return $this->respond($report);
         }else{
@@ -150,6 +157,47 @@ class AdvAllManagerController extends BaseController
             case 'google':
                 $campaigns = $this->google->getCampaigns($arg);
                 $campaigns = $this->google->getStatuses("campaigns", $campaigns, $arg['dates']);
+                foreach ($campaigns as &$campaign) {
+                    $campaign['adType'] = '';
+
+                    switch($campaign['advertisingChannelType']) {
+                        case 'UNSPECIFIED' : $adType = ''; break;
+                        case 'UNKNOWN' : $adType = ''; break;
+                        case 'SEARCH' : $adType = '검색'; break;
+                        case 'DISPLAY' : $adType = '디스플레이'; break;
+                        case 'SHOPPING' : $adType = '쇼핑'; break;
+                        case 'HOTEL' : $adType = '호텔'; break;
+                        case 'VIDEO' : $adType = '비디오'; break;
+                        case 'MULTI_CHANNEL' : $adType = '멀티채널'; break;
+                        case 'LOCAL' : $adType = '지역'; break;
+                        case 'SMART' : $adType = '스마트'; break;
+                        case 'PERFORMANCE_MAX' : $adType = '성능최대'; break;
+                        case 'LOCAL_SERVICES' : $adType = '지역서비스'; break;
+                    }
+                    switch($campaign['advertisingChannelSubType']) {
+                        case 'UNSPECIFIED' : $adType .= ''; break;
+                        case 'UNKNOWN' : $adType .= ''; break;
+                        case 'SEARCH_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
+                        case 'DISPLAY_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
+                        case 'SEARCH_EXPRESS' : $adType .= ' - 익스프레스'; break;
+                        case 'DISPLAY_EXPRESS' : $adType .= ' - 익스프레스'; break;
+                        case 'SHOPPING_SMART_ADS' : $adType .= ' - 스마트 쇼핑'; break;
+                        case 'DISPLAY_GMAIL_AD' : $adType .= ' - Gmail 광고'; break;
+                        case 'DISPLAY_SMART_CAMPAIGN' : $adType .= ' - 스마트 디스플레이'; break;
+                        case 'VIDEO_OUTSTREAM' : $adType .= ' - 아웃스트림'; break;
+                        case 'VIDEO_ACTION' : $adType .= ' - 액션 뷰'; break;
+                        case 'VIDEO_NON_SKIPPABLE' : $adType .= ' - 건너뛸 수 없는 동영상'; break;
+                        case 'APP_CAMPAIGN' : $adType .= ' - 앱'; break;
+                        case 'APP_CAMPAIGN_FOR_ENGAGEMENT' : $adType .= ' - 앱 참여유도'; break;
+                        case 'LOCAL_CAMPAIGN' : $adType .= ' - 지역 광고'; break;
+                        case 'SHOPPING_COMPARISON_LISTING_ADS' : $adType .= ' - 쇼핑 비교'; break;
+                        case 'SMART_CAMPAIGN' : $adType .= ' - 표준 스마트'; break;
+                        case 'VIDEO_SEQUENCE' : $adType .= ' - 시퀀스 비디오'; break;
+                        case 'APP_CAMPAIGN_FOR_PRE_REGISTRATION' : $adType .= ' - 앱 사전 등록 광고'; break;
+                    }
+
+                    $campaign['adType'] = $adType;
+                }
                 break;
             case 'naver':
                 $campaigns = $this->naver->getCampaigns($arg);
@@ -158,8 +206,20 @@ class AdvAllManagerController extends BaseController
             default:
                 return $this->fail("지원하지 않는 매체입니다.");
         }
-        
+
         $total = $this->getTotal($campaigns);
+
+        foreach ($campaigns as &$campaign) {
+            $campaign['budget'] = number_format($campaign['budget']);
+            $campaign['impressions'] = number_format($campaign['impressions']);
+            $campaign['click'] = number_format($campaign['click']);
+            $campaign['spend'] = number_format($campaign['spend']);
+            $campaign['sales'] = number_format($campaign['sales']);
+            $campaign['unique_total'] = number_format($campaign['unique_total']);
+            $campaign['margin'] = number_format($campaign['margin']);
+            $campaign['cpa'] = number_format($campaign['cpa']);
+            $campaign['cpc'] = number_format($campaign['cpc']);
+        }
         
         $result = [
             'total' => $total,
@@ -175,6 +235,15 @@ class AdvAllManagerController extends BaseController
             case 'facebook':
                 $adsets = $this->facebook->getAdsets($arg);
                 $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+                foreach ($adsets as $adset) {
+                    if(is_null($adset['budget'])) {
+                        $budget_editable = false;
+                        $adset['budget_txt'] = '캠페인예산사용';
+                    } else {
+                        $budget_editable = true;
+                        $adset['budget'] = '&#x20a9;'.number_format($adset['budget']);
+                    }
+                }
                 break;
             case 'kakao':
                 $adsets = $this->kakao->getAdsets($arg);
@@ -183,6 +252,11 @@ class AdvAllManagerController extends BaseController
             case 'google':
                 $adsets = $this->google->getAdsets($arg);
                 $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);
+                foreach ($adsets as &$adset) {
+                    $adset['bidAmount'] = max([$adset['cpcBidAmount'],$adset['cpmBidAmount']]);
+                    if($adset['biddingStrategyType'] == '타겟 CPA')
+                        $adset['bidAmount'] = $adset['cpaBidAmount'];
+                }
                 break;
             case 'naver':
                 $adsets = $this->naver->getAdsets($arg);
@@ -250,6 +324,9 @@ class AdvAllManagerController extends BaseController
         $total['cvr'] = 0;
         $total['margin_ratio'] = 0;
         $total['expect_db'] = 0;
+        $total['avg_cpc'] = 0;
+        $total['avg_cpa'] = 0;
+        $total['avg_cvr'] = 0;
         foreach($datas as $data){
             $total['impressions'] +=$data['impressions'];
             $total['click'] +=$data['click'];
@@ -267,8 +344,6 @@ class AdvAllManagerController extends BaseController
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
             if($total['click'] > 0){
                 $total['avg_cpc'] = $total['spend'] / $total['click'];
-            }else{
-                $total['avg_cpc'] = 0;
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
@@ -277,16 +352,12 @@ class AdvAllManagerController extends BaseController
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
             if($total['unique_total'] > 0){
                 $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
-            }else{
-                $total['avg_cpa'] = 0;
             }
 
             //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
             if ($total['click'] > 0) {
                 $total['avg_cvr'] = ($total['unique_total'] / $total['click']) * 100;
-            } else {
-                $total['avg_cvr'] = 0;
-            } 	
+            }
 
             //수익률 = (수익/매출액)*100
             if ($total['sales'] > 0) {
@@ -299,6 +370,15 @@ class AdvAllManagerController extends BaseController
                 $total['expect_db'] += round($data['budget'] / $data['cpa']);
             }
         }
+
+        $total['impressions'] = number_format($total['impressions']);
+        $total['budget'] = number_format($total['budget']);
+        $total['click'] = number_format($total['click']);
+        $total['spend'] = number_format($total['spend']);
+        $total['avg_cpa'] = number_format($total['avg_cpa']);
+        $total['margin'] = number_format($total['margin']);
+        $total['sales'] = number_format($total['sales']);
+        $total['avg_cpc'] = number_format($total['avg_cpc']);
 
         return $total;
     }
@@ -326,6 +406,7 @@ class AdvAllManagerController extends BaseController
                     $accounts = $this->updateAccountsForKakao($accounts);
                     break;
                 case 'google':
+                    $accounts = $this->google->getManageAccounts($arg);
                     $accounts = $this->google->getAccounts($arg);
                     $accounts = $this->updateAccountsForGoogle($accounts);
                     break;
@@ -347,7 +428,7 @@ class AdvAllManagerController extends BaseController
         $getDisapprovalByAccount = $this->getDisapprovalByAccount('ad_account_id');
         foreach ($accounts as &$account) {
             $account['class'] = [];
-            $account['db_ratio'] = '';
+            $account['db_ratio'] = 0;
 
             if ($account['status'] != 1) 
                 array_push($account['class'], 'tag-inactive');
