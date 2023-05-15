@@ -822,6 +822,8 @@ $('body').on('click', '.media_btn', function(){
     $(this).toggleClass("active");
 
     var media = $('#media_btn.active').map(function(){return $(this).val();}).get();
+    args.businesses = [];
+    args.accounts = [];
     args.media = media;
 
     getReport(args);
