@@ -556,5 +556,40 @@ class AdvAllManagerController extends BaseController
 
         return $data;
     }
+
+    public function updateStatus()
+    {
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $data = $this->request->getRawInput();
+            if (!empty($data)) {
+                $sliceId = explode("_", $data['id']);
+                $media = $sliceId[0];
+                $id = $sliceId[1];
+                
+                switch ($media) {
+                    case 'facebook':
+                        $this->facebook->updateStatus($id);
+                        break;
+                    case 'kakao':
+                        $this->kakao->updateStatus($id);
+                        break;
+                    case 'google':
+                        $this->google->updateStatus($id);
+                        break;
+                    case 'naver':
+                        $this->naver->updateStatus($id);
+                        break;
+                    default:
+                        return $this->fail("지원하지 않는 매체입니다.");
+                }
+
+                $res = true;
+            }
+            return $this->respond($res);
+        //}else{
+            return $this->fail("잘못된 요청");
+        //}
+        
+    }
 }
  

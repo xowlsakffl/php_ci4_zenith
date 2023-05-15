@@ -117,11 +117,13 @@ getStatusCount(data);
 getList(data);
 function getList(data = []){
     $('#deviceTable').DataTable({
+        "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
         "ordering": false,
+        "bLengthChange" : false, 
         "ajax": {
             "url": "<?=base_url()?>/integrate/list",
             "data": data,
@@ -130,35 +132,38 @@ function getList(data = []){
             "dataType": "json",
         },
         "columns": [
-            { "data": null },
-            { "data": "info_seq" },
-            { "data": "advertiser" },
-            { "data": "media" },
-            { "data": "tab_name" },
-            { "data": "name" },
-            { "data": "dec_phone" },
-            { "data": "age" },
-            { "data": "gender" },
-            { "data": "add" },
+            { "data": null, "width": "4%"},
+            { "data": "info_seq", "width": "4%" },
+            { "data": "advertiser", "width": "9%" },
+            { "data": "media", "width": "6%" },
+            { "data": "tab_name", "width": "14%" },
+            { "data": "name", "width": "6%" },
+            { "data": "dec_phone", "width": "8%" },
+            { "data": "age", "width": "2%" },
+            { "data": "gender", "width": "2%" },
+            { "data": "add", "width": "8%" },
             { 
                 "data": null,
                 "render": function (data, type, row) {
                     return '<textarea cols="3" rows="3" class="consultation" readonly></textarea>';
-                }
+                }, 
+                "width": "10%"
             },
-            { "data": "site" },
-            { "data": "reg_date", },
+            { "data": "site", "width": "4%" },
+            { "data": "reg_date", "width": "8%" },
             { 
                 "data": 'criteria',
                 "render": function (data, type, row) {
                     return '<select class="data-del"><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select>';
-                }
+                }, 
+                "width": "5%"
             },
             { 
                 "data": null,
                 "render": function (data, type, row) {
                     return '<button id="save" class="save">저장</button><button id="delete" class="delete">삭제</button>';
-                }
+                }, 
+                "width": "5%"
             },
         ],
         "language": {

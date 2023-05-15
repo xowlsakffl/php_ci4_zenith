@@ -17,7 +17,7 @@ class AdvKakaoManagerModel extends Model
     public function getCampaigns($data)
 	{
 		$builder = $this->kakao->table('mm_campaign A');
-        $builder->select('"카카오" AS media, E.name AS account_name, A.id AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin');
+        $builder->select('"카카오" AS media, E.name AS account_name, CONCAT("kakao_", A.id) AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin');
         $builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
 		$builder->join('mm_adgroup B', 'A.id = B.campaign_id');
 		$builder->join('mm_creative C', 'B.id = C.adgroup_id');

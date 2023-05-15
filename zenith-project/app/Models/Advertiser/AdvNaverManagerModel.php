@@ -17,7 +17,7 @@ class AdvNaverManagerModel extends Model
     public function getCampaigns($data)
 	{
 		$builder = $this->naver->table('gfa_ad_report_history');
-        $builder->select('"네이버" AS media, campaign_id AS id, campaign_name AS name, 
+        $builder->select('"네이버" AS media, CONCAT("naver_", A.campaign_id) AS id, campaign_name AS name, 
         COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impressions, SUM(click) AS click, SUM(sales) AS spend, SUM(db_sales) AS sales, SUM(db_count) as unique_total, 0 AS budget, 0 AS status');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
