@@ -131,7 +131,7 @@
     <div class="section client-list googlebiz"></div>
 
     <div class="section client-list facebookbiz">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3>
+        <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 페이스북 비즈니스 계정</h3>
         <div class="row">
             <div class="col">
                 <div class="inner">
@@ -180,6 +180,7 @@
                     <table class="table table-striped table-hover table-default" id="campaigns-table">
                         <thead class="table-dark campaign-head">
                             <tr>
+                                <th scope="col">매체명</th>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -198,6 +199,7 @@
                         </thead>
                         <thead class="campaign-total">
                             <tr id="total">
+                                <td></td>
                                 <td id="total-count"></td>
                                 <td></td>
                                 <td id="total-budget"></td>
@@ -224,6 +226,7 @@
                     <table class="table table-striped table-hover table-default" id="adsets-table">
                         <thead class="table-dark adsets-head">
                             <tr>
+                                <th scope="col">매체명</th>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -242,6 +245,7 @@
                         </thead>
                         <thead class="adsets-total">
                             <tr id="total">
+                                <td></td>
                                 <td id="total-count"></td>
                                 <td></td>
                                 <td id="total-budget"></td>
@@ -268,6 +272,7 @@
                     <table class="table table-striped table-hover table-default" id="ads-table">
                         <thead class="table-dark ads-head">
                             <tr>
+                                <th scope="col">매체명</th>
                                 <th scope="col">캠페인명</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -286,6 +291,7 @@
                         </thead>
                         <thead class="ads-total">
                             <tr id="total">
+                                <td></td>
                                 <td id="total-count"></td>
                                 <td></td>
                                 <td id="total-budget"></td>
@@ -319,13 +325,14 @@ var today = moment().format('YYYY-MM-DD');
 var args = {
     'sdate': $('#sdate').val(),
     'edate': $('#edate').val(),
+    'media': ['facebook'],
+    'type': 'campaigns'
 };
-args.media = 'facebook';
-args.type = 'campaigns';
+
 
 setDate();
-getReport(args);
-getAccount(args);
+//getReport(args);
+//getAccount(args);
 getCampaigns(args);
 
 function getReport(args){
@@ -425,7 +432,7 @@ function setDataTable(tableId, columns, args){
         "ajax": {
             "url": "<?=base_url()?>/advertisements/data",
             "data": args,
-            "type": "GET",
+            "type": "get",
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
@@ -466,6 +473,10 @@ function setDataTable(tableId, columns, args){
 
 function getCampaigns(args) {
     setDataTable('#campaigns-table', [
+            { 
+                "data": "media", 
+                "width": "6%",
+            },
             { 
                 "data": "name", 
                 "width": "10%",
@@ -564,6 +575,10 @@ function getCampaigns(args) {
 function getAdsets(args) {
     setDataTable('#adsets-table', [
         { 
+            "data": "media", 
+            "width": "6%",
+        },
+        { 
             "data": "name", 
             "width": "10%",
             "render": function (data, type, row) {
@@ -660,6 +675,10 @@ function getAdsets(args) {
 
 function getAds(args) {
     setDataTable('#ads-table', [
+        { 
+            "data": "media", 
+            "width": "6%",
+        },
         { 
             "data": "name", 
             "width": "10%",
@@ -803,32 +822,26 @@ function setDate(){
 }
 
 $('body').on('click', '.media_btn', function(){
-    $('.advertiser .row').empty();
-    $('.media_btn').removeClass("active");
-    $(this).addClass("active");
+    $(this).toggleClass("active");
 
-    var media = $(this).val();
+    var media = $('#media_btn.active').map(function(){return $(this).val();}).get();
     args.media = media;
-    args.businesses = [];
-    args.accounts = [];
 
     getReport(args);
-    switch (args.media) {
-    case "google":
-        $('.facebookbiz').empty();
-        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매니저 계정</h3><div class="row"></div>'
+    if(args.media.includes('google')){
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 구글 매니저 계정</h3><div class="row"></div>'
         $('.googlebiz').html(html);
         getGoogleManageAccount(args);
-        break;
-    case "facebook":
+    }else{
         $('.googlebiz').empty();
-        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
+    }
+
+    if(args.media.includes('facebook')){
+        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 페이스북 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
         $('.facebookbiz').html(html);
-        break;
-    default:
-        $('.googlebiz').empty();
+    }else{
         $('.facebookbiz').empty();
-    } 
+    }
 
     getAccount(args);
     switch (args.type) {
@@ -861,10 +874,6 @@ $('body').on('click', '.tab-link', function(){
 });
 
 $('body').on('click', '#business_btn, #account_btn', function(){
-    if ($(this).attr('id') === 'business_btn') {
-        $('#account_btn').removeClass('active')
-    }
-
     $(this).toggleClass("active");
     tab = $('.tab-link.active').val();
     business = $('#business_btn.active').map(function(){return $(this).val();}).get();

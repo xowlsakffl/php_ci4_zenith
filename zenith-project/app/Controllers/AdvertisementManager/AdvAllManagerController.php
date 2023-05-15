@@ -39,27 +39,39 @@ class AdvAllManagerController extends BaseController
                 'businesses' => $this->request->getGet('businesses'),
                 'accounts' => $this->request->getGet('accounts'),
             ];
+            
+            if(empty($arg['media'])){
+                $report = [];
+                return $this->respond($report);
+            }
 
-            switch ($arg['media']) {
-                case 'facebook':
-                    $res = $this->facebook->getReport($arg);
-                    break;
-                case 'kakao':
-                    $res = $this->kakao->getReport($arg);
-                    break;
-                case 'google':
-                    $res = $this->google->getReport($arg);
-                    break;
-                case 'naver':
-                    $res = $this->naver->getReport($arg);
-                    break;
-                default:
-                    return $this->fail("지원하지 않는 매체입니다.");
+            $result = [];
+            foreach ($arg['media'] as $media) {
+                switch ($media) {
+                    case 'facebook':
+                        $res = $this->facebook->getReport($arg);
+                        $result = array_merge($result, $res); 
+                        break;
+                    case 'kakao':
+                        $res = $this->kakao->getReport($arg);
+                        $result = array_merge($result, $res); 
+                        break;
+                    case 'google':
+                        $res = $this->google->getReport($arg);
+                        $result = array_merge($result, $res); 
+                        break;
+                    case 'naver':
+                        $res = $this->naver->getReport($arg);
+                        $result = array_merge($result, $res); 
+                        break;
+                    default:
+                        return $this->fail("지원하지 않는 매체입니다.");
+                }
             }
 
             $columnIndex = 0;
             $data = [];
-            foreach($res as $row) {
+            foreach($result as $row) {
                 $data[] = $row;
                 foreach ($row as $col => $val) {
                     if ($val == NULL) $val = "0";
@@ -68,9 +80,9 @@ class AdvAllManagerController extends BaseController
                 $columnIndex++;
             }
 
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = 0;
+            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] = 0;
     
-            if(!empty($res)){
+            if(!empty($result)){
                 $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
                 $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
                 if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
@@ -122,7 +134,12 @@ class AdvAllManagerController extends BaseController
                 'accounts' => $this->request->getGet('accounts'),
                 'stx' => $this->request->getGet('stx'),
             ];
-            
+
+            if(empty($arg['media'])){
+                $result = [];
+                return $this->respond($result);
+            }
+
             switch ($arg['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
@@ -157,73 +174,80 @@ class AdvAllManagerController extends BaseController
 
     private function getCampaigns($arg)
     {
-        switch ($arg['media']) {
-            case 'facebook':
-                $campaigns = $this->facebook->getCampaigns($arg);
-                $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
-                break;
-            case 'kakao':
-                $campaigns = $this->kakao->getCampaigns($arg);
-                $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['dates']);
-                break;
-            case 'google':
-                $campaigns = $this->google->getCampaigns($arg);
-                $campaigns = $this->google->getStatuses("campaigns", $campaigns, $arg['dates']);
-                foreach ($campaigns as &$campaign) {
-                    $campaign['adType'] = '';
-
-                    switch($campaign['advertisingChannelType']) {
-                        case 'UNSPECIFIED' : $adType = ''; break;
-                        case 'UNKNOWN' : $adType = ''; break;
-                        case 'SEARCH' : $adType = '검색'; break;
-                        case 'DISPLAY' : $adType = '디스플레이'; break;
-                        case 'SHOPPING' : $adType = '쇼핑'; break;
-                        case 'HOTEL' : $adType = '호텔'; break;
-                        case 'VIDEO' : $adType = '비디오'; break;
-                        case 'MULTI_CHANNEL' : $adType = '멀티채널'; break;
-                        case 'LOCAL' : $adType = '지역'; break;
-                        case 'SMART' : $adType = '스마트'; break;
-                        case 'PERFORMANCE_MAX' : $adType = '성능최대'; break;
-                        case 'LOCAL_SERVICES' : $adType = '지역서비스'; break;
+        $result  = [];    
+        foreach ($arg['media'] as $media) {
+            switch ($media) {
+                case 'facebook':
+                    $campaigns = $this->facebook->getCampaigns($arg);
+                    $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $result = array_merge($result, $campaigns); 
+                    break;
+                case 'kakao':
+                    $campaigns = $this->kakao->getCampaigns($arg);
+                    $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $result = array_merge($result, $campaigns); 
+                    break;
+                case 'google':
+                    $campaigns = $this->google->getCampaigns($arg);
+                    $campaigns = $this->google->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    foreach ($campaigns as &$campaign) {
+                        $campaign['adType'] = '';
+    
+                        switch($campaign['advertisingChannelType']) {
+                            case 'UNSPECIFIED' : $adType = ''; break;
+                            case 'UNKNOWN' : $adType = ''; break;
+                            case 'SEARCH' : $adType = '검색'; break;
+                            case 'DISPLAY' : $adType = '디스플레이'; break;
+                            case 'SHOPPING' : $adType = '쇼핑'; break;
+                            case 'HOTEL' : $adType = '호텔'; break;
+                            case 'VIDEO' : $adType = '비디오'; break;
+                            case 'MULTI_CHANNEL' : $adType = '멀티채널'; break;
+                            case 'LOCAL' : $adType = '지역'; break;
+                            case 'SMART' : $adType = '스마트'; break;
+                            case 'PERFORMANCE_MAX' : $adType = '성능최대'; break;
+                            case 'LOCAL_SERVICES' : $adType = '지역서비스'; break;
+                        }
+                        switch($campaign['advertisingChannelSubType']) {
+                            case 'UNSPECIFIED' : $adType .= ''; break;
+                            case 'UNKNOWN' : $adType .= ''; break;
+                            case 'SEARCH_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
+                            case 'DISPLAY_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
+                            case 'SEARCH_EXPRESS' : $adType .= ' - 익스프레스'; break;
+                            case 'DISPLAY_EXPRESS' : $adType .= ' - 익스프레스'; break;
+                            case 'SHOPPING_SMART_ADS' : $adType .= ' - 스마트 쇼핑'; break;
+                            case 'DISPLAY_GMAIL_AD' : $adType .= ' - Gmail 광고'; break;
+                            case 'DISPLAY_SMART_CAMPAIGN' : $adType .= ' - 스마트 디스플레이'; break;
+                            case 'VIDEO_OUTSTREAM' : $adType .= ' - 아웃스트림'; break;
+                            case 'VIDEO_ACTION' : $adType .= ' - 액션 뷰'; break;
+                            case 'VIDEO_NON_SKIPPABLE' : $adType .= ' - 건너뛸 수 없는 동영상'; break;
+                            case 'APP_CAMPAIGN' : $adType .= ' - 앱'; break;
+                            case 'APP_CAMPAIGN_FOR_ENGAGEMENT' : $adType .= ' - 앱 참여유도'; break;
+                            case 'LOCAL_CAMPAIGN' : $adType .= ' - 지역 광고'; break;
+                            case 'SHOPPING_COMPARISON_LISTING_ADS' : $adType .= ' - 쇼핑 비교'; break;
+                            case 'SMART_CAMPAIGN' : $adType .= ' - 표준 스마트'; break;
+                            case 'VIDEO_SEQUENCE' : $adType .= ' - 시퀀스 비디오'; break;
+                            case 'APP_CAMPAIGN_FOR_PRE_REGISTRATION' : $adType .= ' - 앱 사전 등록 광고'; break;
+                        }
+    
+                        $campaign['adType'] = $adType;
                     }
-                    switch($campaign['advertisingChannelSubType']) {
-                        case 'UNSPECIFIED' : $adType .= ''; break;
-                        case 'UNKNOWN' : $adType .= ''; break;
-                        case 'SEARCH_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
-                        case 'DISPLAY_MOBILE_APP' : $adType .= ' - 모바일 앱'; break;
-                        case 'SEARCH_EXPRESS' : $adType .= ' - 익스프레스'; break;
-                        case 'DISPLAY_EXPRESS' : $adType .= ' - 익스프레스'; break;
-                        case 'SHOPPING_SMART_ADS' : $adType .= ' - 스마트 쇼핑'; break;
-                        case 'DISPLAY_GMAIL_AD' : $adType .= ' - Gmail 광고'; break;
-                        case 'DISPLAY_SMART_CAMPAIGN' : $adType .= ' - 스마트 디스플레이'; break;
-                        case 'VIDEO_OUTSTREAM' : $adType .= ' - 아웃스트림'; break;
-                        case 'VIDEO_ACTION' : $adType .= ' - 액션 뷰'; break;
-                        case 'VIDEO_NON_SKIPPABLE' : $adType .= ' - 건너뛸 수 없는 동영상'; break;
-                        case 'APP_CAMPAIGN' : $adType .= ' - 앱'; break;
-                        case 'APP_CAMPAIGN_FOR_ENGAGEMENT' : $adType .= ' - 앱 참여유도'; break;
-                        case 'LOCAL_CAMPAIGN' : $adType .= ' - 지역 광고'; break;
-                        case 'SHOPPING_COMPARISON_LISTING_ADS' : $adType .= ' - 쇼핑 비교'; break;
-                        case 'SMART_CAMPAIGN' : $adType .= ' - 표준 스마트'; break;
-                        case 'VIDEO_SEQUENCE' : $adType .= ' - 시퀀스 비디오'; break;
-                        case 'APP_CAMPAIGN_FOR_PRE_REGISTRATION' : $adType .= ' - 앱 사전 등록 광고'; break;
-                    }
-
-                    $campaign['adType'] = $adType;
-                }
-                break;
-            case 'naver':
-                $campaigns = $this->naver->getCampaigns($arg);
-                $campaigns = $this->naver->getStatuses("campaigns", $campaigns, $arg['dates']);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
+                    $result = array_merge($result, $campaigns); 
+                    break;
+                case 'naver':
+                    $campaigns = $this->naver->getCampaigns($arg);
+                    $campaigns = $this->naver->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $result = array_merge($result, $campaigns); 
+                    break;
+                default:
+                    return $this->fail("지원하지 않는 매체입니다.");
+            }
         }
 
-        $total = $this->getTotal($campaigns);
+        $total = $this->getTotal($result);
         
         $result = [
             'total' => $total,
-            'data' => $campaigns,
+            'data' => $result,
         ];
 
         return $result;
@@ -231,37 +255,43 @@ class AdvAllManagerController extends BaseController
 
     private function getAdSets($arg)
     {
-        switch ($arg['media']) {
-            case 'facebook':
-                $adsets = $this->facebook->getAdsets($arg);
-                $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
-                break;
-            case 'kakao':
-                $adsets = $this->kakao->getAdsets($arg);
-                $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
-                break;
-            case 'google':
-                $adsets = $this->google->getAdsets($arg);
-                $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);
-                foreach ($adsets as &$adset) {
-                    $adset['bidAmount'] = max([$adset['cpcBidAmount'],$adset['cpmBidAmount']]);
-                    if($adset['biddingStrategyType'] == '타겟 CPA')
-                        $adset['bidAmount'] = $adset['cpaBidAmount'];
-                }
-                break;
-            case 'naver':
-                $adsets = $this->naver->getAdsets($arg);
-                $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['dates']);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
+        $result  = [];    
+        foreach ($arg['media'] as $media) {
+            switch ($media) {
+                case 'facebook':
+                    $adsets = $this->facebook->getAdsets($arg);
+                    $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+                    $result = array_merge($result, $adsets); 
+                    break;
+                case 'kakao':
+                    $adsets = $this->kakao->getAdsets($arg);
+                    $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
+                    $result = array_merge($result, $adsets); 
+                    break;
+                case 'google':
+                    $adsets = $this->google->getAdsets($arg);
+                    $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);              
+                    foreach ($adsets as &$adset) {
+                        $adset['bidAmount'] = max([$adset['cpcBidAmount'],$adset['cpmBidAmount']]);
+                        if($adset['biddingStrategyType'] == '타겟 CPA')
+                            $adset['bidAmount'] = $adset['cpaBidAmount'];
+                    }
+                    $result = array_merge($result, $adsets); 
+                    break;
+                case 'naver':
+                    $adsets = $this->naver->getAdsets($arg);
+                    $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['dates']);
+                    $result = array_merge($result, $adsets); 
+                    break;
+                default:
+                    return $this->fail("지원하지 않는 매체입니다.");
+            }
         }
-        
-        $total = $this->getTotal($adsets);
+        $total = $this->getTotal($result);
 
         $result = [
             'total' => $total,
-            'data' => $adsets
+            'data' => $result
         ];
 
         return $result;
@@ -269,31 +299,38 @@ class AdvAllManagerController extends BaseController
 
     private function getAds($arg)
     {
-        switch ($arg['media']) {
-            case 'facebook':
-                $ads = $this->facebook->getAds($arg);
-                $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
-                break;
-            case 'kakao':
-                $ads = $this->kakao->getAds($arg);
-                $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
-                break;
-            case 'google':
-                $ads = $this->google->getAds($arg);
-                $ads = $this->google->getStatuses("ads", $ads, $arg['dates']);
-                break;
-            case 'naver':
-                $ads = $this->naver->getAds($arg);
-                $ads = $this->naver->getStatuses("ads", $ads, $arg['dates']);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
+        $result  = [];    
+        foreach ($arg['media'] as $media) {
+            switch ($media) {
+                case 'facebook':
+                    $ads = $this->facebook->getAds($arg);
+                    $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+                    $result = array_merge($result, $ads); 
+                    break;
+                case 'kakao':
+                    $ads = $this->kakao->getAds($arg);
+                    $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
+                    $result = array_merge($result, $ads); 
+                    break;
+                case 'google':
+                    $ads = $this->google->getAds($arg);
+                    $ads = $this->google->getStatuses("ads", $ads, $arg['dates']);
+                    $result = array_merge($result, $ads); 
+                    break;
+                case 'naver':
+                    $ads = $this->naver->getAds($arg);
+                    $ads = $this->naver->getStatuses("ads", $ads, $arg['dates']);
+                    $result = array_merge($result, $ads); 
+                    break;
+                default:
+                    return $this->fail("지원하지 않는 매체입니다.");
+            }
         }
-        $total = $this->getTotal($ads);
+        $total = $this->getTotal($result);
 
         $result = [
             'total' => $total,
-            'data' => $ads
+            'data' => $result
         ];
 
         return $result;
@@ -386,28 +423,39 @@ class AdvAllManagerController extends BaseController
                 'businesses' => $this->request->getGet('businesses'),
             ];
 
-            switch ($arg['media']) {
-                case 'facebook':
-                    $accounts = $this->facebook->getAccounts($arg);
-                    $accounts = $this->updateAccountsForFacebook($accounts);
-                    break;
-                case 'kakao':
-                    $accounts = $this->kakao->getAccounts($arg);
-                    $accounts = $this->updateAccountsForKakao($accounts);
-                    break;
-                case 'google':
-                    $accounts = $this->google->getManageAccounts($arg);
-                    $accounts = $this->google->getAccounts($arg);
-                    $accounts = $this->updateAccountsForGoogle($accounts);
-                    break;
-                case 'naver':
-                    $accounts = $this->naver->getAccounts($arg);
-                    break;
-                default:
-                    return $this->fail("지원하지 않는 매체입니다.");
+            if(empty($arg['media'])){
+                $result = [];
+                return $this->respond($result);
             }
             
-            return $this->respond($accounts);
+            $result  = [];    
+            foreach ($arg['media'] as $media) {
+                switch ($media) {
+                    case 'facebook':
+                        $accounts = $this->facebook->getAccounts($arg);
+                        $accounts = $this->updateAccountsForFacebook($accounts);
+                        $result = array_merge($result, $accounts); 
+                        break;
+                    case 'kakao':
+                        $accounts = $this->kakao->getAccounts($arg);
+                        $accounts = $this->updateAccountsForKakao($accounts);
+                        $result = array_merge($result, $accounts); 
+                        break;
+                    case 'google':
+                        $accounts = $this->google->getManageAccounts($arg);
+                        $accounts = $this->google->getAccounts($arg);
+                        $accounts = $this->updateAccountsForGoogle($accounts);
+                        $result = array_merge($result, $accounts); 
+                        break;
+                    case 'naver':
+                        $accounts = $this->naver->getAccounts($arg);
+                        $result = array_merge($result, $accounts); 
+                        break;
+                    default:
+                        return $this->fail("지원하지 않는 매체입니다.");
+                }
+            }
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
