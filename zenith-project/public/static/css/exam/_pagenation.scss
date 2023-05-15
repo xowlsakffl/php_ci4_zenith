@@ -7,11 +7,13 @@
 
 .sub-contents-wrap{
     .dataTables_wrapper{max-height:600px;
-        .dataTables_length{margin-bottom:2rem;
-            select{background-color:#fff; padding:0.4rem 1rem;}
+        .paging{padding-top:1.755em; position:sticky; bottom:0; background-color:#f7f7f7;}      
+
+        .dataTables_length{float:unset; position: absolute; left:0;
+            select{background-color:#fff; padding:0.2rem 1rem;}
         }
     
-        .dataTables_info{padding-top:2.755em;
+        .dataTables_info{float:unset; position: absolute; right:0;
             i.bi{color:red; padding-right:6px;}
             span{color:#878787; position:relative;
                 &:hover{font-weight:900;}
@@ -19,7 +21,7 @@
             }
         }
 
-        .dataTables_paginate{float:unset; text-align: center; padding-top:2.25em;  padding-bottom:2.25em;
+        .dataTables_paginate{float:unset; text-align: center; padding-bottom:1.755em;
             .paginate_button{border:none;
                 &.disabled,
                 &.disabled:hover{color:#aaa !important;}
