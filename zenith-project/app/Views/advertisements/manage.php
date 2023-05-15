@@ -331,8 +331,8 @@ var args = {
 
 
 setDate();
-//getReport(args);
-//getAccount(args);
+getReport(args);
+getAccount(args);
 getCampaigns(args);
 
 function getReport(args){
@@ -395,20 +395,17 @@ function getAccount(args){
             $('.advertiser .row').empty();
             var html = '';
             var set_ratio = '';
-            $.each(data, function(idx, v) {       
-                if(args.media != 'naver'){
+            $.each(data, function(idx, v) {     
+                if(v.class){
                     c = v.class;
                     c = c.join(' ');
-                    
-                    if(v.db_count){
-                        set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
-                    }
+                }  
 
-                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+c+'">'+v.name+set_ratio+'</button></div></div>';
-                }else{
-                    html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
+                if(v.db_count){
+                    set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
                 }
-                
+
+                html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+(c ? c : '')+'">'+v.name+(set_ratio ? set_ratio : '')+'</button></div></div>';
             });
 
             $('.advertiser .row').html(html);
