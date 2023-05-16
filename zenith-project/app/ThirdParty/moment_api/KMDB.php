@@ -1,4 +1,6 @@
 <?php
+namespace App\ThirdParty\moment_api;
+
 class KMDB
 {
     private $db, $db2, $zenith;

@@ -1,11 +1,12 @@
 <?php
-require_once __DIR__ . '/kakao-db.php';
+namespace App\ThirdParty\moment_api;
+
 set_time_limit(0);
 ini_set('memory_limit', '-1');
 
 use CodeIgniter\CLI\CLI;
 
-class ChainsawKM
+class ZenithKM
 {
     //// private $app_id = '243424';
     //// private $app_key = '500a99d34478a54c7c4fbfc04ff90512';

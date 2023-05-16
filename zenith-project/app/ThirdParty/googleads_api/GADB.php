@@ -1,4 +1,5 @@
 <?php
+namespace App\ThirdParty\googleads_api;
 
 use CodeIgniter\CLI\CLI;
 

@@ -2,6 +2,7 @@
 namespace App\Controllers\Advertisement;
 
 use App\Controllers\BaseController;
+use App\ThirdParty\googleads_api\ZenithGG;
 use CodeIgniter\CLI\CLI;
 use DateInterval;
 use DatePeriod;
@@ -12,8 +13,7 @@ class GoogleAds extends BaseController
 
     public function __construct(...$param)
     {
-        include APPPATH."/ThirdParty/googleads_api/google-api.php";
-        $this->chainsaw = new \GoogleAds();       
+        $this->chainsaw = new ZenithGG();       
     }
 
     public function getAccounts()
