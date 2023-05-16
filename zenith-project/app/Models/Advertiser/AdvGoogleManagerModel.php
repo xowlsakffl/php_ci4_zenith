@@ -18,7 +18,7 @@ class AdvGoogleManagerModel extends Model
     {
         $builder = $this->google->table('aw_campaign A');
         $builder->select('"구글" AS media, CONCAT("google_", A.id) AS id, A.name AS name, A.status AS status, A.is_updating, B.biddingStrategyType AS biddingStrategyType,
-        COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin');
+        COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin, A.customerId');
         /* (SELECT COUNT(*) AS memos FROM aw_memo F WHERE A.id = F.id AND F.type = 'campaign' AND DATE(F.datetime) >= DATE(NOW())) AS memos */
         $builder->join('aw_adgroup B', 'A.id = B.campaignId');
         $builder->join('aw_ad C', 'B.id = C.adgroupId');
@@ -188,6 +188,12 @@ class AdvGoogleManagerModel extends Model
 				}
 			}
 			if($choi_optimization_campaign=="ON") $row['optimization_campaign_budget'] = $optimization_budget;	// ai 예산 */
+
+			if($row['status'] == 'ENABLED'){
+				$row['status'] = 1;
+			}else{
+				$row['status'] = 0;
+			}
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 

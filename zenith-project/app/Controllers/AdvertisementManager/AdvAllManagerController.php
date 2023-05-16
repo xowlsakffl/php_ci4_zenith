@@ -9,12 +9,15 @@ use App\Models\Advertiser\AdvKakaoManagerModel;
 use App\Models\Advertiser\AdvNaverManagerModel;
 use CodeIgniter\API\ResponseTrait;
 use App\ThirdParty\facebook_api\ZenithFB;
+use App\ThirdParty\googleads_api\ZenithGG;
+use App\ThirdParty\moment_api\ZenithKM;
 
 class AdvAllManagerController extends BaseController
 {
     use ResponseTrait;
     
     protected $facebook, $kakao, $google, $naver;
+    private $campaign;
     public function __construct() 
     {
         $this->facebook = model(AdvFacebookManagerModel::class);
@@ -562,20 +565,38 @@ class AdvAllManagerController extends BaseController
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $data = $this->request->getRawInput();
+            
             if (!empty($data)) {
                 $sliceId = explode("_", $data['id']);
                 $media = $sliceId[0];
                 $id = $sliceId[1];
-                
                 switch ($media) {
                     case 'facebook':
-                        ;
+                        if($data['status'] == 1){
+                            $status = 'ACTIVE';
+                        }else{
+                            $status = 'PAUSED';
+                        }
+                        $zenith = new ZenithFB();
+                        $zenith->setCampaignStatus($id, $status);
                         break;
                     case 'kakao':
-                        $this->kakao->updateStatus($id);
+                        if($data['status'] == 1){
+                            $status = 'ON';
+                        }else{
+                            $status = 'OFF';
+                        }
+                        $zenith = new ZenithKM();
+                        $zenith->setCampaignOnOff($id, $status);
                         break;
                     case 'google':
-                        $this->google->updateStatus($id);
+                        if($data['status'] == 1){
+                            $param = ['status' => 'ENABLED'];
+                        }else{
+                            $param = ['status' => 'PAUSED'];
+                        }
+                        $zenith = new ZenithGG();
+                        $zenith->setCampaignStatus($data['customerId'], $id, $param);
                         break;
                     case 'naver':
                         $this->naver->updateStatus($id);

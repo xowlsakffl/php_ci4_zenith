@@ -150,6 +150,20 @@ class ZenithKM
         return $result; //Array ( [id] => 17550 [name] => ★썸네일피드 [adPurposeType] => INCREASE_WEB_VISITING [dailyBudgetAmount] => [config] => ON [isDailyBudgetAmountOver] => [statusDescription] => 운영중 )
     }
 
+    public function setCampaignOnOff($campaignId, $config = 'ON', $adAccountId = '')
+    { //2.3. 캠페인 ON/OFF 수정
+        $request = 'campaigns/onOff';
+        $data = [
+            'id' => $campaignId, 
+            'config' => $config
+        ];
+        $campaign = $this->db->getCampaignById($campaignId);
+        if ($campaign['ad_account_id']) $this->ad_account_id = $campaign['ad_account_id'];
+        $result = $this->getCall($request, NULL, $data, 'PUT');
+        if ($result['http_code'] == 200)
+            $this->db->setCampaignOnOff($campaignId, $config);
+        return $result;
+    }
      
     private function setCampaignDailyBudgetAmount($campaignId = '', $dailyBudgetAmount = null)
     { //2.4. 캠페인 일예산 수정

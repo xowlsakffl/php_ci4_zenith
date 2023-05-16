@@ -591,6 +591,13 @@ class FBDB extends Config
         }
     }
 
+    // 광고 활성/종료 업데이트하는
+    public function setCampaignStatus($campaign_id, $status)
+    {
+        $sql = "UPDATE fb_campaign SET status = '$status' WHERE campaign_id = '$campaign_id'";
+        $this->db_query($sql);
+    }
+    
     public function updateInsight($data)
     {
         $row = $data;

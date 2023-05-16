@@ -488,7 +488,7 @@ function getCampaigns(args) {
                 "data": "status", 
                 "width": "4%",
                 "render": function (data, type, row) {
-                    status = '<select name="status" data-id="'+row.id+'" class="active-select" id="status_btn"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                    status = '<select name="status" data-id="'+row.id+'" '+(row.customerId ? "data-customerId="+row.customerId+'' : '')+' class="active-select" id="status_btn"><option value="0" '+(row.status === 0 ? 'selected' : '')+'>비활성</option><option value="1" '+(row.status === 1 ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                     return status;
                 }
             },
@@ -921,25 +921,34 @@ $('body').on('click', '#search_btn', function() {
     } 
 });
 
-$('body').on('change', '#status_btn', function() {
+$('body').on('focus', '#status_btn', function(){
+    var prevVal = $(this).val();
+}).on('change', '#status_btn', function() {
     data = {
+        'status' : $(this).val(),
         'tab' : $('.tab-link.active').val(),
         'id' : $(this).data("id"),
     };
 
-    $.ajax({
-        type: "PUT",
-        url: "<?=base_url()?>/advertisements/status-update",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
+    customerId = $(this).data("customerid");
+    if (customerId) {
+        data['customerId'] = customerId;
+    }
 
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+    if(confirm("상태를 변경하시겠습니까?")){
+        $.ajax({
+            type: "PUT",
+            url: "<?=base_url()?>/advertisements/set-status",
+            data: data,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }else{
+        $(this).val(prevVal);
+    }
 });
 
 </script>
