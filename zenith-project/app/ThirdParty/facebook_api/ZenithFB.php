@@ -802,6 +802,28 @@ class ZenithFB
         return $result;
     }
 
+    //광고 상태 업데이트
+    function setCampaignStatus($id, $status)
+    {
+        if ($status == 'ACTIVE') {
+            $status = Campaign::STATUS_ACTIVE;
+        } else {
+            $status = Campaign::STATUS_PAUSED;
+        }
+
+        $this->setCampaignId($id);
+        $campaign = $this->campaign->updateSelf(array(), array(
+            Campaign::STATUS_PARAM_NAME => $status,
+        ));
+        $campaign = $campaign->getData();
+        if ($campaign['success'] == 1) {
+            $this->db->setCampaignStatus($id, $status);
+            return true;
+        }
+
+        return null;
+    }
+    
     public function landingGroup($title)
     {
         if (!$title) return null;

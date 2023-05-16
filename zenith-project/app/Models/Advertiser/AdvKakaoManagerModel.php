@@ -123,6 +123,12 @@ class AdvKakaoManagerModel extends Model
 				$row['optimization_ch'] = "OFF";
 			} */
 
+            if($row['status'] == 'ON'){
+				$row['status'] = 1;
+			}else{
+				$row['status'] = 0;
+			}
+
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
 			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)

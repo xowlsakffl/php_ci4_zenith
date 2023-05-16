@@ -177,7 +177,12 @@ class AdvFacebookManagerModel extends Model
 					$row['optimization_goal'] = "OFF";
 				}
 			} */
-
+			if($row['status'] == 'ACTIVE'){
+				$row['status'] = 1;
+			}else{
+				$row['status'] = 0;
+			}
+			
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
 
 

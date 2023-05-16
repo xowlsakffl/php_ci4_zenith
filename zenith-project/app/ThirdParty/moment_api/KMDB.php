@@ -124,7 +124,7 @@ class KMDB
         if (is_null($id)) return NULL;
         $sql = "SELECT * FROM mm_campaign WHERE id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->getResult();
+        $row = $result->getRowArray();
         return $row;
     }
      
@@ -139,6 +139,12 @@ class KMDB
         return $result;
     }
 
+    public function setCampaignOnOff($campaignId, $config)
+    {
+        $sql = "UPDATE mm_campaign SET config = '{$config}' WHERE id = {$campaignId}";
+        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
+        return $result;
+    }
      
     public function setCampaignDailyBudgetAmount($id, $budget)
     {
