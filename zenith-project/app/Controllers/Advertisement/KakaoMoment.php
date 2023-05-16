@@ -4,6 +4,7 @@ namespace App\Controllers\Advertisement;
 
 use CodeIgniter\CLI\CLI;
 use App\Controllers\BaseController;
+use App\ThirdParty\moment_api\ZenithKM;
 use DateInterval;
 use DatePeriod;
 
@@ -13,8 +14,7 @@ class KakaoMoment extends BaseController
 
     public function __construct(...$param)
     {
-        include APPPATH."/ThirdParty/moment_api/kakao-api.php";
-        $this->chainsaw = new \ChainsawKM();       
+        $this->chainsaw = new ZenithKM();       
     }
 
     //토큰 업데이트

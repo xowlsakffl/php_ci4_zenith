@@ -1,4 +1,6 @@
 <?php
+namespace App\ThirdParty\facebook_api;
+
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Database\Config;
 class FBDB extends Config

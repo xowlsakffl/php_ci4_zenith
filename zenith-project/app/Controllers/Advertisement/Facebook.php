@@ -1,5 +1,7 @@
 <?php
 namespace App\Controllers\Advertisement;
+
+use App\ThirdParty\facebook_api\ZenithFB;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Controller;
 
@@ -11,12 +13,11 @@ use DatePeriod;
 
 class Facebook extends Controller
 {
-    private $chainsaw;
+    private $zenith;
 
     public function __construct()
     {
-        include APPPATH."/ThirdParty/facebook_api/facebook-api.php";
-        $this->chainsaw = new \ChainsawFB();       
+        $this->zenith = new ZenithFB();       
     }
 
     public function initController(
@@ -45,11 +46,11 @@ class Facebook extends Controller
     }
 
     public function getAccounts() {
-        $this->chainsaw->updateAdAccounts();
+        $this->zenith->updateAdAccounts();
     }
 
     public function getLongLivedAccessToken() {
-        $this->chainsaw->getLongLivedAccessToken();
+        $this->zenith->getLongLivedAccessToken();
     }
 
     public function getInsight($all=null, $date=null, $edate=null) {
@@ -62,7 +63,7 @@ class Facebook extends Controller
             $edate = CLI::prompt("인사이트를 수신할 기간 중 종료날짜를 입력해주세요.", $date);
         // $run = CLI::prompt("광고데이터를 ".($all=="true"?"포함":"미포함")."하여 {$date} ~ {$edate} 기간의 인사이트를 수신합니다.",["y","n"]);
         // if($run != 'y') return false;
-        $this->chainsaw->getAsyncInsights($all, $date, $edate);
+        $this->zenith->getAsyncInsights($all, $date, $edate);
         CLI::write("데이터 수신이 완료되었습니다.", "yellow");
     }
 
@@ -74,7 +75,7 @@ class Facebook extends Controller
             $to = CLI::prompt("잠재고객 업데이트 할 종료날짜를 입력해주세요.", date('Y-m-d'));
         // $run = CLI::prompt("{$from}~{$to}일자의 잠재고객을 업데이트 합니다.",["y","n"]);
         // if($run != 'y') return false;
-        $this->chainsaw->getAdLead($from, $to);
+        $this->zenith->getAdLead($from, $to);
     }
 
     public function updateAll() {
@@ -82,11 +83,11 @@ class Facebook extends Controller
         // $run = CLI::prompt("캠페인/광고그룹/광고를 업데이트 합니다.",["y","n"]);
         // if($run != 'y') return false;
         CLI::write("캠페인/광고그룹/광고를 업데이트 합니다.", "light_red");
-        $this->chainsaw->updateAllByAccounts();
+        $this->zenith->updateAllByAccounts();
         /*
-        $getAds = $this->chainsaw->getAds();
-        $updateAdsets = $this->chainsaw->updateAdsets($getAds);
-        $updateCampaigns = $this->chainsaw->updateCampaigns($updateAdsets);
+        $getAds = $this->zenith->getAds();
+        $updateAdsets = $this->zenith->updateAdsets($getAds);
+        $updateCampaigns = $this->zenith->updateCampaigns($updateAdsets);
         */
     }
 
@@ -103,7 +104,7 @@ class Facebook extends Controller
         foreach($date_range as $date) {
             $date = $date->format('Y-m-d');
             CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
-            $this->chainsaw->getAdsUseLanding($date);
+            $this->zenith->getAdsUseLanding($date);
         }
     }
 
@@ -113,6 +114,6 @@ class Facebook extends Controller
         // if($run != 'y') return false;
         CLI::write("광고를 업데이트 합니다.", "light_red");
 
-        $this->chainsaw->updateAds();
+        $this->zenith->updateAds();
     }
 }

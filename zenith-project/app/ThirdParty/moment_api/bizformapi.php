@@ -1,12 +1,14 @@
 <?php
-require_once __DIR__ . '/kakao-db.php';
+namespace App\ThirdParty\moment_api;
+
+use App\ThirdParty\moment_api\KMDB;
 set_time_limit(0);
 ini_set('memory_limit', '-1');
 
 use CodeIgniter\CLI\CLI;
 class ChainsawKMBF
 {
-    private $bizformId = '6590', $api_key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456';
+    private $bizformId = '6590', $api_key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456', $db;
     public function __construct()
     {
         $this->db = new KMDB();

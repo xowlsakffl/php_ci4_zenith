@@ -8,6 +8,7 @@ use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AdvKakaoManagerModel;
 use App\Models\Advertiser\AdvNaverManagerModel;
 use CodeIgniter\API\ResponseTrait;
+use App\ThirdParty\facebook_api\ZenithFB;
 
 class AdvAllManagerController extends BaseController
 {
@@ -557,7 +558,7 @@ class AdvAllManagerController extends BaseController
         return $data;
     }
 
-    public function updateStatus()
+    public function setCampaignStatus()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $data = $this->request->getRawInput();
@@ -568,7 +569,7 @@ class AdvAllManagerController extends BaseController
                 
                 switch ($media) {
                     case 'facebook':
-                        $this->facebook->updateStatus($id);
+                        ;
                         break;
                     case 'kakao':
                         $this->kakao->updateStatus($id);

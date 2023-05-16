@@ -1,4 +1,5 @@
 <?php
+namespace App\ThirdParty\facebook_api;
 ///////////////////////////////////////////////////////////////////////////////////////////
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set("display_errors", 1);
@@ -6,9 +7,9 @@ ini_set("display_errors", 1);
 set_time_limit(0);
 ini_set('memory_limit', '-1');
 
-require_once __DIR__ . '/facebook-db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+use App\ThirdParty\facebook_api\FBDB;
 use CodeIgniter\CLI\CLI;
 
 use Facebook\Facebook;
@@ -81,7 +82,7 @@ use Google\Cloud\Translate\TranslateClient;
 use Curl\Curl;
 use FacebookAds\Logger\CurlLogger;
 
-    class ChainsawFB
+class ZenithFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
@@ -108,7 +109,7 @@ use FacebookAds\Logger\CurlLogger;
         @set_exception_handler(array($this, 'exception_handler'));
 
         try {
-            $this->db = new \FBDB();
+            $this->db = new FBDB();
             // $account = $this->db->getAccessToken();
 
             // $this->account_id = "act_" . $account['ad_account_id'];

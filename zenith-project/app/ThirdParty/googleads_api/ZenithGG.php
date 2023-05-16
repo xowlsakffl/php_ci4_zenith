@@ -1,4 +1,6 @@
 <?php
+namespace App\ThirdParty\googleads_api;
+
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set("display_errors", 1);
 //ini_set('max_execution_time', 1800);
@@ -7,9 +9,9 @@ ini_set('memory_limit', '-1');
 ini_set('soap.wsdl_cache_enabled', 0);
 ini_set('soap.wsdl_cache_ttl', 0);
 
-require_once __DIR__ . '/google-db.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+use App\ThirdParty\googleads_api\GADB;
 use CodeIgniter\CLI\CLI;
 use GetOpt\GetOpt;
 use Google\Ads\GoogleAds\Util\FieldMasks;
@@ -62,7 +64,7 @@ use Google\Ads\GoogleAds\V13\Enums\ResourceChangeOperationEnum\ResourceChangeOpe
 use Google\Ads\GoogleAds\V13\Resources\Campaign;
 use Google\Ads\GoogleAds\V13\Services\CampaignOperation;
 
-class GoogleAds
+class ZenithGG
 {
     private $session;
     private $clientCustomerId;
