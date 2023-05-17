@@ -4,6 +4,9 @@ namespace App\Controllers\Advertisement;
 
 use App\Controllers\BaseController;
 use App\Models\Api\AdLeadModel;
+use App\ThirdParty\facebook_api\ZenithFB;
+use App\ThirdParty\googleads_api\ZenithGG;
+use App\ThirdParty\moment_api\ZenithKM;
 use CodeIgniter\CLI\CLI;
 
 class AdLeadController extends BaseController
@@ -12,13 +15,10 @@ class AdLeadController extends BaseController
 
     public function __construct()
     {
-        include APPPATH."/ThirdParty/facebook_api/facebook-api.php";
-        include APPPATH."/ThirdParty/moment_api/kakao-api.php";
-        include APPPATH."/ThirdParty/googleads_api/google-api.php";
         $this->adlead = model(AdLeadModel::class); 
-        $this->facebook = new \ChainsawFB();
-        $this->google = new \GoogleAds();
-        $this->kakao = new \ChainsawKM();
+        $this->facebook = new ZenithFB();
+        $this->google = new ZenithGG();
+        $this->kakao = new ZenithKM();
     }
 
     public function sendToEventLead()
