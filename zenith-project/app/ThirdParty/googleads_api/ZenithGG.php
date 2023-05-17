@@ -266,28 +266,29 @@ class ZenithGG
         return $result;
     }
 
-    public function setCampaignStatus($customerId = null, $campaignId = null, $data = [])
+    public function setUpdate($customerId = null, $campaignId = null, $param)
     {
         self::setCustomerId($customerId);
         $campaignServiceClient = $this->googleAdsClient->getCampaignServiceClient();
 
-        if(isset($data['status'])){
-            if($data['status'] == 'ENABLED'){
+        $data = [
+            'resource_name' => ResourceNames::forCampaign($customerId, $campaignId),
+        ];
+
+        if(isset($param['status'])){
+            if($param['status'] == 'ENABLED'){
                 $data['status'] = CampaignStatus::ENABLED;
             }else{
                 $data['status'] = CampaignStatus::PAUSED;
             }
         }
 
-        $campaign = new Campaign([
-            'resource_name' => ResourceNames::forCampaign($customerId, $campaignId),
-            'status' => $data['status']
-        ]);
-        
+        $campaign = new Campaign($data);
+
         $campaignOperation = new CampaignOperation();
         $campaignOperation->setUpdate($campaign);
         $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
-
+        
         // Issues a mutate request to update the campaign.
         $response = $campaignServiceClient->mutateCampaigns(
             $customerId,
@@ -297,7 +298,7 @@ class ZenithGG
         // Prints the resource name of the updated campaign.
         /** @var Campaign $updatedCampaign */
         $updatedCampaign = $response->getResults()[0];
-
+        dd($updatedCampaign);
     }
 
     private static function convertToString($value)

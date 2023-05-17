@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers\Advertisement;
 use App\Controllers\BaseController;
+use App\ThirdParty\facebook_api\ZenithFB;
+use App\ThirdParty\moment_api\ZenithKM;
 
 class ApiController extends BaseController
 {
@@ -20,13 +22,11 @@ class ApiController extends BaseController
         throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
     protected function facebook(...$params) {
-        include APPPATH."ThirdParty/facebook_api/facebook-api.php";
-        $this->chainsaw = new \ChainsawFB();
+        $this->chainsaw = new ZenithFB();
         $this->fb_func(...$params);
     }
     protected function moment(...$params) {
-        include APPPATH."ThirdParty/moment_api/kakao-api.php";
-        $this->chainsaw = new \ChainsawKM();
+        $this->chainsaw = new ZenithKM();
         $this->fb_func(...$params);
     }
 

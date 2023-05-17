@@ -937,7 +937,7 @@ $('body').on('focus', '#status_btn', function(){
 
     if(confirm("상태를 변경하시겠습니까?")){
         $.ajax({
-            type: "PUT",
+            type: "get",
             url: "<?=base_url()?>/advertisements/set-status",
             data: data,
             dataType: "json",

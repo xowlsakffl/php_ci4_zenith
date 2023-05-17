@@ -564,8 +564,8 @@ class AdvAllManagerController extends BaseController
     public function setCampaignStatus()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $data = $this->request->getRawInput();
-            
+            //$data = $this->request->getRawInput();
+            $data = $this->request->getGet();
             if (!empty($data)) {
                 $sliceId = explode("_", $data['id']);
                 $media = $sliceId[0];
@@ -596,10 +596,7 @@ class AdvAllManagerController extends BaseController
                             $param = ['status' => 'PAUSED'];
                         }
                         $zenith = new ZenithGG();
-                        $zenith->setCampaignStatus($data['customerId'], $id, $param);
-                        break;
-                    case 'naver':
-                        $this->naver->updateStatus($id);
+                        $zenith->setUpdate($data['customerId'], $id, $param);
                         break;
                     default:
                         return $this->fail("지원하지 않는 매체입니다.");
