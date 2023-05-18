@@ -128,6 +128,15 @@ class GADB
 		return $result;
 	}
 
+	private function getAdGroupIdByAd($id)
+	{
+		if (is_null($id)) return false;
+
+		$sql = "SELECT adgroupId FROM aw_ad WHERE id = {$id}";
+		$result = $this->db_query($sql, true);
+
+		return $result;
+	}
 	private function updateAdGroup($data = null)
 	{
 		if (is_null($data)) return false;
@@ -159,6 +168,25 @@ class GADB
 					cpaBidSource = {$data['cpaBidSource']},
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
+		$result = $this->db_query($sql, true);
+
+		return $result;
+	}
+
+	private function updateAdgroupField($data = null)
+	{
+		if (is_null($data)) return false;
+
+		$sql = "UPDATE aw_adgroup SET";
+		if (isset($data['name'])) {
+			$sql .= " name = {$data['name']}";
+		}
+		if (isset($data['status'])) {
+			$sql .= isset($data['name']) ? "," : "";
+			$sql .= " status = {$data['status']}";
+		}
+		$sql .= " WHERE id = {$data['id']}";
+
 		$result = $this->db_query($sql, true);
 
 		return $result;
@@ -230,6 +258,25 @@ class GADB
 				$this->db_query($sql, true);
 			}
 		}
+
+		return $result;
+	}
+
+	private function updateAdField($data = null)
+	{
+		if (is_null($data)) return false;
+
+		$sql = "UPDATE aw_ad SET";
+		if (isset($data['name'])) {
+			$sql .= " name = {$data['name']}";
+		}
+		if (isset($data['status'])) {
+			$sql .= isset($data['name']) ? "," : "";
+			$sql .= " status = {$data['status']}";
+		}
+		$sql .= " WHERE id = {$data['id']}";
+
+		$result = $this->db_query($sql, true);
 
 		return $result;
 	}

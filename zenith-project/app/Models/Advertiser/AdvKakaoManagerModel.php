@@ -49,7 +49,7 @@ class AdvKakaoManagerModel extends Model
     public function getAdsets($data)
 	{
 		$builder = $this->kakao->table('mm_adgroup B');
-        $builder->select('"카카오" AS media, B.id AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS status, B.aiConfig, B.aiConfig2, B.bidAmount,
+        $builder->select('"카카오" AS media, CONCAT("kakao_", B.id) AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS status, B.aiConfig, B.aiConfig2, B.bidAmount,
         COUNT(C.id) creatives, SUM(D.imp) impressions,
         SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, B.dailyBudgetAmount AS budget, sum(D.sales) as sales, SUM(D.margin) as margin');
 		$builder->join('mm_campaign A', 'B.campaign_id = A.id');
@@ -81,7 +81,7 @@ class AdvKakaoManagerModel extends Model
     public function getAds($data)
 	{
 		$builder = $this->kakao->table('mm_creative C');
-		$builder->select('"카카오" AS media, C.id AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
+		$builder->select('"카카오" AS media, CONCAT("kakao_", C.id) AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
         SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget');
         $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
         $builder->join('mm_campaign A', 'B.campaign_id = A.id');

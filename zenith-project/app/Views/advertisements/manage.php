@@ -459,6 +459,10 @@ function setDataTable(tableId, columns, args){
             }
         },
         "columns": columns,
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            $(row).attr("data-customerId", data.customerId ? data.customerId : '');
+        },
         "language": {
             "emptyTable": "데이터가 존재하지 않습니다.",
             "infoEmpty": "데이터 없음",
@@ -473,14 +477,17 @@ function getCampaigns(args) {
             { 
                 "data": "media", 
                 "width": "6%",
+                "render": function (data, type, row) {
+                    media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
+                    return media;
+                }
             },
             { 
                 "data": "name", 
                 "width": "10%",
                 "render": function (data, type, row) {
                     str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-
-                    name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                    name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
                     return name;
                 }
             },
@@ -488,7 +495,7 @@ function getCampaigns(args) {
                 "data": "status", 
                 "width": "4%",
                 "render": function (data, type, row) {
-                    status = '<select name="status" data-id="'+row.id+'" '+(row.customerId ? "data-customerId="+row.customerId+'' : '')+' class="active-select" id="status_btn"><option value="0" '+(row.status === 0 ? 'selected' : '')+'>비활성</option><option value="1" '+(row.status === 1 ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                    status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                     return status;
                 }
             },
@@ -574,14 +581,17 @@ function getAdsets(args) {
         { 
             "data": "media", 
             "width": "6%",
+            "render": function (data, type, row) {
+                media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
+                return media;
+            }
         },
         { 
             "data": "name", 
             "width": "10%",
             "render": function (data, type, row) {
                 str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-
-                name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
                 return name;
             }
         },
@@ -589,7 +599,7 @@ function getAdsets(args) {
             "data": "status", 
             "width": "4%",
             "render": function (data, type, row) {
-                status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                 return status;
             }
         },
@@ -675,14 +685,17 @@ function getAds(args) {
         { 
             "data": "media", 
             "width": "6%",
+            "render": function (data, type, row) {
+                media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
+                return media;
+            }
         },
         { 
             "data": "name", 
             "width": "10%",
             "render": function (data, type, row) {
                 str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-
-                name = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+str+'</label><button class="btn-memo"><span class="blind">메모</span></button>';
+                name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
                 return name;
             }
         },
@@ -690,7 +703,7 @@ function getAds(args) {
             "data": "status", 
             "width": "4%",
             "render": function (data, type, row) {
-                status = '<select name="status" data-id="'+row.id+'" class="active-select"><option value="PAUSED" '+(row.status === 'PAUSED' ? 'selected' : '')+'>비활성</option><option value="ACTIVE" '+(row.status === 'ACTIVE' ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                 return status;
             }
         },
@@ -927,10 +940,10 @@ $('body').on('focus', '#status_btn', function(){
     data = {
         'status' : $(this).val(),
         'tab' : $('.tab-link.active').val(),
-        'id' : $(this).data("id"),
+        'id' : $(this).closest("tr").data("id"),
     };
 
-    customerId = $(this).data("customerid");
+    customerId = $(this).closest("tr").data("customerid");
     if (customerId) {
         data['customerId'] = customerId;
     }
@@ -945,8 +958,6 @@ $('body').on('focus', '#status_btn', function(){
             success: function(data){
                 if(data == true){
                     alert("변경되었습니다.");
-                }else{
-                    $(this).val(prevVal);
                 }
             },
             error: function(error, status, msg){

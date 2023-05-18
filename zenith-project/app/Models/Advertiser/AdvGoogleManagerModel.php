@@ -25,6 +25,7 @@ class AdvGoogleManagerModel extends Model
         $builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
         $builder->join('aw_ad_account E', 'A.customerId = E.customerId');
         $builder->where('A.status !=', 'NODATA');
+
         if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
             $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
             $builder->where('DATE(D.date) <=', $data['dates']['edate']);
@@ -54,14 +55,14 @@ class AdvGoogleManagerModel extends Model
     public function getAdsets($data)
 	{
 		$builder = $this->google->table('aw_campaign A');
-		$builder->select('"구글" AS media, B.id AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impressions,
-        SUM(D.clicks) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as budget');
+		$builder->select('"구글" AS media, CONCAT("google_", B.id) AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impressions,
+        SUM(D.clicks) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as budget, E.customerId');
 		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
 		$builder->join('aw_ad C', 'B.id = C.adgroupId');
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
+		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
 		if(!empty($data['businesses'])){
-			$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 			$builder->whereIn('E.manageCustomer', $data['businesses']);
         }
 
@@ -94,14 +95,14 @@ class AdvGoogleManagerModel extends Model
     public function getAds($data)
 	{
 		$builder = $this->google->table('aw_campaign A');
-		$builder->select('"구글" AS media, A.id AS campaignId, C.id AS id, C.name AS name, C.code, C.status AS status, C.imageUrl, C.finalUrl, C.adType, C.mediaType, A.is_updating AS is_updating, C.imageUrl, C.assets,
-        SUM(D.impressions) impressions, SUM(D.clicks) click, SUM(D.cost) spend, 0 AS budget, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('"구글" AS media, A.id AS campaignId, CONCAT("google_", C.id) AS id, C.name AS name, C.code, C.status AS status, C.imageUrl, C.finalUrl, C.adType, C.mediaType, A.is_updating AS is_updating, C.imageUrl, C.assets,
+        SUM(D.impressions) impressions, SUM(D.clicks) click, SUM(D.cost) spend, 0 AS budget, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, E.customerId');
 		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
 		$builder->join('aw_ad C', 'B.id = C.adgroupId');
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
+		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
 		if(!empty($data['businesses'])){
-			$builder->join('aw_ad_account F', 'A.customerId = E.customerId');
 			$builder->whereIn('E.manageCustomer', $data['businesses']);
         }
 
