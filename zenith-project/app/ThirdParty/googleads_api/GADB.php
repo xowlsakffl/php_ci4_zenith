@@ -109,6 +109,25 @@ class GADB
 		return $result;
 	}
 
+	private function updateCampaignField($data = null)
+	{
+		if (is_null($data)) return false;
+
+		$sql = "UPDATE aw_campaign SET";
+		if (isset($data['name'])) {
+			$sql .= " name = {$data['name']}";
+		}
+		if (isset($data['status'])) {
+			$sql .= isset($data['name']) ? "," : "";
+			$sql .= " status = {$data['status']}";
+		}
+		$sql .= " WHERE id = {$data['id']}";
+
+		$result = $this->db_query($sql, true);
+
+		return $result;
+	}
+
 	private function updateAdGroup($data = null)
 	{
 		if (is_null($data)) return false;

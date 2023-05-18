@@ -563,9 +563,8 @@ class AdvAllManagerController extends BaseController
 
     public function setCampaignStatus()
     {
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            //$data = $this->request->getRawInput();
-            $data = $this->request->getGet();
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
             if (!empty($data)) {
                 $sliceId = explode("_", $data['id']);
                 $media = $sliceId[0];
@@ -605,10 +604,9 @@ class AdvAllManagerController extends BaseController
                 $res = true;
             }
             return $this->respond($res);
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
-        
+        }
     }
 }
  

@@ -937,11 +937,18 @@ $('body').on('focus', '#status_btn', function(){
 
     if(confirm("상태를 변경하시겠습니까?")){
         $.ajax({
-            type: "get",
+            type: "GET",
             url: "<?=base_url()?>/advertisements/set-status",
             data: data,
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(data == true){
+                    alert("변경되었습니다.");
+                }else{
+                    $(this).val(prevVal);
+                }
+            },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
             }
