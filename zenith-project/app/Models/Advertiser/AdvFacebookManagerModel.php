@@ -178,9 +178,9 @@ class AdvFacebookManagerModel extends Model
 				}
 			} */
 			if($row['status'] == 'ACTIVE'){
-				$row['status'] = 1;
+				$row['status'] = "ON";
 			}else{
-				$row['status'] = 0;
+				$row['status'] = "OFF";
 			}
 			
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률

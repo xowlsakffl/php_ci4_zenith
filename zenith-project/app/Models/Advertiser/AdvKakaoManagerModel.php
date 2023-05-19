@@ -124,9 +124,9 @@ class AdvKakaoManagerModel extends Model
 			} */
 
             if($row['status'] == 'ON'){
-				$row['status'] = 1;
+				$row['status'] = "ON";
 			}else{
-				$row['status'] = 0;
+				$row['status'] = "OFF";
 			}
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률

@@ -191,9 +191,9 @@ class AdvGoogleManagerModel extends Model
 			if($choi_optimization_campaign=="ON") $row['optimization_campaign_budget'] = $optimization_budget;	// ai 예산 */
 
 			if($row['status'] == 'ENABLED'){
-				$row['status'] = 1;
+				$row['status'] = "ON";
 			}else{
-				$row['status'] = 0;
+				$row['status'] = "OFF";
 			}
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률

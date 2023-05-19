@@ -8,6 +8,7 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<script src="/static/node_modules/datatables.net-editor/js/dataTables.editor.js"></script>
 <style>
     .inner button.disapproval::after{
         position: absolute;
@@ -469,7 +470,12 @@ function setDataTable(tableId, columns, args){
             "zeroRecords": "일치하는 데이터가 없어요.",
             "loadingRecords": "로딩중...",
         },
+        "editor": {
+            "table": tableId
+        },
     });
+
+    
 }
 
 function getCampaigns(args) {
@@ -489,7 +495,9 @@ function getCampaigns(args) {
                     str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
                     name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
                     return name;
-                }
+                },
+                "editable": true,  // 편집 가능 여부
+                "editor": "text"
             },
             { 
                 "data": "status", 

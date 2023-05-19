@@ -559,9 +559,9 @@ class ZenithGG
         $adGroupAdInfo = $updatedAdGroupAd->getAdGroupAd();
         if(!empty($adGroupAdInfo)){
             $setData = [
-                'id' => $adGroupAdInfo->getId(),
+                'id' => $adGroupAdInfo->getAd()->getId(),
             ];
-            dd($setData);
+            
             if(isset($data['status'])){
                 $setData['status'] = $adGroupAdInfo->getStatus() == 2 ? 'ENABLED' : 'PAUSED';
             }
