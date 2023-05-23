@@ -201,7 +201,7 @@ class KMDB
                         ON C.ad_account_id = D.id
                 WHERE B.id = {$id}";
         $result = $this->db_query($sql);
-        $row = $result->getResult();
+        $row = $result->getRowArray();
         $ad_account_id = $row['ad_account_id'];
         return $ad_account_id;
     }

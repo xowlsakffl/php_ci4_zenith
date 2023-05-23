@@ -4,10 +4,12 @@ namespace App\ThirdParty\moment_api;
 set_time_limit(0);
 ini_set('memory_limit', '-1');
 
+use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\CLI\CLI;
 
 class ZenithKM
 {
+    use ResponseTrait;
     //// private $app_id = '243424';
     //// private $app_key = '500a99d34478a54c7c4fbfc04ff90512';
     //// private $client_secret = 'V1lTM4d4FrLoxVhnISLqGaLdhwsvcGTT';
@@ -164,7 +166,7 @@ class ZenithKM
             $this->db->setCampaignOnOff($campaignId, $config);
         return $result;
     }
-     
+
     private function setCampaignDailyBudgetAmount($campaignId = '', $dailyBudgetAmount = null)
     { //2.4. 캠페인 일예산 수정
         $request = 'campaigns/dailyBudgetAmount';
@@ -175,7 +177,28 @@ class ZenithKM
         return $result;
     }
 
-     
+    public function setCampaign($param = [], $adAccountId = '')
+    { //2. 캠페인 수정하기 
+        $request = 'campaigns';
+        if (!isset($param['id']) || !$param['id']) 
+            return $this->fail("캠페인 아이디를 지정해주십시오.");
+        if ($adAccountId)
+            $this->ad_account_id = $adAccountId;
+        else {
+            $campaign = $this->db->getCampaignById($param['id']);
+            if ($campaign['ad_account_id']) $this->ad_account_id = $campaign['ad_account_id'];
+        }
+        $data = $this->getCampaign($param['id'], $this->ad_account_id);
+        if (isset($data['trackId']))
+            $param['trackId'] = $data['trackId'];
+        if (isset($data['dailyBudgetAmount']))
+            $param['dailyBudgetAmount'] = $data['dailyBudgetAmount'];
+        $result = $this->getCall($request, NULL, $param, 'PUT');
+        if ($result['id'] == $param['id'])
+            $this->db->setCampaign($param);
+        return $result;
+    }
+
     public function updateCampaigns()
     { //전체 캠페인 업데이트
         $accounts = $this->db->getAdAccounts();
@@ -246,11 +269,39 @@ class ZenithKM
         $result = $this->getCall($request, NULL, $data, 'PUT');
         if ($result['http_code'] == 200)
             $this->db->setAdGroupOnOff($adGroupId, $config);
-        sleep(1);
         return $result;
     }
 
-     
+    public function setAdGroup($param = [], $adAccountId = '')
+    { //3. 광고그룹 수정하기
+        $request = 'adGroups';
+        if (!isset($param['id']) || !$param['id']) 
+            return $this->fail("광고그룹 아이디를 지정해주십시오.");
+        if ($adAccountId)
+            $this->ad_account_id = $adAccountId;
+        else {
+            $adAccountId = $this->db->getAdAccountIdByAdGroupId($param['id']);
+            if ($adAccountId) $this->ad_account_id = $adAccountId;
+        }
+        $adGroup = $this->getAdGroup($param['id'], $this->ad_account_id);
+        // echo '<pre>'.print_r($adGroup,1).'</pre>';
+        if (empty($adGroup['deviceTypes']) && $adGroup['allAvailableDeviceType']) $deviceTypes = ['ANDROID', 'IOS', 'PC'];
+        else $deviceTypes = $adGroup['deviceTypes'];
+        $ag = [
+            'campaign' => $adGroup['campaign'], 'placements' => $adGroup['placements'], 'allAvailableDeviceType' => $adGroup['allAvailableDeviceType'], 'allAvailablePlacement' => $adGroup['allAvailablePlacement'], 'deviceTypes' => $deviceTypes, 'targeting' => $adGroup['targeting'], 'adult' => $adGroup['adult'], 'dailyBudgetAmount' => $adGroup['dailyBudgetAmount'], 'bidStrategy' => $adGroup['bidStrategy'], 'pricingType' => $adGroup['pricingType'], 'smartMessage' => $adGroup['smartMessage'], 'bidAmount' => $adGroup['bidAmount'], 'pacing' => ($adGroup['pacing'] ? $adGroup['pacing'] : 'NONE'), 'schedule' => $adGroup['schedule']
+        ];
+        
+        if (isset($adGroup['adServingCategories']))
+            $ag['adServingCategories'] = $adGroup['adServingCategories'];
+        if (isset($adGroup['messageSendingInfo']))
+            $ag['messageSendingInfo'] = $adGroup['messageSendingInfo'];
+        $data = array_merge($param, $ag);
+        $result = $this->getCall($request, NULL, $data, 'PUT');
+        if ($result['id'] == $param['id'])
+            $this->db->setAdGroup($param);
+        return $result;
+    }
+
     public function setAdGroupsAiRun()
     { //광고그룹 AI 실행 예산수정 aiConfig2 - Ai 2
         $adGroups = $this->db->getAdGroups(['ON'], " AND aiConfig2 = 'ON'");
@@ -305,7 +356,7 @@ class ZenithKM
 
      
     private function setAdGroupDailyBudgetAmount($adGroupId = '', $dailyBudgetAmount = '10000')
-    { //3.4. 광고그룹 일예산 수정
+    { //3.5. 광고그룹 일예산 수정
         $request = 'adGroups/dailyBudgetAmount';
         $data = array('id' => $adGroupId, 'dailyBudgetAmount' => $dailyBudgetAmount);
         $adAccountId = $this->db->getAdAccountIdByAdGroupId($adGroupId);
@@ -316,7 +367,7 @@ class ZenithKM
 
      
     public function setAdGroupBidAmount($adGroupId = '', $bidAmount = '10000', $adAccountId = '')
-    { //3.5. 광고그룹 최대 입찰금액 수정
+    { //3.6. 광고그룹 최대 입찰금액 수정
         $request = 'adGroups/bidAmount';
         $data = array('id' => $adGroupId, 'bidAmount' => $bidAmount);
         $adAccountId = $this->db->getAdAccountIdByAdGroupId($adGroupId);
@@ -423,13 +474,68 @@ class ZenithKM
         $data = array('id' => $creativeId, 'config' => $config);
         $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
         if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param, $data, 'PUT');
+        $result = $this->getCall($request, NULL, $data, 'PUT');
         if ($result['http_code'] == 200)
             $this->db->setCreativeOnOff($creativeId, $config);
         sleep(1);
         return $result;
     }
 
+    public function setCreative($param = [], $adAccountId = '')
+    { // 소재 수정하기
+        $request = 'creatives';
+        if (!isset($param['id']) || !$param['id']) $this->error('소재 아이디를 지정해주십시오.');
+        if ($adAccountId)
+            $this->ad_account_id = $adAccountId;
+        else {
+            $adAccountId = $this->db->getAdAccountIdByCreativeId($param['id']);
+            if ($adAccountId) $this->ad_account_id = $adAccountId;
+        }
+
+        $creative = $this->getCreative($param['id'], $this->ad_account_id);
+
+        // echo '<pre>' . print_r($creative, 1) . '</pre>';
+        $cv = [
+            'adGroupId' => $creative['adGroupId'], 'format' => $creative['format']
+        ];
+
+        if($creative['format'] == 'IMAGE_NATIVE'){
+            if(isset($creative['title']))
+                $cv['title'] = $creative['title']; 
+
+            if(isset($creative['profileName']))
+                $cv['profileName'] = $creative['profileName']; 
+
+            if(isset($creative['description']))
+                $cv['description'] = $creative['description']; 
+
+            if(isset($creative['actionButton']))
+                $cv['actionButton'] = $creative['actionButton']; 
+        }
+        
+        if(isset($creative['altText']))
+            $cv['altText'] = $creative['altText'];
+        if($creative['landingInfo']['landingType'] == 'BIZ_FORM') {
+            $cv['landingInfo']['landingType'] = $creative['landingInfo']['landingType'];
+            $cv['landingInfo']['bizFormId'] = $creative['landingInfo']['bizFormId'];
+        } else {
+            if(isset($creative['pcLandingUrl']))
+                $cv['pcLandingUrl'] = $creative['pcLandingUrl'];
+            if(isset($creative['mobileLandingUrl']))
+                $cv['mobileLandingUrl'] = $creative['mobileLandingUrl'];
+            if(isset($creative['rspvLandingUrl']))
+                $cv['rspvLandingUrl'] = $creative['rspvLandingUrl'];         
+        }
+        if (isset($creative['messageElement']))
+            $cv['messageElement'] = $creative['messageElement'];
+
+        $data = array_merge($param, $cv);
+        $result = $this->getCall($request, NULL, $data, 'PUT', true);
+
+        if ($result['id'] == $param['id'])
+            $this->db->setCreative($param);
+        return $result;
+    }
      
     public function updateCreatives()
     { //전체 소재 업데이트

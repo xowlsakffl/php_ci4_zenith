@@ -564,7 +564,6 @@ class AdvAllManagerController extends BaseController
     public function updateStatus()
     {
         //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
-            //$param = $this->request->getRawInput();
             $param = $this->request->getGet();
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -574,139 +573,213 @@ class AdvAllManagerController extends BaseController
                 'status' => $param['status'],
                 'customerId' => $param['customerId'],
             ];
-            
-            if(empty($data['media']) || empty($data['id']) || empty($data['tab']) || empty($data['status']) || empty($data['customerId'])){
-                return $this->fail("잘못된 요청");
-            }
+
             switch ($data['tab']) {
                 case 'ads':
-                    $result = $this->setAdStatus($data);
+                    switch ($data['media']) {
+                        case 'facebook':
+                            if($data['status'] === "ON"){
+                                $status = 'ACTIVE';
+                            }else{
+                                $status = 'PAUSED';
+                            }
+                            $zenith = new ZenithFB();
+                            $zenith->setCampaignStatus($data['id'], $data['status']);
+                            break;
+                        case 'kakao':
+                            if($data['status'] === "ON"){
+                                $status = 'ON';
+                            }else{
+                                $status = 'OFF';
+                            }
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setCreativeOnOff($data['id'], $data['status']);
+                            break;
+                        case 'google':
+                            if($data['status'] === "ON"){
+                                $param = ['status' => 'ENABLED'];
+                            }else{
+                                $param = ['status' => 'PAUSED'];
+                            }
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateAdGroupAd($data['customerId'], null, $data['id'], $param);
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
                     break;
                 case 'adsets':
-                    $result = $this->setAdsetStatus($data);
+                    switch ($data['media']) {
+                        case 'facebook':
+                            if($data['status'] === "ON"){
+                                $status = 'ACTIVE';
+                            }else{
+                                $status = 'PAUSED';
+                            }
+                            $zenith = new ZenithFB();
+                            $zenith->setCampaignStatus($data['id'], $data['status']);
+                            break;
+                        case 'kakao':
+                            if($data['status'] === "ON"){
+                                $status = 'ON';
+                            }else{
+                                $status = 'OFF';
+                            }
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setAdGroupOnOff($data['id'], $data['status']);
+                            break;
+                        case 'google':
+                            if($data['status'] === "ON"){
+                                $param = ['status' => 'ENABLED'];
+                            }else{
+                                $param = ['status' => 'PAUSED'];
+                            }
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateAdGroup($data['customerId'], $data['id'], $param);
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
                     break;
                 case 'campaigns':
-                    $result = $this->setCampaignStatus($data);
+                    switch ($data['media']) {
+                        case 'facebook':
+                            if($data['status'] === "ON"){
+                                $status = 'ACTIVE';
+                            }else{
+                                $status = 'PAUSED';
+                            }
+                            $zenith = new ZenithFB();
+                            $result = $zenith->setCampaignStatus($data['id'], $data['status']);
+                            break;
+                        case 'kakao':
+                            if($data['status'] === "ON"){
+                                $status = 'ON';
+                            }else{
+                                $status = 'OFF';
+                            }
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setCampaignOnOff($data['id'], $data['status']);
+                            break;
+                        case 'google':
+                            if($data['status'] === "ON"){
+                                $param = ['status' => 'ENABLED'];
+                            }else{
+                                $param = ['status' => 'PAUSED'];
+                            }
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateCampaign($data['customerId'], $data['id'], $param);
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
                     break;
                 default:
-                    return $this->fail("잘못된 요청z");
+                    return $this->fail("잘못된 요청");
             }
 
-            return $this->respond($result);
+            if(!empty($result)){
+                $result['response'] = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
         //}else{
-            //return $this->fail("잘못된 요청");
+            return $this->fail("잘못된 요청");
         //}
     }
 
-    private function setCampaignStatus($data)
+    public function updateName()
     {
-        switch ($data['media']) {
-            case 'facebook':
-                if($data['status'] === "ON"){
-                    $status = 'ACTIVE';
-                }else{
-                    $status = 'PAUSED';
-                }
-                $zenith = new ZenithFB();
-                $zenith->setCampaignStatus($data['id'], $data['status']);
-                break;
-            case 'kakao':
-                if($data['status'] === "ON"){
-                    $status = 'ON';
-                }else{
-                    $status = 'OFF';
-                }
-                $zenith = new ZenithKM();
-                $zenith->setCampaignOnOff($data['id'], $data['status']);
-                break;
-            case 'google':
-                if($data['status'] === "ON"){
-                    $param = ['status' => 'ENABLED'];
-                }else{
-                    $param = ['status' => 'PAUSED'];
-                }
-                $zenith = new ZenithGG();
-                $zenith->updateCampaign($data['customerId'], $data['id'], $param);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
-        }
+        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            //$param = $this->request->getRawInput();
+            $param = $this->request->getGet();
+            $sliceId = explode("_", $param['id']);
+            $data = [
+                'media' => $sliceId[0],
+                'id' => $sliceId[1],
+                'tab' => $param['tab'],
+                'name' => $param['name'],
+                'customerId' => $param['customerId'],
+            ];
+            
+            switch ($data['tab']) {
+                case 'ads':
+                    switch ($data['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
+                            break;
+                        case 'kakao':
+                            $param = [
+                                'id' => $data['id'],
+                                'name' => $data['name'],
+                            ];
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setCreative($param, $data['customerId']);
+                            break;
+                        case 'google':
+                            return $this->fail("지원하지 않는 매체입니다.");
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
+                    break;
+                case 'adsets':
+                    switch ($data['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
+                            break;
+                        case 'kakao':
+                            $param = [
+                                'id' => $data['id'],
+                                'name' => $data['name'],
+                            ];
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setAdGroup($param, $data['customerId']);
+                            break;
+                        case 'google':
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateAdGroup($data['customerId'], $data['id'], $param);
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
+                    break;
+                case 'campaigns':
+                    switch ($data['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
+                            break;
+                        case 'kakao':
+                            $param = [
+                                'id' => $data['id'],
+                                'name' => $data['name'],
+                            ];
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setCampaign($param, $data['customerId']);
+                            break;
+                        case 'google':
+                            $param = ['name' => $data['name']];
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateCampaign($data['customerId'], $data['id'], $param);
+                            break;
+                        default:
+                            return $this->fail("지원하지 않는 매체입니다.");
+                    }
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
 
-        return true;
-    }
-
-    private function setAdsetStatus($data)
-    {
-        switch ($data['media']) {
-            case 'facebook':
-                if($data['status'] === "ON"){
-                    $status = 'ACTIVE';
-                }else{
-                    $status = 'PAUSED';
-                }
-                $zenith = new ZenithFB();
-                $zenith->setCampaignStatus($data['id'], $data['status']);
-                break;
-            case 'kakao':
-                if($data['status'] === "ON"){
-                    $status = 'ON';
-                }else{
-                    $status = 'OFF';
-                }
-                $zenith = new ZenithKM();
-                $zenith->setCampaignOnOff($data['id'], $data['status']);
-                break;
-            case 'google':
-                if($data['status'] === "ON"){
-                    $param = ['status' => 'ENABLED'];
-                }else{
-                    $param = ['status' => 'PAUSED'];
-                }
-                $zenith = new ZenithGG();
-                $zenith->updateAdGroup($data['customerId'], $data['id'], $param);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
-        }
-
-        return true;
-    }
-
-    private function setAdStatus($data)
-    {
-        switch ($data['media']) {
-            case 'facebook':
-                if($data['status'] === "ON"){
-                    $status = 'ACTIVE';
-                }else{
-                    $status = 'PAUSED';
-                }
-                $zenith = new ZenithFB();
-                $zenith->setCampaignStatus($data['id'], $data['status']);
-                break;
-            case 'kakao':
-                if($data['status'] === "ON"){
-                    $status = 'ON';
-                }else{
-                    $status = 'OFF';
-                }
-                $zenith = new ZenithKM();
-                $zenith->setCampaignOnOff($data['id'], $data['status']);
-                break;
-            case 'google':
-                if($data['status'] === "ON"){
-                    $param = ['status' => 'ENABLED'];
-                }else{
-                    $param = ['status' => 'PAUSED'];
-                }
-                $zenith = new ZenithGG();
-                $zenith->updateAd($data['customerId'], null, $data['id'], $param);
-                break;
-            default:
-                return $this->fail("지원하지 않는 매체입니다.");
-        }
-
-        return true;
+            if(!empty($result)){
+                $result['response'] = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+        //}else{
+            return $this->fail("잘못된 요청");
+        //}
     }
 }
  

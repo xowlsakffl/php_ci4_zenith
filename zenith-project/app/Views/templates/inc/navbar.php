@@ -44,3 +44,16 @@ $uri = current_url(true)->getPath();
         <a href="/logout">로그아웃</a>
     </div>
 </div>
+
+<!-- <script>
+    $('button[data-bs-toggle="collapse"]').on('click', function(){  
+        if($(this).attr('aria-expanded','true') && $('.btn-toggle-nav a').hasClass('active')){
+            $(this).find('i').addClass('active');
+            $(this).find('i').css('background','red');
+        }
+        else if($(this).attr('aria-expanded','false')){
+            $(this).find('i').removeClass('active');
+            $(this).find('i').css('background','green');
+        };
+    });
+</script> -->
