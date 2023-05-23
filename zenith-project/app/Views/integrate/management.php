@@ -66,7 +66,7 @@
 
     <div>
         <div class="search-wrap my-5">
-            <div class="statusCount detail d-flex"></div>     
+            <div class="statusCount detail d-flex flex-wrap"></div>     
         </div>
 
         <div class="row table-responsive">

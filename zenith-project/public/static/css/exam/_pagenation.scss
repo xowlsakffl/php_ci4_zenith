@@ -41,17 +41,19 @@
             tbody tr{background-color:#fff;}
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
             select.data-del{padding:3px; border-radius:4px;}
-            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:4px 17px; border-radius:4px;}
-            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:4px 17px; border-radius:4px;
-                &:hover{background-color:red;}          
+            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px;}
+            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px; transition:0.5s;   
+                &:hover{box-shadow:inset 0 -3em 0 0 red;}   
             }
         }
     }
 }
 
 .db-manage-contaniner{
-    .search-wrap{border-radius: 10px;}         
-    .detail{border-top:none; flex-wrap:wrap; 
+    .search-wrap{border-radius: 10px;
+        &:has(.detail):hover{box-shadow:10px 10px 20px #ccc;}
+    }         
+    .detail{flex-wrap:wrap; 
         // .col{width:14%;} 
         //if문 작성
     }
@@ -70,3 +72,4 @@
     from {width: 0%;}
     to {width: 100%;}
 }
+
