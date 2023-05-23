@@ -663,7 +663,7 @@ function sendStatus(data){
 
 function sendName(data, $input){
     $.ajax({
-        type: "get",
+        type: "put",
         url: "<?=base_url()?>/advertisements/set-name",
         data: data,
         dataType: "json",

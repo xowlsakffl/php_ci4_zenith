@@ -564,7 +564,7 @@ class AdvAllManagerController extends BaseController
     public function updateStatus()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
-            $param = $this->request->getGet();
+            $param = $this->request->getRawInput();
             $sliceId = explode("_", $param['id']);
             $data = [
                 'media' => $sliceId[0],
@@ -681,9 +681,8 @@ class AdvAllManagerController extends BaseController
 
     public function updateName()
     {
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
-            //$param = $this->request->getRawInput();
-            $param = $this->request->getGet();
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $param = $this->request->getRawInput();
             $sliceId = explode("_", $param['id']);
             $data = [
                 'media' => $sliceId[0],
@@ -765,9 +764,9 @@ class AdvAllManagerController extends BaseController
             }else{
                 return $this->fail("잘못된 요청");
             }
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 }
  
