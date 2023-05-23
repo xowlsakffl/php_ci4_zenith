@@ -32,7 +32,7 @@
     </div>
 
     <div class="search-wrap">
-        <form class="search d-flex justify-content-center">
+        <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
                 <input type="text" name="sdate" id="sdate">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
@@ -42,7 +42,7 @@
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" id="search_btn" type="button">조회</button>
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
             </div>
         </form>
     </div>
@@ -76,17 +76,17 @@
                     <tr>
                         <th class="first" style="width:20px">#</th>
                         <th>SEQ</th>
-                        <th>이벤트</th>
+                        <th style="width:50px">이벤트</th>
                         <th>광고주</th>
                         <th>매체</th>
                         <th style="width:110px">이벤트 구분</th>
-                        <th style="width:50px" >이름</th>
+                        <th style="width:50px">이름</th>
                         <th style="width:90px">전화번호</th>
                         <th style="width:30px">나이</th>
                         <th style="width:30px">성별</th>
                         <th>기타</th>
                         <th style="width:60px">사이트</th>
-                        <th style="width:90px">등록일</th>
+                        <th style="width:70px">등록일</th>
                         <th style="width:30px">메모</th>
                         <th class="last" style="width:60px">인정기준</th>
                     </tr>
@@ -103,15 +103,15 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
 let data = {};
 let dataTable;
-getLead(data);
-getStatusCount(data);
-getList(data);
+setDate();
+getLead();
+getStatusCount();
+getList();
 function setData() {
     data = {
         'sdate': $('#sdate').val(),
@@ -221,7 +221,8 @@ function getList(data = []){
     });
 }
 
-function getLeadCount(data = []){
+function getLeadCount(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
@@ -251,7 +252,8 @@ function setLeadCount(data) {
     });
 }
 
-function getStatusCount(data = []){
+function getStatusCount(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/statuscount",
@@ -314,7 +316,8 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
     fontAutoResize();
 }
 		
-function getLead(data = []){
+function getLead(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
@@ -378,39 +381,16 @@ function setDate(){
 
 $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
-
-    
-/*
-    data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
-        'stx': $('#stx').val(),
-        'adv': advertiser,
-        'media': media,
-        'event': event
-    };
-
     getLeadCount(data);
     getStatusCount(data);
-    $('#deviceTable').DataTable().destroy();
-    getList(data);
-*/
-    dataTable
-        .column('#deviceTable thead th:contains("광고주")')
-        .search(data.advertiser,true,false)
-        .column('#deviceTable thead th:contains("매체")')
-        .search(data.media,true,false)
-        .column('#deviceTable thead th:contains("이벤트 구분")')
-        .search(data.event,true,false)
-        .draw();
+    dataTable.draw();
 });
 
-$('body').on('click', '#search_btn', function() {
-    
+$('form[name="search-form"]').bind('submit', function() {
     getLeadCount(data);
     getStatusCount(data);
-    $('#deviceTable').DataTable().destroy();
-    getList(data);
+    dataTable.draw();
+    return false;
 });
 </script>
 <?=$this->endSection();?>

@@ -136,19 +136,20 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['adv']);
+        if(!empty($data['advertiser'])){
+            $builder->whereIn('adv.name', explode("|",$data['advertiser']));
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.media', explode("|",$data['media']));
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.description', explode("|",$data['event']));
         }
 
         $builder->groupBy(['adv.name', 'med.media', 'info.description']);
+        // dd($builder->getCompiledSelect());
         $result = $builder->get()->getResultArray();
         
         return $result;
@@ -194,16 +195,16 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['adv']);
+        if(!empty($data['advertiser'])){
+            $builder->whereIn('adv.name', explode("|",$data['advertiser']));
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.media', explode("|",$data['media']));
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.description', explode("|",$data['event']));
         }
         $result = $builder->get()->getResultArray();
 
