@@ -1,4 +1,11 @@
-.sub-contents-wrap{flex:1; height:100vh; overflow:auto; padding:80px 4.4271vw;}
+@mixin effect($second:0.3s) {
+    transform: translateY(6.25rem); visibility:hidden; transition: all linear $second;
+    &.up{transform: translateY(0); visibility:visible;}
+}
+
+.sub-contents-wrap{flex:1; height:100vh; overflow:auto; padding:80px 4.4271vw; transition:all 0.3s;
+    // > div{@include effect;}
+}
 .title-area{display:flex; align-items:center; margin:0 0 20px;
     .page-title{font-size:1.750rem; @include bold;}
     .title-disc{margin:0 0 0 15px;}
@@ -16,7 +23,7 @@
         }
     }
 }
-.search-wrap{overflow:hidden; margin:0 0 50px; border:1px solid #c3c3c3; border-radius:$radius $radius 0 0;
+.search-wrap{overflow:hidden; margin:0 0 50px; border:1px solid #c3c3c3; border-radius:$radius $radius 0 0; 
     .search{padding:35px 10.4167vw; text-align:center; background:#fff;
         .term{flex:1; height:50px; padding:0 25px; border-top:2px solid #e2e2e2; border-bottom:2px solid #e2e2e2;
             input[type="text"]{flex:1; width:100%; border:0;}
@@ -34,6 +41,17 @@
         .col{flex:0 0 auto; width:auto; padding:0 30px; color:#929292; font-weight:500;
             dt{margin:0 0 5px; font-size:1.125rem; color:$color-dark;}
         }
+    }
+    .detail.flex-wrap{
+        .col{margin-bottom:0.8rem;
+            @if(max-width:$large){
+                width:14%;
+            }
+            @if(maxmin-width:$small){
+                width:25%;
+            }          
+            &:last-child{margin-bottom:0;}
+        }        
     }
     select{width:20%; height:50px; margin:0 0 0 20px;}
 }
@@ -164,3 +182,4 @@
 @include small{
     
 }
+

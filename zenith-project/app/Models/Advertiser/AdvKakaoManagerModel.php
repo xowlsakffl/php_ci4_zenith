@@ -17,7 +17,7 @@ class AdvKakaoManagerModel extends Model
     public function getCampaigns($data)
 	{
 		$builder = $this->kakao->table('mm_campaign A');
-        $builder->select('"카카오" AS media, E.name AS account_name, CONCAT("kakao_", A.id) AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin');
+        $builder->select('"카카오" AS media, E.name AS account_name, CONCAT("kakao_", A.id) AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin, A.ad_account_id AS customerId');
         $builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
 		$builder->join('mm_adgroup B', 'A.id = B.campaign_id');
 		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
@@ -51,7 +51,7 @@ class AdvKakaoManagerModel extends Model
 		$builder = $this->kakao->table('mm_adgroup B');
         $builder->select('"카카오" AS media, CONCAT("kakao_", B.id) AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS status, B.aiConfig, B.aiConfig2, B.bidAmount,
         COUNT(C.id) creatives, SUM(D.imp) impressions,
-        SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, B.dailyBudgetAmount AS budget, sum(D.sales) as sales, SUM(D.margin) as margin');
+        SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, B.dailyBudgetAmount AS budget, sum(D.sales) as sales, SUM(D.margin) as margin, A.ad_account_id AS customerId');
 		$builder->join('mm_campaign A', 'B.campaign_id = A.id');
 		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
 		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
@@ -82,7 +82,7 @@ class AdvKakaoManagerModel extends Model
 	{
 		$builder = $this->kakao->table('mm_creative C');
 		$builder->select('"카카오" AS media, CONCAT("kakao_", C.id) AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
-        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget');
+        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget, A.ad_account_id AS customerId');
         $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
         $builder->join('mm_campaign A', 'B.campaign_id = A.id');
 		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
@@ -124,9 +124,9 @@ class AdvKakaoManagerModel extends Model
 			} */
 
             if($row['status'] == 'ON'){
-				$row['status'] = 1;
+				$row['status'] = "ON";
 			}else{
-				$row['status'] = 0;
+				$row['status'] = "OFF";
 			}
 
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률

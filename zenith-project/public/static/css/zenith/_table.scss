@@ -6,6 +6,9 @@
         &.green{background:var(--bs-success);}
         &.red{background:var(--bs-danger);}
     }
+    .nowrap{
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
     .radio-wrap{
     }
 }

@@ -80,14 +80,15 @@ use FacebookAds\Object\Search\TargetingSearchTypes;
 use Google\Cloud\Translate\TranslateClient;
 
 use Curl\Curl;
+use DateTime;
 use FacebookAds\Logger\CurlLogger;
 
 class ZenithFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
-    private $access_token = 'EAAKNGLMV4o4BABCrZBY6AsWfpadUc2fumCOKxStBHzdFsJnPy8kOgxfdPTUMOmnNwZA8vRzmEMKDmncluzmNro1ZB0YHZCea3zuz8c6RErqSNDnMzH7SnuQFTyQbMqCPE4AKvyMoh1GQU3chYpjVfYM7skvy8Ltu7yqpZAgAj8mZBVw6hySyJ61kolHQEnMHiA4urTrDkbksONZC2xaGsbN';
-    private $longLivedAccessToken = 'EAAKNGLMV4o4BAGHXK97JQ9yz8CLZAfF4WlUcg8yrSZBV6j8w4FWMvQyuZCAxdrmBiP6K2kcrR2esqvYOsZAGxiIo10taHkSv9cvrx3IZAXlIGtIrNV1U9Td91ZAithdZBQNhGFnrbXlVRkUvJP9ZA58NBtF0oea17LkMaxPCZAZA7V6qglHTMdX0Q6NovfdIbhB41p7hLKZAv55sZAaUBWQlUpBA';
+    private $access_token = 'EAAKNGLMV4o4BAJhyop1mNFKcAyWtRPucOMyHfyO0hpoiTbYfKaA1FVdY0d1JgH4ABkWwXJKkX1pWrVTXl1UnLGxZBSJT6yJmYsfauYMT0c6TL5zeROfE2JcWBjZBtFvUO8A7qDA057siFuORTos4ZCZCdwQKwWH3ZCpqXY0xXhNpNk25ZCZC3nB07ZBFp1wtU95KQVLHVIV2WOv3Qjxo0T0rr0jHJOtbUNUZD';
+    private $longLivedAccessToken = 'EAAKNGLMV4o4BACAAS6mOXmRA6xDsXvnbyqrlVhz3q1RfBwZBjn9DV046TL2vaZARZACkUPZC4J87F0j8kU2TZANn7DQxjr8MskirAoZCVjhUz0uXi2tR9l2OIplyZAWpCKJW43fG7DMGbw6QkHnHis4T8JQOP0YLltj7hibheHUjUzNGftxBVgJ';
     private $db;
     private $fb, $fb_app;
     private $business_id_list = [
@@ -148,11 +149,11 @@ class ZenithFB
 
             // 현재 토큰 정보 조회
             $accesstoken = new AccessToken($this->access_token);
-            /*
+            
             echo '<pre>'. print_r($accesstoken,1) .'</pre>';
             echo '<p>Issued at ' . $accesstoken->isLongLived() .'</p>';
             echo '<p>Expirest at ' . $accesstoken->getValue()->getExpiresAt()->format('Y-m-d\TH:i:s') .'</p>';
-            */
+            
         } catch (Exception $ex) {
             echo $ex->getMessage();
         }
@@ -803,7 +804,7 @@ class ZenithFB
     }
 
     //광고 상태 업데이트
-    function setCampaignStatus($id, $status)
+    public function setCampaignStatus($id, $status)
     {
         if ($status == 'ACTIVE') {
             $status = Campaign::STATUS_ACTIVE;
@@ -815,15 +816,60 @@ class ZenithFB
         $campaign = $this->campaign->updateSelf(array(), array(
             Campaign::STATUS_PARAM_NAME => $status,
         ));
+        
         $campaign = $campaign->getData();
         if ($campaign['success'] == 1) {
             $this->db->setCampaignStatus($id, $status);
-            return true;
+            $result = ['response' => true];
+            return $result;
         }
 
         return null;
     }
     
+    function setAdsetStatus($id, $status)
+    {
+        if ($status == 'ACTIVE') {
+            $status = AdSet::STATUS_ACTIVE;
+        } else {
+            $status = AdSet::STATUS_PAUSED;
+        }
+
+        $this->setAdsetId($id);
+        $adset = $this->adset->updateSelf(array(), array(
+            AdSet::STATUS_PARAM_NAME => $status,
+        ));
+        $adset = $adset->getData();
+        if ($adset['success'] == 1) {
+            $this->db->setAdsetStatus($id, $status);
+            $result = ['response' => true];
+            return $result;
+        }
+
+        return null;
+    }
+
+    function setAdStatus($id, $status)
+    {
+        if ($status == 'ACTIVE') {
+            $status = Ad::STATUS_ACTIVE;
+        } else {
+            $status = Ad::STATUS_PAUSED;
+        }
+
+        $this->setAdId($id);
+        $ad = $this->ad->updateSelf(array(), array(
+            Ad::STATUS_PARAM_NAME => $status,
+        ));
+        $ad = $ad->getData();
+        if ($ad['success'] == 1) {
+            $this->db->setAdStatus($id, $status);
+            return true;
+        }
+
+        return null;
+    }
+
     public function landingGroup($title)
     {
         if (!$title) return null;

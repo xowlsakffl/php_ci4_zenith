@@ -15,4 +15,17 @@ $(function(){
             $('.left-side .nav .collapse').removeClass('show');
         }
     });
+
+     //slide up 효과
+    let account = document.querySelector('.sub-contents-wrap');
+    let effect = account.querySelectorAll('.sub-contents-wrap > div');
+    let e=0;
+    let timer = setInterval(function(){
+        effect[e].classList.add('up');     
+        e++;
+    
+        if(e >= effect.length){
+            clearInterval(timer); 
+        }              
+    },300); 
 });

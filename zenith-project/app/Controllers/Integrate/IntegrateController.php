@@ -25,18 +25,7 @@ class IntegrateController extends BaseController
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'length' => $this->request->getGet('length'),
-                'start' => $this->request->getGet('start'),
-                'draw' => $this->request->getGet('draw'),
-                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                'stx' => $this->request->getGet('stx'),
-                'adv' => $this->request->getGet('adv'),
-                'media' => $this->request->getGet('media'),
-                'event' => $this->request->getGet('event'),
-            ];
-
+            $arg = $this->request->getGet();
             $result = $this->integrate->getEventLead($arg);
 
             foreach($result['data'] as &$row){

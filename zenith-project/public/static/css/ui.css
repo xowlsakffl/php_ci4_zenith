@@ -246,8 +246,9 @@ body {
   color: #fff;
 }
 .nav-wrap .nav button > i.bi {
-  margin: 0 10px 0 -37px;
-  font-size: 180%;
+  display: inline-block;
+  margin: 5px 10px 0 -35px;
+  font-size: 150%;
   vertical-align: middle;
 }
 .nav-wrap .nav .btn-toggle-nav {
@@ -498,6 +499,7 @@ body {
   height: 100vh;
   overflow: auto;
   padding: 80px 4.4271vw;
+  transition: all 0.3s;
 }
 
 .title-area {
@@ -635,6 +637,14 @@ body {
   margin: 0 0 5px;
   font-size: 1.125rem;
   color: #2d2e34;
+}
+.search-wrap .detail.flex-wrap .col {
+  margin-bottom: 0.8rem;
+  width: 14%;
+  width: 25%;
+}
+.search-wrap .detail.flex-wrap .col:last-child {
+  margin-bottom: 0;
 }
 .search-wrap select {
   width: 20%;
@@ -953,6 +963,11 @@ body {
 }
 .table .ico.red {
   background: var(--bs-danger);
+}
+.table .nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .table-default {
   table-layout: fixed;
