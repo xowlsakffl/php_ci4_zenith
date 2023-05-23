@@ -552,6 +552,13 @@ class ZenithGG
             'resource_name' => ResourceNames::forAdGroupAd($customerId,$adGroupId, $adId),
         ];
 
+        if(isset($param['status'])){
+            if($param['status'] == 'ENABLED'){
+                $data['status'] = AdGroupAdStatus::ENABLED;
+            }else{
+                $data['status'] = AdGroupAdStatus::PAUSED;
+            }
+        }
 
         $adGroupAd = new AdGroupAd($data);
 

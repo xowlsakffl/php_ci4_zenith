@@ -770,8 +770,7 @@ $('body').on('focus', '#status_btn', function(){
 $("body").on("click", '#mediaName p[data-editable="true"]', function(){
     tab = $('.tab-link.active').val();
     id = $(this).closest("tr").data("id");
-    if(tab == 'ads' && id.includes('google')){
-        
+    if((tab == 'ads' && id.includes('google')) || (tab == 'adsets' && id.includes('kakao'))){
         return false;
     }else{
         $('#mediaName p[data-editable="true"]').attr("data-editable", "false");
