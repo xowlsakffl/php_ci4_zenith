@@ -85,7 +85,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
         $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvAllManagerController::getReport');
-        $routes->get('set-status', 'AdvertisementManager\AdvAllManagerController::updateStatus');
+        $routes->put('set-status', 'AdvertisementManager\AdvAllManagerController::updateStatus');
         $routes->get('set-name', 'AdvertisementManager\AdvAllManagerController::updateName');
 
         $routes->group('facebook', static function($routes){

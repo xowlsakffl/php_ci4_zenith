@@ -52,7 +52,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAdsets($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", B.adset_id) AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('"페이스북" AS media, CONCAT("facebook_", B.adset_id) AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
@@ -88,7 +88,7 @@ class AdvFacebookManagerModel extends Model
 	public function getAds($data)
 	{
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", C.ad_id) AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('"페이스북" AS media, CONCAT("facebook_", C.ad_id) AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');

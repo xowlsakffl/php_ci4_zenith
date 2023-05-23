@@ -563,7 +563,7 @@ class AdvAllManagerController extends BaseController
 
     public function updateStatus()
     {
-        //if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $param = $this->request->getGet();
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -584,7 +584,7 @@ class AdvAllManagerController extends BaseController
                                 $status = 'PAUSED';
                             }
                             $zenith = new ZenithFB();
-                            $zenith->setCampaignStatus($data['id'], $data['status']);
+                            $result = $zenith->setAdStatus($data['id'], $status);
                             break;
                         case 'kakao':
                             if($data['status'] === "ON"){
@@ -617,7 +617,7 @@ class AdvAllManagerController extends BaseController
                                 $status = 'PAUSED';
                             }
                             $zenith = new ZenithFB();
-                            $zenith->setCampaignStatus($data['id'], $status);
+                            $result = $zenith->setAdsetStatus($data['id'], $status);
                             break;
                         case 'kakao':
                             $zenith = new ZenithKM();
@@ -674,9 +674,9 @@ class AdvAllManagerController extends BaseController
             }else{
                 return $this->fail("잘못된 요청");
             }
-        //}else{
+        }else{
             return $this->fail("잘못된 요청");
-        //}
+        }
     }
 
     public function updateName()
@@ -692,18 +692,21 @@ class AdvAllManagerController extends BaseController
                 'name' => $param['name'],
                 'customerId' => $param['customerId'],
             ];
+
+            $param = [
+                'id' => $data['id'],
+                'name' => $data['name'],
+            ];
             
             switch ($data['tab']) {
                 case 'ads':
                     switch ($data['media']) {
                         case 'facebook':
+                            $param['type'] = $data['tab'];
                             $zenith = new ZenithFB();
+                            $result = $zenith->updateName($param);
                             break;
                         case 'kakao':
-                            $param = [
-                                'id' => $data['id'],
-                                'name' => $data['name'],
-                            ];
                             $zenith = new ZenithKM();
                             $result = $zenith->setCreative($param, $data['customerId']);
                             break;
@@ -717,13 +720,11 @@ class AdvAllManagerController extends BaseController
                 case 'adsets':
                     switch ($data['media']) {
                         case 'facebook':
+                            $param['type'] = $data['tab'];
                             $zenith = new ZenithFB();
+                            $result = $zenith->updateName($param);
                             break;
                         case 'kakao':
-                            $param = [
-                                'id' => $data['id'],
-                                'name' => $data['name'],
-                            ];
                             $zenith = new ZenithKM();
                             $result = $zenith->setAdGroup($param, $data['customerId']);
                             break;
@@ -738,18 +739,15 @@ class AdvAllManagerController extends BaseController
                 case 'campaigns':
                     switch ($data['media']) {
                         case 'facebook':
+                            $param['type'] = $data['tab'];
                             $zenith = new ZenithFB();
+                            $result = $zenith->updateName($param);
                             break;
                         case 'kakao':
-                            $param = [
-                                'id' => $data['id'],
-                                'name' => $data['name'],
-                            ];
                             $zenith = new ZenithKM();
                             $result = $zenith->setCampaign($param, $data['customerId']);
                             break;
                         case 'google':
-                            $param = ['name' => $data['name']];
                             $zenith = new ZenithGG();
                             $result = $zenith->updateCampaign($data['customerId'], $data['id'], $param);
                             break;

@@ -645,7 +645,7 @@ function setDate(){
 
 function sendStatus(data){
     $.ajax({
-        type: "get",
+        type: "put",
         url: "<?=base_url()?>/advertisements/set-status",
         data: data,
         dataType: "json",

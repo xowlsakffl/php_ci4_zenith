@@ -864,9 +864,114 @@ class ZenithFB
         $ad = $ad->getData();
         if ($ad['success'] == 1) {
             $this->db->setAdStatus($id, $status);
-            return true;
+            $result = ['response' => true];
+            return $result;
         }
 
+        return null;
+    }
+
+    public function updateName($data)
+    {
+        if (!trim($data['id']) || !trim($data['type'])) {
+            return false;
+        }
+        switch ($data['type']) {
+            case 'campaigns':
+                $result = $this->updateCampaignName($data);
+                break;
+            case 'adsets':
+                $result = $this->updateAdsetName($data);
+                break;
+            case 'ads':
+                $result = $this->updateAdName($data);
+                break;
+        }
+        return $result;
+    }
+
+    private function updateCampaign($fields, $data)
+    {
+        if (!is_array($fields) || !is_array($data)) {
+            return null;
+        }
+        if (!$data['id']) {
+            return null;
+        }
+        $campaign = new Campaign($data['id']);
+        // $campaign->setData($fields);
+        $campaign = $campaign->updateSelf(array(), $data);
+        $campaign = $campaign->getData();
+        if ($campaign['success'] == 1) {
+            return $data;
+        }
+    }
+
+    private function updateAdset($fields, $data)
+    {
+        if (!is_array($fields) || !is_array($data)) {
+            return null;
+        }
+        if (!$data['id']) {
+            return null;
+        }
+        $adset = new AdSet($data['id']);
+        // $adset->setData($fields);
+        $adset = $adset->updateSelf(array(), $data);
+        $adset = $adset->getData();
+        if ($adset['success'] == 1) {
+            
+            return $data;
+        }
+    }
+
+    private function updateAd($fields, $data)
+    {
+        if (!is_array($fields) || !is_array($data)) {
+            return null;
+        }
+        if (!$data['id']) {
+            return null;
+        }
+        $ad = new Ad($data['id']);
+        // $ad->setData($fields);
+        $ad = $ad->updateSelf(array(), $data);
+        $ad = $ad->getData();
+        if ($ad['success'] == 1) {
+            return $data;
+        }
+    }
+    
+    private function updateCampaignName($data)
+    {
+        $fields = array(CampaignFields::NAME => $data['name']);
+        $apiResult = $this->updateCampaign($fields, $data);
+        if ($apiResult) {
+            $this->db->updateCampaignName($data);
+            return $apiResult;
+        }
+        return null;
+    }
+
+    private function updateAdsetName($data)
+    {
+        $fields = array(AdSetFields::NAME => $data['name']);
+        $apiResult = $this->updateAdset($fields, $data);
+        if ($apiResult) {
+            $this->db->updateAdsetName($data);
+            return $apiResult;
+        }
+        return null;
+    }
+
+    private function updateAdName($data)
+    {
+        $fields = array(AdFields::NAME => $data['name']);
+        $apiResult = $this->updateAd($fields, $data);
+        if ($apiResult) {
+            $this->db->updateAdName($data);
+            return $apiResult;
+        }
         return null;
     }
 

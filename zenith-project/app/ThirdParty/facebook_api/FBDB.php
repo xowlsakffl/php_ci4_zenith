@@ -610,6 +610,24 @@ class FBDB extends Config
         $this->db_query($sql);
     }
     
+    public function updateCampaignName($data)
+    {
+        $sql = "UPDATE fb_campaign SET campaign_name = '{$data['name']}' WHERE campaign_id = {$data['id']}";
+        $result = $this->db_query($sql);
+    }
+
+    public function updateAdsetName($data)
+    {
+        $sql = "UPDATE fb_adset SET adset_name = '{$data['name']}' WHERE adset_id = {$data['id']}";
+        $result = $this->db_query($sql);
+    }
+
+    public function updateAdName($data)
+    {
+        $sql = "UPDATE fb_ad SET ad_name = '{$data['name']}' WHERE ad_id = {$data['id']}";
+        $result = $this->db_query($sql);
+    }
+    
     public function updateInsight($data)
     {
         $row = $data;
