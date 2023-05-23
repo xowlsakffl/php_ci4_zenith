@@ -8,7 +8,6 @@
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
-<script src="/static/node_modules/datatables.net-editor/js/dataTables.editor.js"></script>
 <style>
     .inner button.disapproval::after{
         position: absolute;
@@ -334,7 +333,7 @@ var args = {
 setDate();
 getReport(args);
 getAccount(args);
-getCampaigns(args);
+getDataTable(args);
 
 function getReport(args){
     $.ajax({
@@ -417,8 +416,20 @@ function getAccount(args){
     });
 }
 
-function setDataTable(tableId, columns, args){
-    $(tableId).DataTable({
+function getDataTable(args){
+    tab = $('.tab-link.active').val();
+    switch (tab) {
+    case "ads":
+        tableId = '#ads-table'
+        break;
+    case "adsets":
+        tableId = '#adsets-table'
+        break;
+    default:
+        tableId = '#campaigns-table'
+    }
+
+    var table = $(tableId).DataTable({
         "autoWidth": false,
         "processing" : true,
         "searching": false,
@@ -459,80 +470,66 @@ function setDataTable(tableId, columns, args){
                 return res.data;
             }
         },
-        "columns": columns,
-        "createdRow": function(row, data, dataIndex) {
-            $(row).attr("data-id", data.id);
-            $(row).attr("data-customerId", data.customerId ? data.customerId : '');
-        },
-        "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "infoEmpty": "데이터 없음",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-        },
-        "editor": {
-            "table": tableId
-        },
-    });
-
-    
-}
-
-function getCampaigns(args) {
-    setDataTable('#campaigns-table', [
-            { 
-                "data": "media", 
-                "width": "6%",
+        "columns": [
+            { "data": "media", "width": "6%"},
+            { "data": "name", "width": "10%"},
+            { "data": "status", "width": "4%"},
+            { "data": "budget", "width": "9%"},
+            { "data": "cpa","width": "7%"},
+            { "data": "unique_total", "width": "3%"},
+            { "data": "spend","width": "9%"},
+            { "data": "margin","width": "9%"},
+            { "data": "margin_ratio","width": "5%"},
+            { "data": "sales","width": "9%"},
+            { "data": "impressions", "width": "7%"},
+            { "data": "click", "width": "5%"},
+            { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
+            { "data": "cvr", "width": "3%"}, //전환율
+        ],
+        "columnDefs": [
+            {
                 "render": function (data, type, row) {
                     media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
                     return media;
-                }
+                },
+                targets: 0,
             },
-            { 
-                "data": "name", 
-                "width": "10%",
+            {
                 "render": function (data, type, row) {
                     str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-                    name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
+                    name = '<div id="mediaName"><p data-editable="true">'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button></div>';
                     return name;
                 },
-                "editable": true,  // 편집 가능 여부
-                "editor": "text"
+                targets: 1,
             },
-            { 
-                "data": "status", 
-                "width": "4%",
+            {
                 "render": function (data, type, row) {
                     status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                     return status;
-                }
+                },
+                targets: 2,
             },
-            { 
-                "data": "budget", 
-                "width": "9%",
+            {
                 "render": function (data, type, row) {
-                    budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
+                    budget = '<div class="budget">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
                     return budget;
-                }
+                },
+                targets: 3,
             },
-            { 
-                "data": "cpa",
-                "width": "7%",
+            {
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
-                }
+                },
+                targets: 4,
             },
-            { "data": "unique_total", "width": "3%" },
-            { 
-                "data": "spend",
-                "width": "9%",
+            {
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
-                }
+                },
+                targets: 6,
             },
-            { 
-                "data": "margin",
-                "width": "9%",
+            {
                 "render": function (data, type, row) {
                     if(data < 0){
                         margin = '\u20A9'+data; 
@@ -541,11 +538,10 @@ function getCampaigns(args) {
                         margin = '\u20A9'+data; 
                     }
                     return margin;
-                }
+                },
+                targets: 7,
             },
-            { 
-                "data": "margin_ratio",
-                "width": "5%",
+            {
                 "render": function (data, type, row) {
                     if(data < 20 && data != 0){
                         margin_ratio = data+'\u0025';   
@@ -555,241 +551,45 @@ function getCampaigns(args) {
                     }
 
                     return margin_ratio;
-                }
+                },
+                targets: 8,
             },
-            { 
-                "data": "sales",
-                "width": "9%",
+            {
                 "render": function (data, type, row) {
                     return '\u20A9'+data;  
-                }
+                },
+                targets: 9,
             },
-            { "data": "impressions", "width": "7%"},
-            { "data": "click", "width": "5%"},
-            { 
-                "data": "cpc", 
-                "width": "5%",
+            {
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
-                }
-            }, //클릭당단가 (1회 클릭당 비용)
-            { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-            { 
-                "data": "cvr", 
-                "width": "3%",
+                },
+                targets: 12,
+            },
+            {
                 "render": function (data, type, row) {
                     return data+'\u0025';
-                }
-            }, //전환율
-        ], args);
-}
-
-function getAdsets(args) {
-    setDataTable('#adsets-table', [
-        { 
-            "data": "media", 
-            "width": "6%",
-            "render": function (data, type, row) {
-                media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
-                return media;
-            }
+                },
+                targets: 13,
+            },
+            {
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                },
+                targets: 14,
+            },
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            $(row).attr("data-customerId", data.customerId ? data.customerId : '');
         },
-        { 
-            "data": "name", 
-            "width": "10%",
-            "render": function (data, type, row) {
-                str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-                name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
-                return name;
-            }
-        },
-        { 
-            "data": "status", 
-            "width": "4%",
-            "render": function (data, type, row) {
-                status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
-                return status;
-            }
-        },
-        { 
-            "data": "budget", 
-            "width": "9%",
-            "render": function (data, type, row) {
-                budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
-                return budget;
-            }
-        },
-        { 
-            "data": "cpa",
-            "width": "7%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        },
-        { "data": "unique_total", "width": "3%" },
-        { 
-            "data": "spend",
-            "width": "9%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        },
-        { 
-            "data": "margin",
-            "width": "9%",
-            "render": function (data, type, row) {
-                if(data < 0){
-                    margin = '\u20A9'+data; 
-                    return '<span style="color:red">'+margin+'</span>';
-                }else{
-                    margin = '\u20A9'+data; 
-                }
-                return margin;
-            }
-        },
-        { 
-            "data": "margin_ratio",
-            "width": "5%",
-            "render": function (data, type, row) {
-                if(data < 20 && data != 0){
-                    margin_ratio = data+'\u0025';   
-                    return '<span style="color:red">'+margin_ratio+'</span>';
-                }else{
-                    margin_ratio = data+'\u0025';   
-                }
-
-                return margin_ratio;
-            }
-        },
-        { 
-            "data": "sales",
-            "width": "9%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;  
-            }
-        },
-        { "data": "impressions", "width": "7%"},
-        { "data": "click", "width": "5%"},
-        { 
-            "data": "cpc", 
-            "width": "5%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        }, //클릭당단가 (1회 클릭당 비용)
-        { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-        { 
-            "data": "cvr", 
-            "width": "3%",
-            "render": function (data, type, row) {
-                return data+'\u0025';
-            }
-        }, //전환율
-    ], args);
-}
-
-function getAds(args) {
-    setDataTable('#ads-table', [
-        { 
-            "data": "media", 
-            "width": "6%",
-            "render": function (data, type, row) {
-                media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
-                return media;
-            }
-        },
-        { 
-            "data": "name", 
-            "width": "10%",
-            "render": function (data, type, row) {
-                str = row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name);
-                name = '<p>'+str+'</p><button class="btn-memo"><span class="blind">메모</span></button>';
-                return name;
-            }
-        },
-        { 
-            "data": "status", 
-            "width": "4%",
-            "render": function (data, type, row) {
-                status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
-                return status;
-            }
-        },
-        { 
-            "data": "budget", 
-            "width": "9%",
-            "render": function (data, type, row) {
-                budget = '<div class="budget" data-editable="true">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
-                return budget;
-            }
-        },
-        { 
-            "data": "cpa",
-            "width": "7%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        },
-        { "data": "unique_total", "width": "3%" },
-        { 
-            "data": "spend",
-            "width": "9%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        },
-        { 
-            "data": "margin",
-            "width": "9%",
-            "render": function (data, type, row) {
-                if(data < 0){
-                    margin = '\u20A9'+data; 
-                    return '<span style="color:red">'+margin+'</span>';
-                }else{
-                    margin = '\u20A9'+data; 
-                }
-                return margin;
-            }
-        },
-        { 
-            "data": "margin_ratio",
-            "width": "5%",
-            "render": function (data, type, row) {
-                if(data < 20 && data != 0){
-                    margin_ratio = data+'\u0025';   
-                    return '<span style="color:red">'+margin_ratio+'</span>';
-                }else{
-                    margin_ratio = data+'\u0025';   
-                }
-
-                return margin_ratio;
-            }
-        },
-        { 
-            "data": "sales",
-            "width": "9%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;  
-            }
-        },
-        { "data": "impressions", "width": "7%"},
-        { "data": "click", "width": "5%"},
-        { 
-            "data": "cpc", 
-            "width": "5%",
-            "render": function (data, type, row) {
-                return '\u20A9'+data;
-            }
-        }, //클릭당단가 (1회 클릭당 비용)
-        { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-        { 
-            "data": "cvr", 
-            "width": "3%",
-            "render": function (data, type, row) {
-                return data+'\u0025';
-            }
-        }, //전환율
-    ], args);
+        "language": {
+            "emptyTable": "데이터가 존재하지 않습니다.",
+            "infoEmpty": "데이터 없음",
+            "zeroRecords": "일치하는 데이터가 없어요.",
+            "loadingRecords": "로딩중...",
+        }
+    });
 }
 
 function setDate(){
@@ -839,6 +639,43 @@ function setDate(){
     });
 }
 
+function sendStatus(data){
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>/advertisements/set-status",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){
+            if(data.response == true){
+                alert("변경되었습니다.");
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function sendName(data, $input){
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>/advertisements/set-name",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){
+            if(data.response == true){
+                var $new_p = $('<p data-editable="true">');
+                $new_p.text(data.name);
+                $input.replaceWith($new_p);
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
 $('body').on('click', '.media_btn', function(){
     $(this).toggleClass("active");
 
@@ -864,16 +701,7 @@ $('body').on('click', '.media_btn', function(){
     }
 
     getAccount(args);
-    switch (args.type) {
-    case "ads":
-        getAds(args);
-        break;
-    case "adsets":
-        getAdsets(args);
-        break;
-    default:
-        getCampaigns(args);
-    } 
+    getDataTable(args); 
 });
 
 $('body').on('click', '.tab-link', function(){
@@ -881,16 +709,7 @@ $('body').on('click', '.tab-link', function(){
     var tabVal = $(this).val();
     args.type = tabVal;
 
-    switch (args.type) {
-    case "ads":
-        getAds(args);
-        break;
-    case "adsets":
-        getAdsets(args);
-        break;
-    default:
-        getCampaigns(args);
-    } 
+    getDataTable(args);
 });
 
 $('body').on('click', '#business_btn, #account_btn', function(){
@@ -907,16 +726,7 @@ $('body').on('click', '#business_btn, #account_btn', function(){
     }
 
     getReport(args);
-    switch (tab) {
-    case "ads":
-        getAds(args);
-        break;
-    case "adsets":
-        getAdsets(args);
-        break;
-    default:
-        getCampaigns(args);
-    } 
+    getDataTable(args);
 });
 
 
@@ -929,17 +739,7 @@ $('body').on('click', '#search_btn', function() {
     args.tab = tab;
     getReport(args);
     getAccount(args);
-
-    switch (tab) {
-    case "ads":
-        getAds(args);
-        break;
-    case "adsets":
-        getAdsets(args);
-        break;
-    default:
-        getCampaigns(args);
-    } 
+    getDataTable(args);
 });
 
 $('body').on('focus', '#status_btn', function(){
@@ -957,25 +757,82 @@ $('body').on('focus', '#status_btn', function(){
     }
 
     if(confirm("상태를 변경하시겠습니까?")){
-        $.ajax({
-            type: "GET",
-            url: "<?=base_url()?>/advertisements/set-status",
-            data: data,
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(data){
-                if(data == true){
-                    alert("변경되었습니다.");
-                }
-            },
-            error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
-            }
-        });
+        sendStatus(data);
     }else{
         $(this).val(prevVal);
     }
 });
+
+$("body").on("click", '#mediaName p[data-editable="true"]', function(){
+    tab = $('.tab-link.active').val();
+    id = $(this).closest("tr").data("id");
+    if(tab == 'ads' && id.includes('google')){
+        
+        return false;
+    }else{
+        $('#mediaName p[data-editable="true"]').attr("data-editable", "false");
+        var tmp_name = $(this).text();
+        var $input = $('<input type="text" style="width:100%">');
+        $input.val(tmp_name);
+        $(this).replaceWith($input);
+        $input.focus().bind({
+            keydown: function (e) {
+                if (e.keyCode == 27) {
+                    //ESC Key
+                    var $old_p = $('<p data-editable="true">');
+                    $old_p.text(tmp_name);
+                    $(this).replaceWith($old_p);
+                }
+
+                if(e.keyCode == 13){
+                    var new_name = $(this).val();
+
+                    var data = {
+                        'name' : new_name,
+                        'tab' : tab,
+                        'id' : id,
+                    };
+                    customerId = $(this).closest("tr").data("customerid");
+                    if (customerId) {
+                        data['customerId'] = customerId;
+                    }
+
+                    if(tmp_name === new_name){
+                        var $old_p = $('<p data-editable="true">');
+                        $old_p.text(tmp_name);
+                        $input.replaceWith($old_p);
+                    } else {
+                        sendName(data, $input);
+                    }
+                }
+            },
+            blur: function() {
+                var new_name = $(this).val();
+
+                var data = {
+                    'name' : new_name,
+                    'tab' : tab,
+                    'id' : id,
+                };
+                customerId = $(this).closest("tr").data("customerid");
+                if (customerId) {
+                    data['customerId'] = customerId;
+                }
+
+                if(tmp_name === new_name){
+                    var $old_p = $('<p data-editable="true">');
+                    $old_p.text(tmp_name);
+                    $input.replaceWith($old_p);
+                } else {
+                    sendName(data, $input); 
+                }
+            }
+        });
+        $('#mediaName p[data-editable="false"]').attr("data-editable", "true");
+    }
+    
+});
+
 
 </script>
 <?=$this->endSection();?>

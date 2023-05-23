@@ -17,7 +17,7 @@ class AdvFacebookManagerModel extends Model
     public function getCampaigns($data)
     {
         $builder = $this->facebook->table('fb_campaign A');
-        $builder->select('"페이스북" AS media, CONCAT("facebook_", A.campaign_id) AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        $builder->select('"페이스북" AS media, CONCAT("facebook_", A.campaign_id) AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id');
         $builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');

@@ -32,6 +32,7 @@ class AdvGoogleManagerModel extends Model
         }
         
         if(!empty($data['businesses'])){
+			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 			$builder->whereIn('E.manageCustomer', $data['businesses']);
         }
 
@@ -63,6 +64,7 @@ class AdvGoogleManagerModel extends Model
 		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
 		if(!empty($data['businesses'])){
+			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 			$builder->whereIn('E.manageCustomer', $data['businesses']);
         }
 
@@ -103,6 +105,7 @@ class AdvGoogleManagerModel extends Model
 		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
 		if(!empty($data['businesses'])){
+			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 			$builder->whereIn('E.manageCustomer', $data['businesses']);
         }
 
