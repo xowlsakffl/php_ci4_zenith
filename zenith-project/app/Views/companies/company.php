@@ -1,12 +1,16 @@
 <?=$this->extend('templates/front.php');?>
 <!--타이틀-->
 <?=$this->section('title');?>
-    CHAIN 열혈광고 - 광고주/광고대행사
+    CHAIN 열혈광고 - 광고주/광고대행사 관리
 <?=$this->endSection();?>
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script src="/static/js/twbsPagination.js"></script>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -15,7 +19,51 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
+<div class="sub-contents-wrap db-manage-contaniner">
+    <div class="title-area">
+        <h2 class="page-title">광고주/광고대행사 관리</h2>
+        <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
+    </div>
 
+    <div class="search-wrap">
+        <form name="search-form" class="search d-flex justify-content-center">
+            <div class="term d-flex align-items-center">
+                <input type="text" name="sdate" id="sdate">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <span> ~ </span>
+                <input type="text" name="edate" id="edate">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+            </div>
+            <div class="input">
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <div class="search-wrap my-5">
+            <div class="statusCount detail d-flex flex-wrap"></div>     
+        </div>
+
+        <div class="row table-responsive">
+            <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="first" style="width:20px">#</th>
+                        <th>소속대행사</th>
+                        <th style="width:50px">타입</th>
+                        <th>이름</th>
+                        <th>전화번호</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
     <!--content-->
     <div class="container-md">
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
@@ -183,35 +231,76 @@
 
 <?=$this->section('script');?>
 <script>
-$(document).ready(function(){
+var today = moment().format('YYYY-MM-DD');
+$('#sdate, #edate').val(today);
 
-getBoardList();
-function getBoardList(page, limit, search, sort, startDate, endDate){
+let data = {};
+let dataTable;
+setDate();
+getList();
+
+function setData() {
     data = {
-        'page': page ? page : 1,
-        'limit': limit ? limit : 10,
-        'search': search ? search : '',
-        'sort': sort ? sort : 'recent',
-        'startDate': startDate ? startDate : '',
-        'endDate': endDate ? endDate : '',
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
     };
-    
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/companies",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(xhr){
-            console.log(xhr.result);
-            setTable(xhr);       
-            setPaging(xhr);
-            setAllCount(xhr);
-            setDate(xhr);
+
+    return data;
+}
+
+function getList(){
+    dataTable = $('#deviceTable').DataTable({
+        "autoWidth": true,
+        "columnDefs": [
+            { targets: [0], orderable: false},
+        ],
+        "order": [[1,'desc']],
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "fixedHeader": true,
+        "deferRender": false,
+        "lengthMenu": [
+            [ 25, 10, 50, -1 ],
+            [ '25', '10', '50', '전체' ]
+        ],
+        "ajax": {
+            "url": "<?=base_url()?>/companies",
+            "data": function(d) {
+                d.searchData = setData();
+            },
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
         },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
+        "columns": [
+            { "data": null },
+            { "data": "seq", "name": "seq" },
+            { 
+                "data": "info_seq",
+                "render": function(data) {
+                    return data;
+                }
+            },
+            { "data": "advertiser" },
+            { "data": "media" },
+            { "data": "tab_name" },
+        ],
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+            return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        },  
     });
 }
 
@@ -531,8 +620,6 @@ $('body').on('click', '#DataResetBtn', function(){
     $('#toDate').val('');
     $('#search').val('');
     getBoardList();
-})
-
 });
 
 </script>

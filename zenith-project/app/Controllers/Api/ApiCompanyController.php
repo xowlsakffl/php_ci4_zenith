@@ -9,14 +9,30 @@ class ApiCompanyController extends \CodeIgniter\Controller
 {
     use ResponseTrait;
 
+    protected $data, $company, $validation;
+
     public function __construct()
     {
         $this->company = model(CompanyModel::class);
     }
 
+    public function getCompanies()
+    {
+        if (/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+
+            
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+
+        return $this->respond($data);
+    }
+
     public function get($id = NULL)
     {
-        if (strtolower($this->request->getMethod()) === 'get') {
+        if (/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get') {
+
             if ($id) {
                 $data['result'] = $this->company->getCompanies($id);
 
@@ -159,17 +175,5 @@ class ApiCompanyController extends \CodeIgniter\Controller
         }
         
         return $this->respond($ret);
-    }
-
-    public function _remap(...$params) {
-        $method = $this->request->getMethod();
-        $params = [($params[0] !== 'get' ? $params[0] : false)];
-        $this->data = $this->request->getRawInput();
-
-        if (method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], $params);
-        } else {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
     }
 }
