@@ -8,8 +8,10 @@
 <!--헤더-->
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
     .section .active{
         border: 1px solid red !important;
@@ -142,7 +144,12 @@ function getList(data = []){
         "ordering": true,
         "fixedHeader": true,
         "deferRender": false,
+        "lengthMenu": [
+            [ 25, 10, 50, -1 ],
+            [ '25', '10', '50', '전체' ]
+        ],
         "buttons": [
+            'pageLength',
             {
                 extend: 'copy',
                 text: 'Copy to clipboard'
@@ -196,20 +203,6 @@ function getList(data = []){
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
-        // "language": {
-        //     "emptyTable": "데이터가 존재하지 않습니다.",
-        //     "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-        //     "info": "현재 _START_ - _END_ / _TOTAL_건",
-        //     "infoEmpty": "데이터 없음",
-        //     "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-        //     "search": "에서 검색: ",
-        //     "zeroRecords": "일치하는 데이터가 없어요.",
-        //     "loadingRecords": "로딩중...",
-        //     "paginate": {
-        //         "next": "다음",
-        //         "previous": "이전"
-        //     }
-        // },
         "rowCallback": function(row, data, index) {
             var api = this.api();
             var startIndex = api.page() * api.page.len();
