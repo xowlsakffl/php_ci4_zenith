@@ -121,6 +121,7 @@ function setData() {
         'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
     };
+
     return data;
 }
 function getList(data = []){

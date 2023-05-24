@@ -81,7 +81,6 @@ class IntegrateController extends BaseController
 
     public function getEventLeadCount()
     {
-
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $data = $this->integrate->getEventLeadCount($arg);

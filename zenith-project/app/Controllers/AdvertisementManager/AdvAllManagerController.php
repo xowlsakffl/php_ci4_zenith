@@ -33,20 +33,16 @@ class AdvAllManagerController extends BaseController
 
     public function getReport()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'media' => $this->request->getGet('media'),
-                'dates' => [
-                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                ],
-                'businesses' => $this->request->getGet('businesses'),
-                'accounts' => $this->request->getGet('accounts'),
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $arg['dates'] = [
+                'sdate' => $arg['sdate'],
+                'edate' => $arg['edate'],
             ];
-            
+
             if(empty($arg['media'])){
-                $report = [];
-                return $this->respond($report);
+                $result = [];
+                return $this->respond($result);
             }
 
             $result = [];
@@ -126,25 +122,19 @@ class AdvAllManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'media' => $this->request->getGet('media'),
-                'dates' => [
-                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                ],
-                'type' => $this->request->getGet('type'),
-                'businesses' => $this->request->getGet('businesses'),
-                'accounts' => $this->request->getGet('accounts'),
-                'stx' => $this->request->getGet('stx'),
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $arg['searchData']['dates'] = [
+                'sdate' => $arg['searchData']['sdate'],
+                'edate' => $arg['searchData']['edate'],
             ];
 
-            if(empty($arg['media'])){
+            if(empty($arg['searchData']['media'])){
                 $result = [];
                 return $this->respond($result);
             }
-
-            switch ($arg['type']) {
+            
+            switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
                     break;
@@ -179,21 +169,21 @@ class AdvAllManagerController extends BaseController
     private function getCampaigns($arg)
     {
         $result  = [];    
-        foreach ($arg['media'] as $media) {
+        foreach ($arg['searchData']['media'] as $media) {
             switch ($media) {
                 case 'facebook':
                     $campaigns = $this->facebook->getCampaigns($arg);
-                    $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $campaigns = $this->facebook->getStatuses("campaigns", $campaigns, $arg['searchData']['dates']);
                     $result = array_merge($result, $campaigns); 
                     break;
                 case 'kakao':
                     $campaigns = $this->kakao->getCampaigns($arg);
-                    $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $campaigns = $this->kakao->getStatuses("campaigns", $campaigns, $arg['searchData']['dates']);
                     $result = array_merge($result, $campaigns); 
                     break;
                 case 'google':
                     $campaigns = $this->google->getCampaigns($arg);
-                    $campaigns = $this->google->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $campaigns = $this->google->getStatuses("campaigns", $campaigns, $arg['searchData']['dates']);
                     foreach ($campaigns as &$campaign) {
                         $campaign['adType'] = '';
     
@@ -239,7 +229,7 @@ class AdvAllManagerController extends BaseController
                     break;
                 case 'naver':
                     $campaigns = $this->naver->getCampaigns($arg);
-                    $campaigns = $this->naver->getStatuses("campaigns", $campaigns, $arg['dates']);
+                    $campaigns = $this->naver->getStatuses("campaigns", $campaigns, $arg['searchData']['dates']);
                     $result = array_merge($result, $campaigns); 
                     break;
                 default:
@@ -260,21 +250,21 @@ class AdvAllManagerController extends BaseController
     private function getAdSets($arg)
     {
         $result  = [];    
-        foreach ($arg['media'] as $media) {
+        foreach ($arg['searchData']['media'] as $media) {
             switch ($media) {
                 case 'facebook':
                     $adsets = $this->facebook->getAdsets($arg);
-                    $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['dates']);
+                    $adsets = $this->facebook->getStatuses("adsets", $adsets, $arg['searchData']['dates']);
                     $result = array_merge($result, $adsets); 
                     break;
                 case 'kakao':
                     $adsets = $this->kakao->getAdsets($arg);
-                    $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['dates']);
+                    $adsets = $this->kakao->getStatuses("adsets", $adsets, $arg['searchData']['dates']);
                     $result = array_merge($result, $adsets); 
                     break;
                 case 'google':
                     $adsets = $this->google->getAdsets($arg);
-                    $adsets = $this->google->getStatuses("adsets", $adsets, $arg['dates']);              
+                    $adsets = $this->google->getStatuses("adsets", $adsets, $arg['searchData']['dates']);              
                     foreach ($adsets as &$adset) {
                         $adset['bidAmount'] = max([$adset['cpcBidAmount'],$adset['cpmBidAmount']]);
                         if($adset['biddingStrategyType'] == '타겟 CPA')
@@ -284,7 +274,7 @@ class AdvAllManagerController extends BaseController
                     break;
                 case 'naver':
                     $adsets = $this->naver->getAdsets($arg);
-                    $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['dates']);
+                    $adsets = $this->naver->getStatuses("adsets", $adsets, $arg['searchData']['dates']);
                     $result = array_merge($result, $adsets); 
                     break;
                 default:
@@ -304,26 +294,26 @@ class AdvAllManagerController extends BaseController
     private function getAds($arg)
     {
         $result  = [];    
-        foreach ($arg['media'] as $media) {
+        foreach ($arg['searchData']['media'] as $media) {
             switch ($media) {
                 case 'facebook':
                     $ads = $this->facebook->getAds($arg);
-                    $ads = $this->facebook->getStatuses("ads", $ads, $arg['dates']);
+                    $ads = $this->facebook->getStatuses("ads", $ads, $arg['searchData']['dates']);
                     $result = array_merge($result, $ads); 
                     break;
                 case 'kakao':
                     $ads = $this->kakao->getAds($arg);
-                    $ads = $this->kakao->getStatuses("ads", $ads, $arg['dates']);
+                    $ads = $this->kakao->getStatuses("ads", $ads, $arg['searchData']['dates']);
                     $result = array_merge($result, $ads); 
                     break;
                 case 'google':
                     $ads = $this->google->getAds($arg);
-                    $ads = $this->google->getStatuses("ads", $ads, $arg['dates']);
+                    $ads = $this->google->getStatuses("ads", $ads, $arg['searchData']['dates']);
                     $result = array_merge($result, $ads); 
                     break;
                 case 'naver':
                     $ads = $this->naver->getAds($arg);
-                    $ads = $this->naver->getStatuses("ads", $ads, $arg['dates']);
+                    $ads = $this->naver->getStatuses("ads", $ads, $arg['searchData']['dates']);
                     $result = array_merge($result, $ads); 
                     break;
                 default:
@@ -417,14 +407,11 @@ class AdvAllManagerController extends BaseController
 
     public function getAccounts()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'media' => $this->request->getGet('media'),
-                'dates' => [
-                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                ],
-                'businesses' => $this->request->getGet('businesses'),
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $arg['dates'] = [
+                'sdate' => $arg['sdate'],
+                'edate' => $arg['edate'],
             ];
 
             if(empty($arg['media'])){

@@ -16,6 +16,7 @@ class AdvGoogleManagerModel extends Model
 
     public function getCampaigns($data)
     {
+		$srch = $data['searchData'];
         $builder = $this->google->table('aw_campaign A');
         $builder->select('"구글" AS media, CONCAT("google_", A.id) AS id, A.name AS name, A.status AS status, A.is_updating, B.biddingStrategyType AS biddingStrategyType,
         COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin, E.customerId');
@@ -26,23 +27,22 @@ class AdvGoogleManagerModel extends Model
         $builder->join('aw_ad_account E', 'A.customerId = E.customerId');
         $builder->where('A.status !=', 'NODATA');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
         
-        if(!empty($data['businesses'])){
-			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
-			$builder->whereIn('E.manageCustomer', $data['businesses']);
+        if(!empty($srch['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
         }
 
-        if(!empty($data['accounts'])){
-			$builder->whereIn('A.customerId', $data['accounts']);
+        if(!empty($srch['accounts'])){
+			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
         }
 
-        if(!empty($data['stx'])){
+        if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('A.name', $data['stx']);
+            $builder->like('A.name', $srch['stx']);
             $builder->groupEnd();
         }
 
@@ -55,6 +55,7 @@ class AdvGoogleManagerModel extends Model
 
     public function getAdsets($data)
 	{
+		$srch = $data['searchData'];
 		$builder = $this->google->table('aw_campaign A');
 		$builder->select('"구글" AS media, CONCAT("google_", B.id) AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impressions,
         SUM(D.clicks) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as budget, E.customerId');
@@ -63,24 +64,23 @@ class AdvGoogleManagerModel extends Model
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
 		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
-		if(!empty($data['businesses'])){
-			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
-			$builder->whereIn('E.manageCustomer', $data['businesses']);
+		if(!empty($srch['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
         }
 
-		if(!empty($data['stx'])){
+		if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('B.name', $data['stx']);
+            $builder->like('B.name', $srch['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
 
-        if(!empty($data['accounts'])){
-			$builder->whereIn('A.customerId', $data['accounts']);
+        if(!empty($srch['accounts'])){
+			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
         }
 
         $builder->where('B.status !=', 'NODATA');
@@ -96,6 +96,7 @@ class AdvGoogleManagerModel extends Model
 
     public function getAds($data)
 	{
+		$srch = $data['searchData'];
 		$builder = $this->google->table('aw_campaign A');
 		$builder->select('"구글" AS media, A.id AS campaignId, CONCAT("google_", C.id) AS id, C.name AS name, C.code, C.status AS status, C.imageUrl, C.finalUrl, C.adType, C.mediaType, A.is_updating AS is_updating, C.imageUrl, C.assets,
         SUM(D.impressions) impressions, SUM(D.clicks) click, SUM(D.cost) spend, 0 AS budget, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, E.customerId');
@@ -104,24 +105,23 @@ class AdvGoogleManagerModel extends Model
 		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
 		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
 
-		if(!empty($data['businesses'])){
-			//$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
-			$builder->whereIn('E.manageCustomer', $data['businesses']);
+		if(!empty($srch['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
         }
 
-		if(!empty($data['stx'])){
+		if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('C.name', $data['stx']);
+            $builder->like('C.name', $srch['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
 
-		if(!empty($data['accounts'])){
-			$builder->whereIn('A.customerId', $data['accounts']);
+		if(!empty($srch['accounts'])){
+			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
         }
 
         $builder->where('C.status !=', 'NODATA');
@@ -280,8 +280,8 @@ class AdvGoogleManagerModel extends Model
 
         $builder->where('F.name !=', '');
 
-        if(!empty($data['businesses'])){
-			$builder->whereIn('F.manageCustomer', $data['businesses']);
+        if(!empty($data['business'])){
+			$builder->whereIn('F.manageCustomer', explode("|", $data['business']));
         }
 
         $builder->groupBy('F.customerId');
@@ -339,12 +339,12 @@ class AdvGoogleManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         } 
 
-		if(!empty($data['businesses'])){
-			$builder->whereIn('E.manageCustomer', $data['businesses']);
+		if(!empty($data['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
 
 		if(!empty($data['accounts'])){
-			$builder->whereIn('D.customerId', $data['accounts']);
+			$builder->whereIn('D.customerId', explode("|",$data['accounts']));
         }
 
 		$builder->groupBy('A.date');

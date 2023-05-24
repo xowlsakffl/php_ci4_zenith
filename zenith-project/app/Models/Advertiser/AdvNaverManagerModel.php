@@ -16,6 +16,7 @@ class AdvNaverManagerModel extends Model
 
     public function getCampaigns($data)
 	{
+        $srch = $data['searchData'];
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('"네이버" AS media, CONCAT("naver_", campaign_id) AS id, campaign_name AS name, 
         COUNT(adset_id) AS adgroups, COUNT(ad_id) AS ads, SUM(impression) AS impressions, SUM(click) AS click, SUM(sales) AS spend, SUM(db_sales) AS sales, SUM(db_count) as unique_total, 0 AS budget, 0 AS status');
@@ -26,7 +27,7 @@ class AdvNaverManagerModel extends Model
         }
 
         if(!empty($data['accounts'])){
-			$builder->whereIn('account_id', $data['accounts']);
+			$builder->whereIn('account_id', explode("|",$srch['accounts']));
         }
 
         if(!empty($data['stx'])){
@@ -44,6 +45,7 @@ class AdvNaverManagerModel extends Model
 
     public function getAdsets($data)
 	{
+        $srch = $data['searchData'];
 		$builder = $this->naver->table('gfa_ad_report_history');
         $builder->select('"네이버" AS media, CONCAT("naver_", adset_id) AS id, adset_name AS name,
         COUNT(ad_id) AS ads, SUM(impression) AS impressions,
@@ -55,7 +57,7 @@ class AdvNaverManagerModel extends Model
         }
 
         if(!empty($data['accounts'])){
-			$builder->whereIn('account_id', $data['accounts']);
+			$builder->whereIn('account_id', explode("|",$srch['accounts']));
         }
 
         if(!empty($data['stx'])){
@@ -73,6 +75,7 @@ class AdvNaverManagerModel extends Model
 
     public function getAds($data)
 	{
+        $srch = $data['searchData'];
 		$builder = $this->naver->table('gfa_ad_report_history');
 		$builder->select('"네이버" AS media, CONCAT("naver_", ad_id) AS id, ad_name AS name, SUM(impression) AS impressions, SUM(click) AS click, SUM(db_count) as unique_total, SUM(sales) AS spend, SUM(db_sales) AS sales, 0 AS budget, 0 AS status');
 
@@ -82,7 +85,7 @@ class AdvNaverManagerModel extends Model
         }
 
         if(!empty($data['accounts'])){
-			$builder->whereIn('account_id', $data['accounts']);
+			$builder->whereIn('account_id', explode("|",$srch['accounts']));
         }
 
         if(!empty($data['stx'])){
@@ -148,7 +151,7 @@ class AdvNaverManagerModel extends Model
         } 
 
 		if(!empty($data['accounts'])){
-			$builder->whereIn('B.account_id', $data['accounts']);
+			$builder->whereIn('B.account_id', explode("|",$data['accounts']));
         }
 
 		$builder->groupBy('A.date');
