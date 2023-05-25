@@ -66,8 +66,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 소속
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        $routes->get('company/list', 'CompanyController::index');
-        $routes->get('company/belong/(:num)', 'CompanyController::belong/$1');//소속 변경
+        $routes->get('company', 'Api\ApiCompanyController::index');
+        $routes->get('company/list', 'Api\ApiCompanyController::getCompanies');
+        /* $routes->get('company/belong/(:num)', 'CompanyController::belong/$1');//소속 변경
         $routes->put('company/belong', 'CompanyController::updateCompanies');
         
         //ajax
@@ -75,7 +76,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('(:num)', 'Api\ApiCompanyController::$1');
         $routes->post('', 'Api\ApiCompanyController::$1');
         $routes->put('(:num)', 'Api\ApiCompanyController::$1');
-        $routes->delete('(:num)', 'Api\ApiCompanyController::$1');
+        $routes->delete('(:num)', 'Api\ApiCompanyController::$1'); */
     });
 
     // 광고관리

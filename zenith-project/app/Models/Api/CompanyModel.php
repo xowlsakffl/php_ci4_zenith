@@ -60,59 +60,57 @@ class CompanyModel extends Model
         $this->zenith = \Config\Database::connect();
     }
 
-    public function getCompanies()
+    public function getCompanies($data)
     {
-        $builder = $this->zenith->table('companies as c');//여기부터
-        $builder = $builder->select('c.*, ci.parent_cdx as parent, parent_c.companyName as parent_company_name');
-        $builder->join('companies_idx as ci', 'c.cdx = ci.cdx', 'left');
-        $builder->join('companies as parent_c', 'ci.parent_cdx = parent_c.cdx', 'left');
+        $srch = $data['searchData'];
+        $builder = $this->zenith->table('companies AS c');
+        $builder->select('c.*, ci.company_parent_id as parent, parent_c.name as p_name');
+        $builder->join('companies_idx AS ci', 'c.id = ci.company_id', 'left');
+        $builder->join('companies AS parent_c', 'parent_c.id = ci.company_parent_id', 'left');
 
-        if(isset($param['limit'])){
-            $limit = $param['limit'];
-        }else{
-            $limit = 10;
+        if(!empty($srch['sdate'] && $srch['edate'])){
+            $builder->where('DATE(c.created_at) >=', $srch['sdate']);
+            $builder->where('DATE(c.created_at) <=', $srch['edate']);
         }
 
-        if(!empty($param['search'])){
-            $searchText = $param['search'];
+        if(!empty($srch['stx'])){
             $builder->groupStart();
-                $builder->orlike('c.companyType', $searchText, 'both');
-                $builder->orLike('c.companyName', $searchText, 'both');
-                $builder->orLike('c.companyTel', $searchText, 'both');
+            $builder->like('c.type', $srch['stx']);
+            $builder->orLike('c.name', $srch['stx']);
+            $builder->orLike('c.tel', $srch['stx']);
+            $builder->orLike('parent_c.name', $srch['stx']);
             $builder->groupEnd();
-            $data['pager']['search'] = $param['search'];
         }
+        
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
 
-        if(!empty($param['startDate']) && !empty($param['endDate'])){
-            $builder->where('c.created_at >=', $param['startDate'].' 00:00:00');
-            $builder->where('c.created_at <=', $param['endDate'].' 23:59:59');
-            
-            $data['pager']['startDate'] = $param['startDate'];
-            $data['pager']['endDate'] = $param['endDate'];
-        }
-
-        if(!empty($param['sort'])){
-            if($param['sort'] == 'old'){
-                $builder->orderBy('c.cdx', 'asc');
-            }else{
-                $builder->orderBy('c.cdx', 'desc');
+        // limit 적용한 쿼리
+        $builder->groupBy('c.id');
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
             }
-            
-            $data['pager']['sort'] = $param['sort'];
         }
-        $builder->groupBy('c.cdx');
+        $orderBy[] = "id DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
 
-        $data['result'] = $builder->paginate($limit);
+        if($data['length'] > 0){
+            $builder->limit($data['length'], $data['start']);
+        }
+    
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
 
-        $data['pager']['limit'] = intval($limit);
-        $data['pager']['total'] = $builder->pager->getTotal();
-        $data['pager']['pageCount'] = $builder->pager->getPageCount();
-        $data['pager']['currentPage'] = $builder->pager->getCurrentPage();
-        $data['pager']['firstPage'] = $builder->pager->getFirstPage();
-        $data['pager']['lastPage'] = $builder->pager->getLastPage();
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
     }
 
-    public function getCompanies()
+    public function getCompany()
     {
         $builder = $this->select('c.*, GROUP_CONCAT(DISTINCT u.id) as user_id, GROUP_CONCAT(DISTINCT u.username) as username, ci.parent_cdx as parent, parent_c.companyName as parent_company_name');
         $builder->from('companies as c');

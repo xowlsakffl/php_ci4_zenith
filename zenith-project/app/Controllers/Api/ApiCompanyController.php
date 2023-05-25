@@ -16,17 +16,30 @@ class ApiCompanyController extends \CodeIgniter\Controller
         $this->company = model(CompanyModel::class);
     }
 
+    public function index()
+    {
+        return view('companies/company');
+    }
+
     public function getCompanies()
     {
         if (/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
+            $result = $this->company->getCompanies($param);
 
-            
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($param['draw']),
+            ];
+
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
 
-        return $this->respond($data);
+        
     }
 
     public function get($id = NULL)
