@@ -89,7 +89,7 @@ class IntegrateModel extends Model
         }
         $orderBy[] = "seq DESC";
         $builder->orderBy(implode(",", $orderBy),'',true);
-        $builder->limit($data['length'], $data['start']);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
         // dd($builder->getCompiledSelect());
         // 결과 반환
         $result = $builder->get()->getResultArray();
@@ -206,6 +206,16 @@ class IntegrateModel extends Model
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
         }
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getMemo($data) 
+    {
+        $builder = $this->zenith->table('event_leads_memo');
+        $builder->select("*");
+        $builder->where("leads_seq", $data['seq']);
         $result = $builder->get()->getResultArray();
 
         return $result;

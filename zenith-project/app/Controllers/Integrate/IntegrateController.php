@@ -122,10 +122,21 @@ class IntegrateController extends BaseController
 
     public function getStatusCount()
     {
-
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->integrate->getStatusCount($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getMemo()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->integrate->getMemo($arg);
 
             return $this->respond($result);
         }else{

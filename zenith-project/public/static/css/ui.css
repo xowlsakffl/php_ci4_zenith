@@ -161,6 +161,16 @@ select::-ms-expand {
   display: none;
 }
 
+::-moz-selection {
+  color: #fff;
+  background: red;
+}
+
+::selection {
+  color: #fff;
+  background: red;
+}
+
 @media screen and (max-width: 1024px) {
   html, body {
     font-size: 14px;
@@ -1138,6 +1148,10 @@ body {
   font-size: 1.625rem;
   border-bottom: 2px solid #ce1922;
 }
+.modal .modal-header .modal-title .title::before {
+  content: "-";
+  padding: 0 5px;
+}
 .modal .modal-header .modal-title .bi {
   font-size: 22px;
 }
@@ -1213,7 +1227,18 @@ body {
   font-size: 13px;
 }
 .memo-list li {
+  position: relative;
   padding: 10px 0;
+}
+.memo-list li::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: -6px;
+  width: 2px;
+  height: 2px;
+  border-radius: 100%;
+  background-color: #ce1922;
 }
 .memo-list li:not(:last-child) {
   border-bottom: 2px dashed #dfdfdf;

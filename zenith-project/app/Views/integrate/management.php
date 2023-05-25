@@ -8,10 +8,8 @@
 <!--헤더-->
 <?=$this->section('header');?>
 <link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
     .section .active{
         border: 1px solid red !important;
@@ -76,21 +74,21 @@
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
                     <tr>
-                        <th class="first" style="width:20px">#</th>
+                        <th class="first">#</th>
                         <th>SEQ</th>
-                        <th style="width:50px">이벤트</th>
+                        <th>이벤트</th>
                         <th>광고주</th>
                         <th>매체</th>
-                        <th style="width:110px">이벤트 구분</th>
-                        <th style="width:50px">이름</th>
-                        <th style="width:90px">전화번호</th>
-                        <th style="width:30px">나이</th>
-                        <th style="width:30px">성별</th>
+                        <th>이벤트 구분</th>
+                        <th>이름</th>
+                        <th>전화번호</th>
+                        <th>나이</th>
+                        <th>성별</th>
                         <th>기타</th>
-                        <th style="width:60px">사이트</th>
-                        <th style="width:70px">등록일</th>
-                        <th style="width:30px">메모</th>
-                        <th class="last" style="width:60px">인정기준</th>
+                        <th>사이트</th>
+                        <th>등록일</th>
+                        <th>메모</th>
+                        <th class="last">인정기준</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -98,6 +96,28 @@
                 </tbody>
             </table>
         </div>
+        <!-- 개별 메모 -->
+        <div class="modal fade" id="integrate-memo" tabindex="-1" aria-labelledby="integrate-memo-label" aria-hidden="true">
+            <div class="modal-dialog modal-sm sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="integrate-memo-label"><i class="bi bi-file-text"></i> 개별 메모<span class="title"></span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="regi-form">
+                            <fieldset>
+                                <legend>메모 작성</legend>
+                                <textarea></textarea>
+                                <button type="button" class="btn-regi">작성</button>
+                            </fieldset>
+                        </form>
+                        <ul class="memo-list m-2"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- //개별 메모 -->
     </div>
 </div>
 <?=$this->endSection();?>
@@ -129,7 +149,7 @@ function setData() {
 function getList(data = []){
     
     dataTable = $('#deviceTable').DataTable({
-        "autoWidth": true,
+        "autoWidth": false,
         "columnDefs": [
             { targets: [0], orderable: false},
             { targets: [1], visible: false},
@@ -142,11 +162,13 @@ function getList(data = []){
         "responsive": true,
         "searching": false,
         "ordering": true,
-        "fixedHeader": true,
-        "deferRender": false,
+        "scrollX": true,
+        "scrollY": 500,
+        "scrollCollapse": true,
+        "deferRender": true,
         "lengthMenu": [
             [ 25, 10, 50, -1 ],
-            [ '25', '10', '50', '전체' ]
+            [ '25개', '10개', '50개', '전체' ]
         ],
         "buttons": [
             'pageLength',
@@ -167,9 +189,9 @@ function getList(data = []){
             "dataType": "json",
         },
         "columns": [
-            { "data": null },
-            { "data": "seq", "name": "seq" },
-            { "data": "info_seq",
+            { "data": null, "width": "40px" },
+            { "data": "seq" },
+            { "data": "info_seq", "width": "40px",
               "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
               }
@@ -177,24 +199,28 @@ function getList(data = []){
             { "data": "advertiser" },
             { "data": "media" },
             { "data": "tab_name" },
-            { "data": "name",
+            { "data": "name", "width": "50px",
               "render": function(data) {
                 return '<span title="'+data+'">'+data+'</span>';
               } 
             },
-            { "data": "dec_phone" },
-            { "data": "age" },
-            { "data": "gender" },
+            { "data": "dec_phone", "width": "90px" },
+            { "data": "age", "width": "30px" },
+            { "data": "gender", "width": "30px" },
             { "data": "add" },
-            { "data": "site" },
-            { "data": "reg_date", },
-            { "data": "memo_cnt",
+            { "data": "site", "width": "50px" },
+            { "data": "reg_date", "width": "70px" },
+            { "data": "memo_cnt", "width": "30px",
               "render" : function(data) {
-                return '<a href="#" class="btn_memo text-dark position-relative"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger">'+data+'</span></a>';
+                var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
+                if(data > 0)
+                    html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger">'+data+'</span>';
+                html += '</a>';
+                return html;
               }
             },
             { 
-                "data": 'status',
+                "data": 'status', "width": "60px",
                 "render": function (data, type, row) {
                     return '<select class="form-select form-select-sm data-del"><option value="1" '+(data=="1"?" selected":"")+'>인정</option><option value="2" '+(data=="2"?" selected":"")+'>중복</option><option value="3" '+(data=="3"?" selected":"")+'>성별불량</option><option value="4" '+(data=="4"?" selected":"")+'>나이불량</option><option value="6" '+(data=="6"?" selected":"")+'>번호불량</option><option value="7" '+(data=="7"?" selected":"")+'>테스트</option><option value="5" '+(data=="5"?" selected":"")+'>콜불량</option><option value="8" '+(data=="8"?" selected":"")+'>이름불량</option><option value="9" '+(data=="9"?" selected":"")+'>지역불량</option><option value="10" '+(data=="10"?" selected":"")+'>업체불량</option><option value="11" '+(data=="11"?" selected":"")+'>미성년자</option><option value="12" '+(data=="12"?" selected":"")+'>본인아님</option><option value="13" '+(data=="13"?" selected":"")+'>쿠키중복</option><option value="99" '+(data=="99"?" selected":"")+'>확인</option></select>';
                 }
@@ -208,13 +234,56 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
+            $(row).attr('data-seq', data.seq);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },  
     });
 }
-
+$('#integrate-memo')
+    .on('show.bs.modal', function(e) { //create memo data
+        var $btn = $(e.relatedTarget);
+        var $row = $btn.closest('tr')
+        var seq = $row.data('seq');
+        var name = $('td:eq(5)', $row).text();
+        $(this).attr('data-seq', seq);
+        $('h1 .title', this).html(name);
+        $('#integrate-memo .memo-list').html('');
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/integrate/getmemo",
+            data: {'seq': seq},
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                setMemoList(data);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    })
+    .on('hidden.bs.modal', function(e) { //modal Reset
+        $(this).removeAttr('data-seq');
+        $('.memo-list, h1 .title', '#integrate-memo').html('');
+        $('#integrate-memo form')[0].reset();
+    });
+function setMemoList(data) {
+    var html =  '';
+    $.each(data, function(i,row) {
+        html += '    <li class="d-flex justify-content-between align-items-start">';
+        html += '        <div class="detail d-flex align-items-start">';
+        html += '            <p class="ms-1">'+ row.memo +'</p>';
+        html += '        </div>';
+        html += '        <div class="info">';
+        html += '            <span>'+ row.username +'</span>';
+        html += '            <span>'+ row.reg_date +'</span>';
+        html += '        </div>';
+        html += '    </li>';
+    });
+    $('#integrate-memo .memo-list').html(html);
+}
 function getLeadCount(){
     var data = setData();
     $.ajax({

@@ -34,6 +34,8 @@ textarea:focus{border: 1px solid #222; outline: none;}
 select{appearance:none;}
 select:focus{outline:none;}
 select::-ms-expand{display:none;}
+::-moz-selection {color:#fff; background:red;}
+::selection {color:#fff; background:red;}
 
 @include medium{
     html, body{font-size:14px;}

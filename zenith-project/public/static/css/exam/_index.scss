@@ -1,0 +1,15 @@
+.ad-list{
+    .type:hover{box-shadow:2px 2px 15px #ccc;}
+    .btn-more{transition:0.4s;
+        &:hover{
+            span{transition:0.2s; animation:moreBtn .5s infinite linear alternate;}
+        }      
+    }
+}  
+@keyframes moreBtn {
+    0% {background-position-x:40%;}
+    40% {background-position-x:70%;}
+    60% {background-position-x:right;}
+    80% {background-position-x:70%;}
+    100% {background-position-x:right;}
+}

@@ -109,6 +109,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('lead', 'Integrate\IntegrateController::getLead');
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
+        $routes->get('getmemo', 'Integrate\IntegrateController::getMemo');
     });
 
     // 회계 관리
