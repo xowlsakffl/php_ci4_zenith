@@ -64,19 +64,15 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     $routes->get('board/list', 'BoardController::index');
 
-    // 소속
+    // 광고대행사/광고주 관리
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        $routes->get('company', 'Api\ApiCompanyController::index');
-        $routes->get('company/list', 'Api\ApiCompanyController::getCompanies');
-        /* $routes->get('company/belong/(:num)', 'CompanyController::belong/$1');//소속 변경
-        $routes->put('company/belong', 'CompanyController::updateCompanies');
-        
-        //ajax
-        $routes->get('', 'Api\ApiCompanyController::get');
-        $routes->get('(:num)', 'Api\ApiCompanyController::$1');
-        $routes->post('', 'Api\ApiCompanyController::$1');
-        $routes->put('(:num)', 'Api\ApiCompanyController::$1');
-        $routes->delete('(:num)', 'Api\ApiCompanyController::$1'); */
+        $routes->get('company', 'Company\CompanyController::index');
+        $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
+        $routes->get('company/get-company', 'Company\CompanyController::getCompany');
+        $routes->get('company/get-agencies', 'Company\CompanyController::getAgencies');
+        $routes->post('company/create-company', 'Company\CompanyController::createCompany');
+        $routes->put('company/set-company', 'Company\CompanyController::setCompany');
+        $routes->delete('company/delete-company', 'Company\CompanyController::deleteCompany');
     });
 
     // 광고관리

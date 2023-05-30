@@ -3,13 +3,11 @@
     "bootstrap": "^5.*",
     "bootstrap-icons": "^1.*",
     "datatables.net": "^1.*",
-    "datatables.net-dt": "^1.*",
-    "daterangepicker": "^3.*",
-    "jquery": "^3.*",
     "datatables.net-autofill-dt": "^2.5.*",
     "datatables.net-buttons-dt": "^2.3.*",
     "datatables.net-colreorder-dt": "^1.6.*",
     "datatables.net-datetime": "^1.4.*",
+    "datatables.net-dt": "^1.*",
     "datatables.net-fixedcolumns-dt": "^4.2.*",
     "datatables.net-fixedheader-dt": "^3.3.*",
     "datatables.net-keytable-dt": "^2.9.*",
@@ -20,6 +18,9 @@
     "datatables.net-searchbuilder-dt": "^1.4.*",
     "datatables.net-searchpanes-dt": "^2.1.*",
     "datatables.net-select-dt": "^1.6.*",
-    "datatables.net-staterestore-dt": "^1.2.*"
+    "datatables.net-staterestore-dt": "^1.2.*",
+    "daterangepicker": "^3.*",
+    "jquery": "^3.*",
+    "jquery-ui": "^1.13.2"
   }
 }

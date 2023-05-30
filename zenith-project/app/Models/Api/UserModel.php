@@ -44,13 +44,13 @@ class UserModel extends ShieldUserModel
     protected $cleanValidationRules = true;
 
     public function getUser($id){
-        $builder = $this->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups, GROUP_CONCAT(DISTINCT apu.permission) as permission, c.companyType, c.companyName');
+        $builder = $this->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups, GROUP_CONCAT(DISTINCT apu.permission) as permission, c.type, c.name');
 
         $builder->from('users as u');
         $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'inner');
         $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id', 'left');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
-        $builder->join('companies as c', 'cu.company_id = c.cdx', 'left');
+        $builder->join('companies as c', 'cu.company_id = c.id', 'left');
         $builder->where('u.id', $id);
         $builder->groupBy('u.id');              
         $result = $builder->get()->getRow();

@@ -11,8 +11,12 @@
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<style>
+    #ui-id-1{
+        z-index: 10000000;
+    }
+</style>
 <?=$this->endSection();?>
-
 <!--바디-->
 <?=$this->section('body');?>
 <?=$this->endSection();?>
@@ -28,10 +32,10 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate">
+                <input type="text" name="sdate" id="sdate" autocomplete="off">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate">
+                <input type="text" name="edate" id="edate" autocomplete="off">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
@@ -41,7 +45,10 @@
         </form>
     </div>
 
-    <div>
+    <div class="position-relative">
+        <div id="create-button-wrap" class="position-absolute top-0 end-0" style="z-index:1">
+            <button id="create-btn-modal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adv-create">생성</button>
+        </div>
         <div class="row table-responsive">
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
@@ -55,10 +62,126 @@
                     </tr>
                 </thead>
                 <tbody>
-
                 </tbody>
             </table>
         </div>
+        <!--수정/보기-->
+        <div class="modal fade" id="adv-show" tabindex="-1" aria-labelledby="adv-show-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="adv-show-label"><i class="bi bi-file-text"></i> <span class="title">광고주/광고대행사</span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <form name="modal-form">
+                                <table class="table table-bordered table-modal" id="adv-show-table">
+                                    <colgroup>
+                                        <col style="width:20%;">
+                                        <col style="width:10%;">
+                                        <col style="width:23%;">
+                                        <col style="width:23%;">
+                                        <col style="width:14%;">
+                                        <col style="width:10%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">소속대행사</th>
+                                            <th scope="col">타입</th>
+                                            <th scope="col">광고주명</th>
+                                            <th scope="col">전화번호</th>
+                                            <th scope="col">생성일</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p_name">
+                                                <input type="hidden" name="id">
+                                                <input type="hidden" name="p_id">
+                                                <input type="text" name="p_name"  class="form-control" id="show-p_name">
+                                            </td>
+                                            <td id="type">
+                                                <span></span>
+                                            </td>
+                                            <td id="name">
+                                                <input type="text" name="name" class="form-control">
+                                            </td>
+                                            <td id="tel">
+                                                <input type="text" name="tel" class="form-control">
+                                            </td>
+                                            <td id="created_at">
+                                                <span></span>
+                                            </td>
+                                            <td id="btns">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">수정</button>
+                                                <button class="btn btn-danger" id="delete_btn"  type="button">삭제</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--수정/보기-->
+        <!--생성-->
+        <div class="modal fade" id="adv-create" tabindex="-1" aria-labelledby="adv-create-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="adv-create-label"><i class="bi bi-file-text"></i> <span class="title">광고주/광고대행사</span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <form name="modal-form-create">
+                                <table class="table table-bordered table-modal" id="adv-create-table">
+                                    <colgroup>
+                                        <col style="width:20%;">
+                                        <col style="width:10%;">
+                                        <col style="width:23%;">
+                                        <col style="width:23%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">소속대행사</th>
+                                            <th scope="col">타입</th>
+                                            <th scope="col">광고주명</th>
+                                            <th scope="col">전화번호</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p_name">
+                                                <input type="text" name="p_name"  class="form-control" id="create-p_name">
+                                            </td>
+                                            <td id="type">
+                                                <select name="type" id="" class="form-control">
+                                                    <option value="광고대행사">광고대행사</option>
+                                                    <option value="광고주">광고주</option>
+                                                </select>
+                                            </td>
+                                            <td id="name">
+                                                <input type="text" name="name" class="form-control">
+                                            </td>
+                                            <td id="tel">
+                                                <input type="text" name="tel" class="form-control">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <button class="btn btn-primary" id="create_btn" type="submit">생성</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--생성-->
     </div>
 </div>
     <!--content-->
@@ -258,10 +381,10 @@ function getList(){
         "deferRender": false,
         "lengthMenu": [
             [ 25, 10, 50, -1 ],
-            [ '25', '10', '50', '전체' ]
+            [ '25개', '10개', '50개', '전체' ]
         ],
         "ajax": {
-            "url": "<?=base_url()?>/company/list",
+            "url": "<?=base_url()?>/company/get-companies",
             "data": function(d) {
                 d.searchData = setData();
             },
@@ -282,6 +405,11 @@ function getList(){
                 }
             },
         ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            $(row).attr("data-bs-toggle", "modal");
+            $(row).attr("data-bs-target", "#adv-show");
+        },
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
@@ -298,6 +426,9 @@ function getList(){
 }
 
 function setDate(){
+    var today = new Date();
+    var startDate = null;
+    var endDate = null;
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷
@@ -309,14 +440,14 @@ function setDate(){
         alwaysShowCalendars: true,                        // 시간 노출 여부
         showDropdowns: true,                     // 년월 수동 설정 여부
         autoApply: true,                         // 확인/취소 버튼 사용여부
-        maxDate: new Date(),
+        maxDate: moment().endOf('day').toDate(),
         autoUpdateInput: false,
         ranges: {
-            '오늘': [moment(), moment()],
-            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '지난 일주일': [moment().subtract(6, 'days'), moment()],
-            '지난 한달': [moment().subtract(29, 'days'), moment()],
-            '이번달': [moment().startOf('month'), moment().endOf('month')],
+            '오늘': [today, today],
+            '어제': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1), new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)],
+            '지난 일주일': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6), today],
+            '지난 한달': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29), today],
+            '이번달': [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth() + 1, 0)]
         }
     }, function(start, end, label) {
         // Lets update the fields manually this event fires on selection of range
@@ -342,149 +473,155 @@ function setDate(){
     });
 }
 
+function setCompanyShow(data) {
+    $('#adv-show-title').text(data.name);
+    $('#adv-show-table #p_name input[name="id"]').val(data.id);
+    $('#adv-show-table #p_name input[type="text"]').val(data.p_name);
+    $('#adv-show-table #type span').text(data.type);
+    $('#adv-show-table #name input').val(data.name);
+    $('#adv-show-table #tel input').val(data.tel);
+    $('#adv-show-table #created_at span').text(data.created_at.substr(0, 10));
+    $('#adv-show-table #btns #delete_btn').val(data.id);
+}
+
+function updateCompany(data){
+    $.ajax({
+        url : "/company/set-company", 
+        type : "PUT", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("변경되었습니다.");
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function createCompany(data){
+    $.ajax({
+        url : "/company/create-company", 
+        type : "POST", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("생성되었습니다.");
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function autoComplete(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-agencies", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.name,
+                                value: item.name,
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        }
+        ,focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
 
-//글쓰기 버튼
-$('body').on('click', '#companyNewBtn', function(){
-    $('#modalWrite #frm').trigger("reset");
-    var myModal = new bootstrap.Modal(document.getElementById('modalWrite'))
-    myModal.show()
-})
-
-//저장 버튼
-$('body').on('click', '#companyInsertBtn', function(){
-    data = {
-        companyType: $('#modalWrite select[name=companyType] option').filter(':selected').val(),
-        companyName: $('#modalWrite input:text[name=companyName]').val(),
-        companyTel: $('#modalWrite input:text[name=companyTel]').val(),
-    };
-    console.log(data);
-    $.ajax({
-        type: "post",
-        url: "<?=base_url()?>/companies",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        success: function(response){
-            $('#modalWrite').modal('hide');
-            $('#modalWrite').find('input').val('');  
-            $('#modalWrite #frm span').text('');  
-            getBoardList();
-        },
-        error: function(error){
-            var errorText = error.responseJSON.messages;
-            $.each(errorText, function(key, val){
-                $("#modalWrite #" + key + "Error").text(val);
-            })
-        }
-    });
-})
-
-//글보기
-$('body').on('click', '#companyView', function(){
-    let id = $(this).attr('data-id');
+$('#adv-show').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var id = $btn.data('id');
+    $('form[name="modal-form"]')[0].reset();
+    $('#adv-show-table tbody tr td span').text('');
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/companies/"+id,
+        url: "<?=base_url()?>/company/get-company",
+        data: {'id': id},
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            console.log(data);
-            $('#modalView .modal-title').html(data.result.companyName);
-            $('#modalView .modal-body #companyBelong').html(data.result.parent_company_name);
-            $('#modalView .modal-body #companyType').html(data.result.companyType);
-            $('#modalView .modal-body #companyName').html(data.result.companyName);
-            $('#modalView .modal-body #companyTel').html(data.result.companyTel);
-            $('#modalView #companyBelong').attr('href', '/company/belong/'+data.result.cdx);
-            $('#modalView #companyUpdateModal').attr('data-id', data.result.cdx);
-            $('#modalView #companyDelete').attr('data-id', data.result.cdx);
-            $.each(data.result.users, function(index, item){   
-                $('<div id="userList">')
-                .append('<p>id : '+item.id+" username : "+item.username+'</p>')
-                .appendTo('#userListWrap'); 
-            });
-            var myModal = new bootstrap.Modal(document.getElementById('modalView'))
-            myModal.show()
+        success: function(data){  
+            setCompanyShow(data);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
+});
+
+$('#show-p_name').on("focus", function(){
+    autoComplete("#show-p_name");
 })
 
-//글수정
-$('body').on('click', '#companyUpdateModal', function(){
-    $('#modalView').modal('hide');
-
-    let id = $(this).attr('data-id');
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/companies/"+id,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            $('#modalUpdate #companyType option[value="'+data.result.companyType+'"]').prop('selected', true);  
-            $('#modalUpdate #companyName').val(data.result.companyName);
-            $('#modalUpdate #companyTel').val(data.result.companyTel);
-            $('#modalUpdate #hidden_id').val(data.result.cdx);
-            $('#modalUpdate #frm span').text('');  
-            var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
-            myModal.show()
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+$('#create-p_name').on("focus", function(){
+    autoComplete("#create-p_name");
 })
 
-//글수정
-$('body').on('click', '#companyUpdateBtn', function(){
-    let id = $("#modalUpdate input:hidden[name=id]").val();
-    data = {
-        companyType: $('#modalUpdate select[name=companyType] option').filter(':selected').val(),
-        companyName: $('#modalUpdate input:text[name=companyName]').val(),
-        companyTel: $('#modalUpdate input:text[name=companyTel]').val(),
-    };
+
+$('form[name="modal-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    updateCompany(data);
+    $('#adv-show').modal('hide');
+    return false;
+});
+
+$('form[name="modal-form-create"]').bind('submit', function() {
+    var data = $(this).serialize();
     console.log(data);
-    $.ajax({
-        type: "put",
-        url: "<?=base_url()?>/companies/"+id,
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        success: function(response){
-            $('#modalUpdate').modal('hide');
-            $('#modalUpdate').find('input').val('');  
-            $('#modalUpdate #frm span').text(''); 
-            getBoardList();
-            console.log(response);
-        },
-        error: function(error){
-            var errorText = error.responseJSON.messages;
-            $.each(errorText, function(key, val){
-                $("#modalWrite #" + key + "Error").text(val);
-            })
-        }
-    });
-})
+    createCompany(data);
+    $('#adv-create').modal('hide');
+    return false;
+});
 
-//글삭제
-$('body').on('click', '#companyDelete', function(){
-    let id = $(this).attr('data-id');
+$('body').on('click', '#delete_btn', function(){
+    let id = $(this).val();
     if(confirm('정말 삭제하시겠습니까?')){
         $.ajax({
             type: "delete",
-            url: "<?=base_url()?>/companies/"+id,
-            dataType: "json",
+            url: "<?=base_url()?>/company/delete-company",
+            dataType: "JSON",
+            data : {'id': id}, 
             contentType: 'application/json; charset=utf-8',
             success: function(data){
-                $('#modalView').modal('hide');
-                getBoardList();
+                if(data == true){
+                    dataTable.draw();
+                    alert("삭제되었습니다.");
+                    $('#adv-show').modal('hide');
+                }
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
