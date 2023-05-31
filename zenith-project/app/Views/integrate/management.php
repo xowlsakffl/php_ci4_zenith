@@ -7,16 +7,12 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
-<style>
-    .section .active{
-        border: 1px solid red !important;
-    }
-    .section .active2{
-        background-color: red !important;
-    }
-</style>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-dt/css/buttons.dataTables.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/js/jszip.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -31,17 +27,17 @@
     </div>
 
     <div class="search-wrap">
-        <form class="search d-flex justify-content-center">
+        <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" readonly="readonly">
+                <input type="text" name="sdate" id="sdate">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" readonly="readonly">
+                <input type="text" name="edate" id="edate">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" id="search_btn" type="button">조회</button>
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
             </div>
         </form>
     </div>
@@ -66,28 +62,28 @@
 
     <div>
         <div class="search-wrap my-5">
-            <div class="statusCount detail d-flex"></div>     
+            <div class="statusCount detail d-flex flex-wrap"></div>     
         </div>
 
         <div class="row table-responsive">
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width:40px" class="first">#</th>
-                        <th style="width:80px">이벤트번호</th>
-                        <th style="width:130px">광고주</th>
-                        <th style="width:70px">매체</th>
-                        <th style="width:120px">이벤트 구분</th>
-                        <th style="width:60px" >이름</th>
-                        <th style="width:100px">전화번호</th>
-                        <th style="width:30px">나이</th>
-                        <th style="width:30px" >성별</th>
-                        <th style="width:200px">기타</th>
-                        <th style="width:120px">상담내용</th>
-                        <th style="width:60px">사이트</th>
-                        <th style="width:100px">등록일</th>
-                        <th style="width:60px">인정기준</th>
-                        <th class="last" style="width:60px">삭제</th>
+                        <th class="first">#</th>
+                        <th>SEQ</th>
+                        <th>이벤트</th>
+                        <th>광고주</th>
+                        <th>매체</th>
+                        <th>이벤트 구분</th>
+                        <th>이름</th>
+                        <th>전화번호</th>
+                        <th>나이</th>
+                        <th>성별</th>
+                        <th>기타</th>
+                        <th>사이트</th>
+                        <th>등록일</th>
+                        <th>메모</th>
+                        <th class="last">인정기준</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +91,28 @@
                 </tbody>
             </table>
         </div>
+        <!-- 개별 메모 -->
+        <div class="modal fade" id="integrate-memo" tabindex="-1" aria-labelledby="integrate-memo-label" aria-hidden="true">
+            <div class="modal-dialog modal-sm sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="integrate-memo-label"><i class="bi bi-file-text"></i> 개별 메모<span class="title"></span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="regi-form">
+                            <fieldset>
+                                <legend>메모 작성</legend>
+                                <textarea></textarea>
+                                <button type="button" class="btn-regi">작성</button>
+                            </fieldset>
+                        </form>
+                        <ul class="memo-list m-2"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- //개별 메모 -->
     </div>
 </div>
 <?=$this->endSection();?>
@@ -102,82 +120,121 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
-var data = {
-    'sdate': $('#sdate').val(),
-    'edate': $('#edate').val(),
-};
-
+let dataTable;
 setDate();
-getLead(data);
-getStatusCount(data);
-getList(data);
+getLead();
+getStatusCount();
+getList();
+function setData() {
+    var data = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+    };
+
+    return data;
+}
 function getList(data = []){
-    $('#deviceTable').DataTable({
+    dataTable = $('#deviceTable').DataTable({
+        "dom": '<Bfr<t>ip>',
         "autoWidth": false,
+        "columnDefs": [
+            { targets: [0], orderable: false},
+            { targets: [1], visible: false},
+            { targets: '_all', visible: true },
+            { targets: [6], className: 'nowrap'}
+        ],
+        "order": [[1,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
-        "ordering": false,
-        "bLengthChange" : false, 
+        "ordering": true,
+        "scrollX": true,
+        "scrollY": 500,
+        "scrollCollapse": true,
+        "stateSave": true,
+        "deferRender": true,
+        "lengthMenu": [
+            [ 25, 10, 50, -1 ],
+            [ '25개', '10개', '50개', '전체' ]
+        ],
+        "buttons": [
+            'pageLength', 
+            {
+                'extend': 'excelHtml5',
+                'exportOptions': { //{'columns': 'th:not(:last-child)'},
+                    'customizeData': function(data) {
+                        var header = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"];
+                        var body = [];
+                        $.each(data['body'], function(i, row) {
+                            var row = row[0];
+                            body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, row.status];
+                        });
+                        data.header = header;
+                        data.body = body;
+                        //return은 하면 안됨. data 오브젝트를 변형시켜서만 사용
+                    }
+                }
+            }
+        ],
         "ajax": {
             "url": "<?=base_url()?>/integrate/list",
-            "data": data,
+            "data": function(d) {
+                d.searchData = setData();
+            },
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
         },
         "columns": [
-            { "data": null, "width": "4%"},
-            { "data": "info_seq", "width": "4%" },
-            { "data": "advertiser", "width": "9%" },
-            { "data": "media", "width": "6%" },
-            { "data": "tab_name", "width": "14%" },
-            { "data": "name", "width": "6%" },
-            { "data": "dec_phone", "width": "8%" },
-            { "data": "age", "width": "2%" },
-            { "data": "gender", "width": "2%" },
-            { "data": "add", "width": "8%" },
-            { 
-                "data": null,
-                "render": function (data, type, row) {
-                    return '<textarea cols="3" rows="3" class="consultation" readonly></textarea>';
-                }, 
-                "width": "10%"
+            { "data": null, "width": "40px" },
+            { "data": "seq" },
+            { "data": "info_seq", "width": "40px",
+              "render": function(data) {
+                return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
+              }
             },
-            { "data": "site", "width": "4%" },
-            { "data": "reg_date", "width": "8%" },
-            { 
-                "data": 'criteria',
-                "render": function (data, type, row) {
-                    return '<select class="data-del"><option value="1" selected="selected">인정</option><option value="2">중복</option><option value="3">성별불량</option><option value="4">나이불량</option><option value="6">번호불량</option><option value="7">테스트</option><option value="5">콜불량</option><option value="8">이름불량</option><option value="9">지역불량</option><option value="10">업체불량</option><option value="11">미성년자</option><option value="12">본인아님</option><option value="13">쿠키중복</option><option value="99">확인</option></select>';
-                }, 
-                "width": "5%"
+            { "data": "advertiser" },
+            { "data": "media" },
+            { "data": "tab_name" },
+            { "data": "name", "width": "50px",
+              "render": function(data) {
+                return '<span title="'+data+'">'+data+'</span>';
+              } 
+            },
+            { "data": "dec_phone", "width": "90px" },
+            { "data": "age", "width": "30px" },
+            { "data": "gender", "width": "30px" },
+            { "data": "add" },
+            { "data": "site", "width": "50px" },
+            { "data": "reg_date", "width": "70px" },
+            { "data": "memo_cnt", "width": "30px",
+              "render" : function(data) {
+                var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
+                if(data > 0)
+                    html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger">'+data+'</span>';
+                html += '</a>';
+                return html;
+              }
             },
             { 
-                "data": null,
+                "data": 'status', "width": "60px",
                 "render": function (data, type, row) {
-                    return '<button id="save" class="save">저장</button><button id="delete" class="delete">삭제</button>';
-                }, 
-                "width": "5%"
+                    return '<select class="form-select form-select-sm data-del"><option value="1" '+(data=="1"?" selected":"")+'>인정</option><option value="2" '+(data=="2"?" selected":"")+'>중복</option><option value="3" '+(data=="3"?" selected":"")+'>성별불량</option><option value="4" '+(data=="4"?" selected":"")+'>나이불량</option><option value="6" '+(data=="6"?" selected":"")+'>번호불량</option><option value="7" '+(data=="7"?" selected":"")+'>테스트</option><option value="5" '+(data=="5"?" selected":"")+'>콜불량</option><option value="8" '+(data=="8"?" selected":"")+'>이름불량</option><option value="9" '+(data=="9"?" selected":"")+'>지역불량</option><option value="10" '+(data=="10"?" selected":"")+'>업체불량</option><option value="11" '+(data=="11"?" selected":"")+'>미성년자</option><option value="12" '+(data=="12"?" selected":"")+'>본인아님</option><option value="13" '+(data=="13"?" selected":"")+'>쿠키중복</option><option value="99" '+(data=="99"?" selected":"")+'>확인</option></select>';
+                }
             },
         ],
         "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "lengthMenu": "페이지당 _MENU_ 개씩 보기",
-            "info": "현재 _START_ - _END_ / _TOTAL_건",
-            "infoEmpty": "데이터 없음",
-            "infoFiltered": "( _MAX_건의 데이터에서 필터링됨 )",
-            "search": "에서 검색: ",
-            "zeroRecords": "일치하는 데이터가 없어요.",
-            "loadingRecords": "로딩중...",
-            "paginate": {
-                "next": "다음",
-                "previous": "이전"
+            "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+            "buttons": {
+                "excel" : '<i class="bi bi-file-earmark-spreadsheet"></i> 엑셀'
             }
         },
         "rowCallback": function(row, data, index) {
@@ -185,16 +242,60 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
+            $(row).attr('data-seq', data.seq);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
-        },  
-        //"dom": 'tlip',
-        "dom": 't<"paging" lip>',
+        },
     });
+    dataTable.buttons().container()
+    .appendTo( $('.dataTables_length', dataTable.table().container() ) );
 }
-
-function getLeadCount(data = []){
+$('#integrate-memo')
+    .on('show.bs.modal', function(e) { //create memo data
+        var $btn = $(e.relatedTarget);
+        var $row = $btn.closest('tr')
+        var seq = $row.data('seq');
+        var name = $('td:eq(5)', $row).text();
+        $(this).attr('data-seq', seq);
+        $('h1 .title', this).html(name);
+        $('#integrate-memo .memo-list').html('');
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/integrate/getmemo",
+            data: {'seq': seq},
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                setMemoList(data);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    })
+    .on('hidden.bs.modal', function(e) { //modal Reset
+        $(this).removeAttr('data-seq');
+        $('.memo-list, h1 .title', '#integrate-memo').html('');
+        $('#integrate-memo form')[0].reset();
+    });
+function setMemoList(data) {
+    var html =  '';
+    $.each(data, function(i,row) {
+        html += '    <li class="d-flex justify-content-between align-items-start">';
+        html += '        <div class="detail d-flex align-items-start">';
+        html += '            <p class="ms-1">'+ row.memo +'</p>';
+        html += '        </div>';
+        html += '        <div class="info">';
+        html += '            <span>'+ row.username +'</span>';
+        html += '            <span>'+ row.reg_date +'</span>';
+        html += '        </div>';
+        html += '    </li>';
+    });
+    $('#integrate-memo .memo-list').html(html);
+}
+function getLeadCount(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
@@ -224,7 +325,8 @@ function setLeadCount(data) {
     });
 }
 
-function getStatusCount(data = []){
+function getStatusCount(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/statuscount",
@@ -287,7 +389,8 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
     fontAutoResize();
 }
 		
-function getLead(data = []){
+function getLead(){
+    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
@@ -351,37 +454,16 @@ function setDate(){
 
 $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
-
-    advertiser = $('#advertiser-list button.active').map(function(){return $(this).val();}).get();
-    media = $('#media-list button.active').map(function(){return $(this).val();}).get();
-    event = $('#event-list button.active').map(function(){return $(this).val();}).get();
-
-    data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
-        'stx': $('#stx').val(),
-        'adv': advertiser,
-        'media': media,
-        'event': event
-    };
-
-    getLeadCount(data);
-    getStatusCount(data);
-    $('#deviceTable').DataTable().destroy();
-    getList(data);
+    getLeadCount();
+    getStatusCount();
+    dataTable.draw();
 });
 
-$('body').on('click', '#search_btn', function() {
-    data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
-        'stx': $('#stx').val(),
-    };
-
-    getLeadCount(data);
-    getStatusCount(data);
-    $('#deviceTable').DataTable().destroy();
-    getList(data);
+$('form[name="search-form"]').bind('submit', function() {
+    getLeadCount();
+    getStatusCount();
+    dataTable.draw();
+    return false;
 });
 </script>
 <?=$this->endSection();?>

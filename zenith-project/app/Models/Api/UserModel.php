@@ -6,6 +6,7 @@ use CodeIgniter\Shield\Models\UserModel as ShieldUserModel;
 
 class UserModel extends ShieldUserModel
 {
+    protected $zenith;
     protected $table = 'users';
     protected $primaryKey = 'id';
 
@@ -43,17 +44,71 @@ class UserModel extends ShieldUserModel
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
-    public function getUser($id){
-        $builder = $this->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups, GROUP_CONCAT(DISTINCT apu.permission) as permission, c.companyType, c.companyName');
+    public function __construct()
+    {
+        $this->zenith = \Config\Database::connect();
+    }
 
-        $builder->from('users as u');
-        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'inner');
-        $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id', 'left');
+    public function getUsers($data)
+    {
+        $builder = $this->zenith->table('users');
+        $builder->select('id, username');
+        if(!empty($data['stx'])){
+            $builder->like('username', $data['stx']);
+        }
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getUserByName($username)
+    {
+        $builder = $this->zenith->table('users');
+        $builder->select('id, username');
+        $builder->where('username', $username);
+        
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
+
+    public function getBelongUsers($companyId)
+    {
+        $builder = $this->zenith->table('users AS u');
+        $builder->select('u.id, u.username, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
-        $builder->join('companies as c', 'cu.company_id = c.cdx', 'left');
-        $builder->where('u.id', $id);
-        $builder->groupBy('u.id');              
-        $result = $builder->get()->getRow();
+        $builder->where('cu.company_id', $companyId);
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function setBelongUser($data, $id)
+    {
+        $builder = $this->zenith->table('companies_users');
+        $builder->select('company_id, user_id');
+        $builder->where('user_id', $id);
+        $builder->where('company_id', $data['company_id']);
+        $result = $builder->get()->getResult();
+
+        if (empty($result)) {
+            $newRecord = [
+                'company_id' => $data['company_id'],
+                'user_id' => $id,
+            ];
+            $result = $builder->insert($newRecord);
+        } else {
+            return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
+        }
+
+        return $result;
+    }
+
+    public function exceptBelongUser($data)
+    {
+        $builder = $this->zenith->table('companies_users');
+        $builder->where('user_id', $data['user_id']);
+        $builder->where('company_id', $data['company_id']);
+        $result = $builder->delete();
 
         return $result;
     }

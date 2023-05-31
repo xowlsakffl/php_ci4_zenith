@@ -64,19 +64,20 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     $routes->get('board/list', 'BoardController::index');
 
-    // 소속
-    $routes->group('companies', static function($routes){     
-        $routes->get('', 'Api\ApiCompanyController::get');
-        $routes->get('(:num)', 'Api\ApiCompanyController::$1');
-        $routes->post('', 'Api\ApiCompanyController::$1');
-        $routes->put('(:num)', 'Api\ApiCompanyController::$1');
-        $routes->delete('(:num)', 'Api\ApiCompanyController::$1');
-    });   
-
+    // 광고대행사/광고주 관리
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        $routes->get('company/list', 'CompanyController::index');
-        $routes->get('company/belong/(:num)', 'CompanyController::belong/$1');//소속 변경
-        $routes->put('company/belong', 'CompanyController::updateCompanies');
+        $routes->get('company', 'Company\CompanyController::index');
+        $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
+        $routes->get('company/get-company', 'Company\CompanyController::getCompany');
+        $routes->get('company/get-agencies', 'Company\CompanyController::getAgencies');
+        $routes->post('company/create-company', 'Company\CompanyController::createCompany');
+        $routes->put('company/set-company', 'Company\CompanyController::setCompany');
+        $routes->delete('company/delete-company', 'Company\CompanyController::deleteCompany');
+
+        $routes->get('company/get-users', 'User\UserController::getUsers');
+        $routes->get('company/get-belong-users', 'User\UserController::getBelongUsers');
+        $routes->put('company/set-user', 'User\UserController::setBelongUser');
+        $routes->delete('company/except-belong-user', 'User\UserController::exceptBelongUser');
     });
 
     // 광고관리
@@ -85,7 +86,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
         $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvAllManagerController::getReport');
-        $routes->get('set-status', 'AdvertisementManager\AdvAllManagerController::updateStatus');
+        $routes->put('set-status', 'AdvertisementManager\AdvAllManagerController::updateStatus');
+        $routes->put('set-name', 'AdvertisementManager\AdvAllManagerController::updateName');
 
         $routes->group('facebook', static function($routes){
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
@@ -108,6 +110,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('lead', 'Integrate\IntegrateController::getLead');
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
+        $routes->get('getmemo', 'Integrate\IntegrateController::getMemo');
     });
 
     // 회계 관리

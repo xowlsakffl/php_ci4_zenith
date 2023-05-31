@@ -6,10 +6,10 @@
 }
 
 .sub-contents-wrap{
-    .dataTables_wrapper{max-height:600px;
+    .dataTables_wrapper{
         .paging{padding-top:1.755em; position:sticky; bottom:0; background-color:#f7f7f7;}      
 
-        .dataTables_length{float:unset; position: absolute; left:0;
+        .dataTables_length{margin-bottom:2rem;
             select{background-color:#fff; padding:0.2rem 1rem;}
         }
     
@@ -41,19 +41,20 @@
             tbody tr{background-color:#fff;}
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
             select.data-del{padding:3px; border-radius:4px;}
-            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:4px 17px; border-radius:4px;}
-            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:4px 17px; border-radius:4px;
-                &:hover{background-color:red;}          
+            button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px;}
+            button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px; transition:0.5s;   
+                &:hover{box-shadow:inset 0 -3em 0 0 red;}   
             }
         }
     }
 }
 
 .db-manage-contaniner{
-    .search-wrap{border-radius: 10px;}         
-    .detail{border-top:none; flex-wrap:wrap; 
-        // .col{width:14%;} 
-        //if문 작성
+    .search-wrap{border-radius: 10px;}          
+    .detail{flex-wrap:wrap;
+        .col:hover{
+            dd{font-weight:900;}
+        } 
     }
 }
 
@@ -66,7 +67,3 @@
     }    
 }
 
-@keyframes hover-line {
-    from {width: 0%;}
-    to {width: 100%;}
-}

@@ -1,0 +1,36 @@
+@keyframes moreBtn {//main 더보기 버튼
+    0% {background-position-x:40%;}
+    40% {background-position-x:70%;}
+    60% {background-position-x:right;}
+    80% {background-position-x:70%;}
+    100% {background-position-x:right;}
+}
+
+@keyframes moreBtn_mo {//main 더보기 버튼
+    0% {bottom:0;}
+    100% {bottom:-100%;}
+}
+
+
+@keyframes letterSpacing { //팝업 modal title
+    0% {letter-spacing:0.5rem;}
+    100% {letter-spacing: 0px;}
+}
+
+@keyframes hover-line { //pagenation.scss
+    from {width: 0%;}
+    to {width: 100%;}
+}
+
+
+@keyframes sidebarShake { //navbar icon hover
+    0% {transform: rotate(-10deg);}
+    100% {transform: rotate(20deg);}
+}
+
+@keyframes updown { //navbar icon active
+    0% {transform: translateY(0px);}
+    100% {transform: translateY(10px);}
+}
+
+

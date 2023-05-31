@@ -1,34 +1,93 @@
 <?php
-namespace App\Controllers\Api;
+namespace App\Controllers\User;
 
 use CodeIgniter\API\ResponseTrait;
 use App\Models\Api\UserModel;
 use CodeIgniter\Shield\Entities\User;
 
-class ApiUserController extends \CodeIgniter\Controller 
+class UserController extends \CodeIgniter\Controller 
 {
     use ResponseTrait;
 
-    protected $userModel;
+    protected $user;
     protected $data;
     protected $logginedUser;
     protected $validation;
 
     public function __construct() {
-        $this->userModel = model(UserModel::class);
+        $this->user = model(UserModel::class);
         $this->logginedUser = auth()->user();
+    }
+
+    public function getUsers(){
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->user->getUsers($param);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getBelongUsers(){
+        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->user->getBelongUsers($param['company_id']);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+    
+    public function setBelongUser()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
+            $param = $this->request->getRawInput();
+            if (!empty($param)) {
+                $user = $this->user->getUserByName($param['username']); 
+                if(empty($user)) {
+                    return $this->failValidationErrors(["username" => "존재하지 않는 사용자입니다."]);
+                }
+
+                $result = $this->user->setBelongUser($param, $user['id']);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+            
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function exceptBelongUser()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete') {
+            $param = $this->request->getRawInput();
+            if (!empty($param)) {
+                $result = $this->user->exceptBelongUser($param);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+            
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
     }
 
     public function get($id = NULL) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
-                $data['result'] = $this->userModel->getUser($id);       
+                $data['result'] = $this->user->getUser($id);       
                 $data['result']->permission = explode(',', $data['result']->permission);
                 $data['result']->groups = explode(',', $data['result']->groups);
             } else {
                 $param = $this->request->getGet();
 
-                $builder = $this->userModel->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
+                $builder = $this->user->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
 
                 if(!empty($param['limit'])){
                     $limit = $param['limit'];
@@ -91,19 +150,19 @@ class ApiUserController extends \CodeIgniter\Controller
         if (strtolower($this->request->getMethod()) === 'put') {
             if ($id && !empty($this->data)) {         
                 $this->validation = \Config\Services::validation();
-                $this->validation->setRules($this->userModel->validationRules, $this->userModel->validationMessages);
+                $this->validation->setRules($this->user->validationRules, $this->user->validationMessages);
                 if (!$this->validation->run($this->data)) {
                     $errors = $this->validation->getErrors();
                     return $this->failValidationErrors($errors);
                 }
 
-                $user = $this->userModel->findById($id);  
+                $user = $this->user->findById($id);  
                     
                 $user->fill([
                     'username' => $this->data['username'],
                 ]);     
 
-                $this->userModel->save($user);
+                $this->user->save($user);
                 $groups = $this->data['groups'];
                 $user->syncGroups(...$this->data['groups']);
                 $user->syncPermissions(...$this->data['permission']);
@@ -120,7 +179,7 @@ class ApiUserController extends \CodeIgniter\Controller
         if (strtolower($this->request->getMethod()) === 'delete') {
             if ($id) {
                 $ret = true;
-                $this->userModel->delete($id);
+                $this->user->delete($id);
             }
         }else{
             return $this->fail("잘못된 요청");
@@ -131,7 +190,7 @@ class ApiUserController extends \CodeIgniter\Controller
 
     protected function checkPermission($logginedUser, $updateId, $postGroups)
     {
-        $updateUser = $this->userModel->find($updateId);
+        $updateUser = $this->user->find($updateId);
         $updateUserGroups = $updateUser->getGroups();
         //user - 본인만 수정 권한 있음
         if($logginedUser->inGroup('user') && !$logginedUser->inGroup('superadmin', 'admin', 'developer') && !$logginedUser->hasPermission('user.edit')){
@@ -176,17 +235,5 @@ class ApiUserController extends \CodeIgniter\Controller
         }
 
         return true;
-    }
-
-    public function _remap(...$params) {
-        $method = $this->request->getMethod();
-        $params = [($params[0] !== 'get' ? $params[0] : false)];
-        $this->data = $this->request->getRawInput();
-
-        if (method_exists($this, $method)) {
-            return call_user_func_array([$this, $method], $params);
-        } else {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-        }
     }
 }

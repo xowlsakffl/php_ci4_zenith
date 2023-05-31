@@ -14,6 +14,7 @@ class IntegrateModel extends Model
 
     public function getEventLead($data)
     {
+        $srch = $data['searchData'];
         $builder = $this->zenith->table('event_leads as el');
         $builder->select("
         info.seq as info_seq, 
@@ -21,6 +22,7 @@ class IntegrateModel extends Model
         med.media, adv.is_stop, 
         info.description AS tab_name, 
         dec_data(el.phone) as dec_phone, 
+        el.seq,
         el.name,
         el.reg_date,
         el.gender,
@@ -33,50 +35,62 @@ class IntegrateModel extends Model
         el.add2,
         el.add3,
         el.add4,
-        el.add5
+        el.add5,
+        el.status,
+        count(lm.leads_seq) as memo_cnt
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
+        $builder->join('event_leads_memo as lm', 'el.seq = lm.leads_seq', 'left');
         $builder->where('el.is_deleted', 0);
-        $builder->where('DATE(el.reg_date) >=', $data['sdate']);
-        $builder->where('DATE(el.reg_date) <=', $data['edate']);
+        $builder->where('DATE(el.reg_date) >=', $srch['sdate']);
+        $builder->where('DATE(el.reg_date) <=', $srch['edate']);
 
-        if(!empty($data['stx'])){
+        if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('adv.name', $data['stx']);
-            $builder->orLike('info.seq', $data['stx']);
-            $builder->orLike('med.media', $data['stx']);
-            $builder->orLike('info.description', $data['stx']);
-            $builder->orLike('el.name', $data['stx']);
-            $builder->orLike('el.branch', $data['stx']);
-            $builder->orLike('el.add1', $data['stx']);
-            $builder->orLike('el.add2', $data['stx']);
-            $builder->orLike('el.add3', $data['stx']);
-            $builder->orLike('el.add4', $data['stx']);
-            $builder->orLike('el.add5', $data['stx']);
+            $builder->like('adv.name', $srch['stx']);
+            $builder->orLike('info.seq', $srch['stx']);
+            $builder->orLike('med.media', $srch['stx']);
+            $builder->orLike('info.description', $srch['stx']);
+            $builder->orLike('el.name', $srch['stx']);
+            $builder->orLike('el.branch', $srch['stx']);
+            $builder->orLike('el.add1', $srch['stx']);
+            $builder->orLike('el.add2', $srch['stx']);
+            $builder->orLike('el.add3', $srch['stx']);
+            $builder->orLike('el.add4', $srch['stx']);
+            $builder->orLike('el.add5', $srch['stx']);
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['adv']);
+        if(!empty($srch['advertiser'])){
+            $builder->whereIn('adv.name', explode("|",$srch['advertiser']));
         }
 
-        if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+        if(!empty($srch['media'])){
+            $builder->whereIn('med.media', explode("|",$srch['media']));
         }
 
-        if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+        if(!empty($srch['event'])){
+            $builder->whereIn('info.description', explode("|",$srch['event']));
         }
 
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
 
         // limit 적용한 쿼리
-        $builder->orderBy('el.reg_date', 'DESC');
-        $builder->limit($data['length'], $data['start']);
-
+        $builder->groupBy(['el.seq','lm.leads_seq'], true);
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "seq DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        // dd($builder->getCompiledSelect());
         // 결과 반환
         $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();
@@ -122,19 +136,20 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['adv']);
+        if(!empty($data['advertiser'])){
+            $builder->whereIn('adv.name', explode("|",$data['advertiser']));
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.media', explode("|",$data['media']));
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.description', explode("|",$data['event']));
         }
 
         $builder->groupBy(['adv.name', 'med.media', 'info.description']);
+        // dd($builder->getCompiledSelect());
         $result = $builder->get()->getResultArray();
         
         return $result;
@@ -180,17 +195,27 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
-        if(!empty($data['adv'])){
-            $builder->whereIn('adv.name', $data['adv']);
+        if(!empty($data['advertiser'])){
+            $builder->whereIn('adv.name', explode("|",$data['advertiser']));
         }
 
         if(!empty($data['media'])){
-            $builder->whereIn('med.media', $data['media']);
+            $builder->whereIn('med.media', explode("|",$data['media']));
         }
 
         if(!empty($data['event'])){
-            $builder->whereIn('info.description', $data['event']);
+            $builder->whereIn('info.description', explode("|",$data['event']));
         }
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getMemo($data) 
+    {
+        $builder = $this->zenith->table('event_leads_memo');
+        $builder->select("*");
+        $builder->where("leads_seq", $data['seq']);
         $result = $builder->get()->getResultArray();
 
         return $result;

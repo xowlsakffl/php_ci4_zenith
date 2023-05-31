@@ -18,25 +18,15 @@ class IntegrateController extends BaseController
 
     public function index()
     {
-        return view('integrate/management');
+        $_get = $this->request->getGet();
+        return view('integrate/management', $_get);
     }
 
     public function getList()
     {
 
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'length' => $this->request->getGet('length'),
-                'start' => $this->request->getGet('start'),
-                'draw' => $this->request->getGet('draw'),
-                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                'stx' => $this->request->getGet('stx'),
-                'adv' => $this->request->getGet('adv'),
-                'media' => $this->request->getGet('media'),
-                'event' => $this->request->getGet('event'),
-            ];
-
+            $arg = $this->request->getGet();
             $result = $this->integrate->getEventLead($arg);
 
             foreach($result['data'] as &$row){
@@ -91,17 +81,8 @@ class IntegrateController extends BaseController
 
     public function getEventLeadCount()
     {
-
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                'stx' => $this->request->getGet('stx'),
-                'adv' => $this->request->getGet('adv'),
-                'media' => $this->request->getGet('media'),
-                'event' => $this->request->getGet('event'),
-            ];
-
+            $arg = $this->request->getGet();
             $data = $this->integrate->getEventLeadCount($arg);
 
             $adv_counts = array();
@@ -141,18 +122,21 @@ class IntegrateController extends BaseController
 
     public function getStatusCount()
     {
-
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
-                'stx' => $this->request->getGet('stx'),
-                'adv' => $this->request->getGet('adv'),
-                'media' => $this->request->getGet('media'),
-                'event' => $this->request->getGet('event'),
-            ];
-
+            $arg = $this->request->getGet();
             $result = $this->integrate->getStatusCount($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getMemo()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->integrate->getMemo($arg);
 
             return $this->respond($result);
         }else{

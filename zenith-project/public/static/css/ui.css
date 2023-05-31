@@ -157,6 +157,14 @@ select::-ms-expand {
   display: none;
 }
 
+::-moz-selection {
+  color: #fff;
+}
+
+::selection {
+  color: #fff;
+}
+
 @media screen and (max-width: 1024px) {
   html, body {
     font-size: 14px;
@@ -246,8 +254,9 @@ body {
   color: #fff;
 }
 .nav-wrap .nav button > i.bi {
-  margin: 0 10px 0 -37px;
-  font-size: 180%;
+  display: inline-block;
+  margin: 5px 10px 0 -35px;
+  font-size: 150%;
   vertical-align: middle;
 }
 .nav-wrap .nav .btn-toggle-nav {
@@ -498,6 +507,7 @@ body {
   height: 100vh;
   overflow: auto;
   padding: 80px 4.4271vw;
+  transition: all 0.3s;
 }
 
 .title-area {
@@ -635,6 +645,14 @@ body {
   margin: 0 0 5px;
   font-size: 1.125rem;
   color: #2d2e34;
+}
+.search-wrap .detail.flex-wrap .col {
+  margin-bottom: 0.8rem;
+  width: 14%;
+  width: 25%;
+}
+.search-wrap .detail.flex-wrap .col:last-child {
+  margin-bottom: 0;
 }
 .search-wrap select {
   width: 20%;
@@ -933,11 +951,7 @@ body {
     background: #ce1922;
   }
 }
-.table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
+.table thead th { /*position:sticky; top:0; z-index:2;*/ }
 .table .none {
   padding: 50px 0;
   text-align: center;
@@ -953,6 +967,11 @@ body {
 }
 .table .ico.red {
   background: var(--bs-danger);
+}
+.table .nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .table-default {
   table-layout: fixed;
@@ -1123,6 +1142,10 @@ body {
   font-size: 1.625rem;
   border-bottom: 2px solid #ce1922;
 }
+.modal .modal-header .modal-title .title::before {
+  content: "-";
+  padding: 0 5px;
+}
 .modal .modal-header .modal-title .bi {
   font-size: 22px;
 }
@@ -1198,7 +1221,18 @@ body {
   font-size: 13px;
 }
 .memo-list li {
+  position: relative;
   padding: 10px 0;
+}
+.memo-list li::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: -6px;
+  width: 2px;
+  height: 2px;
+  border-radius: 100%;
+  background-color: #ce1922;
 }
 .memo-list li:not(:last-child) {
   border-bottom: 2px dashed #dfdfdf;

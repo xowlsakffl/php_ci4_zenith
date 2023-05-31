@@ -16,29 +16,30 @@ class AdvFacebookManagerModel extends Model
     
     public function getCampaigns($data)
     {
+		$srch = $data['searchData'];
         $builder = $this->facebook->table('fb_campaign A');
-        $builder->select('"페이스북" AS media, CONCAT("facebook_", A.campaign_id) AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+        $builder->select('"페이스북" AS media, CONCAT("facebook_", A.campaign_id) AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
         $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
         $builder->join('fb_ad C', 'B.adset_id = C.adset_id');
         $builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
         $builder->join('fb_ad_account E', 'A.account_id = E.ad_account_id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
         
-        if(!empty($data['businesses'])){
-			$builder->whereIn('E.business_id', $data['businesses']);
+        if(!empty($srch['business'])){
+			$builder->whereIn('E.business_id', explode("|",$srch['business']));
         }
 
-        if(!empty($data['accounts'])){
-			$builder->whereIn('A.account_id', $data['accounts']);
+        if(!empty($srch['accounts'])){
+			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
         }
 
-        if(!empty($data['stx'])){
+        if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('A.campaign_name', $data['stx']);
+            $builder->like('A.campaign_name', $srch['stx']);
             $builder->groupEnd();
         }
 
@@ -51,30 +52,31 @@ class AdvFacebookManagerModel extends Model
 
 	public function getAdsets($data)
 	{
+		$srch = $data['searchData'];
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", B.adset_id) AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('"페이스북" AS media, CONCAT("facebook_", B.adset_id) AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
 		
-		if(!empty($data['businesses'])){
+		if(!empty($srch['business'])){
 			$builder->join('fb_ad_account E', 'A.account_id = E.ad_account_id');
-			$builder->whereIn('E.business_id', $data['businesses']);
+			$builder->whereIn('E.business_id', explode("|",$srch['business']));
         }
 
-		if(!empty($data['stx'])){
+		if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('B.adset_name', $data['stx']);
+            $builder->like('B.adset_name', $srch['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
 
-        if(!empty($data['accounts'])){
-			$builder->whereIn('A.account_id', $data['accounts']);
+        if(!empty($srch['accounts'])){
+			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
         }
 
 		$builder->groupBy('B.adset_id');
@@ -87,31 +89,32 @@ class AdvFacebookManagerModel extends Model
 
 	public function getAds($data)
 	{
+		$srch = $data['searchData'];
 		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", C.ad_id) AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin');
+		$builder->select('"페이스북" AS media, CONCAT("facebook_", C.ad_id) AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
 		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
 		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
 		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
 		$builder->join('fb_adcreative E', 'D.ad_id = E.ad_id', 'left');
 
-		if(!empty($data['businesses'])){
+		if(!empty($srch['business'])){
 			$builder->join('fb_ad_account F', 'A.account_id = F.ad_account_id');
-			$builder->whereIn('F.business_id', $data['businesses']);
+			$builder->whereIn('F.business_id', explode("|",$srch['business']));
         }
 
-		if(!empty($data['stx'])){
+		if(!empty($srch['stx'])){
             $builder->groupStart();
-            $builder->like('C.ad_name', $data['stx']);
+            $builder->like('C.ad_name', $srch['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
+            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
+            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
         }
 
-		if(!empty($data['accounts'])){
-			$builder->whereIn('A.account_id', $data['accounts']);
+		if(!empty($dsrchata['accounts'])){
+			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
         }
 
 		$builder->groupBy('C.ad_id');
@@ -178,9 +181,9 @@ class AdvFacebookManagerModel extends Model
 				}
 			} */
 			if($row['status'] == 'ACTIVE'){
-				$row['status'] = 1;
+				$row['status'] = "ON";
 			}else{
-				$row['status'] = 0;
+				$row['status'] = "OFF";
 			}
 			
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
@@ -301,8 +304,8 @@ class AdvFacebookManagerModel extends Model
 		$builder->where('F.is_admin', 0);
         $builder->where('F.name !=', '');
 
-        if(!empty($data['businesses'])){
-			$builder->whereIn('F.business_id', $data['businesses']);
+        if(!empty($data['business'])){
+			$builder->whereIn('F.business_id', explode("|",$data['business']));
         }
 
         $builder->groupBy('F.ad_account_id');
@@ -357,12 +360,12 @@ class AdvFacebookManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         } 
 
-		if(!empty($data['businesses'])){
-			$builder->whereIn('E.business_id', $data['businesses']);
+		if(!empty($data['business'])){
+			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
 		if(!empty($data['accounts'])){
-			$builder->whereIn('D.account_id', $data['accounts']);
+			$builder->whereIn('D.account_id', explode("|",$data['accounts']));
         }
 
 		$builder->groupBy('A.date');

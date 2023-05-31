@@ -62,11 +62,13 @@ use Google\Ads\GoogleAds\V13\Enums\ChangeClientTypeEnum\ChangeClientType;
 use Google\Ads\GoogleAds\V13\Enums\AssetTypeEnum\AssetType;
 use Google\Ads\GoogleAds\V13\Enums\ResourceChangeOperationEnum\ResourceChangeOperation;
 use Google\Ads\GoogleAds\V13\Enums\ResponseContentTypeEnum\ResponseContentType;
+use Google\Ads\GoogleAds\V13\Resources\Ad;
 use Google\Ads\GoogleAds\V13\Resources\AdGroup;
 use Google\Ads\GoogleAds\V13\Resources\AdGroupAd;
 use Google\Ads\GoogleAds\V13\Resources\Campaign;
 use Google\Ads\GoogleAds\V13\Services\AdGroupAdOperation;
 use Google\Ads\GoogleAds\V13\Services\AdGroupOperation;
+use Google\Ads\GoogleAds\V13\Services\AdOperation;
 use Google\Ads\GoogleAds\V13\Services\CampaignOperation;
 
 
@@ -304,13 +306,16 @@ class ZenithGG
             }
         }
 
+        if(isset($param['name'])){
+            $data['name'] = $param['name'];
+        }
+
         $campaign = new Campaign($data);
       
         $campaignOperation = new CampaignOperation();
         $campaignOperation->setUpdate($campaign);
         $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
         
-        // Issues a mutate request to update the campaign.
         $response = $campaignServiceClient->mutateCampaigns(
             $customerId,
             [$campaignOperation],
@@ -329,7 +334,12 @@ class ZenithGG
                 $setData['status'] = $campaignInfo->getStatus() == 2 ? 'ENABLED' : 'PAUSED';
             }
 
+            if(isset($data['name'])){
+                $setData['name'] = $campaignInfo->getName();
+            }
+
             $this->db->updateCampaignField($setData);
+            return $setData;
         };
     }
 
@@ -410,13 +420,16 @@ class ZenithGG
             }
         }
 
+        if(isset($param['name'])){
+            $data['name'] = $param['name'];
+        }
+
         $adGroup = new AdGroup($data);
       
         $adGroupOperation = new AdGroupOperation();
         $adGroupOperation->setUpdate($adGroup);
         $adGroupOperation->setUpdateMask(FieldMasks::allSetFieldsOf($adGroup));
         
-        // Issues a mutate request to update the campaign.
         $response = $adGroupServiceClient ->mutateAdGroups(
             $customerId,
             [$adGroupOperation],
@@ -434,7 +447,12 @@ class ZenithGG
                 $setData['status'] = $adGroupInfo->getStatus() == 2 ? 'ENABLED' : 'PAUSED';
             }
 
+            if(isset($data['name'])){
+                $setData['name'] = $adGroupInfo->getName();
+            }
+
             $this->db->updateAdgroupField($setData);
+            return $setData;
         };
     }
       
@@ -521,7 +539,7 @@ class ZenithGG
         return $result;
     }
       
-    public function updateAd($customerId = null, $adGroupId = null, $adId = null, $param)
+    public function updateAdGroupAd($customerId = null, $adGroupId = null, $adId = null, $param)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
@@ -547,26 +565,71 @@ class ZenithGG
         $adGroupAdOperation = new AdGroupAdOperation();
         $adGroupAdOperation->setUpdate($adGroupAd);
         $adGroupAdOperation->setUpdateMask(FieldMasks::allSetFieldsOf($adGroupAd));
-        
-        // Issues a mutate request to update the campaign.
+
         $response = $googleAdsClient ->mutateAdGroupAds(
             $customerId,
             [$adGroupAdOperation],
             ['responseContentType' => ResponseContentType::MUTABLE_RESOURCE]
         );
 
-        $updatedAdGroupAd = $response->getResults()[0];//여기부터
+        $updatedAdGroupAd = $response->getResults()[0];
         $adGroupAdInfo = $updatedAdGroupAd->getAdGroupAd();
         if(!empty($adGroupAdInfo)){
             $setData = [
-                'id' => $adGroupAdInfo->getId(),
+                'id' => $adGroupAdInfo->getAd()->getId(),
             ];
-            dd($setData);
+            
             if(isset($data['status'])){
                 $setData['status'] = $adGroupAdInfo->getStatus() == 2 ? 'ENABLED' : 'PAUSED';
             }
 
             $this->db->updateAdField($setData);
+            return $setData;
+        };
+    }
+
+    public function updateAd($customerId = null, $adGroupId = null, $adId = null, $param)
+    {
+        $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
+        $account = $account->getRowArray();
+        self::setCustomerId($account['manageCustomer']);
+
+        $adGroupId = $this->db->getAdGroupIdByAd($adId);
+        $adGroupId = $adGroupId->getRow()->adgroupId;
+        $googleAdsClient  = $this->googleAdsClient->getAdServiceClient();
+        $data = [
+            'resource_name' => ResourceNames::forAd($customerId, $adId),
+        ];
+
+        if(isset($param['name'])){
+            $data['name'] = $param['name'];
+        }
+        //dd($googleAdsClient->getAd($data['resource_name']));
+        $ad = new Ad($data);
+
+        $adOperation = new AdOperation();
+        $adOperation->setUpdate($ad);
+        $adOperation->setUpdateMask(FieldMasks::allSetFieldsOf($ad));
+        
+        $response = $googleAdsClient ->mutateAds(
+            $customerId,
+            [$adOperation],
+            ['responseContentType' => ResponseContentType::MUTABLE_RESOURCE]
+        );
+
+        $updatedAd = $response->getResults()[0];
+        $adInfo = $updatedAd->getAd();
+        if(!empty($adInfo)){
+            $setData = [
+                'id' => $adInfo->getId(),
+            ];
+            
+            if(isset($data['name'])){
+                $setData['name'] = $adInfo->getName();
+            }
+
+            $this->db->updateAdField($setData);
+            return $setData;
         };
     }
 

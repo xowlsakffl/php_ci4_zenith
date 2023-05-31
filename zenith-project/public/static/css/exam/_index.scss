@@ -1,0 +1,23 @@
+.ad-list{
+    .type:hover{box-shadow:2px 2px 15px #ccc;}
+    .btn-more{transition:0.4s;
+        &:hover{
+            span{transition:0.2s; animation:moreBtn .5s infinite linear alternate;}
+        }      
+    }
+}  
+
+@include large{    
+    .ad-list{  
+        .type:hover+.btn-more, .type:focus+.btn-more, .type:target+.btn-more{
+            span{animation:none;}
+            
+            &::after{display:block; content:'더 보기'; position: absolute; bottom:-100%; left:5px; animation:moreBtn_mo .3s  linear alternate; font-size:0.8rem; color:#2d2e34;}
+        }
+        .btn-more{width:auto; background:#2d2e34; padding:5px 14px; border-radius:4px;
+            span{padding:0; background:url("/img/ico_arrow.png") no-repeat center 0; color:transparent; width:1.3rem; height:0.85rem; background-size:contain;}   
+        }
+        .btn-primary{background:#ce1922;}
+    }
+}
+

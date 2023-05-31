@@ -1,23 +1,290 @@
 <?=$this->extend('templates/front.php');?>
 <!--타이틀-->
 <?=$this->section('title');?>
-    CHAIN 열혈광고 - 광고주/광고대행사
+    CHAIN 열혈광고 - 광고주/광고대행사 관리
 <?=$this->endSection();?>
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script src="/static/js/twbsPagination.js"></script>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<style>
+    .ui-autocomplete{
+        z-index: 10000000;
+    }
+</style>
 <?=$this->endSection();?>
-
 <!--바디-->
 <?=$this->section('body');?>
 <?=$this->endSection();?>
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
+<div class="sub-contents-wrap db-manage-contaniner">
+    <div class="title-area">
+        <h2 class="page-title">광고주/광고대행사 관리</h2>
+        <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
+    </div>
 
+    <div class="search-wrap">
+        <form name="search-form" class="search d-flex justify-content-center">
+            <div class="term d-flex align-items-center">
+                <input type="text" name="sdate" id="sdate" autocomplete="off">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <span> ~ </span>
+                <input type="text" name="edate" id="edate" autocomplete="off">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+            </div>
+            <div class="input">
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="position-relative">
+        <div id="create-button-wrap" class="position-absolute top-0 end-0" style="z-index:1">
+            <button id="create-btn-modal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adv-create">생성</button>
+        </div>
+        <div class="row table-responsive">
+            <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="first" style="width:20px">#</th>
+                        <th style="width:100px">소속대행사</th>
+                        <th style="width:70px">타입</th>
+                        <th style="width:100px">이름</th>
+                        <th style="width:120px">전화번호</th>
+                        <th style="width:100px">생성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <!--광고대행사 정보, 소속 수정-->
+        <div class="modal fade" id="adv-show" tabindex="-1" aria-labelledby="adv-show-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="adv-show-label"><i class="bi bi-file-text"></i> <span class="title">광고주/광고대행사</span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-2">
+                            <h2 class="body-title">광고대행사/광고주 정보 수정</h2>
+                            <form name="adv-show-form">
+                                <table class="table table-bordered table-modal" id="adv-show-table">
+                                    <colgroup>
+                                        <col style="width:20%;">
+                                        <col style="width:10%;">
+                                        <col style="width:22%;">
+                                        <col style="width:19%;">
+                                        <col style="width:12%;">
+                                        <col style="width:17%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">소속대행사</th>
+                                            <th scope="col">타입</th>
+                                            <th scope="col">광고주명</th>
+                                            <th scope="col">전화번호</th>
+                                            <th scope="col">생성일</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p_name">
+                                                <input type="hidden" name="id">
+                                                <input type="hidden" name="p_id">
+                                                <input type="text" name="p_name"  class="form-control" id="show-p_name" autocomplete="off">
+                                            </td>
+                                            <td id="type">
+                                                <span></span>
+                                            </td>
+                                            <td id="name">
+                                                <input type="text" name="name" class="form-control">
+                                            </td>
+                                            <td id="tel">
+                                                <input type="text" name="tel" class="form-control">
+                                            </td>
+                                            <td id="created_at">
+                                                <span></span>
+                                            </td>
+                                            <td id="btns" class="d-flex">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">수정</button>
+                                                <button class="btn btn-danger" id="delete_btn"  type="button">삭제</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <hr class="my-4">
+                        <div class="mt-2">
+                            <h2 class="body-title">소속 사용자</h2>
+                            <form name="belong-user-form">
+                                <table class="table table-bordered table-modal" id="belong-user-table">
+                                    <colgroup>
+                                        <col style="width:83%;">
+                                        <col style="width:17%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">사용자 이름</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="username">
+                                                <input type="hidden" name="company_id">
+                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                            </td>
+                                            <td id="btns" class="d-flex">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!--유저리스트-->
+                            <table class="dataTable table table-striped table-hover" id="userTable">
+                                <colgroup>
+                                    <col style="width:10%;">
+                                    <col style="width:60%;">
+                                    <col style="width:20%;">
+                                    <col style="width:10%;">
+                                </colgroup>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="first">#</th>
+                                        <th>사용자 이름</th>
+                                        <th>생성일</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <!--유저리스트-->
+                        </div>
+                        <hr class="my-4">
+                        <div class="mt-2">
+                            <h2 class="body-title">매체별 연결 광고주</h2>
+                            <form name="belong-user-form">
+                                <table class="table table-bordered table-modal" id="belong-user-table">
+                                    <colgroup>
+                                        <col style="width:83%;">
+                                        <col style="width:17%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">사용자 이름</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="username">
+                                                <input type="hidden" name="company_id">
+                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                            </td>
+                                            <td id="btns" class="d-flex">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!--매체별 연결 광고주 리스트-->
+                            <table class="dataTable table table-striped table-hover" id="mediaTable">
+                                <colgroup>
+                                    <col style="width:10%;">
+                                    <col style="width:40%;">
+                                    <col style="width:40%;">
+                                    <col style="width:10%;">
+                                </colgroup>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="first">#</th>
+                                        <th>매체</th>
+                                        <th>광고주 이름</th>
+                                        <th>상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <!-- 매체별 연결 광고주 리스트-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--광고대행사 정보, 소속 수정-->
+        <!--광고대행사 생성-->
+        <div class="modal fade" id="adv-create" tabindex="-1" aria-labelledby="adv-create-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg sm-txt">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="adv-create-label"><i class="bi bi-file-text"></i> <span class="title">광고주/광고대행사</span></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <form name="adv-create-form">
+                                <table class="table table-bordered table-modal" id="adv-create-table">
+                                    <colgroup>
+                                        <col style="width:20%;">
+                                        <col style="width:10%;">
+                                        <col style="width:23%;">
+                                        <col style="width:23%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">소속대행사</th>
+                                            <th scope="col">타입</th>
+                                            <th scope="col">광고주명</th>
+                                            <th scope="col">전화번호</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="p_name">
+                                                <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
+                                            </td>
+                                            <td id="type">
+                                                <select name="type" id="" class="form-control">
+                                                    <option value="광고대행사">광고대행사</option>
+                                                    <option value="광고주">광고주</option>
+                                                </select>
+                                            </td>
+                                            <td id="name">
+                                                <input type="text" name="name" class="form-control">
+                                            </td>
+                                            <td id="tel">
+                                                <input type="text" name="tel" class="form-control">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="float-end"><button class="btn btn-primary" id="create_btn" type="submit">생성</button></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--생성-->
+    </div>
+</div>
     <!--content-->
-    <div class="container-md">
+    <!-- <div class="container-md">
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal">
                 <div class="modal-content">
@@ -178,328 +445,435 @@
                 <button class="btn btn-primary" id="companyNewBtn">광고주 생성</button>
             </div>
         </div>
-    </div>
+    </div> -->
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
 <script>
-$(document).ready(function(){
+let data = {};
+let dataTable;
+let userTable;
+let companyId;
 
-getBoardList();
-function getBoardList(page, limit, search, sort, startDate, endDate){
+setDate();
+getCompanyList();
+
+function setData() {
     data = {
-        'page': page ? page : 1,
-        'limit': limit ? limit : 10,
-        'search': search ? search : '',
-        'sort': sort ? sort : 'recent',
-        'startDate': startDate ? startDate : '',
-        'endDate': endDate ? endDate : '',
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
     };
-    
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/companies",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(xhr){
-            console.log(xhr.result);
-            setTable(xhr);       
-            setPaging(xhr);
-            setAllCount(xhr);
-            setDate(xhr);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+
+    return data;
 }
 
-function setPaging(xhr){
-    if(xhr.pager.pageCount == 0){
-        xhr.pager.pageCount = 1;
-    }
-    $('.pagination').twbsPagination('destroy');
-    $('.pagination').twbsPagination({
-        totalPages: xhr.pager.pageCount,	// 총 페이지 번호 수
-        visiblePages: 5,	// 하단에서 한번에 보여지는 페이지 번호 수
-        startPage : xhr.pager.currentPage, // 시작시 표시되는 현재 페이지
-        initiateStartPageClick: false,	// 플러그인이 시작시 페이지 버튼 클릭 여부 (default : true)
-        first : "첫 페이지",	// 페이지네이션 버튼중 처음으로 돌아가는 버튼에 쓰여 있는 텍스트
-        prev : "이전 페이지",	// 이전 페이지 버튼에 쓰여있는 텍스트
-        next : "다음 페이지",	// 다음 페이지 버튼에 쓰여있는 텍스트
-        last : "마지막 페이지",	// 페이지네이션 버튼중 마지막으로 가는 버튼에 쓰여있는 텍스트
-        nextClass : "page-item next",	// 이전 페이지 CSS class
-        prevClass : "page-item prev",	// 다음 페이지 CSS class
-        lastClass : "page-item last",	// 마지막 페이지 CSS calss
-        firstClass : "page-item first",	// 첫 페이지 CSS class
-        pageClass : "page-item",	// 페이지 버튼의 CSS class
-        activeClass : "active",	// 클릭된 페이지 버튼의 CSS class
-        disabledClass : "disabled",	// 클릭 안된 페이지 버튼의 CSS class
-        anchorClass : "page-link",	//버튼 안의 앵커에 대한 CSS class
-        
-        onPageClick: function (event, page) {
-            console.log(xhr.pager.limit);
-            getBoardList(page, xhr.pager.limit, xhr.pager.search, xhr.pager.sort, xhr.pager.startDate, xhr.pager.endDate)
-        }
-    });
-}
-
-function setTable(xhr){
-    $('#companies tbody').empty();
-    $.each(xhr.result, function(index, item){   
-        index++
-        if(item.parent_company_name == null){
-            item.parent_company_name = '';
-        }
-        $('<tr id="companyView" data-id="'+item.cdx+'">').append('<td>'+item.cdx+'</td>')
-        .append('<td>'+item.parent_company_name+'</td>')
-        .append('<td>'+item.companyType+'</td>')
-        .append('<td>'+item.companyName+'</td>')
-        .append('<td>'+item.companyTel+'</td>')
-        .appendTo('#companies'); 
-    });
-}
-function setAllCount(xhr){
-    console.log(xhr.pager.total);
-    if(xhr.pager.total == 0){
-        $total = 0;
-    }else{
-        $total = xhr.pager.total;
-    }
-    $('#allCount').text("총 "+$total+"개");
-}
-
-function setDate(xhr){
-    if($('#fromDate, #toDate').length){
-        var currentDate = moment().format("YYYY-MM-DD");
-        $('#fromDate, #toDate').daterangepicker({
-            locale: {
-                    "format": 'YYYY-MM-DD',     // 일시 노출 포맷
-                    "applyLabel": "확인",                    // 확인 버튼 텍스트
-                    "cancelLabel": "취소",                   // 취소 버튼 텍스트
-                    "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-                    "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+function getCompanyList(){
+    dataTable = $('#deviceTable').DataTable({
+        "autoWidth": true,
+        "columnDefs": [
+            { targets: [0], orderable: false},
+        ],
+        "order": [[1,'desc']],
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "deferRender": false,
+        "lengthMenu": [
+            [ 25, 10, 50, -1 ],
+            [ '25개', '10개', '50개', '전체' ]
+        ],
+        "ajax": {
+            "url": "<?=base_url()?>/company/get-companies",
+            "data": function(d) {
+                d.searchData = setData();
             },
-            "alwaysShowCalendars": true,                        // 시간 노출 여부
-            showDropdowns: true,                     // 년월 수동 설정 여부
-            autoApply: true,                         // 확인/취소 버튼 사용여부
-            maxDate: new Date(),
-            autoUpdateInput: false,
-            ranges: {
-                '오늘': [moment(), moment()],
-                '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                '지난 일주일': [moment().subtract(6, 'days'), moment()],
-                '지난 한달': [moment().subtract(29, 'days'), moment()],
-                '이번달': [moment().startOf('month'), moment().endOf('month')],
-            }
-        }, function(start, end, label) {
-            // console.log("New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')");
-            // Lets update the fields manually this event fires on selection of range
-            startDate = start.format('YYYY-MM-DD'); // selected start
-            endDate = end.format('YYYY-MM-DD'); // selected end
-
-            $checkinInput = $('#fromDate');
-            $checkoutInput = $('#toDate');
-
-            // Updating Fields with selected dates
-            $checkinInput.val(startDate);
-            $checkoutInput.val(endDate);
-
-            // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
-            var checkOutPicker = $checkoutInput.data('daterangepicker');
-            checkOutPicker.setStartDate(startDate);
-            checkOutPicker.setEndDate(endDate);
-
-            // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
-            var checkInPicker = $checkinInput.data('daterangepicker');
-            checkInPicker.setStartDate($checkinInput.val(startDate));
-            checkInPicker.setEndDate(endDate);
-            
-            getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val(), startDate, endDate);
-        });
-    }
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+        },
+        "columns": [
+            { "data": null },
+            { "data": "p_name"},
+            { "data": "type"},
+            { "data": "name" },
+            { "data": "tel" },
+            { 
+                "data": "created_at",
+                "render": function(data){
+                    return data.substr(0, 10);
+                }
+            },
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            $(row).attr("data-bs-toggle", "modal");
+            $(row).attr("data-bs-target", "#adv-show");
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+            return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        },  
+    });
 }
 
-//페이지 게시글 갯수
-$('body').on('change', '#pageLimit', function(){
-    getBoardList(
-        1, 
-        $(this).val(), 
-        $('#search').val(), 
-        $('#sort').val(),
-        $('#fromDate').val(),
-        $('#toDate').val(),
-    );
-})
+function getBelongUsers(){
+    userTable = $('#userTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/company/get-belong-users",
+            "data": {"company_id": companyId},
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res;
+            }
+        },
+        "columns": [
+            { "data": null },
+            { "data": "username"},
+            { 
+                "data": "created_at",
+                "render": function(data){
+                    return data.substr(0, 10);
+                }
+            },
+            { 
+                "data": "null",
+                "render": function(){
+                    return '<button class="btn btn-danger" id="exceptUserBelongBtn">제외</button>';
+                }
+            },
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
+    });
+}
 
-//검색
-$('body').on('keyup', '#search', function(){
-    getBoardList(
-        1, 
-        $('#pageLimit').val(), 
-        $(this).val(), 
-        $('#sort').val(),
-        $('#fromDate').val(),
-        $('#toDate').val(),
-    );
-})
+function setDate(){
+    var today = new Date();
+    var startDate = null;
+    var endDate = null;
+    $('#sdate, #edate').daterangepicker({
+        locale: {
+                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        alwaysShowCalendars: true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        maxDate: moment().endOf('day').toDate(),
+        autoUpdateInput: false,
+        ranges: {
+            '오늘': [today, today],
+            '어제': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1), new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)],
+            '지난 일주일': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6), today],
+            '지난 한달': [new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29), today],
+            '이번달': [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth() + 1, 0)]
+        }
+    }, function(start, end, label) {
+        // Lets update the fields manually this event fires on selection of range
+        startDate = start.format('YYYY-MM-DD'); // selected start
+        endDate = end.format('YYYY-MM-DD'); // selected end
 
-//분류
-$('body').on('change', '#sort', function(){
-    getBoardList(
-        1, 
-        $('#pageLimit').val(), 
-        $('#search').val(), 
-        $(this).val(),
-        $('#fromDate').val(),
-        $('#toDate').val(),
-    );
-})
+        checkinInput = $('#sdate');
+        checkoutInput = $('#edate');
 
-$('#dateRange').on('cancel.daterangepicker', function (ev, picker) {
-    $(this).val('');
-    getBoardList(1, $('#pageLimit').val(), $('#search').val(), $('#sort').val());
+        // Updating Fields with selected dates
+        checkinInput.val(startDate);
+        checkoutInput.val(endDate);
+
+        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+        var checkOutPicker = checkoutInput.data('daterangepicker');
+        checkOutPicker.setStartDate(startDate);
+        checkOutPicker.setEndDate(endDate);
+
+        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+        var checkInPicker = checkinInput.data('daterangepicker');
+        checkInPicker.setStartDate(checkinInput.val(startDate));
+        checkInPicker.setEndDate(endDate);
+    });
+}
+
+function setCompanyShow(data) {
+    $('#adv-show-title').text(data.name);
+    $('#adv-show-table #p_name input[name="id"]').val(data.id);
+    $('#adv-show-table #p_name input[type="text"]').val(data.p_name);
+    $('#adv-show-table #type span').text(data.type);
+    $('#adv-show-table #name input').val(data.name);
+    $('#adv-show-table #tel input').val(data.tel);
+    $('#adv-show-table #created_at span').text(data.created_at.substr(0, 10));
+    $('#adv-show-table #btns #delete_btn').val(data.id);
+    $('#belong-user-table #username input[name="company_id"]').val(data.id);
+}
+
+function updateCompany(data){
+    $.ajax({
+        url : "/company/set-company", 
+        type : "PUT", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("변경되었습니다.");
+                $('#adv-show').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function createCompany(data){
+    $.ajax({
+        url : "/company/create-company", 
+        type : "POST", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("생성되었습니다.");
+                $('#adv-create').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function createCompany(data){
+    $.ajax({
+        url : "/company/create-company", 
+        type : "POST", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("생성되었습니다.");
+                $('#adv-create').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function addBelongUser(data){
+    $.ajax({
+        url : "/company/set-user", 
+        type : "put", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){       
+                alert("추가되었습니다.");
+                userTable.draw();
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function getAgencies(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-agencies", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.name,
+                                value: item.name,
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        }
+        ,focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
+function getUsers(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-users", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.username,
+                                value: item.username,
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        }
+        ,focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
+$('form[name="search-form"]').bind('submit', function() {
+    dataTable.draw();
+    return false;
 });
 
-//글쓰기 버튼
-$('body').on('click', '#companyNewBtn', function(){
-    $('#modalWrite #frm').trigger("reset");
-    var myModal = new bootstrap.Modal(document.getElementById('modalWrite'))
-    myModal.show()
-})
-
-//저장 버튼
-$('body').on('click', '#companyInsertBtn', function(){
-    data = {
-        companyType: $('#modalWrite select[name=companyType] option').filter(':selected').val(),
-        companyName: $('#modalWrite input:text[name=companyName]').val(),
-        companyTel: $('#modalWrite input:text[name=companyTel]').val(),
-    };
-    console.log(data);
-    $.ajax({
-        type: "post",
-        url: "<?=base_url()?>/companies",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        success: function(response){
-            $('#modalWrite').modal('hide');
-            $('#modalWrite').find('input').val('');  
-            $('#modalWrite #frm span').text('');  
-            getBoardList();
-        },
-        error: function(error){
-            var errorText = error.responseJSON.messages;
-            $.each(errorText, function(key, val){
-                $("#modalWrite #" + key + "Error").text(val);
-            })
-        }
-    });
-})
-
-//글보기
-$('body').on('click', '#companyView', function(){
-    let id = $(this).attr('data-id');
+$('#adv-show').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var id = $btn.data('id');
+    $(this).attr('data-id', id);
+    companyId = id;
     $.ajax({
         type: "get",
-        url: "<?=base_url()?>/companies/"+id,
+        url: "<?=base_url()?>/company/get-company",
+        data: {'id': id},
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            console.log(data);
-            $('#modalView .modal-title').html(data.result.companyName);
-            $('#modalView .modal-body #companyBelong').html(data.result.parent_company_name);
-            $('#modalView .modal-body #companyType').html(data.result.companyType);
-            $('#modalView .modal-body #companyName').html(data.result.companyName);
-            $('#modalView .modal-body #companyTel').html(data.result.companyTel);
-            $('#modalView #companyBelong').attr('href', '/company/belong/'+data.result.cdx);
-            $('#modalView #companyUpdateModal').attr('data-id', data.result.cdx);
-            $('#modalView #companyDelete').attr('data-id', data.result.cdx);
-            $.each(data.result.users, function(index, item){   
-                $('<div id="userList">')
-                .append('<p>id : '+item.id+" username : "+item.username+'</p>')
-                .appendTo('#userListWrap'); 
-            });
-            var myModal = new bootstrap.Modal(document.getElementById('modalView'))
-            myModal.show()
+        success: function(data){  
+            setCompanyShow(data);
+            getBelongUsers(companyId); 
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
 })
+.on('hidden.bs.modal', function(e) { //modal Reset
+    companyId = '';
+    $(this).removeAttr('data-id');
+    $('#userTable').DataTable().destroy(); 
+    $('#userTable tbody').empty(); 
+    $('form[name="adv-show-form"]')[0].reset();
+    $('#adv-show-table tbody tr td span').text('');
+});
 
-//글수정
-$('body').on('click', '#companyUpdateModal', function(){
-    $('#modalView').modal('hide');
-
-    let id = $(this).attr('data-id');
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/companies/"+id,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            $('#modalUpdate #companyType option[value="'+data.result.companyType+'"]').prop('selected', true);  
-            $('#modalUpdate #companyName').val(data.result.companyName);
-            $('#modalUpdate #companyTel').val(data.result.companyTel);
-            $('#modalUpdate #hidden_id').val(data.result.cdx);
-            $('#modalUpdate #frm span').text('');  
-            var myModal = new bootstrap.Modal(document.getElementById('modalUpdate'))
-            myModal.show()
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+$('#show-p_name').on("focus", function(){
+    getAgencies("#show-p_name");
 })
 
-//글수정
-$('body').on('click', '#companyUpdateBtn', function(){
-    let id = $("#modalUpdate input:hidden[name=id]").val();
+$('#create-p_name').on("focus", function(){
+    getAgencies("#create-p_name");
+})
+
+$('#show-user-name').on("focus", function(){
+    getUsers("#show-user-name");
+})
+
+$('form[name="adv-show-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    updateCompany(data);
+    return false;
+});
+
+$('form[name="adv-create-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    createCompany(data);
+    return false;
+});
+
+$('form[name="belong-user-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    addBelongUser(data);
+    return false;
+});
+
+$('body').on('click', '#exceptUserBelongBtn', function(){
     data = {
-        companyType: $('#modalUpdate select[name=companyType] option').filter(':selected').val(),
-        companyName: $('#modalUpdate input:text[name=companyName]').val(),
-        companyTel: $('#modalUpdate input:text[name=companyTel]').val(),
+        'company_id': $('#adv-show').attr('data-id'),
+        'user_id': $(this).closest('tr').attr('data-id'),
     };
-    console.log(data);
-    $.ajax({
-        type: "put",
-        url: "<?=base_url()?>/companies/"+id,
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        headers:{'X-Requested-With':'XMLHttpRequest'},
-        success: function(response){
-            $('#modalUpdate').modal('hide');
-            $('#modalUpdate').find('input').val('');  
-            $('#modalUpdate #frm span').text(''); 
-            getBoardList();
-            console.log(response);
-        },
-        error: function(error){
-            var errorText = error.responseJSON.messages;
-            $.each(errorText, function(key, val){
-                $("#modalWrite #" + key + "Error").text(val);
-            })
-        }
-    });
-})
 
-//글삭제
-$('body').on('click', '#companyDelete', function(){
-    let id = $(this).attr('data-id');
-    if(confirm('정말 삭제하시겠습니까?')){
+    if(confirm('현재 소속에서 제외하시겠습니까?')){
         $.ajax({
             type: "delete",
-            url: "<?=base_url()?>/companies/"+id,
-            dataType: "json",
+            url: "<?=base_url()?>/company/except-belong-user",
+            dataType: "JSON",
+            data : data, 
             contentType: 'application/json; charset=utf-8',
             success: function(data){
-                $('#modalView').modal('hide');
-                getBoardList();
+                if(data == true){
+                    getBelongUsers(companyId); 
+                }
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
@@ -508,32 +882,28 @@ $('body').on('click', '#companyDelete', function(){
     }
 })
 
-$('body').on('change', '#companyType', function(){
-    $(this).siblings('span').text("");
-});
-
-$('body').on('keyup', '#companyName', function(){
-    $(this).siblings('span').text("");
-});
-
-$('body').on('keyup', '#companyTel', function(){
-    $(this).siblings('span').text("");
-});
-
-$("#modalView").on("hidden.bs.modal", function () {
-    $('#userListWrap').html('')
-});
-
-$('body').on('click', '#DataResetBtn', function(){
-    $('#sort option:first').prop('selected',true);
-    $('#pageLimit option:first').prop('selected',true);
-    $('#fromDate').val('');
-    $('#toDate').val('');
-    $('#search').val('');
-    getBoardList();
+$('body').on('click', '#delete_btn', function(){
+    let id = $(this).val();
+    if(confirm('정말 삭제하시겠습니까?')){
+        $.ajax({
+            type: "delete",
+            url: "<?=base_url()?>/company/delete-company",
+            dataType: "JSON",
+            data : {'id': id}, 
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(data == true){
+                    dataTable.draw();
+                    alert("삭제되었습니다.");
+                    $('#adv-show').modal('hide');
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
 })
-
-});
 
 </script>
 <?=$this->endSection();?>

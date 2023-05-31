@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*css/common.css compile*/
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Lepcha&display=swap");
@@ -159,6 +160,16 @@ select::-ms-expand {
   display: none;
 }
 
+::-moz-selection {
+  color: #fff;
+  background: #009dff;
+}
+
+::selection {
+  color: #fff;
+  background: #009dff;
+}
+
 @media screen and (max-width: 1024px) {
   html, body {
     font-size: 14px;
@@ -248,8 +259,9 @@ body {
   color: #fff;
 }
 .nav-wrap .nav button > i.bi {
-  margin: 0 10px 0 -37px;
-  font-size: 180%;
+  display: inline-block;
+  margin: 5px 10px 0 -35px;
+  font-size: 150%;
   vertical-align: middle;
 }
 .nav-wrap .nav .btn-toggle-nav {
@@ -500,6 +512,7 @@ body {
   height: 100vh;
   overflow: auto;
   padding: 80px 4.4271vw;
+  transition: all 0.3s;
 }
 
 .title-area {
@@ -637,6 +650,14 @@ body {
   margin: 0 0 5px;
   font-size: 1.125rem;
   color: #2d2e34;
+}
+.search-wrap .detail.flex-wrap .col {
+  margin-bottom: 0.8rem;
+  width: 14%;
+  width: 25%;
+}
+.search-wrap .detail.flex-wrap .col:last-child {
+  margin-bottom: 0;
 }
 .search-wrap select {
   width: 20%;
@@ -935,11 +956,7 @@ body {
     background: #ce1922;
   }
 }
-.table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
+.table thead th { /*position:sticky; top:0; z-index:2;*/ }
 .table .none {
   padding: 50px 0;
   text-align: center;
@@ -955,6 +972,11 @@ body {
 }
 .table .ico.red {
   background: var(--bs-danger);
+}
+.table .nowrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .table-default {
   table-layout: fixed;
@@ -1125,6 +1147,10 @@ body {
   font-size: 1.625rem;
   border-bottom: 2px solid #ce1922;
 }
+.modal .modal-header .modal-title .title::before {
+  content: "-";
+  padding: 0 5px;
+}
 .modal .modal-header .modal-title .bi {
   font-size: 22px;
 }
@@ -1200,7 +1226,18 @@ body {
   font-size: 13px;
 }
 .memo-list li {
+  position: relative;
   padding: 10px 0;
+}
+.memo-list li::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: -6px;
+  width: 2px;
+  height: 2px;
+  border-radius: 100%;
+  background-color: #ce1922;
 }
 .memo-list li:not(:last-child) {
   border-bottom: 2px dashed #dfdfdf;
@@ -1610,9 +1647,6 @@ body {
   float: right;
 }
 
-.sub-contents-wrap .dataTables_wrapper {
-  max-height: 600px;
-}
 .sub-contents-wrap .dataTables_wrapper .paging {
   padding-top: 1.755em;
   position: sticky;
@@ -1620,9 +1654,7 @@ body {
   background-color: #f7f7f7;
 }
 .sub-contents-wrap .dataTables_wrapper .dataTables_length {
-  float: unset;
-  position: absolute;
-  left: 0;
+  margin-bottom: 2rem;
 }
 .sub-contents-wrap .dataTables_wrapper .dataTables_length select {
   background-color: #fff;
@@ -1728,26 +1760,29 @@ body {
   background-color: #009dff;
   color: #fff;
   margin-top: 0.25rem;
-  padding: 4px 17px;
+  padding: 0.4rem 1rem;
   border-radius: 4px;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.delete {
   background-color: #000;
   color: #fff;
   margin-top: 0.25rem;
-  padding: 4px 17px;
+  padding: 0.4rem 1rem;
   border-radius: 4px;
+  transition: 0.5s;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.delete:hover {
-  background-color: red;
+  box-shadow: inset 0 -3em 0 0 red;
 }
 
 .db-manage-contaniner .search-wrap {
   border-radius: 10px;
 }
 .db-manage-contaniner .detail {
-  border-top: none;
   flex-wrap: wrap;
+}
+.db-manage-contaniner .detail .col:hover dd {
+  font-weight: 900;
 }
 
 @media screen and (max-width: 767px) {
@@ -1758,12 +1793,159 @@ body {
     padding-top: 1.25em;
   }
 }
+.nav-wrap .nav button {
+  display: block;
+  padding: 0 0 0 33px;
+  color: #fff;
+}
+.nav-wrap .nav button > i.bi {
+  transition: 0.2s;
+}
+.nav-wrap .nav button:hover > i.bi::before {
+  animation: sidebarShake 0.5s infinite linear alternate;
+  color: #929292;
+}
+.nav-wrap .nav a.active button > i.bi {
+  border-bottom: 2px solid #e58489;
+  animation: updown 1.5s infinite linear alternate;
+}
+
+.modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {
+  animation: letterSpacing 0.7s linear alternate;
+}
+.modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) .bi-arrow-counterclockwise:active::before {
+  transform: rotate(360deg);
+  transition: all 0.5s;
+}
+.modal .modal-header .btn-close {
+  transition: all 0.5s;
+}
+.modal .modal-header .btn-close:active {
+  transform: rotate(360deg);
+}
+
+@media screen and (max-width: 1024px) {
+  .left-side.open .btn-menu {
+    border: none;
+  }
+  .left-side.open .btn-menu:active {
+    transform: rotate(360deg);
+    transition: 0.4s;
+  }
+  .left-side.open .btn-menu:before {
+    height: 100%;
+    left: 50%;
+    width: 2px;
+    top: 0;
+    transform: rotate(45deg);
+    transition: all 0.3s;
+  }
+  .left-side.open .btn-menu:after {
+    height: 100%;
+    left: 50%;
+    width: 2px;
+    transform: rotate(-45deg);
+    transition: all 0.3s;
+  }
+}
+.ad-list .type:hover {
+  box-shadow: 2px 2px 15px #ccc;
+}
+.ad-list .btn-more {
+  transition: 0.4s;
+}
+.ad-list .btn-more:hover span {
+  transition: 0.2s;
+  animation: moreBtn 0.5s infinite linear alternate;
+}
+
+@media screen and (max-width: 1200px) {
+  .ad-list .type:hover + .btn-more span, .ad-list .type:focus + .btn-more span, .ad-list .type:target + .btn-more span {
+    animation: none;
+  }
+  .ad-list .type:hover + .btn-more::after, .ad-list .type:focus + .btn-more::after, .ad-list .type:target + .btn-more::after {
+    display: block;
+    content: "더 보기";
+    position: absolute;
+    bottom: -100%;
+    left: 5px;
+    animation: moreBtn_mo 0.3s linear alternate;
+    font-size: 0.8rem;
+    color: #2d2e34;
+  }
+  .ad-list .btn-more {
+    width: auto;
+    background: #2d2e34;
+    padding: 5px 14px;
+    border-radius: 4px;
+  }
+  .ad-list .btn-more span {
+    padding: 0;
+    background: url("/img/ico_arrow.png") no-repeat center 0;
+    color: transparent;
+    width: 1.3rem;
+    height: 0.85rem;
+    background-size: contain;
+  }
+  .ad-list .btn-primary {
+    background: #ce1922;
+  }
+}
+@keyframes moreBtn {
+  0% {
+    background-position-x: 40%;
+  }
+  40% {
+    background-position-x: 70%;
+  }
+  60% {
+    background-position-x: right;
+  }
+  80% {
+    background-position-x: 70%;
+  }
+  100% {
+    background-position-x: right;
+  }
+}
+@keyframes moreBtn_mo {
+  0% {
+    bottom: 0;
+  }
+  100% {
+    bottom: -100%;
+  }
+}
+@keyframes letterSpacing {
+  0% {
+    letter-spacing: 0.5rem;
+  }
+  100% {
+    letter-spacing: 0px;
+  }
+}
 @keyframes hover-line {
   from {
     width: 0%;
   }
   to {
     width: 100%;
+  }
+}
+@keyframes sidebarShake {
+  0% {
+    transform: rotate(-10deg);
+  }
+  100% {
+    transform: rotate(20deg);
+  }
+}
+@keyframes updown {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(10px);
   }
 }
 .agree-container {
