@@ -42,17 +42,6 @@
             dt{margin:0 0 5px; font-size:1.125rem; color:$color-dark;}
         }
     }
-    .detail.flex-wrap{
-        .col{margin-bottom:0.8rem;
-            @if(max-width:$large){
-                width:14%;
-            }
-            @if(maxmin-width:$small){
-                width:25%;
-            }          
-            &:last-child{margin-bottom:0;}
-        }        
-    }
     select{width:20%; height:50px; margin:0 0 0 20px;}
 }
 .regi-wrap{margin:0 0 20px; padding:20px; text-align:center; border:1px solid #c3c3c3; background:#fff;

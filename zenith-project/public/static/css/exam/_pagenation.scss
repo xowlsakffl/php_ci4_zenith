@@ -50,11 +50,14 @@
 }
 
 .db-manage-contaniner{
-    .search-wrap{border-radius: 10px;}          
-    .detail{flex-wrap:wrap;
-        .col:hover{
-            dd{font-weight:900;}
-        } 
+    .search-wrap{border-radius: 10px; overflow:auto;}          
+    .detail{flex-wrap: wrap; min-width:1000px;
+        .col{padding: 0; flex: 1 0 auto;
+            dt{font-size: 1rem;}
+            &:hover{
+                dd{font-weight:900;}
+            }
+        }        
     }
 }
 
@@ -67,3 +70,14 @@
     }    
 }
 
+@include x-large{ //sub.scss
+    .db-manage-contaniner{
+        .search-wrap{
+            .detail{
+                .col{width:auto;
+                    &:nth-child(n+5){margin-top:0;}
+                }
+            }
+        }
+    }   
+}

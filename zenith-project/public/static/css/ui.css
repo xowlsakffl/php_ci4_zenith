@@ -159,10 +159,12 @@ select::-ms-expand {
 
 ::-moz-selection {
   color: #fff;
+  background: #009dff;
 }
 
 ::selection {
   color: #fff;
+  background: #009dff;
 }
 
 @media screen and (max-width: 1024px) {
@@ -646,14 +648,6 @@ body {
   font-size: 1.125rem;
   color: #2d2e34;
 }
-.search-wrap .detail.flex-wrap .col {
-  margin-bottom: 0.8rem;
-  width: 14%;
-  width: 25%;
-}
-.search-wrap .detail.flex-wrap .col:last-child {
-  margin-bottom: 0;
-}
 .search-wrap select {
   width: 20%;
   height: 50px;
@@ -830,6 +824,11 @@ body {
 }
 .tab-content .btn-wrap .btn:hover, .tab-content .btn-wrap .btn.active {
   color: #fff;
+}
+
+#adv-show-table #p_name #search-results {
+  position: absolute;
+  background-color: #fff;
 }
 
 @media screen and (max-width: 1400px) {
