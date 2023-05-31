@@ -110,7 +110,7 @@ class CompanyModel extends Model
         return $result;
     }
 
-    public function getAgency($p_name)
+    public function getAgencyByName($p_name)
     {
         $builder = $this->zenith->table('companies');
         $builder->select('id, name');

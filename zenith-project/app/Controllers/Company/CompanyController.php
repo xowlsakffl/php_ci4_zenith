@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Controllers\Api;
+namespace App\Controllers\Company;
 
 use App\Models\Api\CompanyModel;
 use CodeIgniter\API\ResponseTrait;
 
-class ApiCompanyController extends \CodeIgniter\Controller 
+class CompanyController extends \CodeIgniter\Controller 
 {
     use ResponseTrait;
 
@@ -13,9 +13,9 @@ class ApiCompanyController extends \CodeIgniter\Controller
 
     public function __construct()
     {
-        if(!auth()->user()->ingroup('superadmin', 'admin', 'developer')){
+        /* if(!auth()->user()->ingroup('superadmin', 'admin', 'developer')){
             return $this->failUnauthorized("권한이 없습니다.");
-        }
+        } */
         $this->zenith = \Config\Database::connect();
         $this->company = model(CompanyModel::class);
     }
@@ -61,7 +61,7 @@ class ApiCompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
-                $agency = $this->company->getAgency($param['p_name']); 
+                $agency = $this->company->getAgencyByName($param['p_name']); 
                 $validation = \Config\Services::validation();
                 if(empty($agency)) {
                     return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);
@@ -88,7 +88,7 @@ class ApiCompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
-                $agency = $this->company->getAgency($param['p_name']); 
+                $agency = $this->company->getAgencyByName($param['p_name']); 
                 $validation = \Config\Services::validation();
                 if(empty($agency)) {
                     return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);

@@ -73,6 +73,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->post('company/create-company', 'Company\CompanyController::createCompany');
         $routes->put('company/set-company', 'Company\CompanyController::setCompany');
         $routes->delete('company/delete-company', 'Company\CompanyController::deleteCompany');
+
+        $routes->get('company/get-users', 'User\UserController::getUsers');
+        $routes->get('company/get-belong-users', 'User\UserController::getBelongUsers');
+        $routes->put('company/set-user', 'User\UserController::setBelongUser');
+        $routes->delete('company/except-belong-user', 'User\UserController::exceptBelongUser');
     });
 
     // 광고관리

@@ -12,7 +12,7 @@
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
-    #ui-id-1{
+    .ui-autocomplete{
         z-index: 10000000;
     }
 </style>
@@ -65,7 +65,7 @@
                 </tbody>
             </table>
         </div>
-        <!--수정/보기-->
+        <!--광고대행사 정보, 소속 수정-->
         <div class="modal fade" id="adv-show" tabindex="-1" aria-labelledby="adv-show-label" aria-hidden="true">
             <div class="modal-dialog modal-lg sm-txt">
                 <div class="modal-content">
@@ -74,16 +74,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="table-responsive">
-                            <form name="modal-form">
+                        <div class="mb-2">
+                            <h2 class="body-title">광고대행사/광고주 정보 수정</h2>
+                            <form name="adv-show-form">
                                 <table class="table table-bordered table-modal" id="adv-show-table">
                                     <colgroup>
                                         <col style="width:20%;">
                                         <col style="width:10%;">
-                                        <col style="width:23%;">
-                                        <col style="width:23%;">
-                                        <col style="width:14%;">
-                                        <col style="width:10%;">
+                                        <col style="width:22%;">
+                                        <col style="width:19%;">
+                                        <col style="width:12%;">
+                                        <col style="width:17%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -100,7 +101,7 @@
                                             <td id="p_name">
                                                 <input type="hidden" name="id">
                                                 <input type="hidden" name="p_id">
-                                                <input type="text" name="p_name"  class="form-control" id="show-p_name">
+                                                <input type="text" name="p_name"  class="form-control" id="show-p_name" autocomplete="off">
                                             </td>
                                             <td id="type">
                                                 <span></span>
@@ -114,7 +115,7 @@
                                             <td id="created_at">
                                                 <span></span>
                                             </td>
-                                            <td id="btns">
+                                            <td id="btns" class="d-flex">
                                                 <button class="btn btn-primary" id="modify_btn" type="submit">수정</button>
                                                 <button class="btn btn-danger" id="delete_btn"  type="button">삭제</button>
                                             </td>
@@ -123,12 +124,110 @@
                                 </table>
                             </form>
                         </div>
+                        <hr class="my-4">
+                        <div class="mt-2">
+                            <h2 class="body-title">소속 사용자</h2>
+                            <form name="belong-user-form">
+                                <table class="table table-bordered table-modal" id="belong-user-table">
+                                    <colgroup>
+                                        <col style="width:83%;">
+                                        <col style="width:17%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">사용자 이름</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="username">
+                                                <input type="hidden" name="company_id">
+                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                            </td>
+                                            <td id="btns" class="d-flex">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!--유저리스트-->
+                            <table class="dataTable table table-striped table-hover" id="userTable">
+                                <colgroup>
+                                    <col style="width:10%;">
+                                    <col style="width:60%;">
+                                    <col style="width:20%;">
+                                    <col style="width:10%;">
+                                </colgroup>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="first">#</th>
+                                        <th>사용자 이름</th>
+                                        <th>생성일</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <!--유저리스트-->
+                        </div>
+                        <hr class="my-4">
+                        <div class="mt-2">
+                            <h2 class="body-title">매체별 연결 광고주</h2>
+                            <form name="belong-user-form">
+                                <table class="table table-bordered table-modal" id="belong-user-table">
+                                    <colgroup>
+                                        <col style="width:83%;">
+                                        <col style="width:17%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">사용자 이름</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="username">
+                                                <input type="hidden" name="company_id">
+                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                            </td>
+                                            <td id="btns" class="d-flex">
+                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!--매체별 연결 광고주 리스트-->
+                            <table class="dataTable table table-striped table-hover" id="mediaTable">
+                                <colgroup>
+                                    <col style="width:10%;">
+                                    <col style="width:40%;">
+                                    <col style="width:40%;">
+                                    <col style="width:10%;">
+                                </colgroup>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="first">#</th>
+                                        <th>매체</th>
+                                        <th>광고주 이름</th>
+                                        <th>상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <!-- 매체별 연결 광고주 리스트-->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--수정/보기-->
-        <!--생성-->
+        <!--광고대행사 정보, 소속 수정-->
+        <!--광고대행사 생성-->
         <div class="modal fade" id="adv-create" tabindex="-1" aria-labelledby="adv-create-label" aria-hidden="true">
             <div class="modal-dialog modal-lg sm-txt">
                 <div class="modal-content">
@@ -138,7 +237,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="table-responsive">
-                            <form name="modal-form-create">
+                            <form name="adv-create-form">
                                 <table class="table table-bordered table-modal" id="adv-create-table">
                                     <colgroup>
                                         <col style="width:20%;">
@@ -157,7 +256,7 @@
                                     <tbody>
                                         <tr>
                                             <td id="p_name">
-                                                <input type="text" name="p_name"  class="form-control" id="create-p_name">
+                                                <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
                                             </td>
                                             <td id="type">
                                                 <select name="type" id="" class="form-control">
@@ -174,7 +273,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button class="btn btn-primary" id="create_btn" type="submit">생성</button>
+                                <div class="float-end"><button class="btn btn-primary" id="create_btn" type="submit">생성</button></div>
                             </form>
                         </div>
                     </div>
@@ -353,8 +452,11 @@
 <script>
 let data = {};
 let dataTable;
+let userTable;
+let companyId;
+
 setDate();
-getList();
+getCompanyList();
 
 function setData() {
     data = {
@@ -366,7 +468,7 @@ function setData() {
     return data;
 }
 
-function getList(){
+function getCompanyList(){
     dataTable = $('#deviceTable').DataTable({
         "autoWidth": true,
         "columnDefs": [
@@ -422,6 +524,59 @@ function getList(){
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },  
+    });
+}
+
+function getBelongUsers(){
+    userTable = $('#userTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/company/get-belong-users",
+            "data": {"company_id": companyId},
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res;
+            }
+        },
+        "columns": [
+            { "data": null },
+            { "data": "username"},
+            { 
+                "data": "created_at",
+                "render": function(data){
+                    return data.substr(0, 10);
+                }
+            },
+            { 
+                "data": "null",
+                "render": function(){
+                    return '<button class="btn btn-danger" id="exceptUserBelongBtn">제외</button>';
+                }
+            },
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
     });
 }
 
@@ -482,6 +637,7 @@ function setCompanyShow(data) {
     $('#adv-show-table #tel input').val(data.tel);
     $('#adv-show-table #created_at span').text(data.created_at.substr(0, 10));
     $('#adv-show-table #btns #delete_btn').val(data.id);
+    $('#belong-user-table #username input[name="company_id"]').val(data.id);
 }
 
 function updateCompany(data){
@@ -495,6 +651,7 @@ function updateCompany(data){
             if(data == true){
                 dataTable.draw();
                 alert("변경되었습니다.");
+                $('#adv-show').modal('hide');
             }
         }
         ,error : function(error){
@@ -516,6 +673,7 @@ function createCompany(data){
             if(data == true){
                 dataTable.draw();
                 alert("생성되었습니다.");
+                $('#adv-create').modal('hide');
             }
         }
         ,error : function(error){
@@ -526,7 +684,50 @@ function createCompany(data){
     });
 }
 
-function autoComplete(inputId){
+function createCompany(data){
+    $.ajax({
+        url : "/company/create-company", 
+        type : "POST", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("생성되었습니다.");
+                $('#adv-create').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function addBelongUser(data){
+    $.ajax({
+        url : "/company/set-user", 
+        type : "put", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){       
+                alert("추가되었습니다.");
+                userTable.draw();
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function getAgencies(inputId){
     $(inputId).autocomplete({
         source : function(request, response) {
             $.ajax({
@@ -558,6 +759,40 @@ function autoComplete(inputId){
         delay: 100
     });
 }
+
+function getUsers(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-users", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.username,
+                                value: item.username,
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        }
+        ,focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
@@ -566,8 +801,8 @@ $('form[name="search-form"]').bind('submit', function() {
 $('#adv-show').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     var id = $btn.data('id');
-    $('form[name="modal-form"]')[0].reset();
-    $('#adv-show-table tbody tr td span').text('');
+    $(this).attr('data-id', id);
+    companyId = id;
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/company/get-company",
@@ -576,36 +811,76 @@ $('#adv-show').on('show.bs.modal', function(e) {
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
             setCompanyShow(data);
+            getBelongUsers(companyId); 
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
+})
+.on('hidden.bs.modal', function(e) { //modal Reset
+    companyId = '';
+    $(this).removeAttr('data-id');
+    $('#userTable').DataTable().destroy(); 
+    $('#userTable tbody').empty(); 
+    $('form[name="adv-show-form"]')[0].reset();
+    $('#adv-show-table tbody tr td span').text('');
 });
 
 $('#show-p_name').on("focus", function(){
-    autoComplete("#show-p_name");
+    getAgencies("#show-p_name");
 })
 
 $('#create-p_name').on("focus", function(){
-    autoComplete("#create-p_name");
+    getAgencies("#create-p_name");
 })
 
+$('#show-user-name').on("focus", function(){
+    getUsers("#show-user-name");
+})
 
-$('form[name="modal-form"]').bind('submit', function() {
+$('form[name="adv-show-form"]').bind('submit', function() {
     var data = $(this).serialize();
     updateCompany(data);
-    $('#adv-show').modal('hide');
     return false;
 });
 
-$('form[name="modal-form-create"]').bind('submit', function() {
+$('form[name="adv-create-form"]').bind('submit', function() {
     var data = $(this).serialize();
-    console.log(data);
     createCompany(data);
-    $('#adv-create').modal('hide');
     return false;
 });
+
+$('form[name="belong-user-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    addBelongUser(data);
+    return false;
+});
+
+$('body').on('click', '#exceptUserBelongBtn', function(){
+    data = {
+        'company_id': $('#adv-show').attr('data-id'),
+        'user_id': $(this).closest('tr').attr('data-id'),
+    };
+
+    if(confirm('현재 소속에서 제외하시겠습니까?')){
+        $.ajax({
+            type: "delete",
+            url: "<?=base_url()?>/company/except-belong-user",
+            dataType: "JSON",
+            data : data, 
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(data == true){
+                    getBelongUsers(companyId); 
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
+})
 
 $('body').on('click', '#delete_btn', function(){
     let id = $(this).val();
