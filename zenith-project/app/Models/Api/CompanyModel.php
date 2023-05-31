@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class CompanyModel extends Model
 {
-    protected $zenith;
+    protected $zenith, $facebook, $google, $kakao;
     protected $validationRules      = [
         'p_name' => 'required',
         'name' => 'required',
@@ -29,6 +29,9 @@ class CompanyModel extends Model
     public function __construct()
     {
         $this->zenith = \Config\Database::connect();
+        $this->facebook = \Config\Database::connect('facebook');
+        $this->google = \Config\Database::connect('google');
+        $this->kakao = \Config\Database::connect('kakao');
     }
 
     public function getCompanies($data)
@@ -102,6 +105,7 @@ class CompanyModel extends Model
         $builder->select('id, name');
         $builder->where('type', '광고대행사');
         $builder->where('status !=', 0);
+        $builder->limit(10);
         if(!empty($stx)){
             $builder->like('name', $stx);
         }
@@ -126,6 +130,7 @@ class CompanyModel extends Model
 
     public function createCompany($data, $agency)
     {
+        $this->zenith->transStart();
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('type', $data['type']);
         $builder_1->set('name', $data['name']);
@@ -139,11 +144,14 @@ class CompanyModel extends Model
             'company_parent_id' => $agency['id']
         ];
         $builder_2->insert($newRecord);
-        return true;
+        $result = $this->zenith->transComplete();
+
+        return $result;
     }
 
     public function setCompany($data, $agency)
     {
+        $this->zenith->transStart();
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('name', $data['name']);
         $builder_1->set('tel', $data['tel']);
@@ -165,12 +173,10 @@ class CompanyModel extends Model
             $builder_2->where('company_id', $data['id']);
             $result_2 = $builder_2->update();
         }
-        
-        if ($result_1 && $result_2) {
-            return true;
-        } else {
-            return false;
-        }
+
+        $result = $this->zenith->transComplete();
+
+        return $result;
     }
 
     public function deleteCompany($data)
@@ -180,6 +186,37 @@ class CompanyModel extends Model
         $builder->where('id', $data['id']);
         $result = $builder->update();
 
-        return true;
+        return $result;
+    }
+
+    public function getAdAccounts($stx = NULL)
+    {
+        $facebookBuilder = $this->facebook->table('fb_ad_account');
+        $kakaoBuilder = $this->kakao->table('mm_ad_account');
+        $googleBuilder = $this->google->table('aw_ad_account');
+
+        $facebookBuilder->select('"페이스북" AS media, name, ad_account_id AS account_id, status AS status');
+        $facebookBuilder->like('name', $stx);
+        $facebookBuilder->limit(10);
+        $facebookResult = $facebookBuilder->get()->getResultArray();
+
+        $kakaoBuilder->select('"카카오" AS media, name, id AS account_id, config AS status');
+        $kakaoBuilder->like('name', $stx);
+        $kakaoBuilder->limit(10);
+        $kakaoResult = $kakaoBuilder->get()->getResultArray();
+
+        $googleBuilder->select('"GDN" AS media, name, , customerId AS account_id, status AS status');
+        $googleBuilder->like('name', $stx);
+        $googleBuilder->limit(10);
+        $googleResult = $googleBuilder->get()->getResultArray();
+
+        $mergedResults = array_merge($facebookResult, $kakaoResult, $googleResult);
+
+        return $mergedResults;
+    }
+
+    public function setAdAccount($data)
+    {
+        
     }
 }

@@ -31,7 +31,7 @@ class UserController extends \CodeIgniter\Controller
     }
 
     public function getBelongUsers(){
-        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getBelongUsers($param['company_id']);
 
@@ -46,12 +46,7 @@ class UserController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
-                $user = $this->user->getUserByName($param['username']); 
-                if(empty($user)) {
-                    return $this->failValidationErrors(["username" => "존재하지 않는 사용자입니다."]);
-                }
-
-                $result = $this->user->setBelongUser($param, $user['id']);
+                $result = $this->user->setBelongUser($param);
             }else{
                 return $this->fail("잘못된 요청");
             }
@@ -78,7 +73,7 @@ class UserController extends \CodeIgniter\Controller
         }
     }
 
-    public function get($id = NULL) {
+    /* public function get($id = NULL) {
         if (strtolower($this->request->getMethod()) === 'get') {
             if ($id) {
                 $data['result'] = $this->user->getUser($id);       
@@ -235,5 +230,5 @@ class UserController extends \CodeIgniter\Controller
         }
 
         return true;
-    }
+    } */
 }

@@ -53,21 +53,12 @@ class UserModel extends ShieldUserModel
     {
         $builder = $this->zenith->table('users');
         $builder->select('id, username');
+        $builder->limit(10);
         if(!empty($data['stx'])){
             $builder->like('username', $data['stx']);
         }
         $result = $builder->get()->getResultArray();
 
-        return $result;
-    }
-
-    public function getUserByName($username)
-    {
-        $builder = $this->zenith->table('users');
-        $builder->select('id, username');
-        $builder->where('username', $username);
-        
-        $result = $builder->get()->getRowArray();
         return $result;
     }
 
@@ -82,23 +73,25 @@ class UserModel extends ShieldUserModel
         return $result;
     }
 
-    public function setBelongUser($data, $id)
+    public function setBelongUser($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('companies_users');
         $builder->select('company_id, user_id');
-        $builder->where('user_id', $id);
+        $builder->where('user_id', $data['user_id']);
         $builder->where('company_id', $data['company_id']);
         $result = $builder->get()->getResult();
 
         if (empty($result)) {
             $newRecord = [
                 'company_id' => $data['company_id'],
-                'user_id' => $id,
+                'user_id' => $data['user_id'],
             ];
             $result = $builder->insert($newRecord);
         } else {
             return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
         }
+        $result = $this->zenith->transComplete();
 
         return $result;
     }

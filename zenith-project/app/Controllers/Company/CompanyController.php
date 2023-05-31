@@ -133,4 +133,36 @@ class CompanyController extends \CodeIgniter\Controller
             return $this->fail("잘못된 요청");
         }
     }
+
+    public function getAdAccounts()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->company->getAdAccounts($param['stx']);
+            foreach($result as &$row){
+                if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
+                    $row['status'] = '활성';
+                }else{
+                    $row['status'] = '비활성';
+                }
+            }
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function setAdAccounts()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
+            $param = $this->request->getRawInput();
+            //여기부터
+            $result = $this->company->setAdAccounts($param);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
 }

@@ -14,6 +14,13 @@
 <style>
     .ui-autocomplete{
         z-index: 10000000;
+        max-height: 300px;
+        overflow-y: auto; /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+        
+    hr{
+        display: block !important;
     }
 </style>
 <?=$this->endSection();?>
@@ -74,7 +81,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-2">
+                        <div>
                             <h2 class="body-title">광고대행사/광고주 정보 수정</h2>
                             <form name="adv-show-form">
                                 <table class="table table-bordered table-modal" id="adv-show-table">
@@ -124,29 +131,70 @@
                                 </table>
                             </form>
                         </div>
-                        <hr class="my-4">
-                        <div class="mt-2">
-                            <h2 class="body-title">소속 사용자</h2>
-                            <form name="belong-user-form">
-                                <table class="table table-bordered table-modal" id="belong-user-table">
+                        <hr class="my-5">
+                        <div>
+                            <h2 class="body-title">매체별 연결 광고주</h2>
+                            <form name="adaccount-form">
+                                <table class="table table-bordered table-modal" id="adaccount-table">
                                     <colgroup>
-                                        <col style="width:83%;">
-                                        <col style="width:17%;">
+                                        <col style="width:100%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th scope="col">사용자 이름</th>
-                                            <th scope="col"></th>
+                                            <th scope="col">연결 광고주 검색/추가</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td id="username">
+                                            <td id="adaccount" class="d-flex">
                                                 <input type="hidden" name="company_id">
-                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                                <input type="hidden" name="ad_account_id">
+                                                <input type="text" name="adaccount"  class="form-control" id="show-adaccount" autocomplete="off">
                                             </td>
-                                            <td id="btns" class="d-flex">
-                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <!--매체별 연결 광고주 리스트-->
+                            <table class="dataTable table table-striped table-hover" id="adAccountListTable">
+                                <colgroup>
+                                    <col style="width:10%;">
+                                    <col style="width:40%;">
+                                    <col style="width:40%;">
+                                    <col style="width:10%;">
+                                </colgroup>
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="first">#</th>
+                                        <th>매체</th>
+                                        <th>광고주 이름</th>
+                                        <th>상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <!-- 매체별 연결 광고주 리스트-->
+                        </div>                
+                        <hr class="my-5">
+                        <div>
+                            <h2 class="body-title">소속 사용자</h2>
+                            <form name="belong-user-form">
+                                <table class="table table-bordered table-modal" id="belong-user-table">
+                                    <colgroup>
+                                        <col style="width:100%;">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">사용자 검색/추가</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="username" class="d-flex">
+                                                <input type="hidden" name="company_id">
+                                                <input type="hidden" name="user_id">
+                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -172,55 +220,6 @@
                                 </tbody>
                             </table>
                             <!--유저리스트-->
-                        </div>
-                        <hr class="my-4">
-                        <div class="mt-2">
-                            <h2 class="body-title">매체별 연결 광고주</h2>
-                            <form name="belong-user-form">
-                                <table class="table table-bordered table-modal" id="belong-user-table">
-                                    <colgroup>
-                                        <col style="width:83%;">
-                                        <col style="width:17%;">
-                                    </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">사용자 이름</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td id="username">
-                                                <input type="hidden" name="company_id">
-                                                <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
-                                            </td>
-                                            <td id="btns" class="d-flex">
-                                                <button class="btn btn-primary" id="modify_btn" type="submit">추가</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                            <!--매체별 연결 광고주 리스트-->
-                            <table class="dataTable table table-striped table-hover" id="mediaTable">
-                                <colgroup>
-                                    <col style="width:10%;">
-                                    <col style="width:40%;">
-                                    <col style="width:40%;">
-                                    <col style="width:10%;">
-                                </colgroup>
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th class="first">#</th>
-                                        <th>매체</th>
-                                        <th>광고주 이름</th>
-                                        <th>상태</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <!-- 매체별 연결 광고주 리스트-->
                         </div>
                     </div>
                 </div>
@@ -283,169 +282,6 @@
         <!--생성-->
     </div>
 </div>
-    <!--content-->
-    <!-- <div class="container-md">
-        <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">글수정</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="frm">
-                        <input type="hidden" name="id" id="hidden_id">
-                        <div class="form-group">
-                            <label for="companyType">타입</label>
-                            <select name="companyType" id="companyType" class="form-control">
-                                <option value="" hidden selected disabled>선택</option>
-                                <option value="광고대행사">광고대행사</option>
-                                <option value="광고주">광고주</option>
-                            </select>
-                            <span id="companyTypeError" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="companyName">이름</label>
-                            <input type="text" name="companyName" class="form-control companyName" id="companyName">
-                            <span id="companyNameError" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="companyTel">전화번호</label>
-                            <input type="text" name="companyTel" class="form-control companyTel" id="companyTel">
-                            <span id="companyTelError" class="text-danger"></span>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">            
-                    <button type="button" class="btn btn-primary" id="companyUpdateBtn">저장</button>
-                </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modalView" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                </div>
-                <div class="modal-body">
-                    <dl>
-                        <dt>소속 대행사</dt>
-                        <dd id="companyBelong"></dd>
-                    </dl>
-                    <dl>
-                        <dt>타입</dt>
-                        <dd id="companyType"></dd>
-                    </dl>
-                    <dl>
-                        <dt>이름</dt>
-                        <dd id="companyName"></dd>
-                    </dl>
-                    <dl>
-                        <dt>전화번호</dt>
-                        <dd id="companyTel"></dd>
-                    </dl>
-                    <h5 class="mt-5">소속 유저 리스트</h5>
-                    <div id="userListWrap">
-                    </div>
-                </div>
-                <div class="modal-footer">          
-                    <?php if(auth()->user()->inGroup('superadmin', 'admin', 'developer')){
-                        echo '<a href="/company/belong" class="btn btn-primary" id="companyBelong">소속 수정</a>';
-                    }?>  
-                    <button type="button" class="btn btn-primary" id="companyUpdateModal">수정</button>
-                    <button type="button" class="btn btn-danger" id="companyDelete">삭제</button>
-                </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modalWrite" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">글쓰기</h5>
-                </div>
-                <div class="modal-body">
-                    <form id="frm">
-                        <div class="form-group">
-                            <label for="companyType">타입</label>
-                            <select name="companyType" id="companyType" class="form-control">
-                                <option value="" hidden selected disabled>선택</option>
-                                <option value="광고대행사">광고대행사</option>
-                                <option value="광고주">광고주</option>
-                            </select>
-                            <span id="companyTypeError" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="companyName">이름</label>
-                            <input type="text" name="companyName" class="form-control companyName" id="companyName">
-                            <span id="companyNameError" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="companyTel">전화번호</label>
-                            <input type="text" name="companyTel" class="form-control companyTel" id="companyTel">
-                            <span id="companyTelError" class="text-danger"></span>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">            
-                    <button type="button" class="btn btn-primary" id="companyInsertBtn">저장</button>
-                </div>
-                </div>
-            </div>
-        </div>
-        <h1 class="font-weight-bold">광고주, 광고대행사 관리</h1>
-        <div class="row mb-2 flex justify-content-end">
-            <div class="col-5">
-                <label for="fromDate">시작날짜</label>
-                <input type="text" class="form-control" id="fromDate" name="fromDate" placeholder="날짜 선택" readonly="readonly">
-                <label for="toDate">종료날짜</label>
-                <input type="text" class="form-control" id="toDate" name="toDate" placeholder="날짜 선택" readonly="readonly">
-            </div>
-        </div>
-        <div class="row mb-2">
-            <div class="col" id="allCount"></div>
-            <div class="col">
-                <select name="sort" id="sort" class="form-control">
-                    <option value="recent">최근순</option>
-                    <option value="old">오래된 순</option>
-                </select>
-            </div>
-            <div class="col-3">
-                <select name="pageLimit" id="pageLimit" class="form-control">
-                    <option value="10">10개</option>
-                    <option value="50">50개</option>
-                    <option value="100">100개</option>
-                </select>
-            </div>
-            <div class="col-3">
-                <input type="text" class="form-control" id="search" name="search" placeholder="검색">
-            </div>
-        </div>
-        <button id="DataResetBtn" class="btn btn-primary">초기화</button>
-        <div class="row">
-            <table class="table" id="companies">
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">소속대행사</th>
-                        <th scope="col">타입</th>
-                        <th scope="col">이름</th>
-                        <th scope="col">전화번호</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <div class="row pagination-container">
-                <ul class="pagination">
-
-                </ul>
-            </div>
-            <div class="d-grid gap-2 d-md-flex justify-content-end">
-                <button class="btn btn-primary" id="companyNewBtn">광고주 생성</button>
-            </div>
-        </div>
-    </div> -->
 <?=$this->endSection();?>
 
 <?=$this->section('script');?>
@@ -453,6 +289,7 @@
 let data = {};
 let dataTable;
 let userTable;
+let adaccountTable;
 let companyId;
 
 setDate();
@@ -580,6 +417,49 @@ function getBelongUsers(){
     });
 }
 
+function getAdAccounts(){
+    adaccountTable = $('#adAccountListTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/company/get-adaccounts",
+            "data": {"company_id": companyId},
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res;
+            }
+        },
+        "columns": [
+            { "data": null },
+            { "data": "media"},
+            { "data": "name"},
+            { "data": "status"},
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-accountid", data.accountid);
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
+    });
+}
+
 function setDate(){
     var today = new Date();
     var startDate = null;
@@ -638,6 +518,7 @@ function setCompanyShow(data) {
     $('#adv-show-table #created_at span').text(data.created_at.substr(0, 10));
     $('#adv-show-table #btns #delete_btn').val(data.id);
     $('#belong-user-table #username input[name="company_id"]').val(data.id);
+    $('#adaccount-table #adaccount input[name="company_id"]').val(data.id);
 }
 
 function updateCompany(data){
@@ -727,6 +608,27 @@ function addBelongUser(data){
     });
 }
 
+function addAdAccount(data){
+    $.ajax({
+        url : "/company/set-adaccounts", 
+        type : "put", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){       
+                alert("추가되었습니다.");
+                adaccountTable.draw();
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
 function getAgencies(inputId){
     $(inputId).autocomplete({
         source : function(request, response) {
@@ -760,8 +662,8 @@ function getAgencies(inputId){
     });
 }
 
-function getUsers(inputId){
-    $(inputId).autocomplete({
+function getUsers(){
+    $('#show-user-name').autocomplete({
         source : function(request, response) {
             $.ajax({
                 url : "/company/get-users", 
@@ -775,6 +677,7 @@ function getUsers(inputId){
                             return {
                                 label: item.username,
                                 value: item.username,
+                                id: item.id
                             };
                         })
                     );
@@ -783,11 +686,54 @@ function getUsers(inputId){
                     alert("에러 발생");
                 }
             });
-        }
-        ,focus : function(event, ui) {	
+        },
+        select: function(event, ui) {
+            $(event.target).val(ui.item.value);
+            $(event.target).siblings('input[name="user_id"]').val(ui.item.id);
+            $(event.target).closest('form[name="belong-user-form"]').trigger('submit');
+        },
+        focus : function(event, ui) {	
             return false;
         },
         minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
+function getAdAccounts(){
+    $('#show-adaccount').autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-adaccounts", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.media+" / "+item.account_id+" / "+item.name+" / "+item.status,
+                                value: item.name,
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        select: function(event, ui) {
+            $(event.target).val(ui.item.value);
+            $(event.target).siblings('input[name="ad_account_id"]').val(ui.item.id);
+            $(event.target).closest('form[name="adaccount-form"]').trigger('submit');
+        },
+        focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 2,
         autoFocus : true,
         delay: 100
     });
@@ -836,7 +782,11 @@ $('#create-p_name').on("focus", function(){
 })
 
 $('#show-user-name').on("focus", function(){
-    getUsers("#show-user-name");
+    getUsers();
+})
+
+$('#show-adaccount').on("focus", function(){
+    getAdAccounts();
 })
 
 $('form[name="adv-show-form"]').bind('submit', function() {
@@ -854,6 +804,12 @@ $('form[name="adv-create-form"]').bind('submit', function() {
 $('form[name="belong-user-form"]').bind('submit', function() {
     var data = $(this).serialize();
     addBelongUser(data);
+    return false;
+});
+
+$('form[name="adaccount-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    addAdAccount(data);
     return false;
 });
 
