@@ -51,11 +51,60 @@ class UserModel extends ShieldUserModel
 
     public function getUsers($data)
     {
+        $srch = $data['searchData'];
+        $builder = $this->zenith->table('users AS u');
+        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status, agu.group, u.created_at');
+        $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
+        $builder->join('companies as c', 'c.id = cu.company_id', 'left');
+        $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
+        $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+        if(!empty($srch['sdate'] && $srch['edate'])){
+            $builder->where('DATE(u.created_at) >=', $srch['sdate']);
+            $builder->where('DATE(u.created_at) <=', $srch['edate']);
+        }
+
+        if(!empty($srch['stx'])){
+            $builder->groupStart();
+            $builder->like('u.username', $srch['stx']);
+            $builder->orLike('ai.secret', $srch['stx']);
+            $builder->groupEnd();
+        }
+        
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
+
+        // limit 적용한 쿼리
+        $builder->groupBy('u.id');
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "created_at DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+
+        if($data['length'] > 0){
+            $builder->limit($data['length'], $data['start']);
+        }
+    
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+    }
+
+    public function getSearchUsers($data)
+    {
         $builder = $this->zenith->table('users');
         $builder->select('id, username');
-        $builder->limit(10);
-        if(!empty($data['stx'])){
+        if(!empty($data['stx'])){        
             $builder->like('username', $data['stx']);
+            $builder->limit(10);
         }
         $result = $builder->get()->getResultArray();
 

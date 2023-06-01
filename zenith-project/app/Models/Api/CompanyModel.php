@@ -95,7 +95,7 @@ class CompanyModel extends Model
         return $result;
     }
 
-    public function getAgencies($stx = NULL)
+    public function getSearchAgencies($stx = NULL)
     {
         $builder = $this->zenith->table('companies');
         $builder->select('id, name');
@@ -185,7 +185,7 @@ class CompanyModel extends Model
         return $result;
     }
 
-    public function getAdAccounts($stx = NULL)
+    public function getSearchAdAccounts($stx = NULL)
     {
         $facebookBuilder = $this->facebook->table('fb_ad_account');
         $kakaoBuilder = $this->kakao->table('mm_ad_account');

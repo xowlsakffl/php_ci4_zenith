@@ -10,7 +10,7 @@ $uri = current_url(true)->getPath();
                 <a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>"><button><i class="bi bi-graph-up-arrow"></i>통합 광고관리</button></a>
             </li>
             <li>
-                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-people-fill"></i>통합 DB관리</button></a>
+                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>통합 DB관리</button></a>
             </li>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
@@ -38,11 +38,11 @@ $uri = current_url(true)->getPath();
                 </div>
             </li>
             <li>
-                <button data-bs-toggle="collapse" data-bs-target="#user" aria-expanded="false"><i class="bi bi-calendar-week"></i>회원 관리</button>
+                <button data-bs-toggle="collapse" data-bs-target="#user" aria-expanded="false"><i class="bi bi-people-fill"></i>회원 관리</button>
                 <div class="collapse" id="user">
                     <ul class="btn-toggle-nav">
                         <li><a href="/company" class="<?php if($uri === '/company'){ echo "active";}?>">광고주/광고대행사 관리</a></li>
-                        <li><a href="/account" class="<?php if($uri === '/account'){ echo "active";}?>">사용자 관리</a></li>
+                        <li><a href="/user" class="<?php if($uri === '/user'){ echo "active";}?>">회원 관리</a></li>
                     </ul>
                 </div>
             </li>
