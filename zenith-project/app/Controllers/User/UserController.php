@@ -46,6 +46,10 @@ class UserController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
+                $belongUser = $this->user->getBelongUser($param);
+                if(!empty($belongUser)){
+                    return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
+                }
                 $result = $this->user->setBelongUser($param);
             }else{
                 return $this->fail("잘못된 요청");

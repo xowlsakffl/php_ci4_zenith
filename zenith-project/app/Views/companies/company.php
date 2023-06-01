@@ -22,6 +22,10 @@
     hr{
         display: block !important;
     }
+
+    .ui-widget{
+        font-family: "NanumSquareNeo", "Noto Sans", dotum, Gulim, sans-serif;
+    }
 </style>
 <?=$this->endSection();?>
 <!--바디-->
@@ -58,14 +62,22 @@
         </div>
         <div class="row table-responsive">
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
+                <colgroup>
+                        <col style="width:5%;">
+                        <col style="width:15%;">
+                        <col style="width:15%;">
+                        <col style="width:30%;">
+                        <col style="width:25%;">
+                        <col style="width:10%;">
+                </colgroup>
                 <thead class="table-dark">
                     <tr>
-                        <th class="first" style="width:20px">#</th>
-                        <th style="width:100px">소속대행사</th>
-                        <th style="width:70px">타입</th>
-                        <th style="width:100px">이름</th>
-                        <th style="width:120px">전화번호</th>
-                        <th style="width:100px">생성일</th>
+                        <th>#</th>
+                        <th scope="col">소속대행사</th>
+                        <th scope="col">타입</th>
+                        <th scope="col">이름</th>
+                        <th scope="col">전화번호</th>
+                        <th scope="col">생성일</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,7 +161,7 @@
                                             <td id="adaccount" class="d-flex">
                                                 <input type="hidden" name="company_id">
                                                 <input type="hidden" name="ad_account_id">
-                                                <input type="text" name="adaccount"  class="form-control" id="show-adaccount" autocomplete="off">
+                                                <input type="text" name="ad_account_name"  class="form-control" id="show-adaccount" autocomplete="off">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -158,17 +170,21 @@
                             <!--매체별 연결 광고주 리스트-->
                             <table class="dataTable table table-striped table-hover" id="adAccountListTable">
                                 <colgroup>
+                                    <col style="width:5%;">
+                                    <col style="width:25%;">
+                                    <col style="width:15%;">
+                                    <col style="width:35%;">
                                     <col style="width:10%;">
-                                    <col style="width:40%;">
-                                    <col style="width:40%;">
                                     <col style="width:10%;">
                                 </colgroup>
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="first">#</th>
+                                        <th>아이디</th>
                                         <th>매체</th>
                                         <th>광고주 이름</th>
                                         <th>상태</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -417,7 +433,7 @@ function getBelongUsers(){
     });
 }
 
-function getAdAccounts(){
+function getCompanyAdAccounts(){
     adaccountTable = $('#adAccountListTable').DataTable({
         "destroy": true,
         "autoWidth": true,
@@ -430,7 +446,7 @@ function getAdAccounts(){
         "paging": false,
         "info": false,
         "ajax": {
-            "url": "<?=base_url()?>/company/get-adaccounts",
+            "url": "<?=base_url()?>/company/get-company-adaccounts",
             "data": {"company_id": companyId},
             "type": "GET",
             "contentType": "application/json",
@@ -441,12 +457,19 @@ function getAdAccounts(){
         },
         "columns": [
             { "data": null },
+            { "data": "accountId"},
             { "data": "media"},
             { "data": "name"},
             { "data": "status"},
+            { 
+                "data": "null",
+                "render": function(){
+                    return '<button class="btn btn-danger" id="exceptAdAccountBtn">제외</button>';
+                }
+            },
         ],
         "createdRow": function(row, data, dataIndex) {
-            $(row).attr("data-accountid", data.accountid);
+            $(row).attr("data-accountid", data.media+"_"+data.accountId);
         },
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
@@ -611,7 +634,7 @@ function addBelongUser(data){
 function addAdAccount(data){
     $.ajax({
         url : "/company/set-adaccounts", 
-        type : "put", 
+        type : "PUT", 
         dataType: "JSON", 
         data : data, 
         contentType: 'application/json; charset=utf-8',
@@ -716,6 +739,7 @@ function getAdAccounts(){
                             return {
                                 label: item.media+" / "+item.account_id+" / "+item.name+" / "+item.status,
                                 value: item.name,
+                                id: item.media+"_"+item.account_id,
                             };
                         })
                     );
@@ -758,6 +782,7 @@ $('#adv-show').on('show.bs.modal', function(e) {
         success: function(data){  
             setCompanyShow(data);
             getBelongUsers(companyId); 
+            getCompanyAdAccounts(companyId); 
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -768,8 +793,12 @@ $('#adv-show').on('show.bs.modal', function(e) {
     companyId = '';
     $(this).removeAttr('data-id');
     $('#userTable').DataTable().destroy(); 
+    $('#adAccountListTable').DataTable().destroy();
+    $('#adAccountListTable tbody').empty();
     $('#userTable tbody').empty(); 
     $('form[name="adv-show-form"]')[0].reset();
+    $('form[name="adaccount-form"]')[0].reset();
+    $('form[name="belong-user-form"]')[0].reset();
     $('#adv-show-table tbody tr td span').text('');
 });
 
@@ -811,6 +840,56 @@ $('form[name="adaccount-form"]').bind('submit', function() {
     var data = $(this).serialize();
     addAdAccount(data);
     return false;
+});
+
+$('body').on('click', '#exceptUserBelongBtn', function(){
+    data = {
+        'company_id': $('#adv-show').attr('data-id'),
+        'user_id': $(this).closest('tr').attr('data-id'),
+    };
+
+    if(confirm('현재 소속에서 제외하시겠습니까?')){
+        $.ajax({
+            type: "delete",
+            url: "<?=base_url()?>/company/except-belong-user",
+            dataType: "JSON",
+            data : data, 
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(data == true){
+                    getBelongUsers(companyId); 
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
+});
+
+$('body').on('click', '#exceptAdAccountBtn', function(){
+    data = {
+        'company_id': $('#adv-show').attr('data-id'),
+        'ad_account_id': $(this).closest('tr').attr('data-accountid'),
+    };
+
+    if(confirm('현재 소속에서 제외하시겠습니까?')){
+        $.ajax({
+            type: "delete",
+            url: "<?=base_url()?>/company/except-company-adaccount",
+            dataType: "JSON",
+            data : data, 
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(data == true){
+                    getCompanyAdAccounts(companyId); 
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
 });
 
 $('body').on('click', '#exceptUserBelongBtn', function(){

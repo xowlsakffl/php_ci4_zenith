@@ -156,7 +156,7 @@ class CompanyModel extends Model
         $builder_1->set('name', $data['name']);
         $builder_1->set('tel', $data['tel']);
         $builder_1->where('id', $data['id']);
-        $result_1 = $builder_1->update();
+        $builder_1->update();
 
         $builder_2 = $this->zenith->table('companies_idx');
         $builder_2->where('company_id', $data['id']);
@@ -215,8 +215,63 @@ class CompanyModel extends Model
         return $mergedResults;
     }
 
-    public function setAdAccount($data)
+    public function getCompanyAdAccounts($data)
     {
-        
+        $zenithBuilder = $this->zenith->table('company_adaccounts AS ca');
+
+        $facebookBuilder = clone $zenithBuilder;
+        $facebookBuilder->join('z_facebook.fb_ad_account AS fa', 'ca.ad_account_id = fa.ad_account_id');
+        $facebookBuilder->select('ca.ad_account_id AS accountId, "페이스북" AS media, fa.name AS name, fa.status AS status');
+        $facebookBuilder->where('ca.company_id', $data['company_id']);
+        $facebookResult = $facebookBuilder->get()->getResultArray();
+
+        $kakaoBuilder = clone $zenithBuilder;
+        $kakaoBuilder->join('z_moment.mm_ad_account AS ma', 'ca.ad_account_id = ma.id');
+        $kakaoBuilder->select('ca.ad_account_id AS accountId, "카카오" AS media, ma.name AS name, ma.config AS status');
+        $kakaoBuilder->where('ca.company_id', $data['company_id']);
+        $kakaoResult = $kakaoBuilder->get()->getResultArray();
+
+        $googleBuilder = clone $zenithBuilder;
+        $googleBuilder->join('z_adwords.aw_ad_account AS awa', 'ca.ad_account_id = awa.customerId');
+        $googleBuilder->select('ca.ad_account_id AS accountId, "GDN" AS media, awa.name AS name, awa.status AS status');
+        $googleBuilder->where('ca.company_id', $data['company_id']);
+        $googleResult = $googleBuilder->get()->getResultArray();
+
+        $mergedResults = array_merge($facebookResult, $kakaoResult, $googleResult);
+        return $mergedResults;
+    }
+
+    public function getCompanyAdAccount($data)
+    {
+        $builder = $this->zenith->table('company_adaccounts');
+        $builder->where('company_id', $data['company_id']);
+        $builder->where('ad_account_id', $data['ad_account_id']);
+        $builder->where('media', $data['media']);
+        $result = $builder->get()->getResult();
+
+        return $result;
+    }
+
+    public function setCompanyAdAccount($data)
+    {
+        $builder = $this->zenith->table('company_adaccounts');
+        $newRecord = [
+            'company_id' => $data['company_id'],
+            'ad_account_id' => $data['ad_account_id'],
+            'media' => $data['media']
+        ];
+        $result = $builder->insert($newRecord);
+        return $result;
+    }
+
+    public function exceptCompanyAdAccount($data)
+    {
+        $builder = $this->zenith->table('company_adaccounts');
+        $builder->where('company_id', $data['company_id']);
+        $builder->where('ad_account_id', $data['ad_account_id']);
+        $builder->where('media', $data['media']);
+        $result = $builder->delete();
+
+        return $result;
     }
 }

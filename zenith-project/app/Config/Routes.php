@@ -80,7 +80,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->delete('company/except-belong-user', 'User\UserController::exceptBelongUser');
 
         $routes->get('company/get-adaccounts', 'Company\CompanyController::getAdAccounts');
-        $routes->put('company/set-adaccounts', 'Company\CompanyController::getAdAccounts');
+        $routes->get('company/get-company-adaccounts', 'Company\CompanyController::getCompanyAdAccounts');
+        $routes->put('company/set-adaccounts', 'Company\CompanyController::setCompanyAdAccount');
+        $routes->delete('company/except-company-adaccount', 'Company\CompanyController::exceptCompanyAdAccount');
     });
 
     // 광고관리

@@ -73,24 +73,25 @@ class UserModel extends ShieldUserModel
         return $result;
     }
 
-    public function setBelongUser($data)
+    public function getBelongUser($data)
     {
-        $this->zenith->transStart();
         $builder = $this->zenith->table('companies_users');
         $builder->select('company_id, user_id');
         $builder->where('user_id', $data['user_id']);
         $builder->where('company_id', $data['company_id']);
         $result = $builder->get()->getResult();
+        return $result;
+    }
 
-        if (empty($result)) {
-            $newRecord = [
-                'company_id' => $data['company_id'],
-                'user_id' => $data['user_id'],
-            ];
-            $result = $builder->insert($newRecord);
-        } else {
-            return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
-        }
+    public function setBelongUser($data)
+    {
+        $this->zenith->transStart();
+        $builder = $this->zenith->table('companies_users');
+        $newRecord = [
+            'company_id' => $data['company_id'],
+            'user_id' => $data['user_id'],
+        ];
+        $builder->insert($newRecord);
         $result = $this->zenith->transComplete();
 
         return $result;
