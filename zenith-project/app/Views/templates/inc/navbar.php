@@ -29,11 +29,20 @@ $uri = current_url(true)->getPath();
                 <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false"><i class="bi bi-calendar-week"></i>이벤트</button>
                 <div class="collapse" id="event">
                     <ul class="btn-toggle-nav">
-                        <li><a href="/eventManage/event">이벤트 관리</a></li>
-                        <li><a href="/eventManage/advertiser" class="">광고주 관리</a></li>
-                        <li><a href="/eventManage/media">매체 관리</a></li>
-                        <li><a href="/eventManage/change">전환 관리</a></li>
-                        <li><a href="/eventManage/exel">엑셀 업로드</a></li>
+                        <li><a href="/eventManage/event" class="<?php if($uri === '/eventManage/event'){ echo "active";}?>">이벤트 관리</a></li>
+                        <li><a href="/eventManage/advertiser" class="<?php if($uri === '/eventManage/advertiser'){ echo "active";}?>">광고주 관리</a></li>
+                        <li><a href="/eventManage/media" class="<?php if($uri === '/eventManage/media'){ echo "active";}?>">매체 관리</a></li>
+                        <li><a href="/eventManage/change" class="<?php if($uri === '/eventManage/change'){ echo "active";}?>">전환 관리</a></li>
+                        <li><a href="/eventManage/exel" class="<?php if($uri === '/eventManage/exel'){ echo "active";}?>">엑셀 업로드</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <button data-bs-toggle="collapse" data-bs-target="#user" aria-expanded="false"><i class="bi bi-calendar-week"></i>회원 관리</button>
+                <div class="collapse" id="user">
+                    <ul class="btn-toggle-nav">
+                        <li><a href="/company" class="<?php if($uri === '/company'){ echo "active";}?>">광고주/광고대행사 관리</a></li>
+                        <li><a href="/account" class="<?php if($uri === '/account'){ echo "active";}?>">사용자 관리</a></li>
                     </ul>
                 </div>
             </li>

@@ -8,14 +8,10 @@ class CompanyModel extends Model
 {
     protected $zenith, $facebook, $google, $kakao;
     protected $validationRules      = [
-        'p_name' => 'required',
         'name' => 'required',
         'tel' => 'required',
     ];
     protected $validationMessages   = [
-        'p_name' => [
-            'required' => '소속대행사는 필수 입력사항입니다.',
-        ],
         'name' => [
             'required' => '이름은 필수 입력사항입니다.',
         ],

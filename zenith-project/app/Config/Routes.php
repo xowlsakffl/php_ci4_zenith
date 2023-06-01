@@ -64,7 +64,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     $routes->get('board/list', 'BoardController::index');
 
-    // 광고대행사/광고주 관리
+    // 회원 관리
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
         $routes->get('company', 'Company\CompanyController::index');
         $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
