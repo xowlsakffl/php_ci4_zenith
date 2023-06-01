@@ -7,6 +7,22 @@ use CodeIgniter\Model;
 class IntegrateModel extends Model
 {
     protected $zenith;
+    private $leads_status = [
+        "인정" => 1, 
+        "중복" => 2, 
+        "성별불량" => 3, 
+        "나이불량" => 4, 
+        "콜불량" => 5, 
+        "번호불량" => 6, 
+        "테스트" => 7, 
+        "이름불량" => 8, 
+        "지역불량" => 9, 
+        "업체불량" => 10, 
+        "미성년자" => 11, 
+        "본인아님" => 12, 
+        "쿠키중복" => 13, 
+        "확인" => 99, 
+    ];
     public function __construct()
     {
         $this->zenith = \Config\Database::connect();
@@ -73,6 +89,10 @@ class IntegrateModel extends Model
 
         if(!empty($srch['event'])){
             $builder->whereIn('info.description', explode("|",$srch['event']));
+        }
+        if(!empty($srch['status'])){
+            $status = array_map(function($v){return $this->leads_status[$v];}, explode("|",$srch['status']));
+            $builder->whereIn('el.status', $status);
         }
 
         // limit 적용하지 않은 쿼리
@@ -171,6 +191,7 @@ class IntegrateModel extends Model
         COUNT(CASE WHEN el.status=10 then 1 end) as 업체불량, 
         COUNT(CASE WHEN el.status=11 then 1 end) as 미성년자, 
         COUNT(CASE WHEN el.status=12 then 1 end) as 본인아님, 
+        COUNT(CASE WHEN el.status=13 then 1 end) as 쿠키중복, 
         COUNT(CASE WHEN el.status=99 then 1 end) as 확인");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');

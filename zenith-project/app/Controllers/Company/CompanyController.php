@@ -110,11 +110,11 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
     
-    public function getAgencies()
+    public function getSearchAgencies()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
-            $result = $this->company->getAgencies($param['stx']);
+            $result = $this->company->getSearchAgencies($param['stx']);
 
             return $this->respond($result);
         }else{
@@ -134,11 +134,11 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
 
-    public function getAdAccounts()
+    public function getSearchAdAccounts()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
-            $result = $this->company->getAdAccounts($param['stx']);
+            $result = $this->company->getSearchAdAccounts($param['stx']);
             foreach($result as &$row){
                 if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
                     $row['status'] = '활성';
@@ -153,12 +153,56 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
 
-    public function setAdAccounts()
+    public function getCompanyAdAccounts()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->company->getCompanyAdAccounts($param);
+            foreach($result as &$row){
+                if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
+                    $row['status'] = '활성';
+                }else{
+                    $row['status'] = '비활성';
+                }
+            }
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function setCompanyAdAccount()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
-            //여기부터
-            $result = $this->company->setAdAccounts($param);
+            $sliceId = explode("_", $param['ad_account_id']);
+            $param['ad_account_id'] = $sliceId[1];
+            $param['media'] = $sliceId[0];
+            $adAccount = $this->company->getCompanyAdAccount($param);
+            if(!empty($adAccount)){
+                return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
+            }
+            $result = $this->company->setCompanyAdAccount($param);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function exceptCompanyAdAccount()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete') {
+            $param = $this->request->getRawInput();
+            $sliceId = explode("_", $param['ad_account_id']);
+            $param['ad_account_id'] = $sliceId[1];
+            $param['media'] = $sliceId[0];
+            if (!empty($param)) {
+                $result = $this->company->exceptCompanyAdAccount($param);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
 
             return $this->respond($result);
         }else{

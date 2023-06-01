@@ -136,6 +136,7 @@ function setData() {
         'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
     };
 
     return data;
@@ -161,6 +162,7 @@ function getList(data = []){
         "scrollCollapse": true,
         "stateSave": true,
         "deferRender": true,
+        "rowId": "seq",
         "lengthMenu": [
             [ 25, 10, 50, -1 ],
             [ '25개', '10개', '50개', '전체' ]
@@ -242,20 +244,17 @@ function getList(data = []){
             var startIndex = api.page() * api.page.len();
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
-            $(row).attr('data-seq', data.seq);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
     });
-    dataTable.buttons().container()
-    .appendTo( $('.dataTables_length', dataTable.table().container() ) );
 }
 $('#integrate-memo')
     .on('show.bs.modal', function(e) { //create memo data
         var $btn = $(e.relatedTarget);
         var $row = $btn.closest('tr')
-        var seq = $row.data('seq');
+        var seq = $row.attr('id');
         var name = $('td:eq(5)', $row).text();
         $(this).attr('data-seq', seq);
         $('h1 .title', this).html(name);
@@ -279,6 +278,20 @@ $('#integrate-memo')
         $('.memo-list, h1 .title', '#integrate-memo').html('');
         $('#integrate-memo form')[0].reset();
     });
+function addMemo() {
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>/integrate/addmemo",
+        data: $('#integrate-memo .regi-form').serialize(),
+        dataType: "json",
+        success: function(data){  
+            setMemoList(data);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
 function setMemoList(data) {
     var html =  '';
     $.each(data, function(i,row) {
@@ -292,7 +305,7 @@ function setMemoList(data) {
         html += '        </div>';
         html += '    </li>';
     });
-    $('#integrate-memo .memo-list').html(html);
+    $('#integrate-memo .memo-list').append(html);
 }
 function getLeadCount(){
     var data = setData();
@@ -464,6 +477,11 @@ $('form[name="search-form"]').bind('submit', function() {
     getStatusCount();
     dataTable.draw();
     return false;
+});
+
+$('.statusCount').on('click', 'dl', function(e) {
+    $(this).toggleClass('active');
+    dataTable.draw();
 });
 </script>
 <?=$this->endSection();?>

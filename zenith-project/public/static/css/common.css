@@ -110,7 +110,9 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 input[type=submit], button {
@@ -149,7 +151,9 @@ textarea:focus {
 }
 
 select {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 select:focus {
@@ -1423,7 +1427,9 @@ body {
 }
 
 .none {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -1457,7 +1463,9 @@ body {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -1620,6 +1628,7 @@ body {
   background-color: #ededed;
 }
 .register-container form .form-control:-webkit-autofill, .register-container form .form-control:-internal-autofill-selected {
+  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -1783,6 +1792,10 @@ body {
 .db-manage-contaniner .detail .col {
   padding: 0;
   flex: 1 0 auto;
+  cursor: pointer;
+}
+.db-manage-contaniner .detail .col:hover, .db-manage-contaniner .detail .col.active {
+  color: red;
 }
 .db-manage-contaniner .detail .col dt {
   font-size: 1rem;
@@ -2131,6 +2144,9 @@ body {
   padding: 1.25rem 1.25rem 1.25rem 3.75rem;
   margin-bottom: 24px;
 }
+.exam-container form input.form-control::-moz-placeholder {
+  color: #fff;
+}
 .exam-container form input.form-control::placeholder {
   color: #fff;
 }
@@ -2138,6 +2154,7 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(177, 155, 143, 0.8);
 }
 .exam-container form input.form-control:-webkit-autofill, .exam-container form input.form-control:-internal-autofill-selected {
+  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
   color: #fff;
   -webkit-text-fill-color: #fff;
@@ -2353,6 +2370,4 @@ body {
     width: 1.8rem;
     height: 1.8rem;
   }
-}
-
-/*# sourceMappingURL=common.css.map */
+}/*# sourceMappingURL=common.css.map */

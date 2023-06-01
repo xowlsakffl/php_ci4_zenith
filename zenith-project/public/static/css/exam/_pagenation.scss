@@ -52,7 +52,8 @@
 .db-manage-contaniner{
     .search-wrap{border-radius: 10px; overflow:auto;}          
     .detail{flex-wrap: wrap; min-width:1000px;
-        .col{padding: 0; flex: 1 0 auto;
+        .col{padding: 0; flex: 1 0 auto; cursor:pointer;
+            &:hover, &.active{color:red;}
             dt{font-size: 1rem;}
             &:hover{
                 dd{font-weight:900;}

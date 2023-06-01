@@ -18,11 +18,61 @@ class UserController extends \CodeIgniter\Controller
         $this->user = model(UserModel::class);
         $this->logginedUser = auth()->user();
     }
+    
+    public function index()
+    {
+        return view('users/user');
+    }
 
     public function getUsers(){
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getUsers($param);
+            foreach ($result['data'] as &$row) {
+                switch ($row['group']) {
+                    case 'superadmin':
+                        $row['group'] = '최고관리자';
+                        break;
+                    case 'admin':
+                        $row['group'] = '관리자';
+                        break;
+                    case 'developer':
+                        $row['group'] = '개발자';
+                        break;
+                    case 'user':
+                        $row['group'] = '사용자';
+                        break;
+                    case 'agency':
+                        $row['group'] = '광고대행사';
+                        break;
+                    case 'advertiser':
+                        $row['group'] = '광고주';
+                        break;
+                    case 'guest':
+                        $row['group'] = '게스트';
+                        break;
+                    default:
+                        $row['group'] = '';
+                        break;
+                }
+            };
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($param['draw']),
+            ];
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getSearchUsers(){
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->user->getSearchUsers($param);
 
             return $this->respond($result);
         }else{
@@ -46,6 +96,10 @@ class UserController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
+                $belongUser = $this->user->getBelongUser($param);
+                if(!empty($belongUser)){
+                    return $this->failValidationErrors(["username" => "이미 소속되어 있습니다."]);
+                }
                 $result = $this->user->setBelongUser($param);
             }else{
                 return $this->fail("잘못된 요청");
