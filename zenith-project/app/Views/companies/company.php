@@ -256,9 +256,9 @@
                                 <table class="table table-bordered table-modal" id="adv-create-table">
                                     <colgroup>
                                         <col style="width:20%;">
-                                        <col style="width:10%;">
-                                        <col style="width:23%;">
-                                        <col style="width:23%;">
+                                        <col style="width:20%;">
+                                        <col style="width:30%;">
+                                        <col style="width:30%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -274,7 +274,7 @@
                                                 <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
                                             </td>
                                             <td id="type">
-                                                <select name="type" id="" class="form-control">
+                                                <select name="type" id="" class="form-select">
                                                     <option value="광고대행사">광고대행사</option>
                                                     <option value="광고주">광고주</option>
                                                 </select>
@@ -612,7 +612,7 @@ function createCompany(data){
 
 function addBelongUser(data){
     $.ajax({
-        url : "/company/set-user", 
+        url : "/company/set-belong-user", 
         type : "put", 
         dataType: "JSON", 
         data : data, 

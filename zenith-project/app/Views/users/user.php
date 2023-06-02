@@ -85,112 +85,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="modal fade" id="disbursementModal" tabindex="-1" aria-labelledby="disbursementModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title" id="disbursementModalLabel">지출결의서</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="approval">
-                            <ol class="d-flex">
-                                <li>
-                                    <span>담당자</span>
-                                    <div></div>
-                                </li>
-                                <li>
-                                    <span>경영지원실장</span>
-                                    <div></div>
-                                </li>
-                                <li>
-                                    <span>사업부대표</span>
-                                    <div></div>
-                                </li>
-                            </ol>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-left-header">
-                                <colgroup>
-                                    <col style="width:30%;">
-                                    <col style="width:70%;">
-                                </colgroup>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">담당자</th>
-                                        <td>
-                                            <select class="form-select" aria-label="담당자 선택">
-                                                <option selected>-선택-</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">문서번호</th>
-                                        <td>
-                                            <textarea></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">거래처명(예금주명)</th>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">은행명</th>
-                                        <td>
-                                            <input type="text" class="form-control">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">계좌번호</th>
-                                        <td>
-                                            <input type="text" class="form-control">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">구분</th>
-                                        <td>
-                                            <select class="form-select" aria-label="구분 선택">
-                                                <option selected>-선택-</option>
-                                                <option value="1">One</option>
-                                                <option value="2">Two</option>
-                                                <option value="3">Three</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">내역(자세히)</th>
-                                        <td>
-                                            <textarea></textarea>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">총금액(VAT 포함)</th>
-                                        <td>
-                                            <input type="text" class="form-control">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">비고</th>
-                                        <td>
-                                            <textarea></textarea>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">작성완료</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <!-- //업체 등록 -->
         <!--사용자 수정-->
         <div class="modal fade" id="user-show" tabindex="-1" aria-labelledby="user-show-label" aria-hidden="true">
             <div class="modal-dialog modal-lg sm-txt">
@@ -201,46 +95,44 @@
                     </div>
                     <div class="modal-body">
                         <div class="table-responsive">
-                            <form name="user-show-form">
+                            <form name="user-show-form" id="userForm">
                                 <h2 class="body-title">회원정보 수정</h2>
                                 <table class="table table-bordered table-left-header">
                                     <colgroup>
                                         <col style="width:30%;">
                                         <col style="width:70%;">
                                     </colgroup>
-                                    <tbody>
+                                    <tbody></tbody>
                                         <tr>
                                             <th scope="row">소속</th>
-                                            <td>
+                                            <td id="userBelong">
+                                                <input type="hidden" name="user_id">
                                                 <input type="hidden" name="company_id">
-                                                <input type="text" class="form-control" id="belongCompany" placeholder="광고주/광고대행사 검색">
+                                                <input type="text" name="company_name" class="form-control" id="belongCompany" placeholder="광고주/광고대행사 검색">
                                             </td>
                                         </tr>
                                         <tr>
                                             <th scope="row">아이디</th>
-                                            <td></td>
+                                            <td id="usernameText"></td>
                                         </tr>
                                         <tr>
                                             <th scope="row">이메일</th>
-                                            <td></td>
+                                            <td id="emailText"></td>
                                         </tr>
                                         <tr>
                                             <th scope="row">상태</th>
-                                            <td>
-                                                <select class="form-select" aria-label="상태 선택">
+                                            <td id="userStatus">
+                                                <select class="form-select" aria-label="상태 선택" name="status">
                                                     <option selected hidden>-선택-</option>
-                                                    <option value="ON">활성</option>
-                                                    <option value="OFF">비활성</option>
+                                                    <option value="1">활성</option>
+                                                    <option value="2">비활성</option>
                                                 </select>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th scope="row">권한</th>
-                                            <td>
-                                                <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="superadmin" class="form-check-input" id="superadmin"> 
-                                                    <label for="superadmin" class="form-check-label">최고관리자</label>
-                                                </div>
+                                            <td id="userGroup">
+                                                <div class="form-check-inline" id="groupHide"></div>
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="group" value="admin" class="form-check-input" id="admin"> 
                                                     <label for="admin" class="form-check-label">관리자</label>
@@ -248,6 +140,10 @@
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="group" value="developer" class="form-check-input" id="developer"> 
                                                     <label for="developer" class="form-check-label">개발자</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="group" value="user" class="form-check-input" id="userCheck"> 
+                                                    <label for="userCheck" class="form-check-label">직원</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="group" value="agency" class="form-check-input" id="agency"> 
@@ -258,10 +154,6 @@
                                                     <label for="advertiser" class="form-check-label">광고주</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="user" class="form-check-input" id="userCheck"> 
-                                                    <label for="userCheck" class="form-check-label">사용자</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="group" value="guest" class="form-check-input" id="guest"> 
                                                     <label for="guest" class="form-check-label">게스트</label>
                                                 </div>                                    
@@ -269,7 +161,7 @@
                                         </tr>
                                         <tr>
                                             <th scope="row">세부권한</th>
-                                            <td>
+                                            <td id="userPermission">
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="permission" value="admin.access" class="form-check-input" id="adminAccess"> 
                                                     <label for="adminAccess" class="form-check-label">관리자만 가능한 페이지 접근 가능</label>
@@ -328,13 +220,17 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <th scope="row">생성일</th>
+                                            <td id="userCreatedAt"></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </form>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary">작성완료</button>
+                        <button type="submit" class="btn btn-primary" id="userModifyBtn" form="userForm">수정</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                     </div>
                 </div>
@@ -394,7 +290,7 @@ function getUserList(){
             { "data": "username"},
             { "data": "email" },
             { "data": "status" },
-            { "data": "group" },
+            { "data": "groups" },
             { 
                 "data": "created_at",
                 "render": function(data){
@@ -469,6 +365,123 @@ function setDate(){
         checkInPicker.setEndDate(endDate);
     });
 }
+
+function getSearchCompanies(){
+    $('#belongCompany').autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/company/get-search-companies", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.name,
+                                value: item.name,
+                                id: item.id
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        select: function(event, ui) {
+            $(event.target).siblings('input[name="company_id"]').val(ui.item.id);
+        },
+        focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
+function setUserShow(data) {
+    $('#user-show #userBelong input[name="user_id"]').val(data.user_id);
+    $('#user-show #userBelong input[name="company_id"]').val(data.company_id);
+    $('#user-show #userBelong input[name="company_name"]').val(data.belong);
+    $('#user-show #usernameText').text(data.username);
+    $('#user-show #emailText').text(data.email);
+    $('#user-show #userCreatedAt').text(data.created_at);
+    if(data.status){
+        $('#user-show #userStatus select').val(data.status);
+    }
+    data.groups.forEach(function(value) {
+        if(value === 'superadmin'){
+            $("#groupHide").text("최고관리자");
+        }
+        $("#userGroup input[value='" + value + "']").prop("checked", true);
+    });
+    data.permissions.forEach(function(value) {
+        $("#userPermission input[value='" + value + "']").prop("checked", true);
+    });
+}
+
+function updateUser(data){
+    $.ajax({
+        url : "/company/set-user", 
+        type : "get", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("변경되었습니다.");
+                $('#adv-show').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+$('#user-show').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var id = $btn.data('user-id');
+    $(this).attr('data-user-id', id);
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>/user/get-user",
+        data: {'user_id': id},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setUserShow(data); 
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+})
+.on('hidden.bs.modal', function(e) { //modal Reset
+    $(this).removeAttr('data-id');
+    $('form[name="user-show-form"]')[0].reset();
+    $('#user-show #usernameText').text('');
+    $('#user-show #emailText').text('');
+    $('#user-show #userCreatdeAt').text('');
+});
+
+$('#belongCompany').on("focus", function(){
+    getSearchCompanies();
+})
+
+
+$('form[name="user-show-form"]').bind('submit', function() {
+    var data = $(this).serialize();
+    updateUser(data);
+    return false;
+});
 
 </script>
 <?=$this->endSection();?>

@@ -95,6 +95,20 @@ class CompanyModel extends Model
         return $result;
     }
 
+    public function getSearchCompanies($stx = NULL)
+    {
+        $builder = $this->zenith->table('companies');
+        $builder->select('id, name');
+        $builder->where('status !=', 0);
+        $builder->limit(10);
+        if(!empty($stx)){
+            $builder->like('name', $stx);
+        }
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
     public function getSearchAgencies($stx = NULL)
     {
         $builder = $this->zenith->table('companies');
@@ -115,6 +129,19 @@ class CompanyModel extends Model
         $builder = $this->zenith->table('companies');
         $builder->select('id, name');
         $builder->where('type', '광고대행사');
+        $builder->where('status !=', 0);
+        if(!empty($p_name)){
+            $builder->where('name', $p_name);
+        }
+
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
+
+    public function getCompanyByName($p_name)
+    {
+        $builder = $this->zenith->table('companies');
+        $builder->select('id, name');
         $builder->where('status !=', 0);
         if(!empty($p_name)){
             $builder->where('name', $p_name);

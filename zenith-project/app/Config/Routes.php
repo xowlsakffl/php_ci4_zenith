@@ -77,7 +77,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
         $routes->get('company/get-search-users', 'User\UserController::getSearchUsers');
         $routes->get('company/get-belong-users', 'User\UserController::getBelongUsers');
-        $routes->put('company/set-user', 'User\UserController::setBelongUser');
+        $routes->put('company/set-belong-user', 'User\UserController::setBelongUser');
         $routes->delete('company/except-belong-user', 'User\UserController::exceptBelongUser');
 
         $routes->get('company/get-search-adaccounts', 'Company\CompanyController::getSearchAdAccounts');
@@ -88,6 +88,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         //사용자 관리
         $routes->get('user', 'User\UserController::index');
         $routes->get('user/get-users', 'User\UserController::getUsers');
+        $routes->get('user/get-user', 'User\UserController::getUser');
+        $routes->get('company/get-search-companies', 'Company\CompanyController::getSearchCompanies');
+        $routes->get('company/set-user', 'User\UserController::setUser');
     });
 
     // 광고관리

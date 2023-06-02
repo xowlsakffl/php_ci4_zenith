@@ -110,6 +110,18 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
     
+    public function getSearchCompanies()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->company->getSearchCompanies($param['stx']);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function getSearchAgencies()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
