@@ -10,19 +10,84 @@ class UserController extends \CodeIgniter\Controller
     use ResponseTrait;
 
     protected $user;
+    protected $company;
     protected $data;
     protected $logginedUser;
     protected $validation;
 
     public function __construct() {
         $this->user = model(UserModel::class);
+        $this->company = model(CompanyModel::class);
         $this->logginedUser = auth()->user();
+    }
+    
+    public function index()
+    {
+        return view('users/user');
     }
 
     public function getUsers(){
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getUsers($param);
+            foreach ($result['data'] as &$row) {
+                switch ($row['groups']) {
+                    case 'superadmin':
+                        $row['groups'] = '최고관리자';
+                        break;
+                    case 'admin':
+                        $row['groups'] = '관리자';
+                        break;
+                    case 'developer':
+                        $row['groups'] = '개발자';
+                        break;
+                    case 'user':
+                        $row['groups'] = '사용자';
+                        break;
+                    case 'agency':
+                        $row['groups'] = '광고대행사';
+                        break;
+                    case 'advertiser':
+                        $row['groups'] = '광고주';
+                        break;
+                    case 'guest':
+                        $row['groups'] = '게스트';
+                        break;
+                    default:
+                        $row['groups'] = '';
+                        break;
+                }
+            };
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($param['draw']),
+            ];
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getUser(){
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->user->getUser($param);
+            $result['groups'] = explode(",", $result['groups']);
+            $result['permissions'] = explode(",", $result['permissions']);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getSearchUsers(){
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->user->getSearchUsers($param);
 
             return $this->respond($result);
         }else{
@@ -41,6 +106,28 @@ class UserController extends \CodeIgniter\Controller
         }
     }
     
+    public function setUser()
+    {
+        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+            //$param = $this->request->getRawInput();
+            $param = $this->request->getGet();
+            if (!empty($param)) {
+                if(empty($param['company_id'])){
+                    $company = $this->company->getCompanyByName($param);
+                    $param['company_id'] = $company['id'];
+                }
+
+                $result = $this->user->setUser($param);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+            
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function setBelongUser()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
@@ -75,69 +162,6 @@ class UserController extends \CodeIgniter\Controller
         }else{
             return $this->fail("잘못된 요청");
         }
-    }
-
-    /* public function get($id = NULL) {
-        if (strtolower($this->request->getMethod()) === 'get') {
-            if ($id) {
-                $data['result'] = $this->user->getUser($id);       
-                $data['result']->permission = explode(',', $data['result']->permission);
-                $data['result']->groups = explode(',', $data['result']->groups);
-            } else {
-                $param = $this->request->getGet();
-
-                $builder = $this->user->select('u.*, GROUP_CONCAT(DISTINCT agu.group) as groups');
-
-                if(!empty($param['limit'])){
-                    $limit = $param['limit'];
-                }else{
-                    $limit = 10;
-                }            
-                $builder->from('users as u');
-                $builder->join('auth_groups_users as agu', 'u.id = agu.user_id');
-
-                if(!empty($param['startDate']) && !empty($param['endDate'])){
-                    $builder->where('u.created_at >=', $param['startDate'].' 00:00:00');
-                    $builder->where('u.created_at <=', $param['endDate'].' 23:59:59');
-                    
-                    $data['pager']['startDate'] = $param['startDate'];
-                    $data['pager']['endDate'] = $param['endDate'];
-                }
-
-                $builder->where('u.deleted_at', NULL);
-
-                if(!empty($param['search'])){
-                    $searchText = $param['search'];
-                    $builder->like('u.username', $searchText);
-                    $data['pager']['search'] = $param['search'];
-                }
-     
-                $builder->groupBy('u.id');
-
-                if(!empty($param['sort'])){
-                    if($param['sort'] == 'old'){
-                        $builder->orderBy('u.created_at', 'asc');
-                    }else{
-                        $builder->orderBy('u.created_at', 'desc');
-                    }
-                    
-                    $data['pager']['sort'] = $param['sort'];
-                }
-
-                $data['result'] = $builder->paginate($limit);
-
-                $data['pager']['limit'] = intval($limit);
-                $data['pager']['total'] = $builder->pager->getTotal();
-                $data['pager']['pageCount'] = $builder->pager->getPageCount();
-                $data['pager']['currentPage'] = $builder->pager->getCurrentPage();
-                $data['pager']['firstPage'] = $builder->pager->getFirstPage();
-                $data['pager']['lastPage'] = $builder->pager->getLastPage();
-            }
-        }else{
-            return $this->fail("잘못된 요청");
-        }
-
-        return $this->respond($data);
     }
 
     public function put($id) {
@@ -234,5 +258,5 @@ class UserController extends \CodeIgniter\Controller
         }
 
         return true;
-    } */
+    }
 }

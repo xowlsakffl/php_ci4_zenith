@@ -1776,18 +1776,22 @@ body {
   border-radius: 10px;
   overflow: auto;
 }
-.db-manage-contaniner .detail {
+.db-manage-contaniner .detail.minWd {
   flex-wrap: wrap;
   min-width: 1000px;
 }
-.db-manage-contaniner .detail .col {
+.db-manage-contaniner .detail.minWd .col {
   padding: 0;
   flex: 1 0 auto;
+  cursor: pointer;
 }
-.db-manage-contaniner .detail .col dt {
+.db-manage-contaniner .detail.minWd .col:hover, .db-manage-contaniner .detail.minWd .col.active {
+  color: red;
+}
+.db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;
 }
-.db-manage-contaniner .detail .col:hover dd {
+.db-manage-contaniner .detail.minWd .col:hover dd {
   font-weight: 900;
 }
 

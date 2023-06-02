@@ -66,23 +66,31 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 회원 관리
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
+        //광고주, 광고대행사 관리
         $routes->get('company', 'Company\CompanyController::index');
         $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
         $routes->get('company/get-company', 'Company\CompanyController::getCompany');
-        $routes->get('company/get-agencies', 'Company\CompanyController::getAgencies');
+        $routes->get('company/get-search-agencies', 'Company\CompanyController::getSearchAgencies');
         $routes->post('company/create-company', 'Company\CompanyController::createCompany');
         $routes->put('company/set-company', 'Company\CompanyController::setCompany');
         $routes->delete('company/delete-company', 'Company\CompanyController::deleteCompany');
 
-        $routes->get('company/get-users', 'User\UserController::getUsers');
+        $routes->get('company/get-search-users', 'User\UserController::getSearchUsers');
         $routes->get('company/get-belong-users', 'User\UserController::getBelongUsers');
-        $routes->put('company/set-user', 'User\UserController::setBelongUser');
+        $routes->put('company/set-belong-user', 'User\UserController::setBelongUser');
         $routes->delete('company/except-belong-user', 'User\UserController::exceptBelongUser');
 
-        $routes->get('company/get-adaccounts', 'Company\CompanyController::getAdAccounts');
+        $routes->get('company/get-search-adaccounts', 'Company\CompanyController::getSearchAdAccounts');
         $routes->get('company/get-company-adaccounts', 'Company\CompanyController::getCompanyAdAccounts');
         $routes->put('company/set-adaccounts', 'Company\CompanyController::setCompanyAdAccount');
         $routes->delete('company/except-company-adaccount', 'Company\CompanyController::exceptCompanyAdAccount');
+
+        //사용자 관리
+        $routes->get('user', 'User\UserController::index');
+        $routes->get('user/get-users', 'User\UserController::getUsers');
+        $routes->get('user/get-user', 'User\UserController::getUser');
+        $routes->get('company/get-search-companies', 'Company\CompanyController::getSearchCompanies');
+        $routes->get('company/set-user', 'User\UserController::setUser');
     });
 
     // 광고관리

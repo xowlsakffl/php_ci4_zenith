@@ -110,11 +110,23 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
     
-    public function getAgencies()
+    public function getSearchCompanies()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
-            $result = $this->company->getAgencies($param['stx']);
+            $result = $this->company->getSearchCompanies($param['stx']);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getSearchAgencies()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $param = $this->request->getGet();
+            $result = $this->company->getSearchAgencies($param['stx']);
 
             return $this->respond($result);
         }else{
@@ -134,11 +146,11 @@ class CompanyController extends \CodeIgniter\Controller
         }
     }
 
-    public function getAdAccounts()
+    public function getSearchAdAccounts()
     {
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
-            $result = $this->company->getAdAccounts($param['stx']);
+            $result = $this->company->getSearchAdAccounts($param['stx']);
             foreach($result as &$row){
                 if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
                     $row['status'] = '활성';

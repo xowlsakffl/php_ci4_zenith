@@ -37,7 +37,7 @@
 <div class="sub-contents-wrap db-manage-contaniner">
     <div class="title-area">
         <h2 class="page-title">광고주/광고대행사 관리</h2>
-        <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
+        <p class="title-disc">내가 더 멀리 보았다면 이는 거인들의 어깨 위에 올라 서있었기 때문이다.</p>
     </div>
 
     <div class="search-wrap">
@@ -72,7 +72,7 @@
                 </colgroup>
                 <thead class="table-dark">
                     <tr>
-                        <th>#</th>
+                        <th scope="col">#</th>
                         <th scope="col">소속대행사</th>
                         <th scope="col">타입</th>
                         <th scope="col">이름</th>
@@ -256,9 +256,9 @@
                                 <table class="table table-bordered table-modal" id="adv-create-table">
                                     <colgroup>
                                         <col style="width:20%;">
-                                        <col style="width:10%;">
-                                        <col style="width:23%;">
-                                        <col style="width:23%;">
+                                        <col style="width:20%;">
+                                        <col style="width:30%;">
+                                        <col style="width:30%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -274,7 +274,7 @@
                                                 <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
                                             </td>
                                             <td id="type">
-                                                <select name="type" id="" class="form-control">
+                                                <select name="type" id="" class="form-select">
                                                     <option value="광고대행사">광고대행사</option>
                                                     <option value="광고주">광고주</option>
                                                 </select>
@@ -612,7 +612,7 @@ function createCompany(data){
 
 function addBelongUser(data){
     $.ajax({
-        url : "/company/set-user", 
+        url : "/company/set-belong-user", 
         type : "put", 
         dataType: "JSON", 
         data : data, 
@@ -656,7 +656,7 @@ function getAgencies(inputId){
     $(inputId).autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "/company/get-agencies", 
+                url : "/company/get-search-agencies", 
                 type : "GET", 
                 dataType: "JSON", 
                 data : {'stx': request.term}, 
@@ -689,7 +689,7 @@ function getUsers(){
     $('#show-user-name').autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "/company/get-users", 
+                url : "/company/get-search-users", 
                 type : "GET", 
                 dataType: "JSON", 
                 data : {'stx': request.term}, 
@@ -728,7 +728,7 @@ function getAdAccounts(){
     $('#show-adaccount').autocomplete({
         source : function(request, response) {
             $.ajax({
-                url : "/company/get-adaccounts", 
+                url : "/company/get-search-adaccounts", 
                 type : "GET", 
                 dataType: "JSON", 
                 data : {'stx': request.term}, 

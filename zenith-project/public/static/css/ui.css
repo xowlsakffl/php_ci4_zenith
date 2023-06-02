@@ -107,7 +107,9 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 input[type=submit], button {
@@ -146,7 +148,9 @@ textarea:focus {
 }
 
 select {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 select:focus {
@@ -1324,6 +1328,4 @@ body {
   .table-modal {
     min-width: 800px;
   }
-}
-
-/*# sourceMappingURL=ui.css.map */
+}/*# sourceMappingURL=ui.css.map */
