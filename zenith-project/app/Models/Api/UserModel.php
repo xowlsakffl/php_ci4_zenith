@@ -142,7 +142,7 @@ class UserModel extends ShieldUserModel
 
     public function setUser($data)
     {
-        dd($this->findById($data['user_id']));
+        $user = $this->findById($data['user_id']);
         $this->db->transStart();
         if(!empty($data['status'])){
             $builder_1 = $this->db->table('users');
@@ -171,11 +171,11 @@ class UserModel extends ShieldUserModel
         }
 
         if(!empty($data['group'])){
-            $this->syncGroups(...$this->data['groups']);
+            $user->syncGroups(...$this->data['groups']);
         }
         
         if(!empty($data['permission'])){
-            $this->syncPermissions(...$this->data['permission']);
+            $user->syncPermissions(...$this->data['permission']);
         }
         
         $result = $this->db->transComplete();

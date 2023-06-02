@@ -132,7 +132,6 @@
                                         <tr>
                                             <th scope="row">권한</th>
                                             <td id="userGroup">
-                                                <div class="form-check-inline" id="groupHide"></div>
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="group" value="admin" class="form-check-input" id="admin"> 
                                                     <label for="admin" class="form-check-label">관리자</label>
@@ -415,7 +414,7 @@ function setUserShow(data) {
     }
     data.groups.forEach(function(value) {
         if(value === 'superadmin'){
-            $("#groupHide").text("최고관리자");
+            $("#userGroup").prepend('<div class="form-check-inline" id="groupHide">최고관리자</div>');
         }
         $("#userGroup input[value='" + value + "']").prop("checked", true);
     });
@@ -470,6 +469,7 @@ $('#user-show').on('show.bs.modal', function(e) {
     $('#user-show #usernameText').text('');
     $('#user-show #emailText').text('');
     $('#user-show #userCreatdeAt').text('');
+    $('#groupHide').remove();
 });
 
 $('#belongCompany').on("focus", function(){
