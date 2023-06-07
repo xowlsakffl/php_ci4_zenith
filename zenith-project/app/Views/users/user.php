@@ -107,7 +107,6 @@
                                             <th scope="row">소속</th>
                                             <td id="userBelong">
                                                 <input type="hidden" name="user_id">
-                                                <input type="hidden" name="company_id">
                                                 <input type="text" name="company_name" class="form-control" id="belongCompany" placeholder="광고주/광고대행사 검색">
                                             </td>
                                         </tr>
@@ -123,9 +122,9 @@
                                             <th scope="row">상태</th>
                                             <td id="userStatus">
                                                 <select class="form-select" aria-label="상태 선택" name="status">
-                                                    <option selected hidden>-선택-</option>
-                                                    <option value="1">활성</option>
-                                                    <option value="2">비활성</option>
+                                                    <option selected hidden disabled>-선택-</option>
+                                                    <option value="활성">활성</option>
+                                                    <option value="비활성">비활성</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -133,27 +132,27 @@
                                             <th scope="row">권한</th>
                                             <td id="userGroup">
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="admin" class="form-check-input" id="admin"> 
+                                                    <input type="checkbox" name="group[]" value="admin" class="form-check-input" id="admin"> 
                                                     <label for="admin" class="form-check-label">관리자</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="developer" class="form-check-input" id="developer"> 
+                                                    <input type="checkbox" name="group[]" value="developer" class="form-check-input" id="developer"> 
                                                     <label for="developer" class="form-check-label">개발자</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="user" class="form-check-input" id="userCheck"> 
+                                                    <input type="checkbox" name="group[]" value="user" class="form-check-input" id="userCheck"> 
                                                     <label for="userCheck" class="form-check-label">직원</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="agency" class="form-check-input" id="agency"> 
+                                                    <input type="checkbox" name="group[]" value="agency" class="form-check-input" id="agency"> 
                                                     <label for="agency" class="form-check-label">광고대행사</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="advertiser" class="form-check-input" id="advertiser"> 
+                                                    <input type="checkbox" name="group[]" value="advertiser" class="form-check-input" id="advertiser"> 
                                                     <label for="advertiser" class="form-check-label">광고주</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="group" value="guest" class="form-check-input" id="guest"> 
+                                                    <input type="checkbox" name="group[]" value="guest" class="form-check-input" id="guest"> 
                                                     <label for="guest" class="form-check-label">게스트</label>
                                                 </div>                                    
                                             </td>
@@ -162,59 +161,59 @@
                                             <th scope="row">세부권한</th>
                                             <td id="userPermission">
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="admin.access" class="form-check-input" id="adminAccess"> 
+                                                    <input type="checkbox" name="permission[]" value="admin.access" class="form-check-input" id="adminAccess"> 
                                                     <label for="adminAccess" class="form-check-label">관리자만 가능한 페이지 접근 가능</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="admin.settings" class="form-check-input" id="adminSettings"> 
+                                                    <input type="checkbox" name="permission[]" value="admin.settings" class="form-check-input" id="adminSettings"> 
                                                     <label for="adminSettings" class="form-check-label">관리자만 가능한 설정 접근 가능</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="users.create" class="form-check-input" id="usersCreate"> 
+                                                    <input type="checkbox" name="permission[]" value="users.create" class="form-check-input" id="usersCreate"> 
                                                     <label for="usersCreate" class="form-check-label">회원 생성</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="users.edit" class="form-check-input" id="usersEdit"> 
+                                                    <input type="checkbox" name="permission[]" value="users.edit" class="form-check-input" id="usersEdit"> 
                                                     <label for="usersEdit" class="form-check-label">회원 수정</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="users.delete" class="form-check-input" id="usersDelete"> 
+                                                    <input type="checkbox" name="permission[]" value="users.delete" class="form-check-input" id="usersDelete"> 
                                                     <label for="usersDelete" class="form-check-label">회원 삭제</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="agency.access" class="form-check-input" id="agencyAccess"> 
+                                                    <input type="checkbox" name="permission[]" value="agency.access" class="form-check-input" id="agencyAccess"> 
                                                     <label for="agencyAccess" class="form-check-label">대행사 목록 페이지</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="agency.advertisers" class="form-check-input" id="agencyAdvertisers"> 
+                                                    <input type="checkbox" name="permission[]" value="agency.advertisers" class="form-check-input" id="agencyAdvertisers"> 
                                                     <label for="agencyAdvertisers" class="form-check-label">대행사 하위 광고주 관리</label>
                                                 </div> 
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="agency.create" class="form-check-input" id="agencyCreate"> 
+                                                    <input type="checkbox" name="permission[]" value="agency.create" class="form-check-input" id="agencyCreate"> 
                                                     <label for="agencyCreate" class="form-check-label">대행사 생성</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="agency.edit" class="form-check-input" id="agencyEdit"> 
+                                                    <input type="checkbox" name="permission[]" value="agency.edit" class="form-check-input" id="agencyEdit"> 
                                                     <label for="agencyEdit" class="form-check-label">대행사 수정</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="agency.delete" class="form-check-input" id="agencyDelete"> 
+                                                    <input type="checkbox" name="permission[]" value="agency.delete" class="form-check-input" id="agencyDelete"> 
                                                     <label for="agencyDelete" class="form-check-label">대행사 삭제</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="advertiser.access" class="form-check-input" id="advertiserAccess"> 
+                                                    <input type="checkbox" name="permission[]" value="advertiser.access" class="form-check-input" id="advertiserAccess"> 
                                                     <label for="advertiserAccess" class="form-check-label">광고주 목록 페이지</label>
                                                 </div> 
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="advertiser.create" class="form-check-input" id="advertiserCreate"> 
+                                                    <input type="checkbox" name="permission[]" value="advertiser.create" class="form-check-input" id="advertiserCreate"> 
                                                     <label for="advertiserCreate" class="form-check-label">광고주 생성</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="advertiser.edit" class="form-check-input" id="advertiserEdit"> 
+                                                    <input type="checkbox" name="permission[]" value="advertiser.edit" class="form-check-input" id="advertiserEdit"> 
                                                     <label for="advertiserEdit" class="form-check-label">광고주 수정</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input type="checkbox" name="permission" value="advertiser.delete" class="form-check-input" id="advertiserDelete"> 
+                                                    <input type="checkbox" name="permission[]" value="advertiser.delete" class="form-check-input" id="advertiserDelete"> 
                                                     <label for="advertiserDelete" class="form-check-label">광고주 삭제</label>
                                                 </div>
                                             </td>
@@ -390,9 +389,6 @@ function getSearchCompanies(){
                 }
             });
         },
-        select: function(event, ui) {
-            $(event.target).siblings('input[name="company_id"]').val(ui.item.id);
-        },
         focus : function(event, ui) {	
             return false;
         },
@@ -404,7 +400,6 @@ function getSearchCompanies(){
 
 function setUserShow(data) {
     $('#user-show #userBelong input[name="user_id"]').val(data.user_id);
-    $('#user-show #userBelong input[name="company_id"]').val(data.company_id);
     $('#user-show #userBelong input[name="company_name"]').val(data.belong);
     $('#user-show #usernameText').text(data.username);
     $('#user-show #emailText').text(data.email);
@@ -426,7 +421,7 @@ function setUserShow(data) {
 function updateUser(data){
     $.ajax({
         url : "/company/set-user", 
-        type : "get", 
+        type : "PUT", 
         dataType: "JSON", 
         data : data, 
         contentType: 'application/json; charset=utf-8',
@@ -476,6 +471,10 @@ $('#belongCompany').on("focus", function(){
     getSearchCompanies();
 })
 
+$('form[name="search-form"]').bind('submit', function() {
+    dataTable.draw();
+    return false;
+});
 
 $('form[name="user-show-form"]').bind('submit', function() {
     var data = $(this).serialize();

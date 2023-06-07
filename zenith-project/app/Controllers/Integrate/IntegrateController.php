@@ -143,4 +143,15 @@ class IntegrateController extends BaseController
             return $this->fail("잘못된 요청");
         }
     }
+
+    public function addMemo() {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $arg = $this->request->getPost();
+            $result = $this->integrate->addMemo($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
 }

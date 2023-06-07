@@ -277,15 +277,29 @@ $('#integrate-memo')
         $(this).removeAttr('data-seq');
         $('.memo-list, h1 .title', '#integrate-memo').html('');
         $('#integrate-memo form')[0].reset();
+    })
+    .find('.regi-form button').bind('click', function(e) {
+        addMemo();
     });
 function addMemo() {
+    if(!$.trim($('#integrate-memo .regi-form textarea').val())) {
+        alert('메모 내용을 입력해주세요.');
+        return false;
+    }
+    var data = {
+        'seq': $('#integrate-memo').data('seq'),
+        'memo': $('#integrate-memo .regi-form textarea').val()
+    };
     $.ajax({
         type: "post",
         url: "<?=base_url()?>/integrate/addmemo",
-        data: $('#integrate-memo .regi-form').serialize(),
+        data: data,
         dataType: "json",
-        success: function(data){  
-            setMemoList(data);
+        success: function(response){  
+            if(response.result == true) {
+                setMemoList(response.data);
+            }
+            $('#integrate-memo .regi-form textarea').val('');
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );

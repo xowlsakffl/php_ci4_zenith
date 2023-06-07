@@ -47,11 +47,12 @@ class UserModel extends ShieldUserModel
     {
         $srch = $data['searchData'];
         $builder = $this->db->table('users AS u');
-        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status,  GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
+        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
         $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+        $builder->where('u.deleted_at =', NULL);
         if(!empty($srch['sdate'] && $srch['edate'])){
             $builder->where('DATE(u.created_at) >=', $srch['sdate']);
             $builder->where('DATE(u.created_at) <=', $srch['edate']);
@@ -171,11 +172,14 @@ class UserModel extends ShieldUserModel
         }
 
         if(!empty($data['group'])){
-            $user->syncGroups(...$this->data['groups']);
+            if ($user->inGroup('superadmin')) {
+                array_push($data['group'], 'superadmin');
+            }
+            $user->syncGroups(...$data['group']);
         }
         
         if(!empty($data['permission'])){
-            $user->syncPermissions(...$this->data['permission']);
+            $user->syncPermissions(...$data['permission']);
         }
         
         $result = $this->db->transComplete();

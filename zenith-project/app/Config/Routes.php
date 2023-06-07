@@ -40,19 +40,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->get('/home', 'HomeController::index');
     $routes->get('/home/report', 'HomeController::getReports');
     $routes->get('pages/(:any)', 'PageController::view/$1');
-    // 회원 관리
-    $routes->group('users', static function($routes){
-        $routes->get('', 'Api\ApiUserController::get');
-        $routes->get('(:num)', 'Api\ApiUserController::$1');
-        $routes->put('(:num)', 'Api\ApiUserController::$1');
-        $routes->delete('(:num)', 'Api\ApiUserController::$1');
-    });
 
-    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        $routes->get('user/list', 'UserController::index');
-        $routes->get('user/belong/(:num)', 'UserController::belong/$1');//소속 변경
-        $routes->put('user/belong', 'UserController::updateCompanies');
-    });
     // 게시판
     $routes->group('boards', static function($routes){     
         $routes->get('', 'Api\ApiBoardController::get');
@@ -90,7 +78,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('user/get-users', 'User\UserController::getUsers');
         $routes->get('user/get-user', 'User\UserController::getUser');
         $routes->get('company/get-search-companies', 'Company\CompanyController::getSearchCompanies');
-        $routes->get('company/set-user', 'User\UserController::setUser');
+        $routes->put('company/set-user', 'User\UserController::setUser');
     });
 
     // 광고관리
@@ -124,6 +112,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
         $routes->get('getmemo', 'Integrate\IntegrateController::getMemo');
+        $routes->post('addmemo', 'Integrate\IntegrateController::addMemo');
     });
 
     // 회계 관리
@@ -161,6 +150,7 @@ $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead
 //테스트
 $routes->get('example/(:any)', 'ExampleController::view/$1');
 
+$routes->cli('chatbot/(:any)', 'Advertisement\GoogleAds::$1');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

@@ -33,7 +33,7 @@ class AdvAllManagerController extends BaseController
 
     public function getReport()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $arg['dates'] = [
                 'sdate' => $arg['sdate'],
@@ -122,7 +122,7 @@ class AdvAllManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $arg['searchData']['dates'] = [
                 'sdate' => $arg['searchData']['sdate'],

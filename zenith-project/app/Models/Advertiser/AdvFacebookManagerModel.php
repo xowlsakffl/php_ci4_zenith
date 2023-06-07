@@ -7,9 +7,10 @@ use CodeIgniter\Model;
 
 class AdvFacebookManagerModel extends Model
 {
-    protected $facebook, $ro_facebook;
+    protected $zenith, $facebook, $ro_facebook;
     public function __construct()
     {
+		$this->zenith = \Config\Database::connect();
         $this->facebook = \Config\Database::connect('facebook');
         $this->ro_facebook = \Config\Database::connect('ro_facebook');
     }
@@ -289,27 +290,29 @@ class AdvFacebookManagerModel extends Model
  */
     public function getAccounts($data)
 	{
-        $builder = $this->facebook->table('fb_ad_account F');
-		$builder->select('F.business_id, F.ad_account_id AS id, F.name, F.status, F.db_count, SUM(D.db_count) AS db_sum, COUNT(DISTINCT D.date) AS date_count');
-        $builder->join('fb_campaign A', 'F.ad_account_id = A.account_id', 'left');
-        $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id', 'left');
-        $builder->join('fb_ad C', 'B.adset_id = C.adset_id', 'left');
-		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
+        $builder = $this->zenith->table('companies c');
+		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, faa.business_id, faa.status, faa.db_count, SUM(fai.db_count) AS db_sum, COUNT(DISTINCT fai.date) AS date_count');
+		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
+		$builder->join('z_facebook.fb_ad_account faa', 'ca.ad_account_id = faa.ad_account_id AND ca.media = "페이스북"', "left");
+        $builder->join('z_facebook.fb_campaign fc', 'faa.ad_account_id = fc.account_id', 'left');
+        $builder->join('z_facebook.fb_adset fas', 'fc.campaign_id = fas.campaign_id', 'left');
+        $builder->join('z_facebook.fb_ad fad', 'fas.adset_id = fad.adset_id', 'left');
+		$builder->join('z_facebook.fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
-        } 
-
-		$builder->where('F.is_admin', 0);
-        $builder->where('F.name !=', '');
-
-        if(!empty($data['business'])){
-			$builder->whereIn('F.business_id', explode("|",$data['business']));
+            $builder->where('DATE(fai.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(fai.date) <=', $data['dates']['edate']);
         }
 
-        $builder->groupBy('F.ad_account_id');
-        $builder->orderBy('F.name', 'asc');
+		$builder->where('faa.is_admin', 0);
+        $builder->where('faa.name !=', '');
+
+        if(!empty($data['business'])){
+			$builder->whereIn('faa.business_id', explode("|",$data['business']));
+        }
+
+        $builder->groupBy('c.id');
+        $builder->orderBy('c.name', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;

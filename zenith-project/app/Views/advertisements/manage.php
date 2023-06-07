@@ -128,7 +128,7 @@
         </div>
     </div>
 
-    <div class="section client-list googlebiz"></div>
+    <!-- <div class="section client-list googlebiz"></div>
 
     <div class="section client-list facebookbiz">
         <h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 페이스북 비즈니스 계정</h3>
@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
@@ -376,7 +376,7 @@ function setReport(data){
     $('#price_01_sum').text(data.price_sum);//매출
 }
 
-function getGoogleManageAccount(){
+/* function getGoogleManageAccount(){
     var data = setData();
     $.ajax({
         type: "GET",
@@ -398,7 +398,7 @@ function getGoogleManageAccount(){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
-}
+} */
 
 function getAccount(){
     var data = setData();
