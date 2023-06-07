@@ -171,11 +171,14 @@ class UserModel extends ShieldUserModel
         }
 
         if(!empty($data['group'])){
-            $user->syncGroups(...$this->data['groups']);
+            if ($user->inGroup('superadmin')) {
+                array_push($data['group'], 'superadmin');
+            }
+            $user->syncGroups(...$data['group']);
         }
         
         if(!empty($data['permission'])){
-            $user->syncPermissions(...$this->data['permission']);
+            $user->syncPermissions(...$data['permission']);
         }
         
         $result = $this->db->transComplete();

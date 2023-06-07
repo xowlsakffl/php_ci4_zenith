@@ -108,9 +108,8 @@ class UserController extends \CodeIgniter\Controller
     
     public function setUser()
     {
-        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
-            //$param = $this->request->getRawInput();
-            $param = $this->request->getGet();
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
+            $param = $this->request->getRawInput();
             if (!empty($param)) {
                 if(empty($param['company_id'])){
                     $company = $this->company->getCompanyByName($param);
