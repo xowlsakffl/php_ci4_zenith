@@ -47,11 +47,12 @@ class UserModel extends ShieldUserModel
     {
         $srch = $data['searchData'];
         $builder = $this->db->table('users AS u');
-        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status,  GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
+        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
         $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
+        $builder->where('u.deleted_at =', NULL);
         if(!empty($srch['sdate'] && $srch['edate'])){
             $builder->where('DATE(u.created_at) >=', $srch['sdate']);
             $builder->where('DATE(u.created_at) <=', $srch['edate']);

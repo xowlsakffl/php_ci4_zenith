@@ -107,7 +107,6 @@
                                             <th scope="row">소속</th>
                                             <td id="userBelong">
                                                 <input type="hidden" name="user_id">
-                                                <input type="hidden" name="company_id">
                                                 <input type="text" name="company_name" class="form-control" id="belongCompany" placeholder="광고주/광고대행사 검색">
                                             </td>
                                         </tr>
@@ -124,8 +123,8 @@
                                             <td id="userStatus">
                                                 <select class="form-select" aria-label="상태 선택" name="status">
                                                     <option selected hidden disabled>-선택-</option>
-                                                    <option value="1">활성</option>
-                                                    <option value="2">비활성</option>
+                                                    <option value="활성">활성</option>
+                                                    <option value="비활성">비활성</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -390,9 +389,6 @@ function getSearchCompanies(){
                 }
             });
         },
-        select: function(event, ui) {
-            $(event.target).siblings('input[name="company_id"]').val(ui.item.id);
-        },
         focus : function(event, ui) {	
             return false;
         },
@@ -404,7 +400,6 @@ function getSearchCompanies(){
 
 function setUserShow(data) {
     $('#user-show #userBelong input[name="user_id"]').val(data.user_id);
-    $('#user-show #userBelong input[name="company_id"]').val(data.company_id);
     $('#user-show #userBelong input[name="company_name"]').val(data.belong);
     $('#user-show #usernameText').text(data.username);
     $('#user-show #emailText').text(data.email);

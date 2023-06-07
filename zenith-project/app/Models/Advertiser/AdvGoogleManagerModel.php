@@ -7,9 +7,10 @@ use CodeIgniter\Model;
 
 class AdvGoogleManagerModel extends Model
 {
-    protected $google, $ro_google;
+    protected $zenith, $google, $ro_google;
     public function __construct()
     {
+		$this->zenith = \Config\Database::connect();
         $this->google = \Config\Database::connect('google');
         $this->ro_google = \Config\Database::connect('ro_google');
     }
@@ -266,26 +267,28 @@ class AdvGoogleManagerModel extends Model
 
     public function getAccounts($data)
 	{
-        $builder = $this->google->table('aw_ad_account F');
-		$builder->select('F.customerId AS id, F.name, F.is_exposed, F.db_count, SUM(F.db_count) AS db_sum, COUNT(DISTINCT D.date) AS date_count');
-        $builder->join('aw_campaign A', 'F.customerId = A.customerId', 'left');
-        $builder->join('aw_adgroup B', 'A.id = B.campaignId', 'left');
-        $builder->join('aw_ad C', 'B.id = C.adgroupId', 'left');
-		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id', 'left');
+		$builder = $this->zenith->table('companies c');
+		$builder->select('ca.ad_account_id AS id, c.name, aaa.is_exposed, aaa.db_count, SUM(aaa.db_count) AS db_sum, COUNT(DISTINCT aar.date) AS date_count');
+		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
+		$builder->join('z_adwords.aw_ad_account aaa', 'ca.ad_account_id = aaa.customerId AND ca.media = "GDN"', "left");
+        $builder->join('z_adwords.aw_campaign ac', 'aaa.customerId = ac.customerId', 'left');
+        $builder->join('z_adwords.aw_adgroup aas', 'ac.id = aas.campaignId', 'left');
+        $builder->join('z_adwords.aw_ad aad', 'aas.id = aad.adgroupId', 'left');
+		$builder->join('z_adwords.aw_ad_report_history aar', 'aad.id = aar.ad_id', 'left');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+            $builder->where('DATE(aar.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(aar.date) <=', $data['dates']['edate']);
         } 
 
-        $builder->where('F.name !=', '');
+        $builder->where('aaa.name !=', '');
 
         if(!empty($data['business'])){
-			$builder->whereIn('F.manageCustomer', explode("|", $data['business']));
+			$builder->whereIn('aaa.manageCustomer', explode("|", $data['business']));
         }
 
-        $builder->groupBy('F.customerId');
-        $builder->orderBy('F.name', 'asc');
+        $builder->groupBy('c.id');
+        $builder->orderBy('aaa.name', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;
