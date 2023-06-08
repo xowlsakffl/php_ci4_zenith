@@ -954,6 +954,12 @@ body {
     background: #ce1922;
   }
 }
+div.dataTables_processing {
+  z-index: 1;
+  padding-top: 16px !important;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
 .table thead th { /*position:sticky; top:0; z-index:2;*/ }
 .table .none {
   padding: 50px 0;
@@ -976,6 +982,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.table .badge-0 {
+  display: none;
+}
+
 .table-default {
   table-layout: fixed;
   min-width: 1400px;
@@ -1144,6 +1154,8 @@ body {
 .modal .modal-header .modal-title {
   font-size: 1.625rem;
   border-bottom: 2px solid #ce1922;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .modal .modal-header .modal-title .title::before {
   content: "-";
@@ -1222,6 +1234,8 @@ body {
 
 .memo-list {
   font-size: 13px;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 .memo-list li {
   position: relative;

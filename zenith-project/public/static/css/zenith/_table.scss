@@ -1,3 +1,4 @@
+div.dataTables_processing{z-index:1; padding-top:16px !important; background-color:rgba(255,255,255,.9);}
 .table{
     thead th{/*position:sticky; top:0; z-index:2;*/}
 
@@ -11,6 +12,7 @@
     }
     .radio-wrap{
     }
+    .badge-0{display:none;}
 }
 .table-default{table-layout:fixed; min-width:1400px;
     --bs-table-hover-bg:#ffebeb;

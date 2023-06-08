@@ -21,6 +21,6 @@
     "datatables.net-staterestore-dt": "^1.2.*",
     "daterangepicker": "^3.*",
     "jquery": "^3.*",
-    "jquery-ui": "^1.13.2"
+    "jquery-ui": "^1.13.*"
   }
 }

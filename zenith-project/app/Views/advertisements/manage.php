@@ -409,7 +409,9 @@ function getAccount(){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            setAccount(data);
+            if(data){
+                setAccount(data);
+            }
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -726,20 +728,20 @@ function handleInput(tab, id, tmp_name, inputElement) {
 $('body').on('click', '.media_btn', function(){
     $(this).toggleClass("active");
     var data = setData();
-    if(data.media.includes('google')){
+    /* if(data.media.includes('google')){
         html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 구글 매니저 계정</h3><div class="row"></div>'
         $('.googlebiz').html(html);
         getGoogleManageAccount(data);
     }else{
         $('.googlebiz').empty();
-    }
+    } */
 
-    if(data.media.includes('facebook')){
+    /* if(data.media.includes('facebook')){
         html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 페이스북 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
         $('.facebookbiz').html(html);
     }else{
         $('.facebookbiz').empty();
-    }
+    } */
 
     getReport(data);
     getAccount(data);

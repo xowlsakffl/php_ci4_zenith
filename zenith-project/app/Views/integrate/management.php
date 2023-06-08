@@ -120,6 +120,22 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
+var lead_status = {
+    "1":"인정", 
+    "2":"중복", 
+    "3":"성별불량", 
+    "4":"나이불량", 
+    "5":"콜불량", 
+    "6":"번호불량", 
+    "7":"테스트", 
+    "8":"이름불량", 
+    "9":"지역불량", 
+    "10":"업체불량", 
+    "11":"미성년자", 
+    "12":"본인아님", 
+    "13":"쿠키중복", 
+    "99":"확인", 
+};
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
@@ -220,8 +236,7 @@ function getList(data = []){
             { "data": "memo_cnt", "width": "30px",
               "render" : function(data) {
                 var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
-                if(data > 0)
-                    html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger">'+data+'</span>';
+                html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-'+data+'">'+data+'</span>';
                 html += '</a>';
                 return html;
               }
@@ -229,7 +244,7 @@ function getList(data = []){
             { 
                 "data": 'status', "width": "60px",
                 "render": function (data, type, row) {
-                    return '<select class="form-select form-select-sm data-del"><option value="1" '+(data=="1"?" selected":"")+'>인정</option><option value="2" '+(data=="2"?" selected":"")+'>중복</option><option value="3" '+(data=="3"?" selected":"")+'>성별불량</option><option value="4" '+(data=="4"?" selected":"")+'>나이불량</option><option value="6" '+(data=="6"?" selected":"")+'>번호불량</option><option value="7" '+(data=="7"?" selected":"")+'>테스트</option><option value="5" '+(data=="5"?" selected":"")+'>콜불량</option><option value="8" '+(data=="8"?" selected":"")+'>이름불량</option><option value="9" '+(data=="9"?" selected":"")+'>지역불량</option><option value="10" '+(data=="10"?" selected":"")+'>업체불량</option><option value="11" '+(data=="11"?" selected":"")+'>미성년자</option><option value="12" '+(data=="12"?" selected":"")+'>본인아님</option><option value="13" '+(data=="13"?" selected":"")+'>쿠키중복</option><option value="99" '+(data=="99"?" selected":"")+'>확인</option></select>';
+                    return '<select class="lead-status form-select form-select-sm data-del"><option value="1" '+(data=="1"?" selected":"")+'>인정</option><option value="2" '+(data=="2"?" selected":"")+'>중복</option><option value="3" '+(data=="3"?" selected":"")+'>성별불량</option><option value="4" '+(data=="4"?" selected":"")+'>나이불량</option><option value="6" '+(data=="6"?" selected":"")+'>번호불량</option><option value="7" '+(data=="7"?" selected":"")+'>테스트</option><option value="5" '+(data=="5"?" selected":"")+'>콜불량</option><option value="8" '+(data=="8"?" selected":"")+'>이름불량</option><option value="9" '+(data=="9"?" selected":"")+'>지역불량</option><option value="10" '+(data=="10"?" selected":"")+'>업체불량</option><option value="11" '+(data=="11"?" selected":"")+'>미성년자</option><option value="12" '+(data=="12"?" selected":"")+'>본인아님</option><option value="13" '+(data=="13"?" selected":"")+'>쿠키중복</option><option value="99" '+(data=="99"?" selected":"")+'>확인</option></select>';
                 }
             },
         ],
@@ -290,6 +305,9 @@ function addMemo() {
         'seq': $('#integrate-memo').data('seq'),
         'memo': $('#integrate-memo .regi-form textarea').val()
     };
+    registerMemo(data);
+}
+function registerMemo(data) {
     $.ajax({
         type: "post",
         url: "<?=base_url()?>/integrate/addmemo",
@@ -298,6 +316,8 @@ function addMemo() {
         success: function(response){  
             if(response.result == true) {
                 setMemoList(response.data);
+                var cnt = parseInt($(`tr[id="${response.data[0].seq}"] td .btn_memo .badge`).text()) || 0;
+                $(`tr[id="${response.data[0].seq}"] td .btn_memo .badge`).removeClass('badge-0').text(++cnt);
             }
             $('#integrate-memo .regi-form textarea').val('');
         },
@@ -307,6 +327,7 @@ function addMemo() {
     });
 }
 function setMemoList(data) {
+    if(!$('#integrate-memo .memo-list').is(':visible')) return;
     var html =  '';
     $.each(data, function(i,row) {
         html += '    <li class="d-flex justify-content-between align-items-start">';
@@ -319,7 +340,7 @@ function setMemoList(data) {
         html += '        </div>';
         html += '    </li>';
     });
-    $('#integrate-memo .memo-list').append(html);
+    $('#integrate-memo .memo-list').prepend(html);
 }
 function getLeadCount(){
     var data = setData();
@@ -497,6 +518,46 @@ $('.statusCount').on('click', 'dl', function(e) {
     $(this).toggleClass('active');
     dataTable.draw();
 });
+function setStatus(t) {
+    var oldvalue = $(t).attr('data-oldvalue');
+    var data = {
+        'seq': $(t).closest('tr').attr('id'),
+        'oldstatus' : oldvalue,
+        'status' : t.value
+    };
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>/integrate/setstatus",
+        data: data,
+        dataType: "json",
+        success: function(response){  
+            if(response.result == true) {
+                var r = response.data;
+                var data = {
+                    'seq' : r.seq,
+                    'memo' : `"${lead_status[r.oldstatus]}"에서 "${lead_status[r.status]}"(으)로 상태변경`
+                };
+                var $o_obj = $('.statusCount dt:contains("'+lead_status[r.oldstatus]+'")').filter(function() { return $(this).text() === lead_status[r.oldstatus];}).next('dd');
+                var o_cnt = parseInt($o_obj.text());
+                $o_obj.text(--o_cnt);
+                var $n_obj = $('.statusCount dt:contains("'+lead_status[r.status]+'")').filter(function() { return $(this).text() === lead_status[r.status];}).next('dd');
+                var n_cnt = parseInt($n_obj.text());
+                $n_obj.text(++n_cnt);
+                registerMemo(data);
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+$('#deviceTable')
+    .on('focus click', '.lead-status', function(e) {
+        $(this).attr('data-oldvalue', this.value);
+    })
+    .on('change', '.lead-status', function(e) {
+        setStatus(this);
+    });
 </script>
 <?=$this->endSection();?>
 

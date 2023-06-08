@@ -7,9 +7,10 @@ use CodeIgniter\Model;
 
 class AdvKakaoManagerModel extends Model
 {
-    protected $kakao, $ro_kakao;
+    protected $zenith, $kakao, $ro_kakao;
     public function __construct()
     {
+        $this->zenith = \Config\Database::connect();
         $this->kakao = \Config\Database::connect('kakao');
         $this->ro_kakao = \Config\Database::connect('ro_kakao');
     }
@@ -144,21 +145,23 @@ class AdvKakaoManagerModel extends Model
     
     public function getAccounts($data)
 	{
-        $builder = $this->kakao->table('mm_ad_account F');
-		$builder->select('F.id AS id, F.name, F.config, F.isAdminStop');
-        $builder->join('mm_campaign A', 'F.id = A.ad_account_id');
-        $builder->join('mm_adgroup B', 'A.id = B.campaign_id');
-        $builder->join('mm_creative C', 'B.id = C.adgroup_id');
-		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
+        $builder = $this->zenith->table('companies c');
+		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, maa.config, maa.isAdminStop');
+        $builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
+        $builder->join('z_moment.mm_ad_account maa', 'ca.ad_account_id = maa.id AND ca.media = "카카오"', "left");
+        $builder->join('z_moment.mm_campaign mc', 'maa.id = mc.ad_account_id');
+        $builder->join('z_moment.mm_adgroup mag', 'mc.id = mag.campaign_id');
+        $builder->join('z_moment.mm_creative mct', 'mag.id = mct.adgroup_id');
+		$builder->join('z_moment.mm_creative_report_basic mcrb', 'mct.id = mcrb.id');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $data['dates']['edate']);
+            $builder->where('DATE(mcrb.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(mcrb.date) <=', $data['dates']['edate']);
         } 
 
-        $builder->where('F.name !=', '');
-        $builder->groupBy('F.id');
-        $builder->orderBy('F.name', 'asc');
+        $builder->where('maa.name !=', '');
+        $builder->groupBy('c.id');
+        $builder->orderBy('c.name', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;

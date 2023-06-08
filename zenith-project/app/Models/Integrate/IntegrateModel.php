@@ -237,6 +237,7 @@ class IntegrateModel extends Model
         $builder = $this->zenith->table('event_leads_memo');
         $builder->select("*");
         $builder->where("leads_seq", $data['seq']);
+        $builder->orderBy("reg_date", "desc");
         $result = $builder->get()->getResultArray();
 
         return $result;
@@ -265,6 +266,22 @@ class IntegrateModel extends Model
         $result = [
             'result' => $result,
             'data' => [$data]
+        ];
+        return $result;
+    }
+
+    public function setStatus($data) {
+        if(!$data['seq']) return null;
+        $this->zenith->transStart();
+        $builder = $this->zenith->table('event_leads');
+        $builder->set('status', $data['status']);
+        $builder->where('seq', $data['seq']);
+        $result = $builder->update();
+        $this->zenith->transComplete();
+        
+        $result = [
+            'result' => $result,
+            'data' => $data
         ];
         return $result;
     }

@@ -12,7 +12,7 @@ use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\moment_api\ZenithKM;
 
-class AdvAllManagerController extends BaseController
+class AdvManagerController extends BaseController
 {
     use ResponseTrait;
     

@@ -83,12 +83,12 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 광고관리
     $routes->group('advertisements', static function($routes){ 
-        $routes->get('', 'AdvertisementManager\AdvAllManagerController::index');
-        $routes->get('accounts', 'AdvertisementManager\AdvAllManagerController::getAccounts');
-        $routes->get('data', 'AdvertisementManager\AdvAllManagerController::getData');
-        $routes->get('report', 'AdvertisementManager\AdvAllManagerController::getReport');
-        $routes->put('set-status', 'AdvertisementManager\AdvAllManagerController::updateStatus');
-        $routes->put('set-name', 'AdvertisementManager\AdvAllManagerController::updateName');
+        $routes->get('', 'AdvertisementManager\AdvManagerController::index');
+        $routes->get('accounts', 'AdvertisementManager\AdvManagerController::getAccounts');
+        $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
+        $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
+        $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
+        $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
 
         $routes->group('facebook', static function($routes){
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
@@ -113,6 +113,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
         $routes->get('getmemo', 'Integrate\IntegrateController::getMemo');
         $routes->post('addmemo', 'Integrate\IntegrateController::addMemo');
+        $routes->post('setstatus', 'Integrate\IntegrateController::setStatus');
     });
 
     // 회계 관리

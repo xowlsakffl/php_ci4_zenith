@@ -21,7 +21,6 @@ class AdvGoogleManagerModel extends Model
         $builder = $this->google->table('aw_campaign A');
         $builder->select('"구글" AS media, CONCAT("google_", A.id) AS id, A.name AS name, A.status AS status, A.is_updating, B.biddingStrategyType AS biddingStrategyType,
         COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin, E.customerId');
-        /* (SELECT COUNT(*) AS memos FROM aw_memo F WHERE A.id = F.id AND F.type = 'campaign' AND DATE(F.datetime) >= DATE(NOW())) AS memos */
         $builder->join('aw_adgroup B', 'A.id = B.campaignId');
         $builder->join('aw_ad C', 'B.id = C.adgroupId');
         $builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
@@ -268,7 +267,7 @@ class AdvGoogleManagerModel extends Model
     public function getAccounts($data)
 	{
 		$builder = $this->zenith->table('companies c');
-		$builder->select('ca.ad_account_id AS id, c.name, aaa.is_exposed, aaa.db_count, SUM(aaa.db_count) AS db_sum, COUNT(DISTINCT aar.date) AS date_count');
+		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, aaa.is_exposed, aaa.db_count, SUM(aaa.db_count) AS db_sum, COUNT(DISTINCT aar.date) AS date_count');
 		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
 		$builder->join('z_adwords.aw_ad_account aaa', 'ca.ad_account_id = aaa.customerId AND ca.media = "GDN"', "left");
         $builder->join('z_adwords.aw_campaign ac', 'aaa.customerId = ac.customerId', 'left');
@@ -288,7 +287,7 @@ class AdvGoogleManagerModel extends Model
         }
 
         $builder->groupBy('c.id');
-        $builder->orderBy('aaa.name', 'asc');
+        $builder->orderBy('c.name', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;
