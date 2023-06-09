@@ -458,7 +458,25 @@ function getCompanyAdAccounts(){
         "columns": [
             { "data": null },
             { "data": "accountId"},
-            { "data": "media"},
+            { 
+                "data": "media",
+                "render": function(data){
+                    switch (data) {
+                        case 'facebook':
+                            media = '페이스북';
+                        break;
+                        case 'google':
+                            media = '구글';
+                        break;
+                        case 'kakao':
+                            media = '카카오';
+                        break;
+                        default:
+                            break;
+                    }
+                    return media;
+                }
+            },
             { "data": "name"},
             { "data": "status"},
             { 

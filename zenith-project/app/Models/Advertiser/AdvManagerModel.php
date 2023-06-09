@@ -122,53 +122,125 @@ class AdvManagerModel extends Model
         fad.ad_id AS id, 
         fad.ad_name AS name, 
         fad.status AS status, 
-        fat.thumbnail, fat.link, 
         SUM(fai.impressions) AS impressions, 
         SUM(fai.inline_link_clicks) AS click, 
         SUM(fai.spend) AS spend, 
         SUM(fai.sales) AS sales, 
-        SUM(fai.db_count) as unique_total, 
-        SUM(fai.margin) as margin, 
-        fc.account_id AS customerId
+        SUM(fai.db_count) AS unique_total, 
+        SUM(fai.margin) AS margin, 
         ');
 		$builder->join('fb_adset fas', 'fad.adset_id = fas.adset_id');
 		$builder->join('fb_campaign fc', 'fas.campaign_id = fc.campaign_id');
 		$builder->join('fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id', 'left');
 		$builder->join('fb_adcreative fat', 'fai.ad_id = fat.ad_id', 'left');
-
+        $builder->groupBy('fad.ad_id');
 
         $builder = $this->google->table('aw_ad aad');
 		$builder->select('
         "google" AS media, 
-        A.id AS campaignId, 
-        C.id AS id, 
-        C.name AS name,
-        C.code, 
-        C.status AS status, 
-        C.imageUrl, 
-        C.finalUrl, 
-        C.adType, 
-        C.mediaType, 
-        A.is_updating AS is_updating, 
-        C.imageUrl, 
-        C.assets,
-        SUM(D.impressions) impressions, 
-        SUM(D.clicks) click, 
-        SUM(D.cost) spend, 
-        0 AS budget, 
-        sum(D.sales) as sales, 
-        SUM(D.db_count) as unique_total, 
-        SUM(D.margin) as margin');
+        aad.id AS id, 
+        aad.name AS name,
+        aad.status AS status, 
+        SUM(aar.impressions) AS impressions, 
+        SUM(aar.clicks) AS click, 
+        SUM(aar.cost) AS spend, 
+        sum(aar.sales) AS sales, 
+        SUM(aar.db_count) AS unique_total, 
+        SUM(aar.margin) AS margin');
 		$builder->join('aw_adgroup aas', 'aad.adgroupId = aas.id');
 		$builder->join('aw_campaign ac', 'aas.campaignId = ac.id');
 		$builder->join('aw_ad_report_history aar', 'aad.id = aar.ad_id');
+        $builder->groupBy('aad.id');
+
+        $builder = $this->kakao->table('mm_creative mct');
+		$builder->select('
+        "kakao" AS media, 
+        mct.id AS id, 
+        mct.name AS name, 
+        mct.config AS status, 
+        SUM(mcrb.imp) AS impressions, 
+        SUM(mcrb.click) AS click, 
+        SUM(mcrb.cost) AS spend, 
+        SUM(mcrb.sales) AS sales, 
+        SUM(mcrb.db_count) AS unique_total, 
+        SUM(mcrb.margin) AS margin, 
+        ');
+        $builder->join('mm_adgroup mag', 'mct.adgroup_id = mag.id');
+        $builder->join('mm_campaign mc', 'mag.campaign_id = mc.id');
+		$builder->join('mm_creative_report_basic mcrb', 'mct.id = mcrb.id');
+        $builder->groupBy('mct.id');
 
 
-        $builder = $this->kakao->table('mm_creative C');
-		$builder->select('"kakao" AS media, CONCAT("kakao_", C.id) AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
-        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget, A.ad_account_id AS customerId');
-        $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
-        $builder->join('mm_campaign A', 'B.campaign_id = A.id');
-		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
+
+        /*report*/
+        $builder = $this->facebook->table('fb_ad_insight_history fai');
+        $builder->select('
+        "facebook" AS media, 
+        faa.name,
+        fai.date, 
+        SUM(fai.impressions) AS impressions,
+        SUM(fai.inline_link_clicks) AS click,
+        (SUM(fai.inline_link_clicks) / SUM(fai.impressions)) * 100 AS click_ratio,
+        (SUM(fai.db_count) / SUM(fai.inline_link_clicks)) * 100 AS conversion_ratio,
+        SUM(fai.spend) AS spend,
+        SUM(fai.db_count) AS unique_total,
+        IFNULL(SUM(fai.spend) / SUM(fai.db_count), 0) AS unique_one_price,
+        SUM(fai.db_price) AS unit_price,
+        SUM(fai.sales) AS price,
+        SUM(fai.margin) AS profit,
+        (SUM(fai.db_price * fai.db_count) - SUM(fai.spend)) / SUM(fai.db_price * fai.db_count) * 100 AS per
+        ');
+        $builder->join('fb_ad fad', 'fai.ad_id = fad.ad_id', 'left');
+        $builder->join('fb_adset fas', 'fad.adset_id = fas.adset_id', 'left');
+        $builder->join('fb_campaign fc', 'fas.campaign_id = fc.campaign_id', 'left');
+        $builder->join('fb_ad_account faa', 'fc.account_id = faa.ad_account_id', 'left');
+        $builder->groupBy('fai.date');
+
+        $builder = $this->google->table('aw_ad_report_history aar');
+        $builder->select('
+        "google" AS media, 
+        aaa.name,
+        aar.date, 
+        SUM(aar.impressions) AS impressions,
+        SUM(aar.clicks) AS click,
+        (SUM(aar.clicks) / SUM(aar.impressions)) * 100 AS click_ratio,
+        (SUM(aar.db_count) / SUM(A.clicks)) * 100 AS conversion_ratio,
+        SUM(aar.cost) AS spend,
+        SUM(aar.db_count) AS unique_total,
+        IFNULL(SUM(aar.cost) / SUM(aar.db_count), 0) AS unique_one_price,
+        SUM(aar.db_price) AS unit_price,
+        SUM(aar.sales) AS price,
+        SUM(aar.margin) AS profit,
+        (SUM(aar.db_price * aar.db_count) - SUM(aar.cost)) / SUM(aar.db_price * aar.db_count) * 100 AS per 
+        ');
+        $builder->join('aw_ad aad', 'aar.ad_id = aad.id', 'left');
+        $builder->join('aw_adgroup aas', 'aad.adgroupId = aas.id', 'left');
+        $builder->join('aw_campaign ac', 'aas.campaignId = ac.id', 'left');
+        $builder->join('aw_ad_account aaa', 'ac.customerId = aaa.customerId', 'left');
+        $builder->groupBy('aar.date');
+
+        $builder = $this->kakao->table('mm_creative_report_basic mcrb');
+        $builder->select('
+        "kakao" AS media, 
+        maa.name,
+        mcrb.date, 
+        SUM(mcrb.imp) AS impressions,
+        SUM(mcrb.click) AS click,   
+        (SUM(mcrb.click) / SUM(mcrb.imp)) * 100 AS click_ratio, 
+        (SUM(mcrb.db_count) / SUM(mcrb.click)) * 100 AS conversion_ratio,
+        SUM(mcrb.cost) AS spend,
+        SUM(mcrb.db_count) AS unique_total, 
+        IFNULL(SUM(mcrb.cost) / SUM(mcrb.db_count),0) AS unique_one_price,
+        SUM(mcrb.db_price) AS unit_price, 
+        SUM(mcrb.sales) AS price,  
+        SUM(mcrb.margin) AS profit,
+        (SUM(mcrb.db_price * mcrb.db_count) - SUM(mcrb.cost)) / SUM(mcrb.db_price * mcrb.db_count) * 100 AS per
+        ');
+        $builder->join('mm_creative mct', 'mcrb.id = mct.id', 'left');
+        $builder->join('mm_adgroup mag', 'mct.adgroup_id = mag.id', 'left');
+        $builder->join('mm_campaign mc', 'mag.campaign_id = mc.id', 'left');
+        $builder->join('mm_ad_account maa', 'mc.ad_account_id = maa.id', 'left');
+        $builder->groupBy('mcrb.date');
+
     }
 }

@@ -244,19 +244,19 @@ class CompanyModel extends Model
 
         $facebookBuilder = clone $zenithBuilder;
         $facebookBuilder->join('z_facebook.fb_ad_account AS fa', 'ca.ad_account_id = fa.ad_account_id');
-        $facebookBuilder->select('ca.ad_account_id AS accountId, "페이스북" AS media, fa.name AS name, fa.status AS status');
+        $facebookBuilder->select('ca.ad_account_id AS accountId, "facebook" AS media, fa.name AS name, fa.status AS status');
         $facebookBuilder->where('ca.company_id', $data['company_id']);
         $facebookResult = $facebookBuilder->get()->getResultArray();
 
         $kakaoBuilder = clone $zenithBuilder;
         $kakaoBuilder->join('z_moment.mm_ad_account AS ma', 'ca.ad_account_id = ma.id');
-        $kakaoBuilder->select('ca.ad_account_id AS accountId, "카카오" AS media, ma.name AS name, ma.config AS status');
+        $kakaoBuilder->select('ca.ad_account_id AS accountId, "kakao" AS media, ma.name AS name, ma.config AS status');
         $kakaoBuilder->where('ca.company_id', $data['company_id']);
         $kakaoResult = $kakaoBuilder->get()->getResultArray();
 
         $googleBuilder = clone $zenithBuilder;
         $googleBuilder->join('z_adwords.aw_ad_account AS awa', 'ca.ad_account_id = awa.customerId');
-        $googleBuilder->select('ca.ad_account_id AS accountId, "GDN" AS media, awa.name AS name, awa.status AS status');
+        $googleBuilder->select('ca.ad_account_id AS accountId, "google" AS media, awa.name AS name, awa.status AS status');
         $googleBuilder->where('ca.company_id', $data['company_id']);
         $googleResult = $googleBuilder->get()->getResultArray();
 
