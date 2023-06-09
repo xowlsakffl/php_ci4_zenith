@@ -736,8 +736,21 @@ function getAdAccounts(){
                 success : function(data){
                     response(
                         $.map(data, function(item) {
+                            switch (item.media) {
+                                case 'facebook':
+                                    media = '페이스북';
+                                break;
+                                case 'google':
+                                    media = '구글';
+                                break;
+                                case 'kakao':
+                                    media = '카카오';
+                                break;
+                                default:
+                                    break;
+                            }
                             return {
-                                label: item.media+" / "+item.account_id+" / "+item.name+" / "+item.status,
+                                label: media+" / "+item.account_id+" / "+item.name+" / "+item.status,
                                 value: item.name,
                                 id: item.media+"_"+item.account_id,
                             };

@@ -71,12 +71,12 @@ class AdvManagerModel extends Model
         fas.adset_id AS id, 
         fas.adset_name AS name, 
         fas.status AS status, 
-        SUM(D.impressions) impressions, 
-        SUM(D.inline_link_clicks) click, 
-        SUM(D.spend) spend, 
-        SUM(D.db_count) as unique_total, 
-        SUM(D.margin) as margin,
-        SUM(D.sales) as sales');
+        SUM(fai.impressions) impressions, 
+        SUM(fai.inline_link_clicks) click, 
+        SUM(fai.spend) spend, 
+        SUM(fai.db_count) as unique_total, 
+        SUM(fai.margin) as margin,
+        SUM(fai.sales) as sales');
         $builder->join('fb_campaign fc', 'fc.campaign_id = fas.campaign_id');
         $builder->join('fb_ad fad', 'fas.adset_id = fad.adset_id');
         $builder->join('fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id');
@@ -96,7 +96,7 @@ class AdvManagerModel extends Model
         $builder->join('aw_campaign ac', 'aas.campaignId = ac.id');
         $builder->join('aw_ad aad', 'aas.id = aad.adgroupId');
         $builder->join('aw_ad_report_history aar', 'aad.id = aar.ad_id');
-        $builder->groupBy('aas.campaignId');
+        $builder->groupBy('aas.id');
 
         $builder = $this->kakao->table('mm_adgroup mag');
         $builder->select('
@@ -113,6 +113,62 @@ class AdvManagerModel extends Model
         $builder->join('mm_campaign mc', 'mag.campaign_id = mc.id');
         $builder->join('mm_creative mct', 'mag.id = mct.adgroup_id');
         $builder->join('mm_creative_report_basic mcrb', 'mct.id = mcrb.id');
-        $builder->groupBy('aas.campaignId');
+        $builder->groupBy('mag.id');
+
+        //ads
+        $builder = $this->facebook->table('fb_ad fad');
+		$builder->select('
+        "facebook" AS media, 
+        fad.ad_id AS id, 
+        fad.ad_name AS name, 
+        fad.status AS status, 
+        fat.thumbnail, fat.link, 
+        SUM(fai.impressions) AS impressions, 
+        SUM(fai.inline_link_clicks) AS click, 
+        SUM(fai.spend) AS spend, 
+        SUM(fai.sales) AS sales, 
+        SUM(fai.db_count) as unique_total, 
+        SUM(fai.margin) as margin, 
+        fc.account_id AS customerId
+        ');
+		$builder->join('fb_adset fas', 'fad.adset_id = fas.adset_id');
+		$builder->join('fb_campaign fc', 'fas.campaign_id = fc.campaign_id');
+		$builder->join('fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id', 'left');
+		$builder->join('fb_adcreative fat', 'fai.ad_id = fat.ad_id', 'left');
+
+
+        $builder = $this->google->table('aw_ad aad');
+		$builder->select('
+        "google" AS media, 
+        A.id AS campaignId, 
+        C.id AS id, 
+        C.name AS name,
+        C.code, 
+        C.status AS status, 
+        C.imageUrl, 
+        C.finalUrl, 
+        C.adType, 
+        C.mediaType, 
+        A.is_updating AS is_updating, 
+        C.imageUrl, 
+        C.assets,
+        SUM(D.impressions) impressions, 
+        SUM(D.clicks) click, 
+        SUM(D.cost) spend, 
+        0 AS budget, 
+        sum(D.sales) as sales, 
+        SUM(D.db_count) as unique_total, 
+        SUM(D.margin) as margin');
+		$builder->join('aw_adgroup aas', 'aad.adgroupId = aas.id');
+		$builder->join('aw_campaign ac', 'aas.campaignId = ac.id');
+		$builder->join('aw_ad_report_history aar', 'aad.id = aar.ad_id');
+
+
+        $builder = $this->kakao->table('mm_creative C');
+		$builder->select('"kakao" AS media, CONCAT("kakao_", C.id) AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
+        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget, A.ad_account_id AS customerId');
+        $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
+        $builder->join('mm_campaign A', 'B.campaign_id = A.id');
+		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
     }
 }

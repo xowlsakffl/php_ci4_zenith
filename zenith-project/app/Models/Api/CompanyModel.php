@@ -218,17 +218,17 @@ class CompanyModel extends Model
         $kakaoBuilder = $this->kakao->table('mm_ad_account');
         $googleBuilder = $this->google->table('aw_ad_account');
 
-        $facebookBuilder->select('"페이스북" AS media, name, ad_account_id AS account_id, status AS status');
+        $facebookBuilder->select('"facebook" AS media, name, ad_account_id AS account_id, status AS status');
         $facebookBuilder->like('name', $stx);
         $facebookBuilder->limit(10);
         $facebookResult = $facebookBuilder->get()->getResultArray();
 
-        $kakaoBuilder->select('"카카오" AS media, name, id AS account_id, config AS status');
+        $kakaoBuilder->select('"kakao" AS media, name, id AS account_id, config AS status');
         $kakaoBuilder->like('name', $stx);
         $kakaoBuilder->limit(10);
         $kakaoResult = $kakaoBuilder->get()->getResultArray();
 
-        $googleBuilder->select('"GDN" AS media, name, , customerId AS account_id, status AS status');
+        $googleBuilder->select('"google" AS media, name, , customerId AS account_id, status AS status');
         $googleBuilder->like('name', $stx);
         $googleBuilder->limit(10);
         $googleResult = $googleBuilder->get()->getResultArray();
