@@ -328,10 +328,8 @@ let data = {};
 let dataTable;
 var tableId = '#campaigns-table';
 setDate();
-/*9
 getReport();
-getAccount(); 
-*/
+getAccount();
 getList(tableId);
 
 function setData() {
@@ -463,13 +461,12 @@ function getList(tableId){
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
-                return res;
-                /* if(res.total == null){
+                if(res.total == null){
                     return false;
                 }else{
-                    //setDataTableTotal(res, tableId);
+                    setDataTableTotal(res, tableId);
                     return res.data;
-                } */
+                }
             }
         },
         "columns": [

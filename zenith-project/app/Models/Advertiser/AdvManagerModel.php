@@ -6,42 +6,20 @@ use CodeIgniter\Model;
 
 class AdvManagerModel extends Model
 {
-    protected $zenith;
+    protected $admanager;
     public function __construct()
     {
-		$this->zenith = \Config\Database::connect();
+		$this->admanager = \Config\Database::connect('admanager');
     }
 
-    public function getAccounts($data)
-	{
-        $builder = $this->zenith->table('companies c');
-		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, faa.business_id, faa.status, faa.db_count, SUM(fai.db_count) AS db_sum, COUNT(DISTINCT fai.date) AS date_count');
-		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
-		$builder->join('z_facebook.fb_ad_account faa', 'ca.ad_account_id = faa.ad_account_id AND ca.media = "페이스북"', "left");
-        $builder->join('z_facebook.fb_campaign fc', 'faa.ad_account_id = fc.account_id', 'left');
-        $builder->join('z_facebook.fb_adset fas', 'fc.campaign_id = fas.campaign_id', 'left');
-        $builder->join('z_facebook.fb_ad fad', 'fas.adset_id = fad.adset_id', 'left');
-		$builder->join('z_facebook.fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id', 'left');
-
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(fai.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(fai.date) <=', $data['dates']['edate']);
-        }
-
-		$builder->where('faa.is_admin', 0);
-        $builder->where('faa.name !=', '');
-
-        if(!empty($data['business'])){
-			$builder->whereIn('faa.business_id', explode("|",$data['business']));
-        }
-
-        $builder->groupBy('c.id');
-        $builder->orderBy('c.name', 'asc');
+    public function getCampaigns()
+    {
+        $builder = $this->admanager->table('campaign');
+        $builder->select('*');
         $result = $builder->get()->getResultArray();
 
         return $result;
-	}
-
+    }
 
     public function test(){
         //campaign
