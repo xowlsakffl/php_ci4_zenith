@@ -50,6 +50,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->delete('(:num)', 'Api\ApiBoardController::$1');
     });   
 
+    $routes->get('calendar', 'Calendar\CalendarController::index');
+
     $routes->get('board/list', 'BoardController::index');
 
     // 회원 관리
