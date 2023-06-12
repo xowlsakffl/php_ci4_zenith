@@ -463,28 +463,27 @@ function getList(tableId){
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
-                return res;
-                /* if(res.total == null){
+                if(res.total == null){
                     return false;
                 }else{
-                    //setDataTableTotal(res, tableId);
+                    setDataTableTotal(res, tableId);
                     return res.data;
-                } */
+                }
             }
         },
         "columns": [
             { "data": "media", "width": "6%"},
             { "data": "name", "width": "10%"},
             { "data": "status", "width": "4%"},
-            { "data": "budget", "width": "9%"},
-            { "data": "cpa","width": "7%"},
-            { "data": "unique_total", "width": "3%"},
-            { "data": "spend","width": "9%"},
-            { "data": "margin","width": "9%"},
-            { "data": "margin_ratio","width": "5%"},
-            { "data": "sales","width": "9%"},
-            { "data": "impressions", "width": "7%"},
-            { "data": "click", "width": "5%"},
+            { "data": "budget", "width": "9%"},//예산
+            { "data": "cpa","width": "7%"},//현재 DB단가
+            { "data": "unique_total", "width": "3%"},//유효DB
+            { "data": "spend","width": "9%"},//지출액
+            { "data": "margin","width": "9%"},//수익
+            { "data": "margin_ratio","width": "5%"},//수익률
+            { "data": "sales","width": "9%"},//매출액
+            { "data": "impressions", "width": "7%"},//노출수
+            { "data": "click", "width": "5%"},//클릭수
             { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
             { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
             { "data": "cvr", "width": "3%"}, //전환율
