@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 
 class ChangeController extends BaseController
 {
-    public function change()
+    public function index()
     {
         return view('/events/change/change');
     }

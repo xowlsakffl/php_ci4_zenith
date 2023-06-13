@@ -328,10 +328,8 @@ let data = {};
 let dataTable;
 var tableId = '#campaigns-table';
 setDate();
-/*9
-getReport();
+//getReport();
 getAccount(); 
-*/
 getList(tableId);
 
 function setData() {
@@ -342,7 +340,7 @@ function setData() {
         'type': $('.tab-link.active').val(),
         'media': $('#media_btn.active').map(function(){return $(this).val();}).get(),
         'business': $('#business_btn.active').map(function(){return $(this).val();}).get().join('|'),
-        'accounts': $('#account_btn.active').map(function(){return $(this).val();}).get().join('|'),
+        'companies': $('#account_btn.active').map(function(){return $(this).val();}).get().join('|'),
     };
     return data;
 }
@@ -426,14 +424,16 @@ function setAccount(data){
     var html = '';
     var set_ratio = '';
     $.each(data, function(idx, v) {     
-        if(v.class){
+        /* if(v.class){
             c = v.class;
             c = c.join(' ');
         }  
         if(v.db_count){
             set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
         }
-        html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+(c ? c : '')+'">'+v.name+(set_ratio ? set_ratio : '')+'</button></div></div>';
+        html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+(c ? c : '')+'">'+v.name+(set_ratio ? set_ratio : '')+'</button></div></div>'; */
+
+        html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
     });
 
     $('.advertiser .row').html(html);
@@ -506,7 +506,7 @@ function getList(tableId){
             },
             {
                 "render": function (data, type, row) {
-                    status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                    status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" || row.status === "STOPPED" || row.status === "DELETED" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                     return status;
                 },
                 targets: 2,
@@ -745,7 +745,7 @@ $('body').on('click', '.media_btn', function(){
         $('.facebookbiz').empty();
     } */
 
-    getReport(data);
+    //getReport(data);
     getAccount(data);
     dataTable.draw();
 });
@@ -773,7 +773,7 @@ $('body').on('click', '#business_btn, #account_btn', function(){
         getAccount();
     }
 
-    getReport(data);
+    //getReport(data);
     dataTable.draw();
 });
 

@@ -100,7 +100,6 @@ class CompanyModel extends Model
         $builder = $this->zenith->table('companies');
         $builder->select('id, name');
         $builder->where('status !=', 0);
-        $builder->limit(10);
         if(!empty($stx)){
             $builder->like('name', $stx);
         }
@@ -115,7 +114,6 @@ class CompanyModel extends Model
         $builder->select('id, name');
         $builder->where('type', '광고대행사');
         $builder->where('status !=', 0);
-        $builder->limit(10);
         if(!empty($stx)){
             $builder->like('name', $stx);
         }
@@ -220,17 +218,14 @@ class CompanyModel extends Model
 
         $facebookBuilder->select('"facebook" AS media, name, ad_account_id AS account_id, status AS status');
         $facebookBuilder->like('name', $stx);
-        $facebookBuilder->limit(10);
         $facebookResult = $facebookBuilder->get()->getResultArray();
 
         $kakaoBuilder->select('"kakao" AS media, name, id AS account_id, config AS status');
         $kakaoBuilder->like('name', $stx);
-        $kakaoBuilder->limit(10);
         $kakaoResult = $kakaoBuilder->get()->getResultArray();
 
         $googleBuilder->select('"google" AS media, name, , customerId AS account_id, status AS status');
         $googleBuilder->like('name', $stx);
-        $googleBuilder->limit(10);
         $googleResult = $googleBuilder->get()->getResultArray();
 
         $mergedResults = array_merge($facebookResult, $kakaoResult, $googleResult);

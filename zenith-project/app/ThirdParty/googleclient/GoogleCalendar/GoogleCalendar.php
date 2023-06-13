@@ -2,7 +2,7 @@
 
 namespace App\ThirdParty\googleclient\GoogleCalendar;
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once '\vendor\autoload.php';
 
 use Google\Client;
 use Google\Service\Drive;

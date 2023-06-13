@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 
 class MediaController extends BaseController
 {
-    public function media()
+    public function index()
     {
         return view('/events/media/media');
     }

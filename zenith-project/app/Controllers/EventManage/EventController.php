@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 
 class EventController extends BaseController
 {
-    public function event()
+    public function index()
     {
         return view('events/event/event');
     }

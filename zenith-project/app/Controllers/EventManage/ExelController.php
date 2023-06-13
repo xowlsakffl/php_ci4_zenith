@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 
 class ExelController extends BaseController
 {
-    public function exel()
+    public function index()
     {
         return view('events/exelUpload/exel');
     }

@@ -26,6 +26,81 @@ class AdvManagerController extends BaseController
         return view('advertisements/manage');
     }
 
+    public function getAccounts()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = [
+                'dates' => [
+                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
+                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                ],
+                'businesses' => $this->request->getGet('businesses'),
+            ];
+            
+            $result  = [];    
+            $accounts = $this->admanager->getAccounts($arg);
+            //$accounts = $this->setAccountData($accounts);
+            $result = array_merge($result, $accounts); 
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    /* private function setAccountData($accounts)
+    {
+        $getDisapprovalByAccount = $this->getDisapprovalByAccount('ad_account_id');
+        foreach ($accounts as &$account) {
+            $account['class'] = [];
+            $account['db_ratio'] = 0;
+
+            if ($account['status'] != 1) 
+                array_push($account['class'], 'tag-inactive');
+            if (in_array($account['id'], $getDisapprovalByAccount)) 
+                array_push($account['class'], 'disapproval');
+
+            $account['db_count'] = $account['db_count'] * $account['date_count'];
+
+            if($account['db_sum'] && $account['db_count']) 
+                $account['db_ratio'] = round($account['db_sum'] / $account['db_count'] * 100,1);
+
+            if($account['db_ratio'] >= 100) { 
+                $account['db_ratio'] = 100; 
+                array_push($account['class'], 'over');
+            }
+
+            if(!$account['db_sum']) $account['db_sum'] = 0;    
+        }
+
+        return $accounts;
+    }
+
+    private function getDisapprovalByAccount($id)
+    {
+        switch ($id) {
+            case 'customerId':
+                $disapprovals = $this->google->getDisapproval();
+                break;
+            case 'account_id':
+                $disapprovals = $this->kakao->getDisapproval();
+                break;
+            case 'ad_account_id':
+                $disapprovals = $this->facebook->getDisapproval();
+                break;
+            default:
+                return $this->fail("잘못된 요청.");
+        }
+
+        $data = [];
+        foreach ($disapprovals as $row) {
+            $data[] = $row[$id];
+        }
+        $data = array_unique($data);
+
+        return $data;
+    } */
+
     public function getData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
@@ -83,6 +158,40 @@ class AdvManagerController extends BaseController
         return $result;
     }
 
+    private function getAdSets($arg)
+    {
+        $result  = [];    
+        $campaigns = $this->admanager->getAdSets($arg);
+        $campaigns = $this->setData($campaigns);
+        $result = array_merge($result, $campaigns); 
+
+        $total = $this->getTotal($result);
+        
+        $result = [
+            'total' => $total,
+            'data' => $result,
+        ];
+
+        return $result;
+    }
+
+    private function getAds($arg)
+    {
+        $result  = [];    
+        $campaigns = $this->admanager->getAds($arg);
+        $campaigns = $this->setData($campaigns);
+        $result = array_merge($result, $campaigns); 
+
+        $total = $this->getTotal($result);
+        
+        $result = [
+            'total' => $total,
+            'data' => $result,
+        ];
+
+        return $result;
+    }
+
     private function setData($result)
     {
         foreach ($result as &$row) {
@@ -90,7 +199,7 @@ class AdvManagerController extends BaseController
                 case 'facebook':
                     $row['media'] = '페이스북';
                     break;
-                case 'moment':
+                case 'kakao':
                     $row['media'] = '카카오';
                     break;
                 case 'google':
@@ -228,7 +337,7 @@ class AdvManagerController extends BaseController
                 $total['avg_margin_ratio'] = 0;
             } 
 
-            if ($data['status'] == 'ON' && $data['unique_total']){
+            if ($data['status'] == 'ON' && $data['unique_total'] && $data['cpa'] != 0){
                 $total['expect_db'] += round($data['budget'] / $data['cpa']);
             }
         }

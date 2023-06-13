@@ -24,17 +24,17 @@
     </div>
 
     <div class="search-wrap">
-        <form class="search d-flex justify-content-center">
+        <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text">
+                <input type="text" name="sdate" id="sdate">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text">
+                <input type="text" name="edate" id="edate">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
-                <input class="" type="text" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" type="submit">조회</button>
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
                 <button class="btn-special ms-2" type="button" data-bs-toggle="modal" data-bs-target="#regiModal">등록</button>
             </div>
         </form>
@@ -42,9 +42,9 @@
 
     <div class="section">
         <div class="btn-wrap text-end mb-2">
-            <a href="/company/list"><button type="button" class="btn btn-danger">광고주 관리</button></a>
-            <a href="/example/media_manage"><button type="button" class="btn btn-danger">매체 관리</button></a>
-            <a href="/example/change_manage"><button type="button" class="btn btn-danger">전환 관리</button></a>
+            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-danger">광고주 관리</button></a>
+            <a href="/eventmanage/media"><button type="button" class="btn btn-danger">매체 관리</button></a>
+            <a href="/eventmanage/change"><button type="button" class="btn btn-danger">전환 관리</button></a>
         </div>
 
         <div class="table-responsive">
@@ -82,7 +82,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td><i class="ico red"></i> 5054</td>
                         <td>아이시티안과의원</td>
                         <td>페이스북</td>
@@ -96,37 +96,7 @@
                         <td>전유빈</td>
                         <td></td>
                         <td>02-14</td>
-                    </tr>
-                    <tr>
-                        <td><i class="ico green"></i> 5054</td>
-                        <td>아이시티안과의원</td>
-                        <td>페이스북</td>
-                        <td>아이시티안과 라식라섹 최대 할인</td>
-                        <td>라식라섹 최대 할인</td>
-                        <td>ㅇ</td>
-                        <td>사용중</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>50,000</td>
-                        <td>전유빈</td>
-                        <td>서지희</td>
-                        <td>02-14</td>
-                    </tr>
-                    <tr>
-                        <td><i class="ico"></i> 5054</td>
-                        <td>아이시티안과의원</td>
-                        <td>페이스북</td>
-                        <td>아이시티안과 라식라섹 최대 할인</td>
-                        <td>라식라섹 최대 할인</td>
-                        <td>ㅇ</td>
-                        <td>사용중</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>50,000</td>
-                        <td>전유빈</td>
-                        <td>서지희</td>
-                        <td>02-14</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>

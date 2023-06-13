@@ -29,11 +29,11 @@ $uri = current_url(true)->getPath();
                 <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false"><i class="bi bi-calendar-week"></i>이벤트</button>
                 <div class="collapse" id="event">
                     <ul class="btn-toggle-nav">
-                        <li><a href="/eventManage/event" class="<?php if($uri === '/eventManage/event'){ echo "active";}?>">이벤트 관리</a></li>
-                        <li><a href="/eventManage/advertiser" class="<?php if($uri === '/eventManage/advertiser'){ echo "active";}?>">광고주 관리</a></li>
-                        <li><a href="/eventManage/media" class="<?php if($uri === '/eventManage/media'){ echo "active";}?>">매체 관리</a></li>
-                        <li><a href="/eventManage/change" class="<?php if($uri === '/eventManage/change'){ echo "active";}?>">전환 관리</a></li>
-                        <li><a href="/eventManage/exel" class="<?php if($uri === '/eventManage/exel'){ echo "active";}?>">엑셀 업로드</a></li>
+                        <li><a href="/eventmanage/event" class="<?php if($uri === '/eventmanage/event'){ echo "active";}?>">이벤트 관리</a></li>
+                        <li><a href="/eventmanage/advertiser" class="<?php if($uri === '/eventmanage/advertiser'){ echo "active";}?>">광고주 관리</a></li>
+                        <li><a href="/eventmanage/media" class="<?php if($uri === '/eventmanage/media'){ echo "active";}?>">매체 관리</a></li>
+                        <li><a href="/eventmanage/change" class="<?php if($uri === '/eventmanage/change'){ echo "active";}?>">전환 관리</a></li>
+                        <li><a href="/eventmanage/exel" class="<?php if($uri === '/eventmanage/exel'){ echo "active";}?>">엑셀 업로드</a></li>
                     </ul>
                 </div>
             </li>

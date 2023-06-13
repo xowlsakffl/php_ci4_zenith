@@ -133,12 +133,12 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 이벤트
-    $routes->group('eventManage', static function($routes){   
-        $routes->get('event', 'EventManage\EventController::event');
-        $routes->get('advertiser', 'EventManage\AdvertiserController::advertiser');
-        $routes->get('media', 'EventManage\MediaController::media');
-        $routes->get('change', 'EventManage\ChangeController::change');
-        $routes->get('exel', 'EventManage\ExelController::exel');
+    $routes->group('eventmanage', static function($routes){   
+        $routes->get('event', 'EventManage\EventController::index');
+        $routes->get('advertiser', 'EventManage\AdvertiserController::index');
+        $routes->get('media', 'EventManage\MediaController::index');
+        $routes->get('change', 'EventManage\ChangeController::index');
+        $routes->get('exel', 'EventManage\ExelController::index');
     });
 });
 
