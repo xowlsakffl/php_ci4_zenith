@@ -6,119 +6,77 @@ use CodeIgniter\Model;
 
 class AdvManagerModel extends Model
 {
-    protected $zenith, $admanager;
+    protected $zenith, $facebook, $google, $kakao;
     public function __construct()
     {
         $this->zenith = \Config\Database::connect();
-		$this->admanager = \Config\Database::connect('admanager');
+		$this->facebook = model(AdvFacebookManagerModel::class);
+        $this->google = model(AdvGoogleManagerModel::class);
+        $this->kakao = model(AdvKakaoManagerModel::class);
     }
 
     public function getAccounts($data)
     {
-        $builder = $this->zenith->table('companies c');
-        $builder->select('c.id, c.name');
-        $builder->join('company_adaccounts ca', 'c.id = ca.company_id');
-        $builder->join('z_admanager.ad_account aac', 'ca.ad_account_id = aac.ad_account_id AND ca.media = aac.media');
-        $builder->join('z_admanager.ad ad', 'aac.ad_account_id = ad.account_id AND aac.media = ad.media');
-        $builder->join('z_admanager.ad_report ar', 'ad.id = ar.ad_id AND ad.media = ar.media');
-
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(ar.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(ar.date) <=', $data['dates']['edate']);
-        }
-
-        if(!empty($data['company_id'])){
-            $builder->whereIn('c.id', explode("|",$data['company_id']));
-        }
-        
-        $builder->groupBy('c.id');
-        $result = $builder->get()->getResultArray();
-
-        return $result;
+        return $this->getQueryResults($data, 'getAccounts');
     }
 
     public function getCampaigns($data)
     {
-        $srch = $data['searchData'];
-        $builder = $this->admanager->table('ad_report ar');
-        $builder->select('
-        c.*, 
-        SUM(ar.impressions) AS impressions, 
-        SUM(ar.click) AS click, 
-        SUM(ar.spend) AS spend, 
-        SUM(ar.unique_total) as unique_total, 
-        SUM(ar.sales) as sales, 
-        SUM(ar.margin) as margin
-        ');
-        $builder->join('ad ad', 'ar.ad_id = ad.id', 'left');
-        $builder->join('campaign c', 'ad.campaign_id = c.id', 'left');
-        $builder->join('zenith.company_adaccounts ca', 'c.account_id = ca.ad_account_id', 'left');
-
-        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(ar.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(ar.date) <=', $srch['dates']['edate']);
-        }
-        
-        if(!empty($srch['companies'])){
-			$builder->whereIn('ca.company_id', explode("|",$srch['companies']));
-        }
-
-        $builder->groupBy('c.id');
-        $result = $builder->get()->getResultArray();
-
-        return $result;
+        return $this->getQueryResults($data['searchData'], 'getCampaigns');
     }
 
     public function getAdSets($data)
     {
-        $srch = $data['searchData'];
-        $builder = $this->admanager->table('adgroup ag');
-        $builder->select('
-        ag.*,
-        SUM(ar.impressions) AS impressions, 
-        SUM(ar.click) AS click, 
-        SUM(ar.spend) AS spend, 
-        SUM(ar.unique_total) as unique_total, 
-        SUM(ar.sales) as sales, 
-        SUM(ar.margin) as margin
-        ');
-        $builder->join('ad ad', 'ag.id = ad.adgroup_id', 'left');
-        $builder->join('ad_report ar', 'ad.id = ar.ad_id', 'left');
-
-        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(ar.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(ar.date) <=', $srch['dates']['edate']);
-        }
-        
-        $builder->groupBy('ag.id');
-        $result = $builder->get()->getResultArray();
-
-        return $result;
+        return $this->getQueryResults($data['searchData'], 'getAdsets');
     }
 
     public function getAds($data)
     {
-        $srch = $data['searchData'];
-        $builder = $this->admanager->table('ad ad');
-        $builder->select('
-        ad.*,
-        SUM(ar.impressions) AS impressions, 
-        SUM(ar.click) AS click, 
-        SUM(ar.spend) AS spend, 
-        SUM(ar.unique_total) as unique_total, 
-        SUM(ar.sales) as sales, 
-        SUM(ar.margin) as margin,
-        0 as budget
-        ');
-        $builder->join('ad_report ar', 'ad.id = ar.ad_id', 'left');
+        return $this->getQueryResults($data['searchData'], 'getAds');
+    }
 
-        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(ar.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(ar.date) <=', $srch['dates']['edate']);
+    public function getReport($data)
+    {
+        return $this->getQueryResults($data, 'getReport');
+    }
+
+    private function getQueryResults($data, $type)
+    {
+        $builders = [];
+
+        if (in_array('facebook', $data['media'])) {
+            $facebookBuilder = $this->facebook->$type($data);
+            $builders[] = $facebookBuilder;
         }
-        
-        $builder->groupBy('ad.id');
-        $result = $builder->get()->getResultArray();
+
+        if (in_array('google', $data['media'])) {
+            $googleBuilder = $this->google->$type($data);
+            $builders[] = $googleBuilder;
+        }
+
+        if (in_array('kakao', $data['media'])) {
+            $kakaoBuilder = $this->kakao->$type($data);
+            $builders[] = $kakaoBuilder;
+        }
+
+        $unionBuilder = null;
+        foreach ($builders as $builder) {
+            if ($unionBuilder) {
+                $unionBuilder->union($builder);
+            } else {
+                $unionBuilder = $builder;
+            }
+        }
+
+        if ($unionBuilder) {
+            if($type == 'getAccounts'){   
+                $unionBuilder->groupBy('G.id');
+                $unionBuilder->orderBy('G.id', 'asc');
+            }
+            $result = $unionBuilder->get()->getResultArray();
+        } else {
+            $result = null;
+        }
 
         return $result;
     }

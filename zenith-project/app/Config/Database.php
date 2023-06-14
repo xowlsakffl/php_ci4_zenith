@@ -250,11 +250,11 @@ class Database extends Config
 
     public array $chainsaw = [
         'DSN'      => '',
-        'hostname' => '',
+        'hostname' => 'localhost',
         'username' => '',
         'password' => '',
         'database' => '',
-        'DBDriver' => '',
+        'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
         'DBDebug'  => (ENVIRONMENT !== 'production'),
@@ -270,11 +270,11 @@ class Database extends Config
 
     public array $admanager = [
         'DSN'      => '',
-        'hostname' => '',
+        'hostname' => 'localhost',
         'username' => '',
         'password' => '',
         'database' => '',
-        'DBDriver' => '',
+        'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
         'DBDebug'  => (ENVIRONMENT !== 'production'),

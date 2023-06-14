@@ -7,167 +7,208 @@ use CodeIgniter\Model;
 
 class AdvKakaoManagerModel extends Model
 {
-    protected $zenith, $kakao, $ro_kakao;
-    public function __construct()
-    {
-        $this->zenith = \Config\Database::connect();
-        $this->kakao = \Config\Database::connect('kakao');
-        $this->ro_kakao = \Config\Database::connect('ro_kakao');
-    }
+    public function getAccounts($data)
+	{
+        $builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+        G.id AS company_id,
+		G.name AS company_name
+        ');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
+        return $builder;
+	}
 
     public function getCampaigns($data)
 	{
-        $srch = $data['searchData'];
-		$builder = $this->kakao->table('mm_campaign A');
-        $builder->select('"카카오" AS media, E.name AS account_name, CONCAT("kakao_", A.id) AS id, A.name AS name, A.goal, A.config AS status, A.autoBudget AS autoBudget, SUM(D.imp) AS impressions, SUM(D.click) AS click, SUM(D.cost) AS spend, SUM(D.db_count) as unique_total, A.dailyBudgetAmount AS budget, SUM(D.sales) AS sales, SUM(D.margin) as margin, A.ad_account_id AS customerId');
-        $builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
-		$builder->join('mm_adgroup B', 'A.id = B.campaign_id');
-		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
-		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
-		$builder->join('mm_ad_account E', 'E.id = A.ad_account_id');
+		$builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+        G.id AS company_id,
+		G.name AS company_name,
+        "kakao" AS media, 
+        D.id AS id, 
+        D.name AS name, 
+        D.config AS status, 
+        D.dailyBudgetAmount AS budget, 
+        SUM(A.imp) AS impressions, 
+        SUM(A.click) AS click, 
+        SUM(A.cost) AS spend, 
+        SUM(A.sales) AS sales, 
+        SUM(A.db_count) as unique_total,
+        SUM(A.margin) as margin, 
+        E.id as customerId
+        ');
+        //$builder->select('(SELECT COUNT(*) AS memos FROM mm_memo E WHERE A.id = E.id AND E.type = \'campaign\' AND DATE(E.datetime) >= DATE(NOW())) AS memos');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         }
 
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.ad_account_id', explode("|",$srch['accounts']));
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
-        if(!empty($srch['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('A.name', $srch['stx']);
+            $builder->like('D.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('A.id');
-		$builder->orderBy('D.create_time', 'desc');
-        $builder->orderBy('A.name', 'asc');
-        $result = $builder->get()->getResultArray();
-        return $result;
+        $builder->groupBy('D.id');
+		$builder->orderBy('A.create_time', 'desc');
+        $builder->orderBy('D.name', 'asc');
+        return $builder;
 	}
 
     public function getAdsets($data)
 	{
-        $srch = $data['searchData'];
-		$builder = $this->kakao->table('mm_adgroup B');
-        $builder->select('"카카오" AS media, CONCAT("kakao_", B.id) AS id, B.name AS name, A.goal, A.objectiveDetailType, B.config AS status, B.aiConfig, B.aiConfig2, B.bidAmount,
-        COUNT(C.id) creatives, SUM(D.imp) impressions,
-        SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, B.dailyBudgetAmount AS budget, sum(D.sales) as sales, SUM(D.margin) as margin, A.ad_account_id AS customerId');
-		$builder->join('mm_campaign A', 'B.campaign_id = A.id');
-		$builder->join('mm_creative C', 'B.id = C.adgroup_id');
-		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
+        $builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+        G.id AS company_id,
+		G.name AS company_name,
+        "kakao" AS media, 
+        C.id AS id, 
+        C.name AS name, 
+        C.config AS status, 
+        C.dailyBudgetAmount AS budget, 
+        SUM(A.imp) AS impressions, 
+        SUM(A.click) AS click, 
+        SUM(A.cost) AS spend, 
+        SUM(A.sales) AS sales, 
+        SUM(A.db_count) as unique_total,
+        SUM(A.margin) as margin, 
+        E.id as customerId
+        ');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         }
 
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.ad_account_id', explode("|",$srch['accounts']));
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
-        if(!empty($srch['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('B.name', $srch['stx']);
-            $builder->groupEnd();
-        }
-
-        $builder->groupBy('B.id');
-		$builder->orderBy('D.create_time', 'desc');
-        $builder->orderBy('B.name', 'asc');
-        $result = $builder->get()->getResultArray();
-        return $result;
-	}
-
-    public function getAds($data)
-	{
-        $srch = $data['searchData'];
-		$builder = $this->kakao->table('mm_creative C');
-		$builder->select('"카카오" AS media, CONCAT("kakao_", C.id) AS id, A.name AS campaign_name, A.goal AS campaign_goal, C.name AS name, A.type, C.format, C.config AS status, C.aiConfig, C.landingUrl, C.landingType, C.hasExpandable, C.bizFormId, C.imageUrl, C.frequencyCap,
-        SUM(D.imp) impressions, SUM(D.click) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, sum(D.sales) as sales, SUM(D.margin) as margin, 0 AS budget, A.ad_account_id AS customerId');
-        $builder->join('mm_adgroup B', 'C.adgroup_id = B.id');
-        $builder->join('mm_campaign A', 'B.campaign_id = A.id');
-		$builder->join('mm_creative_report_basic D', 'C.id = D.id');
-
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
-        }
-
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.ad_account_id', explode("|",$srch['accounts']));
-        }
-
-        if(!empty($srch['stx'])){
-            $builder->groupStart();
-            $builder->like('C.name', $srch['stx']);
+            $builder->like('C.name', $data['stx']);
             $builder->groupEnd();
         }
 
         $builder->groupBy('C.id');
-		$builder->orderBy('D.create_time', 'desc');
+		$builder->orderBy('A.create_time', 'desc');
         $builder->orderBy('C.name', 'asc');
-        $result = $builder->get()->getResultArray();
-        return $result;
+        return $builder;
 	}
 
-    public function getStatuses($param, $result, $dates)
-    {
-        foreach ($result as &$row) {
-            /* if ($optimization_stat == "1") {
-				$row['optimization'] = "ON";	//어른정파고
-				$row['optimization_ch'] = "OFF";	// 어린이정파고
-			} else if ($optimization_stat == "2") {
-				$row['optimization'] = "OFF";	//어른정파고
-				$row['optimization_ch'] = "ON";	// 어린이정파고
-			} else {
-				$row['optimization'] = "OFF";
-				$row['optimization_ch'] = "OFF";
-			} */
-
-            if($row['status'] == 'ON'){
-				$row['status'] = "ON";
-			}else{
-				$row['status'] = "OFF";
-			}
-
-            $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
-
-			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
-			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
-			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
-			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
-        }
-        return $result;
-    }
-    
-    public function getAccounts($data)
+    public function getAds($data)
 	{
-        $builder = $this->zenith->table('companies c');
-		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, maa.config, maa.isAdminStop');
-        $builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
-        $builder->join('z_moment.mm_ad_account maa', 'ca.ad_account_id = maa.id AND ca.media = "카카오"', "left");
-        $builder->join('z_moment.mm_campaign mc', 'maa.id = mc.ad_account_id');
-        $builder->join('z_moment.mm_adgroup mag', 'mc.id = mag.campaign_id');
-        $builder->join('z_moment.mm_creative mct', 'mag.id = mct.adgroup_id');
-		$builder->join('z_moment.mm_creative_report_basic mcrb', 'mct.id = mcrb.id');
+        $builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+        G.id AS company_id,
+		G.name AS company_name,
+        "kakao" AS media, 
+        B.id AS id, 
+        B.name AS name, 
+        B.config AS status, 
+        0 AS budget, 
+        SUM(A.imp) AS impressions, 
+        SUM(A.click) AS click, 
+        SUM(A.cost) AS spend, 
+        SUM(A.sales) AS sales, 
+        SUM(A.db_count) as unique_total,
+        SUM(A.margin) as margin, 
+        E.id as customerId
+        ');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
 		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(mcrb.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(mcrb.date) <=', $data['dates']['edate']);
-        } 
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
 
-        $builder->where('maa.name !=', '');
-        $builder->groupBy('c.id');
-        $builder->orderBy('c.name', 'asc');
-        $result = $builder->get()->getResultArray();
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
 
-        return $result;
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('B.name', $data['stx']);
+            $builder->groupEnd();
+        }
+
+        $builder->groupBy('B.id');
+		$builder->orderBy('A.create_time', 'desc');
+        $builder->orderBy('B.name', 'asc');
+        return $builder;
 	}
 
-    public function getDisapproval()
+    public function getReport($data)
+	{
+        $builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+        A.date,
+        SUM(A.imp) AS impressions,
+        SUM(A.click) AS click,   
+        (SUM(A.click) / SUM(A.imp)) * 100 AS click_ratio, 
+        (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio,
+        SUM(A.cost) AS spend,
+        SUM(A.db_count) AS unique_total, 
+        IFNULL(SUM(A.cost) / SUM(A.db_count),0) AS unique_one_price,
+        SUM(A.db_price) AS unit_price, 
+        SUM(A.sales) AS price,  
+        SUM(A.margin) AS profit,
+        (SUM(A.db_price * A.db_count) - SUM(A.cost)) / SUM(A.db_price * A.db_count) * 100 AS per
+        ');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        $builder->groupBy('A.date');
+        return $builder;
+	}
+
+    /* public function getDisapproval()
 	{
         $builder = $this->kakao->table('mm_ad_account acc');
 		$builder->select('acc.id AS account_id, acc.name AS customer_name,
@@ -187,42 +228,5 @@ class AdvKakaoManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	}
-
-    public function getReport($data)
-	{
-		$builder = $this->kakao->table('mm_creative_report_basic A');
-        $builder->select('A.date, A.update_time,
-                SUM(A.imp) AS impressions,
-                SUM(A.click) AS click,   
-                (SUM(A.click) / SUM(A.imp)) * 100 AS click_ratio, 
-                (SUM(A.db_count) / SUM(A.click)) * 100 AS conversion_ratio,
-                SUM(A.cost) AS spend,
-                FLOOR(SUM(A.cost) * 0.85) AS spend_ratio, 
-                SUM(A.db_count) AS unique_total, 
-                IFNULL(SUM(A.cost) / SUM(A.db_count),0) AS unique_one_price,
-                SUM(A.db_price) AS unit_price, 
-                SUM(A.sales) AS price,  
-                SUM(A.margin) AS profit,
-                (SUM(A.db_price * A.db_count) - SUM(A.cost)) / SUM(A.db_price * A.db_count) * 100 AS per');
-        $builder->join('mm_creative B', 'A.id = B.id', 'left');
-        $builder->join('mm_adgroup C', 'B.adgroup_id = C.id', 'left');
-        $builder->join('mm_campaign D', 'C.campaign_id = D.id', 'left');
-        $builder->join('mm_ad_account E', 'D.ad_account_id = E.id', 'left');
-
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
-        } 
-
-		if(!empty($data['accounts'])){
-			$builder->whereIn('E.id', explode("|",$data['accounts']));
-        }
-
-		$builder->groupBy('A.date');
-		$builder->orderBy('A.date', 'ASC');
-		$result = $builder->get()->getResultArray();
-
-        return $result;
-	}
+	} */
 }

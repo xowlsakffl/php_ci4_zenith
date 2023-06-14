@@ -7,131 +7,197 @@ use CodeIgniter\Model;
 
 class AdvGoogleManagerModel extends Model
 {
-    protected $zenith, $google, $ro_google;
-    public function __construct()
-    {
-		$this->zenith = \Config\Database::connect();
-        $this->google = \Config\Database::connect('google');
-        $this->ro_google = \Config\Database::connect('ro_google');
-    }
+	public function getManageAccounts() {
+        $builder = $this->google->table('aw_ad_account');  
+		$builder->select('*');
+        $builder->where('canManageClients', 1);
+        $builder->where('status', 'ENABLED');
+        //$builder->where('is_exposed', 1);
+        $builder->orderBy('name', 'asc');
+        $builder->orderBy('create_time', 'asc');
+
+        $result = $builder->get()->getResultArray();
+
+		return $result;
+	}
+
+    public function getAccounts($data)
+	{
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
+
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+		
+		return $builder;
+	}
 
     public function getCampaigns($data)
     {
-		$srch = $data['searchData'];
-        $builder = $this->google->table('aw_campaign A');
-        $builder->select('"구글" AS media, CONCAT("google_", A.id) AS id, A.name AS name, A.status AS status, A.is_updating, B.biddingStrategyType AS biddingStrategyType,
-        COUNT(B.id) AS adgroups, COUNT(C.id) AS ads, SUM(D.impressions) AS impressions, SUM(D.clicks) AS click, SUM(D.cost) AS spend, D.ad_id, A.amount AS budget, sum(D.sales) AS sales, A.advertisingChannelType AS advertisingChannelType, A.advertisingChannelSubType AS advertisingChannelSubType, SUM(D.db_count) AS unique_total, SUM(D.margin) AS margin, E.customerId');
-        $builder->join('aw_adgroup B', 'A.id = B.campaignId');
-        $builder->join('aw_ad C', 'B.id = C.adgroupId');
-        $builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
-        $builder->join('aw_ad_account E', 'A.customerId = E.customerId');
-        $builder->where('A.status !=', 'NODATA');
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name,
+		"google" AS media,
+		D.id AS id, 
+		D.name AS name, 
+		D.status AS status, 
+		D.amount AS budget, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.clicks) AS click, 
+		SUM(A.cost) AS spend, 
+		sum(A.sales) AS sales, 
+		SUM(A.db_count) AS unique_total, 
+		SUM(A.margin) AS margin, 
+		E.customerId as customerId
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
 
-        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         }
         
-        if(!empty($srch['business'])){
-			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
+        if(!empty($data['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
 
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
-        if(!empty($srch['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('A.name', $srch['stx']);
+            $builder->like('D.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('A.id');
-		$builder->orderBy('D.create_time', 'desc');
-        $builder->orderBy('A.name', 'asc');
-        $result = $builder->get()->getResultArray();
-        return $result;
+        $builder->groupBy('D.id');
+		$builder->orderBy('A.create_time', 'desc');
+        $builder->orderBy('D.name', 'asc');
+		return $builder;
     }
 
     public function getAdsets($data)
 	{
-		$srch = $data['searchData'];
-		$builder = $this->google->table('aw_campaign A');
-		$builder->select('"구글" AS media, CONCAT("google_", B.id) AS id, B.name AS name, B.status AS status, B.biddingStrategyType AS biddingStrategyType, B.cpcBidAmount AS cpcBidAmount, B.cpmBidAmount AS cpmBidAmount, B.cpaBidAmount AS cpaBidAmount, A.is_updating AS is_updating, B.adGroupType AS adGroupType, COUNT(C.id) creatives, SUM(D.impressions) impressions,
-        SUM(D.clicks) click, SUM(D.cost) spend, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, B.cpcBidAmount, sum(D.sales) as sales, 0 as budget, E.customerId');
-		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
-		$builder->join('aw_ad C', 'B.id = C.adgroupId');
-		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
-		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name,
+		"google" AS media,
+		C.id AS id, 
+		C.name AS name, 
+		C.status AS status, 
+		0 AS budget, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.clicks) AS click, 
+		SUM(A.cost) AS spend, 
+		sum(A.sales) AS sales, 
+		SUM(A.db_count) AS unique_total, 
+		SUM(A.margin) AS margin, 
+		E.customerId as customerId
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
 
-		if(!empty($srch['business'])){
-			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
+        if(!empty($data['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
 
-		if(!empty($srch['stx'])){
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('B.name', $srch['stx']);
+            $builder->like('C.name', $data['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
-        }
-
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
-        }
-
-        $builder->where('B.status !=', 'NODATA');
-
-		$builder->groupBy('B.id');
-		$builder->orderBy('D.create_time', 'desc');
-		$builder->orderBy('B.name', 'asc');
-		$result = $builder->get()->getResultArray();
-
-		return $result;
-
+        $builder->groupBy('C.id');
+		$builder->orderBy('A.create_time', 'desc');
+        $builder->orderBy('C.name', 'asc');
+		return $builder;
 	}
 
     public function getAds($data)
 	{
-		$srch = $data['searchData'];
-		$builder = $this->google->table('aw_campaign A');
-		$builder->select('"구글" AS media, A.id AS campaignId, CONCAT("google_", C.id) AS id, C.name AS name, C.code, C.status AS status, C.imageUrl, C.finalUrl, C.adType, C.mediaType, A.is_updating AS is_updating, C.imageUrl, C.assets,
-        SUM(D.impressions) impressions, SUM(D.clicks) click, SUM(D.cost) spend, 0 AS budget, sum(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, E.customerId');
-		$builder->join('aw_adgroup B', 'A.id = B.campaignId');
-		$builder->join('aw_ad C', 'B.id = C.adgroupId');
-		$builder->join('aw_ad_report_history D', 'C.id = D.ad_id');
-		$builder->join('aw_ad_account E', 'A.customerId = E.customerId');
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name,
+		"google" AS media,
+		B.id AS id, 
+		B.name AS name, 
+		B.status AS status, 
+		0 AS budget, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.clicks) AS click, 
+		SUM(A.cost) AS spend, 
+		sum(A.sales) AS sales, 
+		SUM(A.db_count) AS unique_total, 
+		SUM(A.margin) AS margin, 
+		E.customerId as customerId
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
 
-		if(!empty($srch['business'])){
-			$builder->whereIn('E.manageCustomer', explode("|",$srch['business']));
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
+        if(!empty($data['business'])){
+			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
 
-		if(!empty($srch['stx'])){
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('C.name', $srch['stx']);
+            $builder->like('B.name', $data['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
-        }
-
-		if(!empty($srch['accounts'])){
-			$builder->whereIn('A.customerId', explode("|",$srch['accounts']));
-        }
-
-        $builder->where('C.status !=', 'NODATA');
-
-		$builder->groupBy('C.id');
-		$builder->orderBy('D.create_time', 'desc');
-		$builder->orderBy('C.name', 'asc');
-		$result = $builder->get()->getResultArray();
-
-		return $result;
+        $builder->groupBy('B.id');
+		$builder->orderBy('A.create_time', 'desc');
+        $builder->orderBy('B.name', 'asc');
+		return $builder;
 	}
 
     public function getStatuses($param, $result, $dates)
@@ -249,51 +315,48 @@ class AdvGoogleManagerModel extends Model
         }
         return $result;
     }
-    
-    public function getManageAccounts() {
-        $builder = $this->google->table('aw_ad_account');  
-		$builder->select('*');
-        $builder->where('canManageClients', 1);
-        $builder->where('status', 'ENABLED');
-        //$builder->where('is_exposed', 1);
-        $builder->orderBy('name', 'asc');
-        $builder->orderBy('create_time', 'asc');
-
-        $result = $builder->get()->getResultArray();
-
-		return $result;
-	}
-
-    public function getAccounts($data)
+	public function getReport($data)
 	{
-		$builder = $this->zenith->table('companies c');
-		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, aaa.is_exposed, aaa.db_count, SUM(aaa.db_count) AS db_sum, COUNT(DISTINCT aar.date) AS date_count');
-		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
-		$builder->join('z_adwords.aw_ad_account aaa', 'ca.ad_account_id = aaa.customerId AND ca.media = "GDN"', "left");
-        $builder->join('z_adwords.aw_campaign ac', 'aaa.customerId = ac.customerId', 'left');
-        $builder->join('z_adwords.aw_adgroup aas', 'ac.id = aas.campaignId', 'left');
-        $builder->join('z_adwords.aw_ad aad', 'aas.id = aad.adgroupId', 'left');
-		$builder->join('z_adwords.aw_ad_report_history aar', 'aad.id = aar.ad_id', 'left');
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+		A.date, 
+		SUM(A.impressions) AS impressions,
+		SUM(A.clicks) AS click,
+		(SUM(A.clicks) / SUM(A.impressions)) * 100 AS click_ratio,
+		(SUM(A.db_count) / SUM(A.clicks)) * 100 AS conversion_ratio,
+		SUM(A.cost) AS spend,
+		SUM(A.db_count) AS unique_total,
+		IFNULL(SUM(A.cost) / SUM(A.db_count), 0) AS unique_one_price,
+		SUM(A.db_price) AS unit_price,
+		SUM(A.sales) AS price,
+		SUM(A.margin) AS profit,
+		(SUM(A.db_price * A.db_count) - SUM(A.cost)) / SUM(A.db_price * A.db_count) * 100 AS per
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(aar.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(aar.date) <=', $data['dates']['edate']);
-        } 
-
-        $builder->where('aaa.name !=', '');
-
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
         if(!empty($data['business'])){
-			$builder->whereIn('aaa.manageCustomer', explode("|", $data['business']));
+			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
 
-        $builder->groupBy('c.id');
-        $builder->orderBy('c.name', 'asc');
-        $result = $builder->get()->getResultArray();
-
-        return $result;
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+		
+        $builder->groupBy('A.date');
+		return $builder;
 	}
-
-    public function getDisapproval()
+    /* public function getDisapproval()
 	{
         $builder = $this->google->table('aw_ad_account acc');
 		$builder->select('acc.customerId, acc.name AS customer_name,
@@ -314,45 +377,5 @@ class AdvGoogleManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	}
-
-    public function getReport($data)
-	{
-		$builder = $this->google->table('aw_ad_report_history A');
-        $builder->select('A.date, 
-                SUM(A.impressions) AS impressions,
-                SUM(A.clicks) AS click,
-                (SUM(A.clicks) / SUM(A.impressions)) * 100 AS click_ratio,
-                (SUM(A.db_count) / SUM(A.clicks)) * 100 AS conversion_ratio,
-                SUM(A.cost) AS spend,
-                SUM(A.db_count) AS unique_total,
-                IFNULL(SUM(A.cost) / SUM(A.db_count), 0) AS unique_one_price,
-                SUM(A.db_price) AS unit_price,
-                SUM(A.sales) AS price,
-                SUM(A.margin) AS profit,
-                (SUM(A.db_price * A.db_count) - SUM(A.cost)) / SUM(A.db_price * A.db_count) * 100 AS per ');
-        $builder->join('aw_ad B', 'A.ad_id = B.id', 'left');
-        $builder->join('aw_adgroup C', 'B.adgroupId = C.id', 'left');
-        $builder->join('aw_campaign D', 'C.campaignId = D.id', 'left');
-        $builder->join('aw_ad_account E', 'D.customerId = E.customerId', 'left');
-
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
-        } 
-
-		if(!empty($data['business'])){
-			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
-        }
-
-		if(!empty($data['accounts'])){
-			$builder->whereIn('D.customerId', explode("|",$data['accounts']));
-        }
-
-		$builder->groupBy('A.date');
-		$builder->orderBy('A.date', 'ASC');
-		$result = $builder->get()->getResultArray();
-
-        return $result;
-	}
+	} */
 }

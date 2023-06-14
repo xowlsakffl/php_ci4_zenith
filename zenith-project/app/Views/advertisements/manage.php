@@ -120,11 +120,11 @@
                     <button type="button" value="google" id="media_btn" class="media_btn">구글</button>
                 </div>
             </div>
-            <div class="col">
+            <!-- <div class="col">
                 <div class="inner">
                     <button type="button" value="naver" id="media_btn" class="media_btn">네이버</button>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -328,8 +328,8 @@ let data = {};
 let dataTable;
 var tableId = '#campaigns-table';
 setDate();
-//getReport();
-getAccount(); 
+getReport();
+getAccount();
 getList(tableId);
 
 function setData() {
@@ -340,8 +340,9 @@ function setData() {
         'type': $('.tab-link.active').val(),
         'media': $('#media_btn.active').map(function(){return $(this).val();}).get(),
         'business': $('#business_btn.active').map(function(){return $(this).val();}).get().join('|'),
-        'companies': $('#account_btn.active').map(function(){return $(this).val();}).get().join('|'),
+        'company': $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
     };
+    console.log(data.company)
     return data;
 }
 
@@ -419,25 +420,42 @@ function getAccount(){
     });
 }
 
-function setAccount(data){
+function setAccount(data) {
+    var $row = $('.advertiser .row');
+
+    var existingIds = [];
+    $row.find('.filter_btn').each(function() {
+        existingIds.push($(this).val());
+    });
+
+    var html = '';
+    $.each(data, function(idx, v) {
+        var companyId = v.company_id.toString();
+
+        if (existingIds.includes(companyId)) {
+            existingIds = existingIds.filter(id => id !== companyId);
+        } else {
+            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn">' + v.company_name + '</button></div></div>';
+        }
+    });
+
+    $row.find('.filter_btn').filter(function() {
+        return existingIds.includes($(this).val());
+    }).parent().parent().remove();
+
+    $row.append(html);
+}
+
+/* function setAccount(data){
     $('.advertiser .row').empty();
     var html = '';
     var set_ratio = '';
     $.each(data, function(idx, v) {     
-        /* if(v.class){
-            c = v.class;
-            c = c.join(' ');
-        }  
-        if(v.db_count){
-            set_ratio = '<div class="progress"><div class="progress-bar" role="progressbar" style="width:'+v.db_ratio+'%"></div><div class="txt">'+v.db_sum+'/'+v.db_count+'</div></div>';
-        }
-        html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn '+(c ? c : '')+'">'+v.name+(set_ratio ? set_ratio : '')+'</button></div></div>'; */
-
-        html += '<div class="col"><div class="inner"><button type="button" value="'+v.id+'" id="account_btn" class="filter_btn">'+v.name+'</button></div></div>';
+        html += '<div class="col"><div class="inner"><button type="button" value="'+v.company_id+'" id="company_btn" class="filter_btn">'+v.company_name+'</button></div></div>';
     });
 
     $('.advertiser .row').html(html);
-}
+} */
 
 function getList(tableId){
     if ($.fn.DataTable.isDataTable(tableId)) {
@@ -463,8 +481,8 @@ function getList(tableId){
             "contentType": "application/json",
             "dataType": "json",
             "dataSrc": function(res){
-                if(res.total == null){
-                    return false;
+                if(!res.total){
+                    $('#total td').text('');
                 }else{
                     setDataTableTotal(res, tableId);
                     return res.data;
@@ -475,15 +493,15 @@ function getList(tableId){
             { "data": "media", "width": "6%"},
             { "data": "name", "width": "10%"},
             { "data": "status", "width": "4%"},
-            { "data": "budget", "width": "9%"},//예산
-            { "data": "cpa","width": "7%"},//현재 DB단가
-            { "data": "unique_total", "width": "3%"},//유효DB
-            { "data": "spend","width": "9%"},//지출액
-            { "data": "margin","width": "9%"},//수익
-            { "data": "margin_ratio","width": "5%"},//수익률
-            { "data": "sales","width": "9%"},//매출액
-            { "data": "impressions", "width": "7%"},//노출수
-            { "data": "click", "width": "5%"},//클릭수
+            { "data": "budget", "width": "9%"},
+            { "data": "cpa","width": "7%"},
+            { "data": "unique_total", "width": "3%"},
+            { "data": "spend","width": "9%"},
+            { "data": "margin","width": "9%"},
+            { "data": "margin_ratio","width": "5%"},
+            { "data": "sales","width": "9%"},
+            { "data": "impressions", "width": "7%"},
+            { "data": "click", "width": "5%"},
             { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
             { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
             { "data": "cvr", "width": "3%"}, //전환율
@@ -491,7 +509,20 @@ function getList(tableId){
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+row.media+'</label>';
+                    switch (row.media) {
+                        case 'facebook':
+                            media = '페이스북';
+                            break;
+                        case 'google':
+                            media = '구글';
+                            break;
+                        case 'kakao':
+                            media = '카카오';
+                            break;
+                        default:
+                            break;
+                    }
+                    media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+media+'</label>';
                     return media;
                 },
                 targets: 0,
@@ -506,14 +537,14 @@ function getList(tableId){
             },
             {
                 "render": function (data, type, row) {
-                    status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" || row.status === "STOPPED" || row.status === "DELETED" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                    status = '<select name="status" class="active-select" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
                     return status;
                 },
                 targets: 2,
             },
             {
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget || row.ai2_status == 'ON' ? '\u20A9'+row.budget : '-')+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
                     return budget;
                 },
                 targets: 3,
@@ -581,7 +612,7 @@ function getList(tableId){
             },
         ],
         "createdRow": function(row, data, dataIndex) {
-            $(row).attr("data-id", data.id);
+            $(row).attr("data-id", data.media+"_"+data.id);
             $(row).attr("data-customerId", data.customerId ? data.customerId : '');
         },
         "language": {
@@ -745,7 +776,7 @@ $('body').on('click', '.media_btn', function(){
         $('.facebookbiz').empty();
     } */
 
-    //getReport(data);
+    getReport(data);
     getAccount(data);
     dataTable.draw();
 });
@@ -766,14 +797,14 @@ $('body').on('click', '.tab-link', function(){
     getList(tableId);
 });
 
-$('body').on('click', '#business_btn, #account_btn', function(){
+$('body').on('click', '#business_btn, #company_btn', function(){
     $(this).toggleClass("active");
     
-    if ($(this).attr('id') === 'business_btn') {
-        getAccount();
-    }
+    /* if ($(this).attr('id') === 'business_btn') {
+        //getAccount();
+    } */
 
-    //getReport(data);
+    getReport(data);
     dataTable.draw();
 });
 

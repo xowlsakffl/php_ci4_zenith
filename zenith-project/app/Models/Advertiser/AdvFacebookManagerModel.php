@@ -7,318 +7,222 @@ use CodeIgniter\Model;
 
 class AdvFacebookManagerModel extends Model
 {
-    protected $zenith, $facebook, $ro_facebook;
-    public function __construct()
-    {
-		$this->zenith = \Config\Database::connect();
-        $this->facebook = \Config\Database::connect('facebook');
-        $this->ro_facebook = \Config\Database::connect('ro_facebook');
-    }
-    
+	public function getAccounts($data)
+	{
+		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+			G.id AS company_id,
+			G.name AS company_name
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+		
+        return $builder;
+	}
+
     public function getCampaigns($data)
     {
-		$srch = $data['searchData'];
-        $builder = $this->facebook->table('fb_campaign A');
-        $builder->select('"페이스북" AS media, CONCAT("facebook_", A.campaign_id) AS id, A.campaign_name AS name, A.status AS status, A.budget AS budget, A.is_updating AS is_updating, A.ai2_status, COUNT(B.adset_id) AS adsets, COUNT(C.ad_id) AS ads, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, D.ad_id, SUM(D.sales) as sales, A.account_id, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
-        $builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
-        $builder->join('fb_ad C', 'B.adset_id = C.adset_id');
-        $builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
-        $builder->join('fb_ad_account E', 'A.account_id = E.ad_account_id');
+        $builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+			G.id AS company_id,
+			G.name AS company_name,
+			"facebook" AS media, 
+			D.campaign_id AS id, 
+			D.campaign_name AS name, 
+			D.status AS status, 
+			D.budget AS budget, 
+			SUM(A.impressions) AS impressions, 
+			SUM(A.inline_link_clicks) AS click, 
+			SUM(A.spend) AS spend, 
+			SUM(A.sales) as sales, 
+			SUM(A.db_count) as unique_total, 
+			SUM(A.margin) as margin, 
+			E.ad_account_id as customerId
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         }
         
-        if(!empty($srch['business'])){
-			$builder->whereIn('E.business_id', explode("|",$srch['business']));
+        if(!empty($data['business'])){
+			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
-        if(!empty($srch['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('A.campaign_name', $srch['stx']);
+            $builder->like('D.campaign_name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('A.campaign_id');
-		$builder->orderBy('D.create_date', 'desc');
-        $builder->orderBy('A.campaign_name', 'asc');
-        $result = $builder->get()->getResultArray();
-        return $result;
+        $builder->groupBy('D.campaign_id');
+		$builder->orderBy('A.create_date', 'desc');
+        $builder->orderBy('D.campaign_name', 'asc');
+        return $builder;
     }
 
 	public function getAdsets($data)
 	{
-		$srch = $data['searchData'];
-		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", B.adset_id) AS id, B.adset_name AS name, B.status AS status, B.budget_type, A.is_updating AS is_updating, B.lsi_conversions, B.lsi_status, COUNT(C.ad_id) ads, SUM(D.impressions) impressions, SUM(D.inline_link_clicks) click, SUM(D.spend) spend, B.budget, SUM(D.sales) as sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
-		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
-		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
-		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id');
-		
-		if(!empty($srch['business'])){
-			$builder->join('fb_ad_account E', 'A.account_id = E.ad_account_id');
-			$builder->whereIn('E.business_id', explode("|",$srch['business']));
+		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+			G.id AS company_id,
+			G.name AS company_name,
+			"facebook" AS media, 
+			C.adset_id AS id, 
+			C.adset_name AS name, 
+			C.status AS status, 
+			C.budget AS budget, 
+			SUM(A.impressions) AS impressions, 
+			SUM(A.inline_link_clicks) AS click, 
+			SUM(A.spend) AS spend, 
+			SUM(A.sales) as sales, 
+			SUM(A.db_count) as unique_total, 
+			SUM(A.margin) as margin, 
+			E.ad_account_id as customerId
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
+        if(!empty($data['business'])){
+			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
-		if(!empty($srch['stx'])){
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('B.adset_name', $srch['stx']);
+            $builder->like('C.adset_name', $data['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
-        }
-
-        if(!empty($srch['accounts'])){
-			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
-        }
-
-		$builder->groupBy('B.adset_id');
-		$builder->orderBy('D.create_date', 'desc');
-		$builder->orderBy('B.adset_name', 'asc');
-		$result = $builder->get()->getResultArray();
-
-		return $result;
+        $builder->groupBy('C.adset_id');
+		$builder->orderBy('A.create_date', 'desc');
+        $builder->orderBy('C.adset_name', 'asc');
+        return $builder;
 	}
 
 	public function getAds($data)
 	{
-		$srch = $data['searchData'];
-		$builder = $this->facebook->table('fb_campaign A');
-		$builder->select('"페이스북" AS media, CONCAT("facebook_", C.ad_id) AS id, C.ad_name AS name, C.status AS status, E.thumbnail, E.link, A.is_updating AS is_updating, SUM(D.impressions) AS impressions, SUM(D.inline_link_clicks) AS click, SUM(D.spend) AS spend, 0 AS budget, SUM(D.sales) AS sales, SUM(D.db_count) as unique_total, SUM(D.margin) as margin, A.account_id AS customerId');
-		$builder->join('fb_adset B', 'A.campaign_id = B.campaign_id');
-		$builder->join('fb_ad C', 'B.adset_id = C.adset_id');
-		$builder->join('fb_ad_insight_history D', 'C.ad_id = D.ad_id', 'left');
-		$builder->join('fb_adcreative E', 'D.ad_id = E.ad_id', 'left');
+		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+			G.id AS company_id,
+			G.name AS company_name,
+			"facebook" AS media, 
+			B.ad_id AS id, 
+			B.ad_name AS name, 
+			B.status AS status, 
+			0 AS budget, 
+			SUM(A.impressions) AS impressions, 
+			SUM(A.inline_link_clicks) AS click, 
+			SUM(A.spend) AS spend, 
+			SUM(A.sales) as sales, 
+			SUM(A.db_count) as unique_total, 
+			SUM(A.margin) as margin, 
+			E.ad_account_id as customerId
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($srch['business'])){
-			$builder->join('fb_ad_account F', 'A.account_id = F.ad_account_id');
-			$builder->whereIn('F.business_id', explode("|",$srch['business']));
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        }
+        
+        if(!empty($data['business'])){
+			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
-		if(!empty($srch['stx'])){
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('C.ad_name', $srch['stx']);
+            $builder->like('B.ad_name', $data['stx']);
             $builder->groupEnd();
         }
 
-		if(!empty($srch['dates']['sdate']) && !empty($srch['dates']['edate'])){
-            $builder->where('DATE(D.date) >=', $srch['dates']['sdate']);
-            $builder->where('DATE(D.date) <=', $srch['dates']['edate']);
-        }
-
-		if(!empty($dsrchata['accounts'])){
-			$builder->whereIn('A.account_id', explode("|",$srch['accounts']));
-        }
-
-		$builder->groupBy('C.ad_id');
-		$builder->orderBy('D.create_date', 'desc');
-		$builder->orderBy('C.ad_name', 'asc');
-		$result = $builder->get()->getResultArray();
-
-		return $result;
+        $builder->groupBy('B.ad_id');
+		$builder->orderBy('A.create_date', 'desc');
+        $builder->orderBy('B.ad_name', 'asc');
+        return $builder;
 	}
+	public function getReport($data)
+	{
+		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+		A.date, 
+		SUM(A.impressions) AS impressions,
+		SUM(A.inline_link_clicks) AS click,
+		(SUM(A.inline_link_clicks) / SUM(A.impressions)) * 100 AS click_ratio,
+		(SUM(A.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
+		SUM(A.spend) AS spend,
+		SUM(A.db_count) AS unique_total,
+		IFNULL(SUM(A.spend) / SUM(A.db_count), 0) AS unique_one_price,
+		SUM(A.db_price) AS unit_price,
+		SUM(A.sales) AS price,
+		SUM(A.margin) AS profit,
+		(SUM(A.db_price * A.db_count) - SUM(A.spend)) / SUM(A.db_price * A.db_count) * 100 AS per
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-    public function getStatuses($param, $result, $dates)
-    {
-        foreach ($result as &$row) {
-            /* $optimization_stat = $this->getOptimization($param, $row['id']);
-			$optimization_goal = $this->getOptimization_goal($param, $row['id']);
-			
-            if ($param == "campaigns") { // 캠페인단 ai
-				if ($optimization_stat == "901" || $optimization_stat == "801") {
-					$row['optimization_campaign'] = "ON";
-				} else {
-					$row['optimization_campaign'] = "OFF";
-				}
-
-				if ($optimization_goal == "902") {
-					$row['optimization_goal_campaign'] = "ON";
-				} else {
-					$row['optimization_goal_campaign'] = "OFF";
-				}
-			} else if ($param == "adsets") { // 광고세트단 ai
-				if ($optimization_stat == "801") {
-					$row['optimization_adset'] = "ON";
-				} else {
-					$row['optimization_adset'] = "OFF";
-				}
-			} else if ($param == "ads") { // 광고 ai
-				if ($optimization_stat == "701") {
-					$row['optimization_ad'] = "ON";
-				} else {
-					$row['optimization_ad'] = "OFF";
-				}
-			} else {	// 광고세트단 ai
-				if ($optimization_stat == "1") {
-					$row['optimization'] = "ON";	//공격ai
-					$row['optimization_ch'] = "OFF";	// 공격ai
-					$row['optimization_top'] = "OFF";	// 3만ai
-				} else if ($optimization_stat == "2") {
-					$row['optimization'] = "OFF";	//공격ai
-					$row['optimization_ch'] = "ON";	// 안정ai
-					$row['optimization_top'] = "OFF";	// 3만ai
-				} else if ($optimization_stat == "3") {
-					$row['optimization'] = "OFF";	//공격ai
-					$row['optimization_ch'] = "OFF";	// 안정ai
-					$row['optimization_top'] = "ON";	// 3만ai
-				} else {
-					$row['optimization'] = "OFF";	//공격ai
-					$row['optimization_ch'] = "OFF";	// 안정ai
-					$row['optimization_top'] = "OFF";	// 3만ai
-				}
-
-				if ($optimization_goal == "100") {
-					$row['optimization_goal'] = "ON";
-				} else {
-					$row['optimization_goal'] = "OFF";
-				}
-			} */
-			if($row['status'] == 'ACTIVE'){
-				$row['status'] = "ON";
-			}else{
-				$row['status'] = "OFF";
-			}
-			
-            $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
-
-
-			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
-			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
-			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
-			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
-
-			switch (!empty($row['budget_type'])) {
-				case 'daily':
-					$row['budget_txt'] = '일일';
-					break;
-				case 'lifetime':
-					$row['budget_txt'] = '소진';
-					break;
-				default:
-					$row['budget_txt'] = '';
-					break;
-			}
+        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
+            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
+            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
         }
-        return $result;
-    }
-    
-    // 정파고 on/off 확인
-	/* private function getOptimization($param, $id)
-	{
-		if ($param == "campaigns") { //캠페인단 ai
-            $builder = $this->facebook->table('fb_optimization_campaign');
-            $builder->select('campaign_id, type');
-            $builder->where('campaign_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['campaign_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		} else if ($param == "ads") { //광고 ai
-            $builder = $this->facebook->table('fb_optimization_ad');
-            $builder->select('ad_id, type');
-            $builder->where('ad_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['ad_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		} else if ($param == "adsets") { //광고세트단 ai
-            $builder = $this->facebook->table('fb_optimization_adset');
-            $builder->select('adset_id, type');
-            $builder->where('adset_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['adset_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		} else { //광고세트단 ai
-            $builder = $this->facebook->table('fb_optimization');
-            $builder->select('adset_id, type');
-            $builder->where('adset_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['adset_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		}
-	}
-
-    // 목표ai on/off 확인
-	private function getOptimization_goal($param, $id)
-	{
-		if ($param == "campaigns") { //캠페인단 목표 ai
-            $builder = $this->facebook->table('fb_optimization_goal_campaign');
-            $builder->select('campaign_id, type');
-            $builder->where('campaign_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['campaign_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		} else { //광고세트단 목표 ai
-            $builder = $this->facebook->table('fb_optimization_goal');
-            $builder->select('adset_id, type');
-            $builder->where('adset_id', $id);
-            $row = $builder->get()->getRowArray();
-
-			if (!empty($row['adset_id'])) {
-				return $row['type'];
-			} else {
-				return "off";
-			}
-		}
-	}
- */
-    public function getAccounts($data)
-	{
-        $builder = $this->zenith->table('companies c');
-		$builder->select('ca.ad_account_id AS id, c.name, ca.media AS media, faa.business_id, faa.status, faa.db_count, SUM(fai.db_count) AS db_sum, COUNT(DISTINCT fai.date) AS date_count');
-		$builder->join('company_adaccounts ca', 'c.id = ca.company_id', "left");
-		$builder->join('z_facebook.fb_ad_account faa', 'ca.ad_account_id = faa.ad_account_id AND ca.media = "페이스북"', "left");
-        $builder->join('z_facebook.fb_campaign fc', 'faa.ad_account_id = fc.account_id', 'left');
-        $builder->join('z_facebook.fb_adset fas', 'fc.campaign_id = fas.campaign_id', 'left');
-        $builder->join('z_facebook.fb_ad fad', 'fas.adset_id = fad.adset_id', 'left');
-		$builder->join('z_facebook.fb_ad_insight_history fai', 'fad.ad_id = fai.ad_id', 'left');
-
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(fai.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(fai.date) <=', $data['dates']['edate']);
-        }
-
-		$builder->where('faa.is_admin', 0);
-        $builder->where('faa.name !=', '');
-
+        
         if(!empty($data['business'])){
-			$builder->whereIn('faa.business_id', explode("|",$data['business']));
+			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
-        $builder->groupBy('c.id');
-        $builder->orderBy('c.name', 'asc');
-        $result = $builder->get()->getResultArray();
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
 
-        return $result;
+        $builder->groupBy('A.date');
+        return $builder;
 	}
 
-    public function getDisapproval()
+    /* public function getDisapproval()
 	{
         $builder = $this->facebook->table('fb_ad_account acc');
 		$builder->select('acc.ad_account_id, acc.name AS account_name, ac.campaign_id, ac.campaign_name AS campaign_name, ag.adset_id, ag.adset_name AS adset_name, ad.ad_id, ad.ad_name, as.link, ad.effective_status, ad.status, ad.created_time, ad.updated_time');
@@ -336,45 +240,7 @@ class AdvFacebookManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	}
+	} */
 
-	public function getReport($data)
-	{
-		$builder = $this->facebook->table('fb_ad_insight_history A');
-        $builder->select('A.date, 
-                SUM(A.impressions) AS impressions,
-                SUM(A.inline_link_clicks) AS click,
-                (SUM(A.inline_link_clicks) / SUM(A.impressions)) * 100 AS click_ratio,
-                (SUM(A.db_count) / SUM(A.inline_link_clicks)) * 100 AS conversion_ratio,
-                SUM(A.spend) AS spend,
-                SUM(A.db_count) AS unique_total,
-                IFNULL(SUM(A.spend) / SUM(A.db_count), 0) AS unique_one_price,
-                SUM(A.db_price) AS unit_price,
-                SUM(A.sales) AS price,
-                SUM(A.margin) AS profit,
-                (SUM(A.db_price * A.db_count) - SUM(A.spend)) / SUM(A.db_price * A.db_count) * 100 AS per');
-        $builder->join('fb_ad B', 'A.ad_id = B.ad_id', 'left');
-        $builder->join('fb_adset C', 'B.adset_id = C.adset_id', 'left');
-        $builder->join('fb_campaign D', 'C.campaign_id = D.campaign_id', 'left');
-        $builder->join('fb_ad_account E', 'D.account_id = E.ad_account_id', 'left');
-
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
-        } 
-
-		if(!empty($data['business'])){
-			$builder->whereIn('E.business_id', explode("|",$data['business']));
-        }
-
-		if(!empty($data['accounts'])){
-			$builder->whereIn('D.account_id', explode("|",$data['accounts']));
-        }
-
-		$builder->groupBy('A.date');
-		$builder->orderBy('A.date', 'ASC');
-		$result = $builder->get()->getResultArray();
-
-        return $result;
-	}
+	
 }
