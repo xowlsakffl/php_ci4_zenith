@@ -7,9 +7,10 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script>
-    console.log('header')
-</script>
+<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-dt/css/buttons.dataTables.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -26,10 +27,10 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate">
+                <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate">
+                <input type="text" name="edate" id="edate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
@@ -48,7 +49,7 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover table-default">
+            <table class="table table-striped table-hover table-default"  id="event-table">
                 <colgroup>
                     <col style="width:6%">
                     <col style="width:10%">
@@ -416,7 +417,148 @@
 
 <!--스크립트-->
 <?=$this->section('script');?>
-<script></script>
+<script>
+var today = moment().format('YYYY-MM-DD');
+$('#sdate, #edate').val(today);
+
+let data = {};
+let dataTable;
+
+setDate();
+getList()
+
+function setData() {
+    data = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+    };
+
+    return data;
+}
+
+function getList(){
+    dataTable = $('#event-table').DataTable({
+        "dom": '<Bfr<t>ip>',
+        "autoWidth": false,
+        "columnDefs": [
+            { targets: [0], orderable: false},
+            { targets: [1], visible: false},
+            { targets: '_all', visible: true },
+            { targets: [6], className: 'nowrap'}
+        ],
+        "order": [[1,'desc']],
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "scrollX": true,
+        "scrollY": 500,
+        "scrollCollapse": true,
+        "stateSave": true,
+        "deferRender": true,
+        "rowId": "seq",
+        "lengthMenu": [
+            [ 25, 10, 50, -1 ],
+            [ '25개', '10개', '50개', '전체' ]
+        ],
+        "ajax": {
+            "url": "<?=base_url()?>/eventmanage/event/data",
+            "data": function(d) {
+                d.searchData = setData();
+            },
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                if(!res.total){
+                    $('#total td').text('');
+                }else{
+                    setDataTableTotal(res, tableId);
+                    return res.data;
+                }
+            }
+        },
+        "columns": [
+            { "data": "media", "width": "6%"},
+            { "data": "name", "width": "10%"},
+            { "data": "status", "width": "4%"},
+            { "data": "budget", "width": "9%"},
+            { "data": "cpa","width": "7%"},
+            { "data": "unique_total", "width": "3%"},
+            { "data": "spend","width": "9%"},
+            { "data": "margin","width": "9%"},
+            { "data": "margin_ratio","width": "5%"},
+            { "data": "sales","width": "9%"},
+            { "data": "impressions", "width": "7%"},
+            { "data": "click", "width": "5%"},
+            { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
+            { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
+            { "data": "cvr", "width": "3%"}, //전환율
+        ],
+        "language": {
+            "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        },
+        "infoCallback": function(settings, start, end, max, total, pre){
+            return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        }
+    });
+}
+
+function setDate(){
+    $('#sdate, #edate').val(today);
+    $('#sdate, #edate').daterangepicker({
+        locale: {
+                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        alwaysShowCalendars: true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        maxDate: new Date(),
+        autoUpdateInput: false,
+        ranges: {
+            '오늘': [moment(), moment()],
+            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '지난 일주일': [moment().subtract(6, 'days'), moment()],
+            '지난 한달': [moment().subtract(29, 'days'), moment()],
+            '이번달': [moment().startOf('month'), moment().endOf('month')],
+        }
+    }, function(start, end, label) {
+        // Lets update the fields manually this event fires on selection of range
+        startDate = start.format('YYYY-MM-DD'); // selected start
+        endDate = end.format('YYYY-MM-DD'); // selected end
+
+        $checkinInput = $('#sdate');
+        $checkoutInput = $('#edate');
+
+        // Updating Fields with selected dates
+        $checkinInput.val(startDate);
+        $checkoutInput.val(endDate);
+
+        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+        var checkOutPicker = $checkoutInput.data('daterangepicker');
+        checkOutPicker.setStartDate(startDate);
+        checkOutPicker.setEndDate(endDate);
+
+        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+        var checkInPicker = $checkinInput.data('daterangepicker');
+        checkInPicker.setStartDate($checkinInput.val(startDate));
+        checkInPicker.setEndDate(endDate);
+    
+    });
+}
+</script>
 <?=$this->endSection();?>
 
 <!--푸터-->

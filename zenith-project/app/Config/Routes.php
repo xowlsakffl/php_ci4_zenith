@@ -134,7 +134,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 이벤트
     $routes->group('eventmanage', static function($routes){   
-        $routes->get('event', 'EventManage\EventController::index');
+        $routes->group('event', static function($routes){   
+            $routes->get('', 'EventManage\EventController::index');
+            $routes->get('data', 'EventManage\EventController::getData');
+        });
+
         $routes->get('advertiser', 'EventManage\AdvertiserController::index');
         $routes->get('media', 'EventManage\MediaController::index');
         $routes->get('change', 'EventManage\ChangeController::index');

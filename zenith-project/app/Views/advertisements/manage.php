@@ -342,7 +342,7 @@ function setData() {
         'business': $('#business_btn.active').map(function(){return $(this).val();}).get().join('|'),
         'company': $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
     };
-    console.log(data.company)
+
     return data;
 }
 
