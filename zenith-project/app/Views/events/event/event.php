@@ -7,8 +7,9 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-dt/css/buttons.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <?=$this->endSection();?>
@@ -50,7 +51,7 @@
 
         <div class="table-responsive">
             <table class="table table-striped table-hover table-default"  id="event-table">
-                <colgroup>
+                <!-- <colgroup>
                     <col style="width:6%">
                     <col style="width:10%">
                     <col style="width:5%">
@@ -64,7 +65,7 @@
                     <col style="width:5%">
                     <col style="width:5%">
                     <col style="width:5%">
-                </colgroup>
+                </colgroup> -->
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">이벤트번호</th>
@@ -425,13 +426,7 @@ function setData() {
 function getList(){
     dataTable = $('#event-table').DataTable({
         "autoWidth": false,
-        "columnDefs": [
-            { targets: [0], orderable: false},
-            { targets: [1], visible: false},
-            { targets: '_all', visible: true },
-            { targets: [6], className: 'nowrap'}
-        ],
-        "order": [[1,'desc']],
+        "order": [[0,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -440,7 +435,6 @@ function getList(){
         "scrollX": true,
         "scrollY": 500,
         "scrollCollapse": true,
-        "stateSave": true,
         "deferRender": true,
         "rowId": "seq",
         "lengthMenu": [
@@ -455,37 +449,59 @@ function getList(){
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
-            "dataSrc": function(res){
-                if(!res.total){
-                    $('#total td').text('');
-                }else{
-                    setDataTableTotal(res, tableId);
-                    return res.data;
-                }
-            }
         },
         "columns": [
             { 
-                "data": "media", "width": "6%",
+                "data": "seq",
+                "width": "6%",
                 "render": function(data, type, row) {
-                    console.log(data);
-                    return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
+                    config = '';
+                    if(row.config == 'disabled'){
+                        config = '<span class="ads_status '+row.config+'" title="광고 비활성화">X</span>';
+                    }
+
+                    if(row.config == 'enabled'){
+                        config = '<span class="ads_status '+row.config+'" title="광고 운영중">O</span>';
+                    }
+                    return config+'<button data-clipboard-text="https://event.hotblood.co.kr/'+data+'">'+data+'</button>';
                 }
             },
-            /* { "data": "name", "width": "10%"},
-            { "data": "status", "width": "4%"},
-            { "data": "budget", "width": "9%"},
-            { "data": "cpa","width": "7%"},
-            { "data": "unique_total", "width": "3%"},
-            { "data": "spend","width": "9%"},
-            { "data": "margin","width": "9%"},
-            { "data": "margin_ratio","width": "5%"},
-            { "data": "sales","width": "9%"},
-            { "data": "impressions", "width": "7%"},
-            { "data": "click", "width": "5%"},
-            { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
-            { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-            { "data": "cvr", "width": "3%"}, //전환율 */
+            { 
+                "data": "advertiser_name", 
+                "width": "10%",
+                "render": function(data, type, row) {
+                    return '<a href="">'+data+'</a>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
+                }
+            },
+            { "data": "media_name", "width": "5%"},
+            { "data": "title", "width": "23%"},
+            { "data": "description","width": "12%"},
+            { "data": "interlock", "width": "5%"},
+            { "data": "is_stop","width": "5%"},
+            { "data": "impressions","width": "5%"},
+            { "data": "db","width": "5%"},
+            { "data": "db_price","width": "8%"},
+            { "data": "mb_name", "width": "5%"},
+            { 
+                "data": "mantis", "width": "5%",
+                "render": function(data, type, row) {
+                    name = '';
+                    if(data.designer){
+                        name += data.designer+" / ";
+                    }
+                    if(data.developer){
+                        name += data.developer;
+                    }
+                    return '<a href="https://mantis.chainsaw.co.kr/view.php?id='+data.id+'">'+name+'</a>';
+                }
+            },
+            { 
+                "data": "ei_datetime", 
+                "width": "5%",
+                "render": function(data){
+                    return data.substr(0, 10);
+                }
+            }
         ],
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
