@@ -105,14 +105,12 @@ class AdvGoogleManagerController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'dates' => [
-                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                    'sdate' => $this->request->getGet('sdate'),
+                    'edate' => $this->request->getGet('edate'),
                 ],
-                'businesses' => $this->request->getGet('businesses'),
-                'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->google->getReport($arg);
+            $res = $this->google->getReport($arg)->get()->getResultArray();
             $columnIndex = 0;
             $data = [];
             foreach($res as $row) {

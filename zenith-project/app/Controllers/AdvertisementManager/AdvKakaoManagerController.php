@@ -79,13 +79,12 @@ class AdvKakaoManagerController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
                 'dates' => [
-                    'sdate' => $this->request->getGet('sdate') ? $this->request->getGet('sdate') : date('Y-m-d'),
-                    'edate' => $this->request->getGet('edate') ? $this->request->getGet('edate') : date('Y-m-d'),
+                    'sdate' => $this->request->getGet('sdate'),
+                    'edate' => $this->request->getGet('edate'),
                 ],
-                'accounts' => $this->request->getGet('accounts'),
             ];
 
-            $res = $this->kakao->getReport($arg);
+            $res = $this->kakao->getReport($arg)->get()->getResultArray();
             $columnIndex = 0;
             $data = [];
             foreach($res as $row) {
