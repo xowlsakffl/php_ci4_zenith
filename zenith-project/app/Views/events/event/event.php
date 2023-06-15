@@ -83,21 +83,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- <tr>
-                        <td><i class="ico red"></i> 5054</td>
-                        <td>아이시티안과의원</td>
-                        <td>페이스북</td>
-                        <td>아이시티안과 라식라섹 최대 할인</td>
-                        <td>라식라섹 최대 할인</td>
-                        <td></td>
-                        <td>사용중</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>50,000</td>
-                        <td>전유빈</td>
-                        <td></td>
-                        <td>02-14</td>
-                    </tr> -->
                 </tbody>
             </table>
         </div>
@@ -439,7 +424,6 @@ function setData() {
 
 function getList(){
     dataTable = $('#event-table').DataTable({
-        "dom": '<Bfr<t>ip>',
         "autoWidth": false,
         "columnDefs": [
             { targets: [0], orderable: false},
@@ -481,8 +465,14 @@ function getList(){
             }
         },
         "columns": [
-            { "data": "media", "width": "6%"},
-            { "data": "name", "width": "10%"},
+            { 
+                "data": "media", "width": "6%",
+                "render": function(data, type, row) {
+                    console.log(data);
+                    return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
+                }
+            },
+            /* { "data": "name", "width": "10%"},
             { "data": "status", "width": "4%"},
             { "data": "budget", "width": "9%"},
             { "data": "cpa","width": "7%"},
@@ -495,16 +485,10 @@ function getList(){
             { "data": "click", "width": "5%"},
             { "data": "cpc", "width": "5%"}, //클릭당단가 (1회 클릭당 비용)
             { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
-            { "data": "cvr", "width": "3%"}, //전환율
+            { "data": "cvr", "width": "3%"}, //전환율 */
         ],
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
-        },
-        "rowCallback": function(row, data, index) {
-            var api = this.api();
-            var startIndex = api.page() * api.page.len();
-            var seq = startIndex + index + 1;
-            $('td:eq(0)', row).html(seq);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";

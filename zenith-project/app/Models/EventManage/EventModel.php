@@ -69,27 +69,36 @@ class EventModel extends Model
 
     public function getEnabledAds()
 	{
-        $builder = $this->db->table('
-        (SELECT ad.ad_name AS name, cr.link AS link FROM z_facebook.fb_ad AS ad
-        LEFT JOIN z_facebook.fb_adcreative AS cr ON cr.ad_id = ad.ad_id
-        WHERE ad.effective_status = "ACTIVE" AND (ad.ad_name LIKE "%#%" OR cr.link <> ""))
+        $query = $this->db->query("SELECT * FROM
+        (
+        (SELECT ad.ad_name AS name, cr.link AS link FROM `facebook`.`fb_ad` AS ad
+            LEFT JOIN `facebook`.`fb_adcreative` AS cr ON cr.ad_id = ad.ad_id
+        WHERE ad.effective_status = 'ACTIVE' AND (ad.ad_name LIKE '%#%' OR cr.link <> ''))
         UNION
-        (SELECT IF(INSTR(code, "#")>0, ad.code, ad.name) AS name, ad.finalUrl AS link
-        FROM z_adwords.aw_ad AS ad
-        LEFT JOIN z_adwords.aw_adgroup AS ag ON ad.adgroupId = ag.id
-        LEFT JOIN z_adwords.aw_campaign AS ac ON ag.campaignId = ac.id
-        WHERE ad.status = "ENABLED" AND ag.status = "ENABLED" AND ac.status = "ENABLED" AND (ad.name LIKE "%#%" OR ad.code LIKE "%#%" OR ad.finalUrl <> ""))
+        (SELECT IF(INSTR(code, '#')>0, ad.code, ad.name) AS name, ad.finalUrl AS link 
+            FROM `adwords`.`aw_ad` AS ad
+            LEFT JOIN `adwords`.`aw_adgroup` AS ag ON ad.adgroupId = ag.id
+            LEFT JOIN `adwords`.`aw_campaign` AS ac ON ag.campaignId = ac.id
+        WHERE ad.status = 'ENABLED' AND ag.status = 'ENABLED' AND ac.status = 'ENABLED' AND (ad.name LIKE '%#%' OR ad.code LIKE '%#%' OR ad.finalUrl <> ''))
         UNION
         (SELECT ad.name, ad.landingUrl AS link
-        FROM z_moment.mm_creative AS ad
-        LEFT JOIN z_moment.mm_adgroup AS ag ON ad.adgroup_id = ag.id
-        LEFT JOIN z_moment.mm_campaign AS ac ON ag.campaign_id = ac.id
-        WHERE ad.config = "ON" AND ag.config = "ON" AND ac.config = "ON" AND (ad.name LIKE "%#%" OR ad.landingUrl <> "")) AS tb
-        ');
-        $builder->where('tb.name REGEXP', '^.*#([0-9]+).*', false);
-        $builder->orWhere('tb.link REGEXP', '.+(kr|com|event)\/([0-9]+)', false);
+            FROM `moment`.`mm_creative` AS ad
+            LEFT JOIN `moment`.`mm_adgroup` AS ag ON ad.adgroup_id = ag.id
+            LEFT JOIN `moment`.`mm_campaign` AS ac ON ag.campaign_id = ac.id
+        WHERE ad.config = 'ON' AND ag.config = 'ON' AND ac.config = 'ON' AND (ad.name LIKE '%#%' OR ad.landingUrl <> ''))
+        ) AS tb
+        WHERE tb.name REGEXP('^.*#([0-9]+).*') OR tb.link REGEXP('.+(kr|com|event)\/([0-9]+)')");
 
-        $result = $builder->get()->getResultArray();
-        return $result;
+        $result = $query->getResultArray();
+
+        foreach($result as $row) {
+			if(preg_match('/^.+(kr|com|event)\/([0-9]{3,6})(\?.+)?$/', $row['link'])) {
+				$data[] = preg_replace('/^.+(kr|com|event)\/([0-9]{3,6})(\?.+)?/', '$2', $row['link']);
+			} else if(preg_match('/^.*\#([0-9]+).*/', $row['name'])) {
+				$data[] = preg_replace('/^.*\#([0-9]+).*/', '$1', $row['name']);
+			}
+		}
+		$data = array_unique($data);
+        return $data;
     }
 }

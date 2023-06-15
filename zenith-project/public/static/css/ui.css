@@ -107,9 +107,7 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 input[type=submit], button {
@@ -148,9 +146,7 @@ textarea:focus {
 }
 
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 select:focus {
@@ -973,7 +969,7 @@ div.dataTables_processing > div:last-child > div {
   width: auto;
   position: absolute;
   right: 0;
-  top: 20px;
+  top: 0;
   z-index: 1;
 }
 .btns-memo-style button.active {
@@ -1369,4 +1365,6 @@ div.dataTables_processing > div:last-child > div {
   .table-modal {
     min-width: 800px;
   }
-}/*# sourceMappingURL=ui.css.map */
+}
+
+/*# sourceMappingURL=ui.css.map */
