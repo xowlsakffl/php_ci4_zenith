@@ -1,4 +1,9 @@
 div.dataTables_processing{z-index:1; padding-top:16px !important; background-color:rgba(255,255,255,.9);}
+div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !important;}
+.table-responsive{position:relative;}
+.btns-memo-style{display:inline; width:auto; position:absolute; right:0; top:20px; z-index:1;
+    button.active{color:var(--bs-red);}
+}
 .table{
     thead th{/*position:sticky; top:0; z-index:2;*/}
 
@@ -13,6 +18,10 @@ div.dataTables_processing{z-index:1; padding-top:16px !important; background-col
     .radio-wrap{
     }
     .badge-0{display:none;}
+    td{
+        .regi-form{float:right;}
+        .memo-list{float:left; width:75%;}
+    }
 }
 .table-default{table-layout:fixed; min-width:1400px;
     --bs-table-hover-bg:#ffebeb;

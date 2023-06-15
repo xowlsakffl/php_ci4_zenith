@@ -960,6 +960,26 @@ div.dataTables_processing {
   background-color: rgba(255, 255, 255, 0.9);
 }
 
+div.dataTables_processing > div:last-child > div {
+  background-color: var(--bs-red) !important;
+}
+
+.table-responsive {
+  position: relative;
+}
+
+.btns-memo-style {
+  display: inline;
+  width: auto;
+  position: absolute;
+  right: 0;
+  top: 20px;
+  z-index: 1;
+}
+.btns-memo-style button.active {
+  color: var(--bs-red);
+}
+
 .table thead th { /*position:sticky; top:0; z-index:2;*/ }
 .table .none {
   padding: 50px 0;
@@ -984,6 +1004,13 @@ div.dataTables_processing {
 }
 .table .badge-0 {
   display: none;
+}
+.table td .regi-form {
+  float: right;
+}
+.table td .memo-list {
+  float: left;
+  width: 75%;
 }
 
 .table-default {

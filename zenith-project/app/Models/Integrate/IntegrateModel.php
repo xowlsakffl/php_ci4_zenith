@@ -246,7 +246,7 @@ class IntegrateModel extends Model
     public function addMemo($data) {
         $builder = $this->zenith->table('event_leads');
         $builder->select("event_seq");
-        $builder->where("seq", $data['seq']);
+        $builder->where("seq", $data['leads_seq']);
         $row = $builder->get()->getRowArray();
         $data['event_seq'] = $row['event_seq'];
         if(!$data['event_seq']) return null;
@@ -254,7 +254,7 @@ class IntegrateModel extends Model
         $data['username'] = auth()->user()->username;
         $this->zenith->transStart();
         $builder = $this->zenith->table('event_leads_memo');
-        $builder->set('leads_seq', $data['seq']);
+        $builder->set('leads_seq', $data['leads_seq']);
         $builder->set('event_seq', $data['event_seq']);
         $builder->set('username', $data['username']);
         $builder->set('memo', $data['memo']);

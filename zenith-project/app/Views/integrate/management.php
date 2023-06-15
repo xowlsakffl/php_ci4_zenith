@@ -7,11 +7,13 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-dt/css/buttons.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <?=$this->endSection();?>
 
@@ -66,6 +68,11 @@
         </div>
 
         <div class="row table-responsive">
+            <div class="btns-memo-style">
+                <span class="btns-title">메모 표시:</span>
+                <button type="button" class="btns-memo" value="modal" title="새창으로 표시"><i class="bi bi-window-stack"></i></button>
+                <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
+            </div>
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
                     <tr>
@@ -92,11 +99,11 @@
             </table>
         </div>
         <!-- 개별 메모 -->
-        <div class="modal fade" id="integrate-memo" tabindex="-1" aria-labelledby="integrate-memo-label" aria-hidden="true">
+        <div class="modal fade" id="modal-integrate-memo" tabindex="-1" aria-labelledby="modal-integrate-memo-label" aria-hidden="true">
             <div class="modal-dialog modal-sm sm-txt">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title" id="integrate-memo-label"><i class="bi bi-file-text"></i> 개별 메모<span class="title"></span></h1>
+                        <h1 class="modal-title" id="modal-integrate-memo-label"><i class="bi bi-file-text"></i> 개별 메모<span class="title"></span></h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -140,11 +147,8 @@ var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
 let dataTable;
-setDate();
-getLead();
-getStatusCount();
 getList();
-function setData() {
+function setData() { //list 출력을 위해 Parameter 세팅
     var data = {
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
@@ -157,7 +161,15 @@ function setData() {
 
     return data;
 }
-function getList(data = []){
+function setSearchData() {
+    data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
+    data.searchData.media.split('|').map(function(txt){ $(`#media-list button[value="${txt}"]`).addClass('active'); });
+    data.searchData.event.split('|').map(function(txt){ $(`#event-list button[value="${txt}"]`).addClass('active'); });
+    $('#sdate').val(data.searchData.sdate);
+    $('#edate').val(data.searchData.edate);
+    $('#stx').val(data.searchData.stx);
+}
+function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
         "autoWidth": false,
@@ -167,7 +179,7 @@ function getList(data = []){
             { targets: '_all', visible: true },
             { targets: [6], className: 'nowrap'}
         ],
-        "order": [[1,'desc']],
+        "order": [[12,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -177,6 +189,12 @@ function getList(data = []){
         "scrollY": 500,
         "scrollCollapse": true,
         "stateSave": true,
+        "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
+            data.memoView = $('.btns-memo.active').val();
+        },
+        "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
+            $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
+        },
         "deferRender": true,
         "rowId": "seq",
         "lengthMenu": [
@@ -185,6 +203,13 @@ function getList(data = []){
         ],
         "buttons": [
             'pageLength', 
+            {
+                'extend':'savedStates',
+                'buttons': [
+                    'createState',
+                    'removeAllStates'
+                ]
+            },
             {
                 'extend': 'excelHtml5',
                 'exportOptions': { //{'columns': 'th:not(:last-child)'},
@@ -233,9 +258,9 @@ function getList(data = []){
             { "data": "add" },
             { "data": "site", "width": "50px" },
             { "data": "reg_date", "width": "70px" },
-            { "data": "memo_cnt", "width": "30px",
-              "render" : function(data) {
-                var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
+            { "data": "memo_cnt", "width": "30px", "className": "memo",
+              "render" : function(data) { // data-bs-toggle="modal"
+                var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-target="#modal-integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
                 html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-'+data+'">'+data+'</span>';
                 html += '</a>';
                 return html;
@@ -249,10 +274,7 @@ function getList(data = []){
             },
         ],
         "language": {
-            "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
-            "buttons": {
-                "excel" : '<i class="bi bi-file-earmark-spreadsheet"></i> 엑셀'
-            }
+            "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신
         },
         "rowCallback": function(row, data, index) {
             var api = this.api();
@@ -260,74 +282,110 @@ function getList(data = []){
             var seq = startIndex + index + 1;
             $('td:eq(0)', row).html(seq);
         },
-        "infoCallback": function(settings, start, end, max, total, pre){
+        "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
+        "initComplete": function(settings, json) {
+            setDate();
+            getLead();
+            getStatusCount();
+        }
     });
 }
-$('#integrate-memo')
-    .on('show.bs.modal', function(e) { //create memo data
-        var $btn = $(e.relatedTarget);
-        var $row = $btn.closest('tr')
-        var seq = $row.attr('id');
-        var name = $('td:eq(5)', $row).text();
-        $(this).attr('data-seq', seq);
-        $('h1 .title', this).html(name);
-        $('#integrate-memo .memo-list').html('');
-        $.ajax({
-            type: "get",
-            url: "<?=base_url()?>/integrate/getmemo",
-            data: {'seq': seq},
-            dataType: "json",
-            contentType: 'application/json; charset=utf-8',
-            success: function(data){  
-                setMemoList(data);
-            },
-            error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
-            }
+$('.btns-memo-style button').bind('click', function() { //메모 표시타입
+    $('.btns-memo-style button').removeClass('active');
+    $(this).addClass('active');
+    dataTable.state.save();
+});
+$('#deviceTable').on('click', 'td.memo', function(e) { //메모셀 클릭 시
+    var type = $('.btns-memo.active').val();
+    var tr = $(this).closest('tr');
+    var row = dataTable.row(tr);
+    var seq = row.data().seq;
+    if(type == 'table') {
+        if (row.child.isShown()) { // 메모가 열려있을 때
+            row.child.hide();
+        } else { // 메모가 닫혀있을 때
+            var html = '<form class="regi-form"><fieldset><legend>메모 작성</legend><textarea></textarea><button type="button" class="btn-regi">작성</button></fieldset></form>';
+            html += '<ul class="memo-list">';
+            row.child(html).show();
+            getMemoList(seq);
+        }
+    } else {
+        dataTable.rows().every(function(){ //모든 메모 닫음
+            if(this.child.isShown()) this.child.hide();
         });
-    })
-    .on('hidden.bs.modal', function(e) { //modal Reset
-        $(this).removeAttr('data-seq');
-        $('.memo-list, h1 .title', '#integrate-memo').html('');
-        $('#integrate-memo form')[0].reset();
-    })
-    .find('.regi-form button').bind('click', function(e) {
-        addMemo();
-    });
-function addMemo() {
-    if(!$.trim($('#integrate-memo .regi-form textarea').val())) {
+        $('#modal-integrate-memo').attr('data-seq', seq).modal('show'); //modal 호출
+    }
+});
+$(document).on('click', '.regi-form button', function(e) { //메모 작성
+    var type = $('.btns-memo.active').val();
+    if(!$.trim($('textarea', $(this).parents('.regi-form')).val())) {
         alert('메모 내용을 입력해주세요.');
         return false;
     }
     var data = {
-        'seq': $('#integrate-memo').data('seq'),
-        'memo': $('#integrate-memo .regi-form textarea').val()
+        'memo': $('textarea', $(this).parents('.regi-form')).val()
     };
+    if(type == 'table') {
+        data['leads_seq'] =  $(this).parents('tr').prev('tr').attr('id');
+    } else {
+        data['leads_seq'] = $('#modal-integrate-memo').data('seq');
+    }
     registerMemo(data);
-}
-function registerMemo(data) {
+});
+$('#modal-integrate-memo')
+    .on('show.bs.modal', function(e) { //create memo data
+        var seq = $(this).attr('data-seq');
+        var $row = dataTable.row($(`#${seq}`));
+        var name = $row.data().name;
+        $('h1 .title', this).html(name);
+        $('.memo-list', this).html('');
+        getMemoList(seq);
+    })
+    .on('hidden.bs.modal', function(e) { //modal Reset
+        $(this).removeAttr('data-seq');
+        $('.memo-list, h1 .title', '#modal-integrate-memo').html('');
+        $('#modal-integrate-memo form')[0].reset();
+    });
+    
+function getMemoList(seq) { //메모 수신
     $.ajax({
-        type: "post",
-        url: "<?=base_url()?>/integrate/addmemo",
-        data: data,
+        type: "get",
+        url: "<?=base_url()?>integrate/getmemo",
+        data: {'seq': seq},
         dataType: "json",
-        success: function(response){  
-            if(response.result == true) {
-                setMemoList(response.data);
-                var cnt = parseInt($(`tr[id="${response.data[0].seq}"] td .btn_memo .badge`).text()) || 0;
-                $(`tr[id="${response.data[0].seq}"] td .btn_memo .badge`).removeClass('badge-0').text(++cnt);
-            }
-            $('#integrate-memo .regi-form textarea').val('');
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setMemoList(data);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
 }
-function setMemoList(data) {
-    if(!$('#integrate-memo .memo-list').is(':visible')) return;
+function registerMemo(data) { //메모 등록
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>integrate/addmemo",
+        data: data,
+        dataType: "json",
+        success: function(response){  
+            if(response.result == true) {
+                setMemoList(response.data);
+                var cnt = parseInt($(`tr[id="${response.data[0].leads_seq}"] td .btn_memo .badge`).text()) || 0;
+                $(`tr[id="${response.data[0].leads_seq}"] td .btn_memo .badge`).removeClass('badge-0').text(++cnt); //뱃지 변경
+            }
+            $('.regi-form textarea').val('');
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+function setMemoList(data) { //메모 리스트 생성
+    if(typeof data[0] == "undefined") return;
+    var seq = data[0].leads_seq;
     var html =  '';
     $.each(data, function(i,row) {
         html += '    <li class="d-flex justify-content-between align-items-start">';
@@ -340,7 +398,15 @@ function setMemoList(data) {
         html += '        </div>';
         html += '    </li>';
     });
-    $('#integrate-memo .memo-list').prepend(html);
+    var wrap;
+    var type = $('.btns-memo.active').val();
+    if(type == 'table') {
+        wrap = $(`#${seq}`).next('tr').find('.memo-list');
+    } else {
+        wrap = $(`[data-seq="${seq}"] .memo-list`);
+    }
+    wrap.prepend(html);
+    
 }
 function getLeadCount(){
     var data = setData();
@@ -434,6 +500,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         });
         $('#'+type+'-list').html(html);
     });
+    setSearchData();
     fontAutoResize();
 }
 		
