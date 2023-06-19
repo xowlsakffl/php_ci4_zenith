@@ -16,6 +16,6 @@ class CalendarController extends BaseController
 
     public function index()
     {
-        return view('calendar/calendar');
+        return view('calendar/calendar');;
     }
 }
