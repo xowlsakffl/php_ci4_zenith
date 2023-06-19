@@ -16,6 +16,7 @@ class CalendarController extends BaseController
 
     public function index()
     {
-        return view('calendar/calendar');;
+        dd($this->request->getGet('code'));
+        return view('calendar/calendar');
     }
 }

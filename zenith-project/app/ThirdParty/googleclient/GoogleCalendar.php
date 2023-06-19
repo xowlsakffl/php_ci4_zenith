@@ -17,7 +17,7 @@ class GoogleCalendar
         $this->client->setApplicationName("Zenith_Client_Library");
         $this->client->setAuthConfig(__DIR__.'/credentials.json');
         $this->client->addScope(Drive::DRIVE);
-        $this->redirect_uri = 'https://carezenith.co.kr/calendar/oauth';
+        $this->redirect_uri = 'https://local.vrzenith.com/calendar/oauth';
         $this->client->setRedirectUri($this->redirect_uri);
 
         if (!isset($_GET['code'])) {
