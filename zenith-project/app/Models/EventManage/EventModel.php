@@ -11,7 +11,7 @@ class EventModel extends Model
         $srch = $data['searchData'];
         $builder = $this->db->table('event_information AS info');
         $builder->select('IFNULL(db.db_count, 0) AS db, adv.name AS advertiser_name, med.media AS media_name, SUM(imp.impressions) AS impressions, info.*');
-        $builder->join('(SELECT seq, SUM(db_count) AS db_count FROM event_dbcount_history GROUP BY seq) AS db', 'info.seq = db.seq', 'left');
+        $builder->join('(SELECT seq, SUM(db_count) AS db_count FROM event_leads_count GROUP BY seq) AS db', 'info.seq = db.seq', 'left');
         $builder->join('event_advertiser AS adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media AS med', 'info.media = med.seq', 'left');
         $builder->join('event_impressions_history AS imp', 'info.seq = imp.seq', 'left');

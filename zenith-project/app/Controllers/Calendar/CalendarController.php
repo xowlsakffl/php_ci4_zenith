@@ -3,7 +3,7 @@
 namespace App\Controllers\Calendar;
 
 use App\Controllers\BaseController;
-use App\ThirdParty\googleclient\GoogleCalendar\GoogleCalendar;
+use App\ThirdParty\googleclient\GoogleCalendar;
 
 class CalendarController extends BaseController
 {
