@@ -26,6 +26,12 @@ class IntegrateController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+            if(!isset($arg['searchData'])) {
+                $arg['searchData'] = [
+                    'sdate'=> date('Y-m-d'),
+                    'edate'=> date('Y-m-d')
+                ];
+            }
             $result = $this->integrate->getEventLead($arg);
 
             foreach($result['data'] as &$row){
@@ -82,6 +88,12 @@ class IntegrateController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+            if(!isset($arg['searchData'])) {
+                $arg['searchData'] = [
+                    'sdate'=> date('Y-m-d'),
+                    'edate'=> date('Y-m-d')
+                ];
+            }
             $data = $this->integrate->getEventLeadCount($arg);
 
             $adv_counts = array();
@@ -123,6 +135,12 @@ class IntegrateController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+            if(!isset($arg['searchData'])) {
+                $arg['searchData'] = [
+                    'sdate'=> date('Y-m-d'),
+                    'edate'=> date('Y-m-d')
+                ];
+            }
             $result = $this->integrate->getStatusCount($arg);
 
             return $this->respond($result);

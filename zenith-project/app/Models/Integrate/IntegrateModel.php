@@ -123,6 +123,7 @@ class IntegrateModel extends Model
 
     public function getEventLeadCount($data)
     {
+        $data = $data['searchData'];
         $builder = $this->zenith->table('event_leads as el');
         $builder->select("
         adv.name as adv_name,
@@ -177,6 +178,7 @@ class IntegrateModel extends Model
 
     public function getStatusCount($data)
     {
+        $data = $data['searchData'];
         $builder = $this->zenith->table('event_leads as el');
         $builder->select("
         COUNT(CASE WHEN el.status=1 then 1 end) as 인정, 

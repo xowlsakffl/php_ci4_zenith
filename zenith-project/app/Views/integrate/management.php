@@ -146,28 +146,21 @@ var lead_status = {
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
-let dataTable;
+let dataTable, tableParam;
 getList();
-function setData() { //list 출력을 위해 Parameter 세팅
-    var data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
-        'stx': $('#stx').val(),
-        'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
-        'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
-        'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
-        'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
-    };
-
-    return data;
-}
 function setSearchData() {
+    var data = tableParam;
+    if(typeof data.searchData == 'undefined') return;
     data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
     data.searchData.media.split('|').map(function(txt){ $(`#media-list button[value="${txt}"]`).addClass('active'); });
     data.searchData.event.split('|').map(function(txt){ $(`#event-list button[value="${txt}"]`).addClass('active'); });
+    data.searchData.status.split('|').map(function(txt){
+        $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
+    });
     $('#sdate').val(data.searchData.sdate);
     $('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
+    dataTable.state.save();
 }
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
@@ -191,9 +184,22 @@ function getList(data = []) { //리스트 세팅
         "stateSave": true,
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             data.memoView = $('.btns-memo.active').val();
+            if($('#advertiser-list>div').is(':visible')) {
+                data.searchData = {
+                    'sdate': $('#sdate').val(),
+                    'edate': $('#edate').val(),
+                    'stx': $('#stx').val(),
+                    'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+                };
+                tableParam = data;
+            }
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
+            tableParam = data;
         },
         "deferRender": true,
         "rowId": "seq",
@@ -230,7 +236,7 @@ function getList(data = []) { //리스트 세팅
         "ajax": {
             "url": "<?=base_url()?>/integrate/list",
             "data": function(d) {
-                d.searchData = setData();
+                d.searchData = tableParam.searchData;
             },
             "type": "GET",
             "contentType": "application/json",
@@ -286,9 +292,9 @@ function getList(data = []) { //리스트 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
         "initComplete": function(settings, json) {
+            getStatusCount();
             setDate();
             getLead();
-            getStatusCount();
         }
     });
 }
@@ -409,11 +415,10 @@ function setMemoList(data) { //메모 리스트 생성
     
 }
 function getLeadCount(){
-    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
-        data: data,
+        data: tableParam,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
@@ -440,11 +445,10 @@ function setLeadCount(data) {
 }
 
 function getStatusCount(){
-    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/statuscount",
-        data: data,
+        data: tableParam,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(result){     
@@ -500,16 +504,16 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         });
         $('#'+type+'-list').html(html);
     });
+    getLeadCount();
     setSearchData();
     fontAutoResize();
 }
 		
 function getLead(){
-    var data = setData();
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/integrate/leadcount",
-        data: data,
+        data: tableParam.searchData,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){
@@ -569,20 +573,23 @@ function setDate(){
 
 $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
-    getLeadCount();
+    dataTable.state.save();
     getStatusCount();
+    getLeadCount();
     dataTable.draw();
 });
 
 $('form[name="search-form"]').bind('submit', function() {
-    getLeadCount();
+    dataTable.state.save();
     getStatusCount();
+    getLeadCount();
     dataTable.draw();
     return false;
 });
 
 $('.statusCount').on('click', 'dl', function(e) {
     $(this).toggleClass('active');
+    dataTable.state.save();
     dataTable.draw();
 });
 function setStatus(t) {
