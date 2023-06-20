@@ -14,7 +14,7 @@ class CalendarController extends BaseController
         $this->googleCalender = new GoogleCalendar();
     }
 
-    public function index()
+    public function test()
     {
         //$list = $this->googleCalender->eventList();
 
@@ -29,8 +29,7 @@ class CalendarController extends BaseController
         $event_id = '0iaudoh97jkqnp8vg1mbg5d4fg';
         $this->googleCalender->updateEvent($data, $event_id); */
 
-        $event_id = '3pp2lt2r5iuc9k4r13ampehhvt';
-        $this->googleCalender->deleteEvent($event_id);
-        return view('calendar/calendar');
+        /* $event_id = '3pp2lt2r5iuc9k4r13ampehhvt';
+        $this->googleCalender->deleteEvent($event_id); */
     }
 }
