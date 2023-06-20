@@ -3,7 +3,7 @@
 namespace App\Controllers\Calendar;
 
 use App\Controllers\BaseController;
-use App\ThirdParty\googleclient\GoogleCalendar\GoogleCalendar;
+use App\ThirdParty\googleclient\GoogleCalendar;
 
 class CalendarController extends BaseController
 {
@@ -16,7 +16,8 @@ class CalendarController extends BaseController
 
     public function index()
     {
-        dd($this->request->getGet('code'));
-        return view('calendar/calendar');
+        $list = $this->googleCalender->list();
+
+        return view('calendar/calendar', $list);
     }
 }

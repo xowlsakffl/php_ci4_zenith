@@ -5,7 +5,8 @@ namespace App\ThirdParty\googleclient;
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Google\Client;
-use Google\Service\Drive;
+use Google\Service\Calendar;
+use Google\Service\Calendar\Event;
 
 class GoogleCalendar
 {
@@ -15,18 +16,41 @@ class GoogleCalendar
     {
         $this->client = new Client();
         $this->client->setApplicationName("Zenith_Client_Library");
-        $this->client->setAuthConfig(__DIR__.'/credentials.json');
-        $this->client->addScope(Drive::DRIVE);
-        $this->redirect_uri = 'https://local.vrzenith.com/calendar/oauth';
-        $this->client->setRedirectUri($this->redirect_uri);
+        $this->client->setAuthConfig(__DIR__.'\carelabs-ams-a78a293c2f50.json');
+        $this->client->addScope(Calendar::CALENDAR);
+        $this->client->fetchAccessTokenWithAssertion();    
+        $this->accessToken = $this->client->getAccessToken();
+        dd($this->accessToken);
+    }
 
-        if (!isset($_GET['code'])) {
-            $authUrl = $this->client->createAuthUrl();
-            header('Location: ' . $authUrl);
-            exit;
-        } else {
-            $this->client->fetchAccessTokenWithAuthCode($_GET['code']);
-            $this->accessToken = $this->client->getAccessToken();
-        }
+    public function list()
+    {
+        $service = new Calendar($this->client);
+        
+        $calendarList = $service->calendarList->listCalendarList();
+        $list = $calendarList->getItems();
+        dd($list);
+        return $list;
+    }
+
+    public function createEvent($calendarId, $summary, $startDateTime, $endDateTime)
+    {
+        $service = new Calendar($this->client);
+
+        $event = new Event([
+            'summary' => $summary,
+            'start' => [
+                'dateTime' => $startDateTime,
+                'timeZone' => 'Asia/Seoul',
+            ],
+            'end' => [
+                'dateTime' => $endDateTime,
+                'timeZone' => 'Asia/Seoul',
+            ],
+        ]);
+
+        $event = $service->events->insert($calendarId, $event);
+        dd($event);
+        return $event;
     }
 }
