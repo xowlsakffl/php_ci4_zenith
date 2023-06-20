@@ -4,54 +4,96 @@ namespace App\ThirdParty\googleclient;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use DateTime;
 use Google\Client;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
-
+use Google\Service\Calendar\EventDateTime;
 
 class GoogleCalendar
 {
     protected $client, $redirect_uri, $accessToken;
+    protected $calendarId = '7fa4832dd987be8a4c7aed61bb3c3ab641d347659e9c192c4405a9a0cff1476d@group.calendar.google.com';
 
     public function __construct()
     {
         $this->client = new Client();
         $this->client->setApplicationName("Zenith_Client_Library");
-        $this->client->setAuthConfig(__DIR__.'\carelabs-ams-a78a293c2f50.json');
+        $this->client->setAuthConfig(__DIR__.'\carelabs-ams-c10d78f8d141.json');
         $this->client->addScope(Calendar::CALENDAR);
-        $this->client->fetchAccessTokenWithAssertion();    
-        $this->accessToken = $this->client->getAccessToken();
-        dd($this->accessToken);
     }
 
-    public function list()
+    public function calenderList()
     {
         $service = new Calendar($this->client);
-        
         $calendarList = $service->calendarList->listCalendarList();
-        $list = $calendarList->getItems();
-        dd($list);
-        return $list;
+        $calendars = $calendarList->getItems();
+
+        return $calendars;
     }
 
-    public function createEvent($calendarId, $summary, $startDateTime, $endDateTime)
+    public function eventList()
     {
         $service = new Calendar($this->client);
+        $events = $service->events->listEvents($this->calendarId);
+
+        return $events;
+    }
+
+    public function createEvent($data)
+    {
+        $service = new Calendar($this->client);
+
+        $startDateTime = new \DateTime($data['startDate']);
+        $endDateTime = new \DateTime($data['endDate']);
 
         $event = new Event([
-            'summary' => $summary,
-            'start' => [
-                'dateTime' => $startDateTime,
+            'summary' => $data['summary'],
+            'start' => new EventDateTime([
+                'dateTime' => $startDateTime->format('Y-m-d\TH:i:sP'),
                 'timeZone' => 'Asia/Seoul',
-            ],
-            'end' => [
-                'dateTime' => $endDateTime,
+            ]),
+            'end' => new EventDateTime([
+                'dateTime' => $endDateTime->format('Y-m-d\TH:i:sP'),
                 'timeZone' => 'Asia/Seoul',
-            ],
+            ]),
         ]);
 
-        $event = $service->events->insert($calendarId, $event);
-        dd($event);
+        $event = $service->events->insert($this->calendarId, $event);
         return $event;
+    }
+    
+    public function updateEvent($data, $event_id)
+    {
+        $service = new Calendar($this->client);
+
+        $event = $service->events->get($this->calendarId, $event_id);
+
+        $event->setSummary($data['summary']);
+        $startDateTime = new \DateTime($data['startDate']);
+        $endDateTime = new \DateTime($data['endDate']);
+
+        $event->setStart(new EventDateTime([
+            'dateTime' => $startDateTime->format('Y-m-d\TH:i:sP'),
+            'timeZone' => 'Asia/Seoul',
+        ]));
+
+        $event->setEnd(new EventDateTime([
+            'dateTime' => $endDateTime->format('Y-m-d\TH:i:sP'),
+            'timeZone' => 'Asia/Seoul',
+        ]));
+
+        $updatedEvent = $service->events->update($this->calendarId, $event->getId(), $event);
+
+        return $updatedEvent->getUpdated();
+    }
+
+    public function deleteEvent($event_id)
+    {
+        $service = new Calendar($this->client);
+
+        $service->events->delete($this->calendarId, $event_id);
+
+        return true;
     }
 }

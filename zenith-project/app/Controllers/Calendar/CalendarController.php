@@ -16,8 +16,21 @@ class CalendarController extends BaseController
 
     public function index()
     {
-        $list = $this->googleCalender->list();
+        //$list = $this->googleCalender->eventList();
 
-        return view('calendar/calendar', $list);
+        /* $data['startDate'] = '2023-06-24';
+        $data['endDate'] = '2023-06-30';
+        $data['summary'] = 'test6';
+        $this->googleCalender->createEvent($data); */
+
+        /* $data['startDate'] = '2023-06-20';
+        $data['endDate'] = '2023-06-30';
+        $data['summary'] = '테스트2';
+        $event_id = '0iaudoh97jkqnp8vg1mbg5d4fg';
+        $this->googleCalender->updateEvent($data, $event_id); */
+
+        $event_id = '3pp2lt2r5iuc9k4r13ampehhvt';
+        $this->googleCalender->deleteEvent($event_id);
+        return view('calendar/calendar');
     }
 }

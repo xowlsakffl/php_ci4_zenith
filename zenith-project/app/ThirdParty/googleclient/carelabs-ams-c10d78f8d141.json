@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "carelabs-ams",
+  "private_key_id": "c10d78f8d14152bce553e54f4c53973e934d3f29",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCdVUWOP5+gPwQD\nbQ7vddxTAyCIuZ02tHDeOh1bXGThg+0oe5MmzRd54F4JFYPgO68JulvNHsK4CzSs\nDf4B6vojNMqkX+eLnIVbsjP+JgNp9jceC+IiV/Y2AY+kds0OBoRUuuwsbzZtr5Vb\nVdmVnLAX2dEeQbPsKPUYjEDT8Tli39UxaU+WTkEzntmDPZ30KaOzddClmkmpbiMc\njfbJrVpGbBNiVFG6qkeY9TTJ2po9n+08mWkJoa0EclbmqMrUGkvgZ8uPZNGzKixX\n5TDgWO2G7uGb3bQhIsOg+SIbCkhzvOXDZATpdJEaTnKyc4IYbzUDyJARlykgYgnR\nugYJZHbhAgMBAAECggEAFvudYQW3RjveVLfKLj3L1Q6IYqCmsBaUxEm9/xoUnILe\nkoLWwJzGGKYnZnFPpeJiE+w2u9SKAkOUyqtylwohxyHPlkpyMwlGy9nQ0YfxCLoQ\nXCHFQ1oRG9uHhbFbC/j0vMHffTAzxbsX+NMmKT5N1PYbH63eYBmtkAvw7mT3CpPI\nCgHHQEmEeusQzjGyTcY1Vvigtxl0fEYlswlykpph25VmS5RNm57QsNf3apnVZlf1\nc8ySkNe/oL6fjMdmIohcai9JjubgOUP5Q2/F7ZCYqnOtDqIn5ljV8cCs2M900IE7\nKjo+tMx/qQhc1N1unYj+thbax1HK8WNT7HREEnQMbwKBgQDeXsVFK31b71HxUQVd\nG/M2P9Ikpr4bsQnl+cMv7bpSnNfMt9bpqR47CWA4Yztf7DLvGQteqplN/AlYqjQa\nXi9mYScP1w07OZjhsmx4cMm2LoK59zW0oHauwyBjgBOByH5El/DIH/tK8Duj6gck\nRQWXUWgjibraFpsQ0dtFEYk4EwKBgQC1IIpqmdvTRa0j2OSiyEnPtG6xqJBho9/t\neJkvAxJlxsXel7O5jIB5uYHAqSwflhKFkpE56wYqeYCVbfDBCqKGVwDG5H4QYYXH\nbugZIjmuO3d+Gaq5hdA9fxNABCqRq5q7jOGp/nRa3FMs+8jjm/1uSJ3FKEnG+lBi\nNzsx5pebuwKBgHGFbi4WuqOhdHK+iv9ykmIiiLRfT3QxmD0ImcWxFkqweVawj42v\n4Zf//FgtCJW6rnHzliNY8nSmc1sJYRoI9SfN9zQV9FJE4DBwdwGxirhv3Br2AjvZ\nI12qjbFeJBdAdH2uF6UC9rXWGIxgoA67EdSjIYfq+zH1Emqux8Ll5ehzAoGANxNm\nA3Q1e9C8DSJuo3DzwMzEvBDdllMWTEdXjQwKFBiVIlJOvCUVC+50nfjTCefASg1/\nS3VDsravesCrbIenU+IwwknIa4K8AyCeQsY9c9VxSE7VswQVhh2V5OlfaFwd+Nml\n5OMSzm4gfJUzSMKuFVLPZpwRkweaWcMhpNLRVvECgYEA2A9boBRkxdLJezHCBZPX\npKt6YHfTx1ACOAwSATna+AG8RnbFiUQ4v/RMKtV2lEj6kv/+dBK06yEM5Q55gaTI\nsf66d7zvyUlnU8udPt6H2Dpw+h9yYNaY0m/UJCeimASE97M+5IR1JPK2dYkK1nKF\nFbjhUCvn7TCfNTCDWyxlMBg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "zenith-service-account@carelabs-ams.iam.gserviceaccount.com",
+  "client_id": "112984425649505893915",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/zenith-service-account%40carelabs-ams.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
