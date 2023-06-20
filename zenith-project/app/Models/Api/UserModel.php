@@ -47,7 +47,7 @@ class UserModel extends ShieldUserModel
     {
         $srch = $data['searchData'];
         $builder = $this->db->table('users AS u');
-        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
+        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status_message as status, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
@@ -148,6 +148,7 @@ class UserModel extends ShieldUserModel
         if(!empty($data['status'])){
             $builder_1 = $this->db->table('users');
             $builder_1->set('status', $data['status']);
+            $builder_1->set('status_message', $data['status_message']);
             $builder_1->where('id', $data['user_id']);
             $builder_1->update();
         }

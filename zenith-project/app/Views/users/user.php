@@ -123,8 +123,8 @@
                                             <td id="userStatus">
                                                 <select class="form-select" aria-label="상태 선택" name="status">
                                                     <option selected hidden disabled>-선택-</option>
-                                                    <option value="활성">활성</option>
-                                                    <option value="비활성">비활성</option>
+                                                    <option value="1">활성</option>
+                                                    <option value="2">비활성</option>
                                                 </select>
                                             </td>
                                         </tr>

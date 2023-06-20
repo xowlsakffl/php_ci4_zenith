@@ -124,6 +124,17 @@ class UserController extends \CodeIgniter\Controller
 
                 $param['company_id'] = $company['id'];
                 
+                switch ($param['status']) {
+                    case 1:
+                        $param['status_message'] = '활성';
+                        break;
+                    case 2:
+                        $param['status_message'] = '비활성';
+                        break;
+                    default:
+                        break;
+                }
+
                 $result = $this->user->setUser($param);
             }else{
                 return $this->fail("잘못된 요청");
