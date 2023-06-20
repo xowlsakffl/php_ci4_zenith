@@ -28,7 +28,6 @@ class EventController extends BaseController
             $result = $this->event->getInformation($arg);
             $ads = $this->event->getEnabledAds();
             $issues = $this->event->getIssuesFromMantis();
-            dd($ads);
             $list = $result['data'];
             for ($i = 0; $i < count($list); $i++) {   
                 if($list[$i]['is_stop']){
@@ -66,7 +65,7 @@ class EventController extends BaseController
                     }
                 }
             }
-            dd($list);
+
             $result = [
                 'data' => $list,
                 'recordsTotal' => $result['allCount'],

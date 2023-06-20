@@ -8,6 +8,7 @@ use Google\Client;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
 
+
 class GoogleCalendar
 {
     protected $client, $redirect_uri, $accessToken;
