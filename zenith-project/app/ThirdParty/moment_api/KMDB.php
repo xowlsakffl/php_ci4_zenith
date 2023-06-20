@@ -585,7 +585,7 @@ class KMDB
     public function updateBizform($data)
     {
         $row = $data['data'];
-        if(!$row['id']) return;
+        if(empty($row) || !$row['id']) return;
         $sql = "INSERT INTO mm_bizform(`id`, `title`, `imgUrl`, `startAt`, `startTimeAt`, `endAt`, `endTimeAt`, `applyType`, `privacyScopeUse`, `flowType`, `completeType`, `status`, `runningStatus`, `editingPhase`, `channelUsed`, `channelProfileId`, `prizeAnnouncedDateAt`, `prizeAnnouncedTimeAt`, `partnerCsPhone`, `partnerCsUrl`, `reportEnable`, `createdAt`, `abortedAt`, `finishUv`, `create_time`)
         VALUES('{$row['id']}', '{$row['title']}', '{$row['imgUrl']}', '{$row['startAt']}', '{$row['startTimeAt']}', '{$row['endAt']}', '{$row['endTimeAt']}', '{$row['applyType']}', '{$row['privacyScopeUse']}', '{$row['flowType']}', '{$row['completeType']}', '{$row['status']}', '{$row['runningStatus']}', '{$row['editingPhase']}', '{$row['channelUsed']}', '{$row['channelProfileId']}', '{$row['prizeAnnouncedDateAt']}', '{$row['prizeAnnouncedTimeAt']}', '{$row['partnerCsPhone']}', '{$row['partnerCsUrl']}', '{$row['reportEnable']}', '{$row['createdAt']}', '{$row['abortedAt']}', '{$row['finishUv']}', NOW())
         ON DUPLICATE KEY
