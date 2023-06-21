@@ -33,9 +33,9 @@ class IntegrateController extends BaseController
                 ];
             }
             //list
-            $result = $this->integrate->getEventLead($arg);
+            $list = $this->integrate->getEventLead($arg);
 
-            foreach($result['data'] as &$row){
+            foreach($list['data'] as &$row){
                 $etc = [];
                 if(!empty($row['email'])) {
                     $etc[] = $row['email'];
@@ -72,31 +72,32 @@ class IntegrateController extends BaseController
                 $row['add'][] = $add;
             }
 
-            $data = $this->integrate->getEventLeadCount($arg);
+            $leads = $this->integrate->getEventLeadCount($arg);
             $status = $this->integrate->getStatusCount($arg);
 
             $adv_counts = array();
             $med_counts = array();
             $event_counts = array();
-            foreach ($data as $d) {
-                if (!array_key_exists($d['adv_name'], $adv_counts)) {
-                    $adv_counts[$d['adv_name']] = array(
+            
+            foreach ($leads as $lead) {
+                if (!array_key_exists($lead['adv_name'], $adv_counts)) {
+                    $adv_counts[$lead['adv_name']] = array(
                         'countAll' => 0
                     );
                 }
 
-                if (!array_key_exists($d['med_name'], $med_counts)) {
-                    $med_counts[$d['med_name']] = array(
+                if (!array_key_exists($lead['med_name'], $med_counts)) {
+                    $med_counts[$lead['med_name']] = array(
                         'countAll' => 0
                     );
                 }
 
-                $event_counts[$d['event']] = array(
-                    'countAll' => $d['countAll'],
+                $event_counts[$lead['event']] = array(
+                    'countAll' => $lead['countAll'],
                 );
 
-                $adv_counts[$d['adv_name']]['countAll'] += $d['countAll'];
-                $med_counts[$d['med_name']]['countAll'] += $d['countAll'];
+                $adv_counts[$lead['adv_name']]['countAll'] += $lead['countAll'];
+                $med_counts[$lead['med_name']]['countAll'] += $lead['countAll'];
             }
 
             $buttons = [
@@ -105,11 +106,11 @@ class IntegrateController extends BaseController
                 'event' => $event_counts,
                 'status' => $status,
             ];
-
+            
             $result = [
-                'data' => $result['data'],
-                'recordsTotal' => $result['allCount'],
-                'recordsFiltered' => $result['allCount'],
+                'data' => $list['data'],
+                'recordsTotal' => $list['allCount'],
+                'recordsFiltered' => $list['allCount'],
                 'draw' => intval($arg['draw']),
                 'buttons' => $buttons,
             ];

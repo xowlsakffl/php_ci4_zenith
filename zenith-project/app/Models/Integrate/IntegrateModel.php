@@ -140,6 +140,9 @@ class IntegrateModel extends Model
         $builder->where('info.description !=', '');
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
+        $builder->groupBy(['adv.name', 'med.media', 'info.description']);
+
+        $noFilteredBuilder = clone $builder;
 
         if(!empty($data['stx'])){
             $builder->groupStart();
@@ -167,13 +170,25 @@ class IntegrateModel extends Model
 
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
-        }
+        } 
 
-        $builder->groupBy(['adv.name', 'med.media', 'info.description']);
-        // dd($builder->getCompiledSelect());
-        $result = $builder->get()->getResultArray();
         
-        return $result;
+        $noFilterResult = $noFilteredBuilder->get()->getResultArray();
+        $filterResult = $builder->get()->getResultArray();
+        
+        /* foreach ($filterResult as $filterRow) {
+            foreach ($noFilterResult as &$noFilterRow) {
+                if (
+                    $filterRow['adv_name'] === $noFilterRow['adv_name'] &&
+                    $filterRow['med_name'] === $noFilterRow['med_name'] &&
+                    $filterRow['event'] === $noFilterRow['event']
+                ) {
+                    $noFilterRow['total'] = $filterRow['countAll'];
+                }
+            }
+        } */
+        dd($filterResult);
+
     }
 
     public function getStatusCount($data)
