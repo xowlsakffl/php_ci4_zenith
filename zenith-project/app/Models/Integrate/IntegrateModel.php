@@ -140,9 +140,10 @@ class IntegrateModel extends Model
         $builder->where('info.description !=', '');
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        //$builder->groupBy(['adv.name', 'med.media', 'info.description']);
+        
+        $filteredBuilder = clone $builder;
 
-        /* if(!empty($data['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('adv.name', $data['stx']);
             $builder->orLike('info.seq', $data['stx']);
@@ -168,13 +169,16 @@ class IntegrateModel extends Model
 
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
-        }  */
+        }
 
-        
-        $result = $builder->get()->getResultArray();
+        $result = [
+            'filteredResult' => $builder->get()->getResultArray(),
+            'noFilteredResult' => $filteredBuilder->get()->getResultArray()
+        ];
 
         return $result;
     }
+
 
     public function getStatusCount($data)
     {

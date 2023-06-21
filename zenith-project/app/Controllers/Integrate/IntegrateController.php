@@ -72,56 +72,19 @@ class IntegrateController extends BaseController
                 $row['add'][] = $add;
             }
 
-            $leads = $this->integrate->getEventLeadCount($arg);
+            $leadsAll = $this->integrate->getEventLeadCount($arg);
+            $filteredResult = $this->setCount($leadsAll['filteredResult']);
+            $noFilteredResult = $this->setCount($leadsAll['noFilteredResult']);
+            
+
             $status = $this->integrate->getStatusCount($arg);
 
-            $data = [
-                'advertiser' => [],
-                'media' => [],
-                'event' => [],
-            ];
-            foreach($leads as $row) {
-                //광고주 기준
-                if(!isset($data['advertiser'][$row['advertiser']]))
-                    $data['advertiser'][$row['advertiser']] = ['count'=>0, 'media'=>[], 'event'=>[]];
-                $data['advertiser'][$row['advertiser']]['count']++;
-                if(!isset($data['advertiser'][$row['advertiser']]['media'][$row['media']]))
-                    $data['advertiser'][$row['advertiser']]['media'][$row['media']] = 0;
-                $data['advertiser'][$row['advertiser']]['media'][$row['media']]++;
-                if(!isset($data['advertiser'][$row['advertiser']]['event'][$row['event']]))
-                    $data['advertiser'][$row['advertiser']]['event'][$row['event']] = 0;
-                $data['advertiser'][$row['advertiser']]['event'][$row['event']]++;
-
-                //매체 기준
-                if(!isset($data['media'][$row['media']]))
-                    $data['media'][$row['media']] = ['count'=>0, 'advertiser'=>[], 'event'=>[]];
-                $data['media'][$row['media']]['count']++;
-                if(!isset($data['media'][$row['media']]['advertiser'][$row['advertiser']]))
-                    $data['media'][$row['media']]['advertiser'][$row['advertiser']] = 0;
-                $data['media'][$row['media']]['advertiser'][$row['advertiser']]++;
-                if(!isset($data['media'][$row['media']]['event'][$row['event']]))
-                    $data['media'][$row['media']]['event'][$row['event']] = 0;
-                $data['media'][$row['media']]['event'][$row['event']]++;
-
-                //이벤트 기준
-                if(!isset($data['event'][$row['event']]))
-                    $data['event'][$row['event']] = ['count'=>0, 'advertiser'=>[], 'media'=>[]];
-                $data['event'][$row['event']]['count']++;
-                if(!isset($data['event'][$row['event']]['advertiser'][$row['advertiser']]))
-                    $data['event'][$row['event']]['advertiser'][$row['advertiser']] = 0;
-                $data['event'][$row['event']]['advertiser'][$row['advertiser']]++;
-                if(!isset($data['event'][$row['event']]['media'][$row['media']]))
-                    $data['event'][$row['event']]['media'][$row['media']] = 0;
-                $data['event'][$row['event']]['media'][$row['media']]++;
-            }
-
-            dd($data);
-            $buttons = [
+            /* $buttons = [
                 'advertiser' => $data['advertiser'],
                 'media' => $data['media'],
                 'event' => $data['event'],
                 'status' => $status,
-            ];
+            ]; */
             
             $result = [
                 'data' => $list['data'],
@@ -234,5 +197,50 @@ class IntegrateController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    private function setCount($leads)
+    {
+        $data = [
+            'advertiser' => [],
+            'media' => [],
+            'event' => [],
+        ];
+        foreach($leads as $row) {
+            //광고주 기준
+            if(!isset($data['advertiser'][$row['advertiser']]))
+                $data['advertiser'][$row['advertiser']] = ['count'=>0, 'media'=>[], 'event'=>[]];
+            $data['advertiser'][$row['advertiser']]['count']++;
+            if(!isset($data['advertiser'][$row['advertiser']]['media'][$row['media']]))
+                $data['advertiser'][$row['advertiser']]['media'][$row['media']] = 0;
+            $data['advertiser'][$row['advertiser']]['media'][$row['media']]++;
+            if(!isset($data['advertiser'][$row['advertiser']]['event'][$row['event']]))
+                $data['advertiser'][$row['advertiser']]['event'][$row['event']] = 0;
+            $data['advertiser'][$row['advertiser']]['event'][$row['event']]++;
+
+            //매체 기준
+            if(!isset($data['media'][$row['media']]))
+                $data['media'][$row['media']] = ['count'=>0, 'advertiser'=>[], 'event'=>[]];
+            $data['media'][$row['media']]['count']++;
+            if(!isset($data['media'][$row['media']]['advertiser'][$row['advertiser']]))
+                $data['media'][$row['media']]['advertiser'][$row['advertiser']] = 0;
+            $data['media'][$row['media']]['advertiser'][$row['advertiser']]++;
+            if(!isset($data['media'][$row['media']]['event'][$row['event']]))
+                $data['media'][$row['media']]['event'][$row['event']] = 0;
+            $data['media'][$row['media']]['event'][$row['event']]++;
+
+            //이벤트 기준
+            if(!isset($data['event'][$row['event']]))
+                $data['event'][$row['event']] = ['count'=>0, 'advertiser'=>[], 'media'=>[]];
+            $data['event'][$row['event']]['count']++;
+            if(!isset($data['event'][$row['event']]['advertiser'][$row['advertiser']]))
+                $data['event'][$row['event']]['advertiser'][$row['advertiser']] = 0;
+            $data['event'][$row['event']]['advertiser'][$row['advertiser']]++;
+            if(!isset($data['event'][$row['event']]['media'][$row['media']]))
+                $data['event'][$row['event']]['media'][$row['media']] = 0;
+            $data['event'][$row['event']]['media'][$row['media']]++;
+        }
+
+        return $data;
     }
 }
