@@ -32,6 +32,7 @@ class IntegrateController extends BaseController
                     'edate'=> date('Y-m-d')
                 ];
             }
+            //list
             $result = $this->integrate->getEventLead($arg);
 
             foreach($result['data'] as &$row){
@@ -71,11 +72,49 @@ class IntegrateController extends BaseController
                 $row['add'][] = $add;
             }
 
+            //buttons
+            $data = $this->integrate->getEventLeadCount($arg);
+
+            $adv_counts = array();
+            $med_counts = array();
+            $event_counts = array();
+            foreach ($data as $row) {
+                if (!array_key_exists($row['adv_name'], $adv_counts)) {
+                    $adv_counts[$row['adv_name']] = array(
+                        'countAll' => 0
+                    );
+                }
+
+                if (!array_key_exists($row['med_name'], $med_counts)) {
+                    $med_counts[$row['med_name']] = array(
+                        'countAll' => 0
+                    );
+                }
+
+                $event_counts[$row['event']] = array(
+                    'countAll' => $row['countAll'],
+                );
+
+                $adv_counts[$row['adv_name']]['countAll'] += $row['countAll'];
+                $med_counts[$row['med_name']]['countAll'] += $row['countAll'];
+            }
+
+            $buttons = [
+                'advertiser' => $adv_counts,
+                'media' => $med_counts,
+                'event' => $event_counts,
+            ];
+
+            //status
+            $status = $this->integrate->getStatusCount($arg);
+
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],
                 'recordsFiltered' => $result['allCount'],
                 'draw' => intval($arg['draw']),
+                'buttons' => $buttons,
+                'status' => $status,
             ];
 
             return $this->respond($result);

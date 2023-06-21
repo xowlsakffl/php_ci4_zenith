@@ -236,7 +236,8 @@ function getList(data = []) { //리스트 세팅
         "ajax": {
             "url": "<?=base_url()?>/integrate/list",
             "data": function(d) {
-                d.searchData = tableParam.searchData;
+                if(typeof tableParam != 'undefined')
+                    d.searchData = tableParam.searchData;
             },
             "type": "GET",
             "contentType": "application/json",
