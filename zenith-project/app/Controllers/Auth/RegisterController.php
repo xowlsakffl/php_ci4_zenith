@@ -114,7 +114,11 @@ class RegisterController extends ShieldRegisterController
             $user->username = null;
         }
 
+        $user->status = 1;
+        $user->status_message = '활성';
+
         try {
+            
             $users->save($user);
         } catch (ValidationException $e) {
             return redirect()->back()->withInput()->with('errors', $users->errors());

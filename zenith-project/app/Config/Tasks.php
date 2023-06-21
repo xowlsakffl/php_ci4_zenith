@@ -35,5 +35,7 @@ class Tasks extends BaseConfig
     public function init(Scheduler $schedule)
     {
         $schedule->command('EventCron')->everyMinute(5)->named('event');
+
+        $schedule->command('GwCron')->everyMinute(30)->betweenHours(10,19)->named('gw');
     }
 }
