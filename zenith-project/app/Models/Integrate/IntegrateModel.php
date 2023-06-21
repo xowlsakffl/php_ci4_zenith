@@ -126,10 +126,10 @@ class IntegrateModel extends Model
         $data = $data['searchData'];
         $builder = $this->zenith->table('event_leads as el');
         $builder->select("
-        adv.name as adv_name,
-        med.media as med_name,
-        info.description as event,
-        count(el.seq) as countAll,
+        el.seq,
+        adv.name as advertiser,
+        med.media as media,
+        info.description as event
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
@@ -140,11 +140,9 @@ class IntegrateModel extends Model
         $builder->where('info.description !=', '');
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
-        $builder->groupBy(['adv.name', 'med.media', 'info.description']);
+        //$builder->groupBy(['adv.name', 'med.media', 'info.description']);
 
-        $noFilteredBuilder = clone $builder;
-
-        if(!empty($data['stx'])){
+        /* if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('adv.name', $data['stx']);
             $builder->orLike('info.seq', $data['stx']);
@@ -170,25 +168,12 @@ class IntegrateModel extends Model
 
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
-        } 
+        }  */
 
         
-        $noFilterResult = $noFilteredBuilder->get()->getResultArray();
-        $filterResult = $builder->get()->getResultArray();
-        
-        /* foreach ($filterResult as $filterRow) {
-            foreach ($noFilterResult as &$noFilterRow) {
-                if (
-                    $filterRow['adv_name'] === $noFilterRow['adv_name'] &&
-                    $filterRow['med_name'] === $noFilterRow['med_name'] &&
-                    $filterRow['event'] === $noFilterRow['event']
-                ) {
-                    $noFilterRow['total'] = $filterRow['countAll'];
-                }
-            }
-        } */
-        dd($filterResult);
+        $result = $builder->get()->getResultArray();
 
+        return $result;
     }
 
     public function getStatusCount($data)

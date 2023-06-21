@@ -75,35 +75,51 @@ class IntegrateController extends BaseController
             $leads = $this->integrate->getEventLeadCount($arg);
             $status = $this->integrate->getStatusCount($arg);
 
-            $adv_counts = array();
-            $med_counts = array();
-            $event_counts = array();
-            
-            foreach ($leads as $lead) {
-                if (!array_key_exists($lead['adv_name'], $adv_counts)) {
-                    $adv_counts[$lead['adv_name']] = array(
-                        'countAll' => 0
-                    );
-                }
+            $data = [
+                'advertiser' => [],
+                'media' => [],
+                'event' => [],
+            ];
+            foreach($leads as $row) {
+                //광고주 기준
+                if(!isset($data['advertiser'][$row['advertiser']]))
+                    $data['advertiser'][$row['advertiser']] = ['count'=>0, 'media'=>[], 'event'=>[]];
+                $data['advertiser'][$row['advertiser']]['count']++;
+                if(!isset($data['advertiser'][$row['advertiser']]['media'][$row['media']]))
+                    $data['advertiser'][$row['advertiser']]['media'][$row['media']] = 0;
+                $data['advertiser'][$row['advertiser']]['media'][$row['media']]++;
+                if(!isset($data['advertiser'][$row['advertiser']]['event'][$row['event']]))
+                    $data['advertiser'][$row['advertiser']]['event'][$row['event']] = 0;
+                $data['advertiser'][$row['advertiser']]['event'][$row['event']]++;
 
-                if (!array_key_exists($lead['med_name'], $med_counts)) {
-                    $med_counts[$lead['med_name']] = array(
-                        'countAll' => 0
-                    );
-                }
+                //매체 기준
+                if(!isset($data['media'][$row['media']]))
+                    $data['media'][$row['media']] = ['count'=>0, 'advertiser'=>[], 'event'=>[]];
+                $data['media'][$row['media']]['count']++;
+                if(!isset($data['media'][$row['media']]['advertiser'][$row['advertiser']]))
+                    $data['media'][$row['media']]['advertiser'][$row['advertiser']] = 0;
+                $data['media'][$row['media']]['advertiser'][$row['advertiser']]++;
+                if(!isset($data['media'][$row['media']]['event'][$row['event']]))
+                    $data['media'][$row['media']]['event'][$row['event']] = 0;
+                $data['media'][$row['media']]['event'][$row['event']]++;
 
-                $event_counts[$lead['event']] = array(
-                    'countAll' => $lead['countAll'],
-                );
-
-                $adv_counts[$lead['adv_name']]['countAll'] += $lead['countAll'];
-                $med_counts[$lead['med_name']]['countAll'] += $lead['countAll'];
+                //이벤트 기준
+                if(!isset($data['event'][$row['event']]))
+                    $data['event'][$row['event']] = ['count'=>0, 'advertiser'=>[], 'media'=>[]];
+                $data['event'][$row['event']]['count']++;
+                if(!isset($data['event'][$row['event']]['advertiser'][$row['advertiser']]))
+                    $data['event'][$row['event']]['advertiser'][$row['advertiser']] = 0;
+                $data['event'][$row['event']]['advertiser'][$row['advertiser']]++;
+                if(!isset($data['event'][$row['event']]['media'][$row['media']]))
+                    $data['event'][$row['event']]['media'][$row['media']] = 0;
+                $data['event'][$row['event']]['media'][$row['media']]++;
             }
 
+            dd($data);
             $buttons = [
-                'advertiser' => $adv_counts,
-                'media' => $med_counts,
-                'event' => $event_counts,
+                'advertiser' => $data['advertiser'],
+                'media' => $data['media'],
+                'event' => $data['event'],
                 'status' => $status,
             ];
             
