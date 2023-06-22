@@ -292,10 +292,11 @@ function getList(data = []) { //리스트 세팅
         "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
-        "initComplete": function(settings, json) {
-            getStatusCount();
+        "initComplete": function(settings, data) {
+            setButtons(data.buttons);
+            setLeadCount(data.buttons);
+            setStatusCount(data.buttons.status);
             setDate();
-            getLead();
         }
     });
 }
@@ -415,26 +416,12 @@ function setMemoList(data) { //메모 리스트 생성
     wrap.prepend(html);
     
 }
-function getLeadCount(){
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/integrate/leadcount",
-        data: tableParam,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            setLeadCount(data);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-}
-
 function setLeadCount(data) {
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
+        console.log(type);
+        if(type == 'status') return true;
         var $container = $('#'+type+'-list');
         $.each(row, function(name, v) {
             button = $('#'+type+'-list .col[data-name="'+ name +'"] button');
@@ -445,22 +432,10 @@ function setLeadCount(data) {
     });
 }
 
-function getStatusCount(){
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/integrate/statuscount",
-        data: tableParam,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(result){     
-            $('.statusCount').empty();
-            $.each(result[0], function(key, value) {
-                $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
-            });
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
+function setStatusCount(data){
+    $('.statusCount').empty();
+    $.each(data, function(key, value) {
+        $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
     });
 }
 function fontAutoResize() { //.client-list button 항목 가변폰트 적용
@@ -494,18 +469,18 @@ $(window).resize(function() {
 
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
     $.each(data, function(type, row) {
+        if(type == 'status') return true;
         var html = "";
         $.each(row, function(idx, v) {
-            html += '<div class="col" data-name="'+idx+'"><div class="inner">';
-            html += '<button type="button" value="'+idx+'">' + idx + '</button>';
+            html += '<div class="col" data-name="'+v.label+'"><div class="inner">';
+            html += '<button type="button" value="'+v.label+'">' + v.label + '</button>';
             html += '<div class="progress">';
-            html += '<div class="txt">' + v.countAll + '</div>';
+            html += '<div class="txt">'+v.count+'/'+v.total+'</div>';
             html += '</div>';
             html += '</div></div>';
         });
         $('#'+type+'-list').html(html);
     });
-    getLeadCount();
     setSearchData();
     fontAutoResize();
 }
@@ -575,15 +550,11 @@ function setDate(){
 $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
     dataTable.state.save();
-    getStatusCount();
-    getLeadCount();
     dataTable.draw();
 });
 
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.state.save();
-    getStatusCount();
-    getLeadCount();
     dataTable.draw();
     return false;
 });
