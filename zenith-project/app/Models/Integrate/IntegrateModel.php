@@ -233,7 +233,7 @@ class IntegrateModel extends Model
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
         }
-        $result = $builder->get()->getResultArray();
+        $result = $builder->get()->getRowArray();
 
         return $result;
     }

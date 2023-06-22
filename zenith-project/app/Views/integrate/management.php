@@ -13,6 +13,7 @@
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <?=$this->endSection();?>
@@ -150,6 +151,7 @@ let dataTable, tableParam;
 getList();
 function setSearchData() {
     var data = tableParam;
+    $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData == 'undefined') return;
     data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
     data.searchData.media.split('|').map(function(txt){ $(`#media-list button[value="${txt}"]`).addClass('active'); });
@@ -160,7 +162,8 @@ function setSearchData() {
     $('#sdate').val(data.searchData.sdate);
     $('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
-    dataTable.state.save();
+    debug('searchData 세팅')
+    if(typeof dataTable != 'undefined') dataTable.state.save();
 }
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
@@ -183,6 +186,7 @@ function getList(data = []) { //리스트 세팅
         "scrollCollapse": true,
         "stateSave": true,
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
+            debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
             if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
@@ -195,11 +199,15 @@ function getList(data = []) { //리스트 세팅
                     'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
                 };
                 tableParam = data;
+                debug(tableParam.searchData);
             }
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
+            debug('state 로드')
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
+            setSearchData();
+            debug(tableParam.searchData);
         },
         "deferRender": true,
         "rowId": "seq",
@@ -208,30 +216,38 @@ function getList(data = []) { //리스트 세팅
             [ '25개', '10개', '50개', '전체' ]
         ],
         "buttons": [
-            'pageLength', 
             {
-                'extend':'savedStates',
+                'extend': 'collection',
+                'className': 'custom-btn-collection',
                 'buttons': [
-                    'createState',
-                    'removeAllStates'
+                    'pageLength',
+                    'colvis',
+                    {
+                        'extend':'savedStates',
+                        'buttons': [
+                            'createState',
+                            'removeAllStates'
+                        ]
+                    },
+                    {
+                        'extend': 'excelHtml5',
+                        'exportOptions': { //{'columns': 'th:not(:last-child)'},
+                            'customizeData': function(data) {
+                                var header = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"];
+                                var body = [];
+                                $.each(data['body'], function(i, row) {
+                                    var row = row[0];
+                                    body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, row.status];
+                                });
+                                data.header = header;
+                                data.body = body;
+                                //return은 하면 안됨. data 오브젝트를 변형시켜서만 사용
+                            }
+                        }
+                    }
                 ]
             },
-            {
-                'extend': 'excelHtml5',
-                'exportOptions': { //{'columns': 'th:not(:last-child)'},
-                    'customizeData': function(data) {
-                        var header = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"];
-                        var body = [];
-                        $.each(data['body'], function(i, row) {
-                            var row = row[0];
-                            body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, row.status];
-                        });
-                        data.header = header;
-                        data.body = body;
-                        //return은 하면 안됨. data 오브젝트를 변형시켜서만 사용
-                    }
-                }
-            }
+            
         ],
         "ajax": {
             "url": "<?=base_url()?>/integrate/list",
@@ -291,18 +307,19 @@ function getList(data = []) { //리스트 세팅
         },
         "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
-        },
-        "initComplete": function(settings, data) {
-            setButtons(data.buttons);
-            setLeadCount(data.buttons);
-            setStatusCount(data.buttons.status);
-            setDate();
         }
+    }).on('xhr.dt', function( e, settings, data, xhr ) {
+        setButtons(data.buttons);
+        setLeadCount(data.buttons)
+        setStatusCount(data.buttons.status);
+        setDate();
+        setSearchData();
     });
 }
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');
+    debug('메모표시방식 설정');
     dataTable.state.save();
 });
 $('#deviceTable').on('click', 'td.memo', function(e) { //메모셀 클릭 시
@@ -420,14 +437,15 @@ function setLeadCount(data) {
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
-        console.log(type);
         if(type == 'status') return true;
         var $container = $('#'+type+'-list');
-        $.each(row, function(name, v) {
-            button = $('#'+type+'-list .col[data-name="'+ name +'"] button');
-            button.siblings('.progress').children('.txt').text(v.countAll);
-            if($('#'+type+'-list .col').length == Object.keys(data[type]).length) return true;
-            button.addClass('on');
+        $.each(row, function(idx, v) {
+            var cnt_txt = v.total;
+            if(v.count != v.total) cnt_txt = v.count + "/" + v.total;
+            button = $(`#${type}-list .col[data-name="${v.label}"] button`);
+            button.siblings('.progress').children('.txt').text(`${cnt_txt}`);
+            if(tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "") return true;
+            if(v.count) button.addClass('on');
         });
     });
 }
@@ -449,11 +467,11 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         });
         var i = 0;
         var btn_width = Math.round(button.width());
-        // console.log(button.val(), btn_scr_w, btn_width);
+        // debug(button.val(), btn_scr_w, btn_width);
         while((button[0].scrollWidth+10) / 2 >= btn_width) {
             var size = parseFloat(button.css('font-size')) / 16 * 100;
             button.css({'font-size': --size+'%'});
-            // console.log(button.css('font-size'), size)
+            // debug(button.css('font-size'), size)
             if(button.css('font-size') < 8 || i > 60) break;
             i++;
         }
@@ -481,7 +499,6 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         });
         $('#'+type+'-list').html(html);
     });
-    setSearchData();
     fontAutoResize();
 }
 		
@@ -549,21 +566,26 @@ function setDate(){
 
 $('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
+    debug('필터링 탭 클릭');
     dataTable.state.save();
     dataTable.draw();
 });
 
 $('form[name="search-form"]').bind('submit', function() {
+    debug('검색 전송')
     dataTable.state.save();
     dataTable.draw();
     return false;
 });
 
 $('.statusCount').on('click', 'dl', function(e) {
+    debug('인정기준 필터')
     $(this).toggleClass('active');
     dataTable.state.save();
     dataTable.draw();
 });
+
+// 인정기준 변경처리
 function setStatus(t) {
     var oldvalue = $(t).attr('data-oldvalue');
     var data = {
@@ -604,6 +626,9 @@ $('#deviceTable')
     .on('change', '.lead-status', function(e) {
         setStatus(this);
     });
+function debug(msg) {
+    // console.log(msg);
+}
 </script>
 <?=$this->endSection();?>
 

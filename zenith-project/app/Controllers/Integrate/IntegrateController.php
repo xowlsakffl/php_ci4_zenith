@@ -73,11 +73,13 @@ class IntegrateController extends BaseController
             }
 
             $leadsAll = $this->integrate->getEventLeadCount($arg);
-            $buttons['filtered'] = $this->setCount($leadsAll['filteredResult'], 'total');
-            $buttons['noFiltered'] = $this->setCount($leadsAll['noFilteredResult'], 'count');
-            foreach($buttons['filtered'] as $type => $row){
+            $buttons['filtered'] = $this->setCount($leadsAll['filteredResult'], 'count');
+            $buttons['noFiltered'] = $this->setCount($leadsAll['noFilteredResult'], 'total');
+            foreach($buttons['noFiltered'] as $type => $row){
                 foreach($row as $k => $v) {
-                    $filter_lists[$type][$k] = array_merge($buttons['noFiltered'][$type][$k], $v);
+                    if(!isset($buttons['filtered'][$type][$k]))
+                        $buttons['filtered'][$type][$k] = ['count' => 0];
+                    $filter_lists[$type][$k] = array_merge($buttons['filtered'][$type][$k], $v);
                 }                
             }
             foreach($filter_lists as $type => $row) {
@@ -87,7 +89,7 @@ class IntegrateController extends BaseController
             }
 
             $status = $this->integrate->getStatusCount($arg);
-
+            $filters['status'] = $status;
             /* $buttons = [
                 'advertiser' => $data['advertiser'],
                 'media' => $data['media'],
