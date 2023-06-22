@@ -21,7 +21,7 @@ class EventController extends BaseController
         return view('events/event/event');
     }
 
-    public function getData()
+    public function getList()
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
@@ -64,6 +64,8 @@ class EventController extends BaseController
                         $list[$i]['config'] = 'enabled';
                     }
                 }
+
+                $list[$i]['db_price'] = number_format($list[$i]['db_price']);
             }
 
             $result = [
@@ -73,6 +75,84 @@ class EventController extends BaseController
                 'draw' => intval($arg['draw']),
             ];
 
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getAdv()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->event->getAdv($arg['stx']);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getMedia()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->event->getMedia($arg['stx']);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function createEvent()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
+            $arg = $this->request->getGet();
+            $data = [
+                'advertiser' => $arg['advertiser'],
+                'media' => $arg['media'],
+                'description' => $arg['description'],
+                'db_price' => $arg['db_price'],
+                'interlock' => $arg['interlock'],
+                'lead' => $arg['lead'],
+                'creative_id' => $arg['creative_id'],
+                'bizform_apikey' => $arg['bizform_apikey'],
+                'custom' => $arg['custom'],
+                'title' => $arg['title'],
+                'subtitle' => $arg['subtitle'],
+                'object' => $arg['object'],
+                'object_items' => $arg['object_items'],
+                'pixel_id' => trim($arg['pixel_id']),
+                'view_script' => $arg['view_script'],
+                'done_script' => $arg['done_script'],
+                'check_gender' => $arg['check_gender'],
+                'check_age_min' => $arg['check_age_min'],
+                'check_age_max' => $arg['check_age_max'],
+                'duplicate_term' => $arg['duplicate_term'],
+                'check_phone' => $arg['check_phone'],
+                'check_name' => $arg['check_name'],
+                'check_cookie' => $arg['check_cookie'],
+                'duplicate_precheck' => $arg['duplicate_precheck'],
+                'username' => auth()->user()->username,
+                'ei_datetime' => date('Y-m-d H:i:s'),
+            ];
+            $validation = \Config\Services::validation();
+            $validation->setRules($this->event->validationRules, $this->event->validationMessages);
+            if (!$validation->run($data)) {
+                $errors = $validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
+
+            $result = $this->event->createEvent($data);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getEvent($seq)
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $result = $this->event->getEvent($seq);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

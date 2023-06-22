@@ -12,6 +12,101 @@
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/js/tag-it.min.js"></script>
+<style>
+    ul.tagit {
+        padding: 1px 5px;
+        overflow: auto;
+        margin-left: inherit; /* usually we don't want the regular ul margins. */
+        margin-right: inherit;
+    }
+    ul.tagit li {
+        display: block;
+        float: left;
+        margin: 2px 5px 2px 0;
+    }
+    ul.tagit li.tagit-choice {    
+        position: relative;
+        line-height: inherit;
+    }
+    input.tagit-hidden-field {
+        display: none;
+    }
+    ul.tagit li.tagit-choice-read-only { 
+        padding: .2em .5em .2em .5em; 
+    } 
+
+    ul.tagit li.tagit-choice-editable { 
+        padding: .2em 18px .2em .5em; 
+    } 
+
+    ul.tagit li.tagit-new {
+        padding: .25em 4px .25em 0;
+    }
+
+    ul.tagit li.tagit-choice a.tagit-label {
+        cursor: pointer;
+        text-decoration: none;
+    }
+    ul.tagit li.tagit-choice .tagit-close {
+        cursor: pointer;
+        position: absolute;
+        right: .1em;
+        top: 50%;
+        margin-top: -8px;
+        line-height: 17px;
+    }
+
+    /* used for some custom themes that don't need image icons */
+    ul.tagit li.tagit-choice .tagit-close .text-icon {
+        display: none;
+    }
+
+    ul.tagit li.tagit-choice input {
+        display: block;
+        float: left;
+        margin: 2px 5px 2px 0;
+    }
+    ul.tagit input[type="text"] {
+        -moz-box-sizing:    border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing:         border-box;
+
+        -moz-box-shadow: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+
+        border: none;
+        margin: 0;
+        padding: 0;
+        width: inherit;
+        background-color: inherit;
+        outline: none;
+    }
+
+    .ui-autocomplete{
+        z-index: 10000000;
+        max-height: 300px;
+        overflow-y: auto; /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+
+    .ads_status.enabled{
+        display:inline-block;
+        width:10px;height:10px;
+        border-radius:100%;
+        background:#3CB043;
+    }
+    .ads_status.disabled{
+        display:inline-block;
+        width:10px;height:10px;
+        border-radius:100%;
+        background:#FF0000;
+    }
+    .btn_landing.hide{
+        display: none;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -37,7 +132,7 @@
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
-                <button class="btn-special ms-2" type="button" data-bs-toggle="modal" data-bs-target="#regiModal">등록</button>
+                <button class="btn-special ms-2" id="createBtn" data-bs-toggle="modal" data-bs-target="#regiModal" type="button">등록</button>
             </div>
         </form>
     </div>
@@ -51,21 +146,6 @@
 
         <div class="table-responsive">
             <table class="table table-striped table-hover table-default"  id="event-table">
-                <!-- <colgroup>
-                    <col style="width:6%">
-                    <col style="width:10%">
-                    <col style="width:5%">
-                    <col>
-                    <col style="width:12%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                    <col style="width:8%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                </colgroup> -->
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">이벤트번호</th>
@@ -101,299 +181,319 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h2 class="body-title">이벤트 정보</h2>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-left-header">
-                        <colgroup>
-                            <col style="width:30%;">
-                            <col style="width:70%;">
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <th scope="row" class="text-end">랜딩번호</th>
-                                <td>6124</td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">랜딩주소</th>
-                                <td>
-                                    <a href="#">https://event.asdkljad.com</a>
-                                    <button type="button" class="btn btn-secondary btn-sm">복사하기</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">광고주</th>
-                                <td><input type="text" class="form-control" value="예쁨주의상상의원" disabled></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">매체</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">이벤트 구분</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">DB 단가</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">랜딩구분</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="landing_radio" id="landing_radio01">
-                                            <label class="form-check-label" for="landing_radio01">일반</label>
+                <form name="event-register-form" id="event-register-form">
+                    <h2 class="body-title">이벤트 정보</h2>
+                    <div class="table-responsive">    
+                        <input type="hidden" name="seq" value="">
+                        <input type="hidden" name="advertiser" value="">
+                        <input type="hidden" name="media" value="">
+                        <table class="table table-bordered table-left-header">
+                            <colgroup>
+                                <col style="width:30%;">
+                                <col style="width:70%;">
+                            </colgroup>
+                            <tbody>
+                                <!-- <tr>
+                                    <th scope="row" class="text-end">랜딩번호</th>
+                                    <td>6124</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">랜딩주소</th>
+                                    <td>
+                                        <a href="#">https://event.asdkljad.com</a>
+                                        <button type="button" class="btn btn-secondary btn-sm">복사하기</button>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <th scope="row" class="text-end">광고주</th>
+                                    <td><input type="text" class="form-control" name="adv_name" placeholder="광고주명을 입력하세요." autocomplete="off"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">매체</th>
+                                    <td><input type="text" class="form-control" name="media_name" placeholder="광고매체를 입력하세요." autocomplete="off"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">이벤트 구분</th>
+                                    <td><input type="text" name="description" class="form-control" placeholder="이벤트구분을 입력하세요." ></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">DB 단가</th>
+                                    <td><input type="text" name="db_price" class="form-control" placeholder="DB 단가를 입력하세요." ></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">랜딩 사용여부</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0" name="is_stop" id="is_stop01" checked>
+                                                <label class="form-check-label" for="is_stop01">사용</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="1"  name="is_stop" id="is_stop02">
+                                                <label class="form-check-label" for="is_stop02">미사용</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="landing_radio" id="landing_radio02">
-                                            <label class="form-check-label" for="landing_radio02">잠재고객</label>
+                                        <p class="mt-2 text-secondary">※ 광고주가 사용중지로 되어있을 경우 랜딩은 노출되지 않습니다.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">랜딩구분</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0" name="lead" id="lead01" checked>
+                                                <label class="form-check-label" for="lead01">일반</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="1"  name="lead" id="lead02">
+                                                <label class="form-check-label" for="lead02">잠재고객</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="4" name="lead" id="lead03">
+                                                <label class="form-check-label" for="lead03">비즈폼</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="2" name="lead" id="lead04">
+                                                <label class="form-check-label" for="lead04">엑셀업로드</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="3" name="lead" id="lead05">
+                                                <label class="form-check-label" for="lead05">API수신</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="landing_radio" id="landing_radio03">
-                                            <label class="form-check-label" for="landing_radio03">비즈폼</label>
+                                        <div class="mb-2" id="bizform">
+                                            <input type="text" name="creative_id" value="" class="form-control" style="float:left;width:49%;margin-right:2%" placeholder="소재번호를 입력하세요." title="소재 번호">
+                                            <input type="text" name="bizform_apikey" value=""  class="form-control" style="float:left;width:49%" placeholder="비즈폼 API KEY를 입력하세요." title="소재 번호">
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="landing_radio" id="landing_radio04">
-                                            <label class="form-check-label" for="landing_radio04">엑셀업로드</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">외부연동 사용여부</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="1" name="interlock" id="interlock01">
+                                                <label class="form-check-label" for="interlock01">사용</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0"  name="interlock" id="interlock02" checked>
+                                                <label class="form-check-label" for="interlock02">미사용</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="landing_radio" id="landing_radio05">
-                                            <label class="form-check-label" for="landing_radio05">API수신</label>
+                                        <div class="interlock_code">
+                                            <div class="d-flex mb-2">
+                                                <input type="text" name="partner_id" placeholder="파트너아이디" class="form-control me-2">
+                                                <input type="text" name="partner_name" placeholder="파트너명" class="form-control">
+                                            </div>
+                                            <div class="d-flex">
+                                                <input type="text" name="paper_code" placeholder="지면코드" class="form-control me-2">
+                                                <input type="text" name="paper_name" placeholder="지면명" class="form-control">
+                                            </div>
+                                        </div>        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">랜딩 고정값</th>
+                                    <td>
+                                        <input type=hidden name="custom">
+                                        <div class="custom-row-wrap">
+                                            <div class="d-flex mb-2 custom_row">
+                                                <select name="custom_key" class="custom form-select me-2" aria-label="선택">
+                                                    <option selected disabled>개별설정 안함</option>
+                                                    <option value="branch">지점</option>
+                                                    <option value="sms_number">문자 발송번호</option>
+                                                </select>
+                                                <input type="text" class="form-control" id="custom_val">
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">외부연동 사용여부</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="linkage_radio" id="linkage_radio01">
-                                            <label class="form-check-label" for="linkage_radio01">사용</label>
-                                        </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="linkage_radio" id="linkage_radio02">
-                                            <label class="form-check-label" for="linkage_radio02">미사용</label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex mb-2">
-                                        <input type="text" class="form-control me-2">
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="d-flex">
-                                        <input type="text" class="form-control me-2">
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">랜딩 고정값</th>
-                                <td>
-                                    <div class="d-flex mb-2">
-                                        <select class="form-select me-2" aria-label="선택">
-                                            <option selected>-선택-</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <div class="d-flex mb-2">
-                                        <select class="form-select me-2" aria-label="선택">
-                                            <option selected>-선택-</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                    <button type="button" class="btn btn-primary btn-sm float-end">추가</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">브라우저 제목(타이틀)</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">키워드</th>
-                                <td>
-                                    <input type="text" class="form-control">
-                                    <p class="mt-2 text-secondary">※ 이벤트의 핵심 키워드를 입력해주세요.</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">설명</th>
-                                <td><input type="text" class="form-control" placeholder="이벤트를 구체적으로 설명해주세요. (약 40자내외, 최대 100자이내)"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">수집목적</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">수집항목</th>
-                                <td><input type="text" class="form-control"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">페이스북 Pixel ID</th>
-                                <td><input type="text" class="form-control" placeholder="페이스북 픽셀을 사용하는 경우 체인쏘우에 등록된 픽셀ID를 입력해 주세요."></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">View Script</th>
-                                <td><textarea placeholder="추적스크립트(View)"></textarea></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">Complete Script</th>
-                                <td><textarea placeholder="추적스크립트(Complete)"></textarea></td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">사용여부</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="linkage_radio" id="linkage_radio01">
-                                            <label class="form-check-label" for="linkage_radio01">사용</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="linkage_radio" id="linkage_radio02">
-                                            <label class="form-check-label" for="linkage_radio02">미사용</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">※ 광고주가 사용중지로 되어있을 경우 랜딩은 노출되지 않습니다.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>                    
-                </div>
+                                        <button type="button" class="btn btn-primary btn-sm float-end" id="add_custom">추가</button>
+                                    </td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">브라우저 제목(타이틀)</th>
+                                    <td><input type="text" name="title" class="form-control" placeholder="이벤트를 잘 표현할 수 있는 핵심단어를 사용하여 제목을 입력해주세요.(약 20자내외)"></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">키워드</th>
+                                    <td>
+                                        <input type="text" name="keyword" class="form-control" id="tag">
+                                        <p class="mt-2 text-secondary">※ 이벤트의 핵심 키워드를 입력해주세요.</p>
+                                    </td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">설명</th>
+                                    <td><input type="text" name="subtitle" class="form-control" placeholder="이벤트를 구체적으로 설명해주세요. (약 40자내외, 최대 100자이내)"></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">수집목적</th>
+                                    <td><input type="text" name="object" class="form-control" placeholder="ex) 라식,라섹"></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">수집항목</th>
+                                    <td><input type="text" name="object_items" placeholder="ex) 이름,나이,전화번호" class="form-control"></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">페이스북 Pixel ID</th>
+                                    <td><input type="text" class="form-control" name="pixel_id" placeholder="페이스북 픽셀을 사용하는 경우 체인쏘우에 등록된 픽셀ID를 입력해 주세요."></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">View Script</th>
+                                    <td><textarea name="view_script" id="view_script" placeholder="추적스크립트(View)"></textarea></td>
+                                </tr>
+                                <tr class="leadHide">
+                                    <th scope="row" class="text-end">Complete Script</th>
+                                    <td><textarea name="done_script" id="done_script" placeholder="추적스크립트(Complete)"></textarea></td>
+                                </tr>
+                            </tbody>
+                        </table>           
+                    </div>
 
-                <h2 class="body-title">이벤트 정보</h2>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-left-header">
-                        <colgroup>
-                            <col style="width:30%;">
-                            <col style="width:70%;">
-                        </colgroup>
-                        <tbody>
-                            <tr>
-                                <th scope="row" class="text-end">성별</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="gender_radio" id="gender_radio01">
-                                            <label class="form-check-label" for="gender_radio01">무관</label>
+                    <h2 class="body-title mt-4">인정기준</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-left-header">
+                            <colgroup>
+                                <col style="width:30%;">
+                                <col style="width:70%;">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="text-end">성별</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0" name="check_gender" id="check_gender01" checked>
+                                                <label class="form-check-label" for="check_gender01">무관</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="m"  name="check_gender" id="check_gender02">
+                                                <label class="form-check-label" for="check_gender02">남</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" value="f"  name="check_gender" id="check_gender03">
+                                                <label class="form-check-label" for="check_gender03">여</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="gender_radio" id="gender_radio02">
-                                            <label class="form-check-label" for="gender_radio02">남</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">나이</th>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input type="text" name="check_age_min" class="form-control">
+                                            <span class="m-2">~</span>
+                                            <input type="text" name="check_age_max" class="form-control">
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="gender_radio" id="gender_radio03">
-                                            <label class="form-check-label" for="gender_radio03">여</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">중복기간</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="1" name="duplicate_term" id="duplicate_term01">
+                                                <label class="form-check-label" for="duplicate_term01">1일</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="7" name="duplicate_term" id="duplicate_term02">
+                                                <label class="form-check-label" for="duplicate_term02">1주</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="30" name="duplicate_term" id="duplicate_term03">
+                                                <label class="form-check-label" for="duplicate_term03">1개월</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="60" name="duplicate_term" id="duplicate_term04">
+                                                <label class="form-check-label" for="duplicate_term04">2개월</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="90" name="duplicate_term" id="duplicate_term05">
+                                                <label class="form-check-label" for="duplicate_term05">3개월</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="120" name="duplicate_term" id="duplicate_term06">
+                                                <label class="form-check-label" for="duplicate_term06">4개월</label>
+                                            </div>
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="150" name="duplicate_term" id="duplicate_term07">
+                                                <label class="form-check-label" for="duplicate_term07">5개월</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" value="180" name="duplicate_term" id="duplicate_term08" checked>
+                                                <label class="form-check-label" for="duplicate_term08">전체</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">나이</th>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <input type="text" class="form-control">
-                                        <span class="m-2">~</span>
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">중복기간</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio01">
-                                            <label class="form-check-label" for="term_radio01">1일</label>
+                                        <p class="text-secondary">※ 중복기간 변경이후 시점의 DB부터 적용됩니다.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">전화번호 중복</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0"  name="check_phone" id="check_phone01">
+                                                <label class="form-check-label" for="check_phone01">미사용</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" value="1"  name="check_phone" id="check_phone02" checked>
+                                                <label class="form-check-label" for="check_phone02">사용</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio02">
-                                            <label class="form-check-label" for="term_radio02">1주</label>
+                                        <p class="text-secondary">※ 전화번호 중복 사용/미사용 변경이후 시점의 DB부터 적용됩니다.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">이름 중복</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0"  name="check_name" id="check_name01" checked>
+                                                <label class="form-check-label" for="check_name01">미사용</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" value="1"  name="check_name" id="check_name02">
+                                                <label class="form-check-label" for="check_name02">사용</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio03">
-                                            <label class="form-check-label" for="term_radio03">1개월</label>
+                                        <p class="text-secondary">※ 이름 중복 사용/미사용 변경이후 시점의 DB부터 적용됩니다.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">쿠키 중복</th>
+                                    <td>
+                                        <div class="d-flex radio-wrap">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" type="radio" value="0"  name="check_cookie" id="check_cookie01" checked>
+                                                <label class="form-check-label" for="check_cookie01">미사용</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" value="1"  name="check_cookie" id="check_cookie02">
+                                                <label class="form-check-label" for="check_cookie02">사용</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio04">
-                                            <label class="form-check-label" for="term_radio04">2개월</label>
-                                        </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio05">
-                                            <label class="form-check-label" for="term_radio05">3개월</label>
-                                        </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio06">
-                                            <label class="form-check-label" for="term_radio06">4개월</label>
-                                        </div>
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio07">
-                                            <label class="form-check-label" for="term_radio07">5개월</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="term_radio" id="term_radio08">
-                                            <label class="form-check-label" for="term_radio08">전체</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">※ 중복기간 변경이후 시점의 DB부터 적용됩니다.</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">전화번호 중복</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="phone_radio" id="phone_radio01">
-                                            <label class="form-check-label" for="phone_radio01">미사용</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="phone_radio" id="phone_radio02">
-                                            <label class="form-check-label" for="phone_radio02">사용</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">※ 전화번호 중복 사용/미사용 변경이후 시점의 DB부터 적용됩니다.</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">이름 중복</th>
-                                <td>
-                                    <div class="d-flex radio-wrap">
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="radio" name="name_radio" id="name_radio01">
-                                            <label class="form-check-label" for="name_radio01">미사용</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="name_radio" id="name_radio02">
-                                            <label class="form-check-label" for="name_radio02">사용</label>
-                                        </div>
-                                    </div>
-                                    <p class="text-secondary">※ 이름 중복 사용/미사용 변경이후 시점의 DB부터 적용됩니다.</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="text-end">사전 중복 체크</th>
-                                <td>
-                                    <select class="form-select me-2" aria-label="선택">
-                                        <option selected>-선택-</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                        <p class="text-secondary">※ 쿠키 중복 사용/미사용 변경이후 시점의 DB부터 적용됩니다.</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-end">사전 중복 체크</th>
+                                    <td>
+                                        <select class="form-select me-2" aria-label="선택" name='duplicate_precheck'>
+                                            <option value="0">사전 중복 체크 안함</option>
+                                            <option value="1">동일 랜딩 내의 이름과 연락처 중복 여부</option>
+                                            <option value="2">동일 광고주 내의 이름과 연락처 중복 여부</option>
+                                            <option value="3">동일 광고주와 매체 내의 이름과 연락처 중복 여부</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">복사</button>
-                <button type="button" class="btn btn-danger">삭제</button>
+                <!-- <button type="button" class="btn btn-primary">복사</button>
+                <button type="button" class="btn btn-danger">삭제</button> -->
                 <button type="button" class="btn btn-secondary">목록</button>
-                <button type="button" class="btn btn-primary">목록 수정하기</button>
+                <button type="submit" class="btn btn-primary" form="event-register-form">랜딩 만들기</button>
             </div>
         </div>
     </div>
@@ -411,7 +511,7 @@ let data = {};
 let dataTable;
 
 setDate();
-getList()
+getList();
 
 function setData() {
     data = {
@@ -442,7 +542,7 @@ function getList(){
             [ '25개', '10개', '50개', '전체' ]
         ],
         "ajax": {
-            "url": "<?=base_url()?>/eventmanage/event/data",
+            "url": "<?=base_url()?>/eventmanage/event/list",
             "data": function(d) {
                 d.searchData = setData();
             },
@@ -457,11 +557,11 @@ function getList(){
                 "render": function(data, type, row) {
                     config = '';
                     if(row.config == 'disabled'){
-                        config = '<span class="ads_status '+row.config+'" title="광고 비활성화">X</span>';
+                        config = '<span class="ads_status '+row.config+'" title="광고 비활성화"></span>';
                     }
 
                     if(row.config == 'enabled'){
-                        config = '<span class="ads_status '+row.config+'" title="광고 운영중">O</span>';
+                        config = '<span class="ads_status '+row.config+'" title="광고 운영중"></span>';
                     }
                     return config+'<button data-clipboard-text="https://event.hotblood.co.kr/'+data+'">'+data+'</button>';
                 }
@@ -470,7 +570,7 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "10%",
                 "render": function(data, type, row) {
-                    return '<a href="">'+data+'</a>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
+                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
                 }
             },
             { "data": "media_name", "width": "5%"},
@@ -480,8 +580,12 @@ function getList(){
             { "data": "is_stop","width": "5%"},
             { "data": "impressions","width": "5%"},
             { "data": "db","width": "5%"},
-            { "data": "db_price","width": "8%"},
-            { "data": "mb_name", "width": "5%"},
+            { 
+                "data": "db_price",
+                "width": "8%",
+
+            },
+            { "data": "username", "width": "5%"},
             { 
                 "data": "mantis", "width": "5%",
                 "render": function(data, type, row) {
@@ -508,6 +612,9 @@ function getList(){
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        },
+        "initComplete": function(settings, json) {
+            fileCheck();
         }
     });
 }
@@ -558,6 +665,241 @@ function setDate(){
     
     });
 }
+
+function fileCheck() {
+    $.getJSON("https://event.hotblood.co.kr/getfiles", function(response) {
+        $('a.btn_landing').each(function(i, obj) {
+            var filename = $(obj).data('filename') + '.php';
+            if ($.inArray(filename, response) != -1) {
+                $(obj).removeClass('hide');
+            }
+        });
+    });
+}
+		
+function createEvent(data){
+    $.ajax({
+        url : "<?=base_url()?>/eventmanage/event/create", 
+        type : "POST", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("생성되었습니다.");
+                $('#regiModal').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
+function getAdv(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "<?=base_url()?>/eventmanage/event/adv", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(data);
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100,
+        select: function(event, ui) {
+            $('input[name="advertiser"]').val(ui.item.id);
+        }
+    });
+}
+
+function getMedia(inputId){
+    $(inputId).autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "<?=base_url()?>/eventmanage/event/media", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(data);
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100,
+        select: function(event, ui) {
+            $('input[name="media"]').val(ui.item.id);
+        }
+    });
+}
+
+function chkLead() {
+    if ($('input[name="lead"][value="0"]').is(':checked')) {
+        $('.leadHide').show();
+        $('#bizform').hide();
+        $('#bizform input').val('');
+    }else if($('input[name="lead"][value="4"]').is(':checked')){
+        $('.leadHide').hide();
+        $('#bizform').show();
+    }else {
+        $('.leadHide').hide();
+        $('#bizform').hide();
+        $('#bizform input').val('');
+    }
+    /* if ($('input[name=seq]').val()) {
+        if ($('input[name="lead"][value="0"]').is(':checked')) {
+            $('.interlockline:last()').removeClass('last');
+            $('.case:eq(0) tr:eq(6)').removeClass('last').nextAll('tr').show();
+            $('.bizform').hide();
+        } else if ($('input[name="lead"][value="4"]').is(':checked')) {
+            $('.bizform').show();
+            $('.case:eq(0) tr:eq(4)').removeClass('last');
+            $('.interlockline').show();
+            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
+        } else {
+            $('.case:eq(0) tr:eq(6)').removeClass('last');
+            $('.interlockline').show();
+            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
+            $('.bizform').hide();
+        }
+    } else {
+        if ($('input[name="lead"][value="0"]').is(':checked')) {
+            $('.interlockline:last()').removeClass('last');
+            $('.case:eq(0) tr:eq(4)').removeClass('last').nextAll('tr').show();
+            $('.bizform').hide();
+        } else if ($('input[name="lead"][value="4"]').is(':checked')) {
+            $('.bizform').show();
+            $('.case:eq(0) tr:eq(4)').removeClass('last');
+            $('.interlockline').show();
+            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
+        } else {
+            $('.case:eq(0) tr:eq(4)').removeClass('last');
+            $('.interlockline').show();
+            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
+            $('.bizform').hide();
+        }
+    } */
+}
+
+function chkInterlock(){
+    if ($('input[name="interlock"][value="0"]').is(':checked')) {
+        $('.interlock_code').hide();
+        $('.interlock_code input').val('');
+    } else {
+        $('.interlock_code').show();
+    }
+}
+
+function setEvent(data){
+    
+}
+
+$('input[name="adv_name"]').on("focus", function(){
+    $('input[name="advertiser"]').val("");
+	$('input[name="adv_name"]').val("");
+    getAdv('input[name="adv_name"]');
+})
+
+$('input[name="media_name"]').on("focus", function(){
+    $('input[name="media"]').val("");
+	$('input[name="media_name"]').val("");
+    getMedia('input[name="media_name"]');
+})
+
+$('input[name="lead"]').bind('change', function() {
+    chkLead();
+});
+
+$('input[name="interlock"]').bind('change', function() {
+    chkInterlock();
+});
+
+$('#add_custom').click(function() {
+    const custom_row = '<div class="d-flex mb-2 custom_row"><select name="custom_key" class="custom form-select me-2" aria-label="선택"><option selected disabled>개별설정 안함</option><option value="branch">지점</option><option value="sms_number">문자 발송번호</option></select><input type="text" class="form-control" id="custom_val"></div>';
+    $('.custom-row-wrap').last().append(custom_row);
+});
+
+var keywords = [];
+$('input[name="keyword"]').tagit({
+    availableTags: keywords
+}).data("ui-tagit").tagInput.addClass("tagit-input");
+
+$('#regiModal').on('show.bs.modal', function(e) {
+    chkLead();
+    chkInterlock();
+
+    var $btn = $(e.relatedTarget);
+    if ($btn.attr('id') === 'updateBtn') {
+        var $tr = $btn.closest('tr');
+        var seq = $tr.attr('id');
+        $.ajax({
+            type: "get",
+            url: "<?=base_url()?>/eventmanage/event/"+seq,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                console.log(data);
+                setEvent(data);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    }
+})
+.on('hidden.bs.modal', function(e) { //modal Reset
+    /* companyId = '';
+    $(this).removeAttr('data-id');
+    $('#userTable').DataTable().destroy(); 
+    $('#adAccountListTable').DataTable().destroy();
+    $('#adAccountListTable tbody').empty();
+    $('#userTable tbody').empty(); 
+    $('form[name="adv-show-form"]')[0].reset();
+    $('form[name="adaccount-form"]')[0].reset();
+    $('form[name="belong-user-form"]')[0].reset();
+    $('#adv-show-table tbody tr td span').text(''); */
+});
+
+$('form[name="event-register-form"]').bind('submit', function() {
+    var cus_array = new Array();
+    var jarray = new Object();
+    for (var i = 0; i < $('.custom').length; i++) {
+        if ($('.custom_row').eq(i).children('.custom').val() && $('.custom_row').eq(i).children('#custom_val').val()) {
+            var key = $('.custom_row').eq(i).children('.custom').val();
+            var val = $('.custom_row').eq(i).children('#custom_val').val();
+            jarray = {
+                key,
+                val
+            };
+            cus_array.push(jarray);
+        }
+    }
+    $('input[name=custom]').val(JSON.stringify(cus_array));
+    var data = $(this).serialize();
+    createEvent(data);
+    return false;
+});
+
+
+
 </script>
 <?=$this->endSection();?>
 

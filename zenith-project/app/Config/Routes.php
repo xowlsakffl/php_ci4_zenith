@@ -138,7 +138,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('eventmanage', static function($routes){   
         $routes->group('event', static function($routes){   
             $routes->get('', 'EventManage\EventController::index');
-            $routes->get('data', 'EventManage\EventController::getData');
+            $routes->get('list', 'EventManage\EventController::getList');
+            $routes->get('adv', 'EventManage\EventController::getAdv');
+            $routes->get('media', 'EventManage\EventController::getMedia');
+            $routes->post('create', 'EventManage\EventController::createEvent');
+            $routes->get('(:num)', 'EventManage\EventController::getEvent/$1');
         });
 
         $routes->get('advertiser', 'EventManage\AdvertiserController::index');

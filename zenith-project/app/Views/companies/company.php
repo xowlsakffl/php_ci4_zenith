@@ -606,28 +606,6 @@ function createCompany(data){
     });
 }
 
-function createCompany(data){
-    $.ajax({
-        url : "/company/create-company", 
-        type : "POST", 
-        dataType: "JSON", 
-        data : data, 
-        contentType: 'application/json; charset=utf-8',
-        success : function(data){
-            if(data == true){
-                dataTable.draw();
-                alert("생성되었습니다.");
-                $('#adv-create').modal('hide');
-            }
-        }
-        ,error : function(error){
-            var errorMessages = error.responseJSON.messages;
-            var firstErrorMessage = Object.values(errorMessages)[0];
-            alert(firstErrorMessage);
-        }
-    });
-}
-
 function addBelongUser(data){
     $.ajax({
         url : "/company/set-belong-user", 

@@ -6,6 +6,21 @@ use CodeIgniter\Model;
 
 class EventModel extends Model
 {
+    protected $validationRules      = [
+        'advertiser' => 'required',
+        'media' => 'required',
+    ];
+    protected $validationMessages   = [
+        'advertiser' => [
+            'required' => '광고주가 입력되지 않았습니다.',
+        ],
+        'media' => [
+            'required' => '매체가 입력되지 않았습니다.',
+        ],
+    ];
+    protected $skipValidation       = false;
+    protected $cleanValidationRules = true;
+
     public function getInformation($data)
     {
         $srch = $data['searchData'];
@@ -100,5 +115,51 @@ class EventModel extends Model
 		}
 		$data = array_unique($data);
         return $data;
+    }
+
+    public function getAdv($stx)
+    {
+        $builder = $this->db->table('event_advertiser');
+        $builder->select('seq as id, name as value');
+        if(!empty($stx)){
+            $builder->like('name', $stx);
+        }
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
+    public function getMedia($stx)
+    {
+        $builder = $this->db->table('event_media');
+        $builder->select('seq as id, media as value');
+        if(!empty($stx)){
+            $builder->like('media', $stx);
+        }
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
+    public function createEvent($data)
+    {
+        $builder = $this->db->table('event_information');
+        $builder->insert($data);
+
+        return true;
+    }
+
+    public function getEvent($seq)
+    {
+        $builder = $this->db->table('event_information AS info');
+        $builder->select('info.*, adv.name AS advertiser_name, med.media AS media_name');
+        $builder->join('event_advertiser AS adv', 'info.advertiser = adv.seq', 'left');
+        $builder->join('event_media AS med', 'info.media = med.seq', 'left');
+        if(!empty($stx)){
+            $builder->where('info.seq', $seq);
+        }
+
+        $result = $builder->get()->getRowArray();
+        return $result;
     }
 }
