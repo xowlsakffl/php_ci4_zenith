@@ -105,44 +105,61 @@ class EventController extends BaseController
 
     public function createEvent()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
-            $arg = $this->request->getGet();
-            $data = [
-                'advertiser' => $arg['advertiser'],
-                'media' => $arg['media'],
-                'description' => $arg['description'],
-                'db_price' => $arg['db_price'],
-                'interlock' => $arg['interlock'],
-                'lead' => $arg['lead'],
-                'creative_id' => $arg['creative_id'],
-                'bizform_apikey' => $arg['bizform_apikey'],
-                'custom' => $arg['custom'],
-                'title' => $arg['title'],
-                'subtitle' => $arg['subtitle'],
-                'object' => $arg['object'],
-                'object_items' => $arg['object_items'],
-                'pixel_id' => trim($arg['pixel_id']),
-                'view_script' => $arg['view_script'],
-                'done_script' => $arg['done_script'],
-                'check_gender' => $arg['check_gender'],
-                'check_age_min' => $arg['check_age_min'],
-                'check_age_max' => $arg['check_age_max'],
-                'duplicate_term' => $arg['duplicate_term'],
-                'check_phone' => $arg['check_phone'],
-                'check_name' => $arg['check_name'],
-                'check_cookie' => $arg['check_cookie'],
-                'duplicate_precheck' => $arg['duplicate_precheck'],
-                'username' => auth()->user()->username,
-                'ei_datetime' => date('Y-m-d H:i:s'),
-            ];
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $arg = $this->request->getPost();
+            $data = $this->setArg($arg);
+            $data['advertiser'] = $arg['advertiser'];
+            $data['ei_datetime'] = date('Y-m-d H:i:s');
+
             $validation = \Config\Services::validation();
-            $validation->setRules($this->event->validationRules, $this->event->validationMessages);
+            $validationRules      = [
+                'advertiser' => 'required',
+                'media' => 'required',
+            ];
+            $validationMessages   = [
+                'advertiser' => [
+                    'required' => '광고주가 입력되지 않았습니다.',
+                ],
+                'media' => [
+                    'required' => '매체가 입력되지 않았습니다.',
+                ],
+            ];
+            $validation->setRules($validationRules, $validationMessages);
             if (!$validation->run($data)) {
                 $errors = $validation->getErrors();
                 return $this->failValidationErrors($errors);
             }
 
             $result = $this->event->createEvent($data);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function updateEvent()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+            $arg = $this->request->getRawInput();
+            $data = $this->setArg($arg);
+            $data['ei_updatetime'] = date('Y-m-d H:i:s');
+
+            $validation = \Config\Services::validation();
+            $validationRules      = [
+                'media' => 'required',
+            ];
+            $validationMessages   = [
+                'media' => [
+                    'required' => '매체가 입력되지 않았습니다.',
+                ],
+            ];
+            $validation->setRules($validationRules, $validationMessages);
+            if (!$validation->run($data)) {
+                $errors = $validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
+
+            $result = $this->event->updateEvent($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -158,5 +175,36 @@ class EventController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    private function setArg($arg){
+        $data = [
+            'media' => $arg['media'],
+            'description' => $arg['description'],
+            'db_price' => $arg['db_price'],
+            'interlock' => $arg['interlock'],
+            'lead' => $arg['lead'],
+            'creative_id' => $arg['creative_id'],
+            'bizform_apikey' => $arg['bizform_apikey'],
+            'custom' => $arg['custom'],
+            'title' => $arg['title'],
+            'subtitle' => $arg['subtitle'],
+            'object' => $arg['object'],
+            'object_items' => $arg['object_items'],
+            'pixel_id' => trim($arg['pixel_id']),
+            'view_script' => $arg['view_script'],
+            'done_script' => $arg['done_script'],
+            'check_gender' => $arg['check_gender'],
+            'check_age_min' => $arg['check_age_min'],
+            'check_age_max' => $arg['check_age_max'],
+            'duplicate_term' => $arg['duplicate_term'],
+            'check_phone' => $arg['check_phone'],
+            'check_name' => $arg['check_name'],
+            'check_cookie' => $arg['check_cookie'],
+            'duplicate_precheck' => $arg['duplicate_precheck'],
+            'username' => auth()->user()->username,
+        ];
+
+        return $data;
     }
 }

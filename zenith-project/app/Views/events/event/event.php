@@ -106,6 +106,9 @@
     .btn_landing.hide{
         display: none;
     }
+    .create-btn-wrap, .update-btn-wrap{
+        display: none;
+    }
 </style>
 <?=$this->endSection();?>
 
@@ -491,10 +494,14 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-primary">복사</button>
-                <button type="button" class="btn btn-danger">삭제</button> -->
-                <button type="button" class="btn btn-secondary">목록</button>
-                <button type="submit" class="btn btn-primary" form="event-register-form">랜딩 만들기</button>
+                <div class="create-btn-wrap">
+                    <button type="submit" class="btn btn-primary" form="event-register-form" id="createActionBtn">랜딩 생성</button>
+                </div>
+                <div class="update-btn-wrap">
+                    <button type="button" class="btn btn-primary" id="copyActionBtn">복사</button>
+                    <button type="button" class="btn btn-danger"  id="deleteActionBtn">삭제</button>
+                    <button type="submit" class="btn btn-primary" form="event-register-form" id="updateActionBtn">랜딩 수정</button>
+                </div>
             </div>
         </div>
     </div>
@@ -700,6 +707,28 @@ function createEvent(data){
     });
 }
 
+function updateEvent(data){
+    $.ajax({
+        url : "<?=base_url()?>/eventmanage/event/update", 
+        type : "PUT", 
+        dataType: "JSON", 
+        data : data, 
+        contentType: 'application/json; charset=utf-8',
+        success : function(data){
+            if(data == true){
+                dataTable.draw();
+                alert("수정되었습니다.");
+                $('#regiModal').modal('hide');
+            }
+        }
+        ,error : function(error){
+            var errorMessages = error.responseJSON.messages;
+            var firstErrorMessage = Object.values(errorMessages)[0];
+            alert(firstErrorMessage);
+        }
+    });
+}
+
 function getAdv(inputId){
     $(inputId).autocomplete({
         source : function(request, response) {
@@ -877,6 +906,8 @@ $('#regiModal').on('show.bs.modal', function(e) {
         var $tr = $btn.closest('tr');
         var seq = $tr.attr('id');
         $('.landing_info').show();
+        $('.update-btn-wrap').show();
+        $('.create-btn-wrap').hide();
         $.ajax({
             type: "get",
             url: "<?=base_url()?>/eventmanage/event/view",
@@ -884,7 +915,6 @@ $('#regiModal').on('show.bs.modal', function(e) {
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
-                console.log(data);
                 setEvent(data);
                 chkLead();
                 chkInterlock();
@@ -896,6 +926,8 @@ $('#regiModal').on('show.bs.modal', function(e) {
         
     }else{
         $('.landing_info').hide();
+        $('.update-btn-wrap').hide();
+        $('.create-btn-wrap').show();
         $('input[name="adv_name"]').removeAttr('disabled');
         chkLead();
         chkInterlock();
@@ -906,7 +938,8 @@ $('#regiModal').on('show.bs.modal', function(e) {
     $('.custom-row-wrap .update_custom_box').empty();
 });
 
-$('form[name="event-register-form"]').bind('submit', function() {
+$('form[name="event-register-form"]').bind('submit', function(e) {
+    e.preventDefault();
     var cus_array = new Array();
     var jarray = new Object();
     for (var i = 0; i < $('.custom').length; i++) {
@@ -922,7 +955,15 @@ $('form[name="event-register-form"]').bind('submit', function() {
     }
     $('input[name=custom]').val(JSON.stringify(cus_array));
     var data = $(this).serialize();
-    createEvent(data);
+    var clickedButton = $(document.activeElement).attr('id');
+    if(clickedButton == 'createActionBtn'){
+        createEvent(data);
+    }else if(clickedButton == 'updateActionBtn'){
+        updateEvent(data);
+    }else{
+
+    }
+    
     return false;
 });
 

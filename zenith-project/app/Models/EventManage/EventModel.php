@@ -6,21 +6,6 @@ use CodeIgniter\Model;
 
 class EventModel extends Model
 {
-    protected $validationRules      = [
-        'advertiser' => 'required',
-        'media' => 'required',
-    ];
-    protected $validationMessages   = [
-        'advertiser' => [
-            'required' => '광고주가 입력되지 않았습니다.',
-        ],
-        'media' => [
-            'required' => '매체가 입력되지 않았습니다.',
-        ],
-    ];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
-
     public function getInformation($data)
     {
         $srch = $data['searchData'];
@@ -145,6 +130,15 @@ class EventModel extends Model
     {
         $builder = $this->db->table('event_information');
         $builder->insert($data);
+
+        return true;
+    }
+
+    public function updateEvent($data)
+    {
+        $builder = $this->db->table('event_information');
+        $builder->where('seq', $data['seq']);
+        $builder->update($data);
 
         return true;
     }
