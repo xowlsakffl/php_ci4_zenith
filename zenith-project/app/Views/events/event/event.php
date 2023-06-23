@@ -193,17 +193,17 @@
                                 <col style="width:70%;">
                             </colgroup>
                             <tbody>
-                                <!-- <tr>
+                                <tr class="landing_info">
                                     <th scope="row" class="text-end">랜딩번호</th>
-                                    <td>6124</td>
+                                    <td class="landing_info_num"></td>
                                 </tr>
-                                <tr>
+                                <tr class="landing_info">
                                     <th scope="row" class="text-end">랜딩주소</th>
                                     <td>
-                                        <a href="#">https://event.asdkljad.com</a>
+                                        <a href="#" target="_blank" class="landing_info_link"></a>
                                         <button type="button" class="btn btn-secondary btn-sm">복사하기</button>
                                     </td>
-                                </tr> -->
+                                </tr>
                                 <tr>
                                     <th scope="row" class="text-end">광고주</th>
                                     <td><input type="text" class="form-control" name="adv_name" placeholder="광고주명을 입력하세요." autocomplete="off"></td>
@@ -297,6 +297,7 @@
                                     <td>
                                         <input type=hidden name="custom">
                                         <div class="custom-row-wrap">
+                                            <div class="update_custom_box"></div>
                                             <div class="d-flex mb-2 custom_row">
                                                 <select name="custom_key" class="custom form-select me-2" aria-label="선택">
                                                     <option selected disabled>개별설정 안함</option>
@@ -764,39 +765,6 @@ function chkLead() {
         $('#bizform').hide();
         $('#bizform input').val('');
     }
-    /* if ($('input[name=seq]').val()) {
-        if ($('input[name="lead"][value="0"]').is(':checked')) {
-            $('.interlockline:last()').removeClass('last');
-            $('.case:eq(0) tr:eq(6)').removeClass('last').nextAll('tr').show();
-            $('.bizform').hide();
-        } else if ($('input[name="lead"][value="4"]').is(':checked')) {
-            $('.bizform').show();
-            $('.case:eq(0) tr:eq(4)').removeClass('last');
-            $('.interlockline').show();
-            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
-        } else {
-            $('.case:eq(0) tr:eq(6)').removeClass('last');
-            $('.interlockline').show();
-            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
-            $('.bizform').hide();
-        }
-    } else {
-        if ($('input[name="lead"][value="0"]').is(':checked')) {
-            $('.interlockline:last()').removeClass('last');
-            $('.case:eq(0) tr:eq(4)').removeClass('last').nextAll('tr').show();
-            $('.bizform').hide();
-        } else if ($('input[name="lead"][value="4"]').is(':checked')) {
-            $('.bizform').show();
-            $('.case:eq(0) tr:eq(4)').removeClass('last');
-            $('.interlockline').show();
-            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
-        } else {
-            $('.case:eq(0) tr:eq(4)').removeClass('last');
-            $('.interlockline').show();
-            $('.interlockline:last()').addClass('last').nextAll('tr').hide();
-            $('.bizform').hide();
-        }
-    } */
 }
 
 function chkInterlock(){
@@ -808,8 +776,69 @@ function chkInterlock(){
     }
 }
 
+function stripslashes(str) {
+  return str.replace(/\\(.?)/g, function (match, char) {
+    switch (char) {
+      case '\\':
+        return '\\';
+      case '0':
+        return '\u0000';
+      case '':
+        return '';
+      default:
+        return char;
+    }
+  });
+}
+
 function setEvent(data){
-    
+    $('input[name="seq"]').val(data.seq);
+    $('input[name="advertiser"]').val(data.advertiser);
+    $('input[name="media"]').val(data.media);
+    $('.landing_info_num').text(data.seq);
+    $('.landing_info_link').attr('href', 'https://event.hotblood.co.kr/'+data.seq).text('https://event.hotblood.co.kr/'+data.seq);
+    $('input[name="adv_name"]').val(data.advertiser_name).attr('disabled', true);
+    $('input[name="media_name"]').val(data.media_name);
+    $('input[name="description"]').val(data.description);
+    $('input[name="db_price"]').val(data.db_price);
+    $('input:radio[name="is_stop"][value="'+data.is_stop+'"]').prop('checked', true);
+    $('input:radio[name="lead"][value="'+data.lead+'"]').prop('checked', true);
+    $('input:radio[name="interlock"][value="'+data.interlock+'"]').prop('checked', true);
+    $('input[name="partner_id"]').val(data.partner_id);
+    $('input[name="partner_name"]').val(data.partner_name);
+    $('input[name="paper_code"]').val(data.paper_code);
+    $('input[name="paper_name"]').val(data.paper_name);
+
+    if(data.custom && data.custom != '[]'){
+        var json = JSON.parse(data.custom.replace(/\\/g, ''));
+        for (var j = 0; j < json.length; j++) {
+
+            custom_row = '<div class="d-flex mb-2 custom_row"><select name="custom_key" class="custom form-select me-2" aria-label="선택"><option selected disabled>개별설정 안함</option><option value="branch" ' + ((json[j].key === 'branch') ? 'selected' : '') + '>지점</option><option value="sms_number" ' + ((json[j].key === 'sms_number') ? 'selected' : '') + '>문자 발송번호</option></select><input type="text" class="form-control" id="custom_val" value="' + json[j].val + '"></div>';
+
+            $('.custom-row-wrap .update_custom_box').prepend(custom_row);
+        }
+    }
+    $('input[name="title"]').val(data.title);
+    $('input[name="keyword"]').val(data.keywords);
+    $('input[name="subtitle"]').val(data.subtitle);
+    $('input[name="object"]').val(data.object);
+    $('input[name="object_items"]').val(data.object_items);
+    $('input[name="pixel_id"]').val(data.pixel_id);
+    $('textarea[name="view_script"]').text(stripslashes(data.view_script));
+    $('textarea[name="done_script"]').text(stripslashes(data.done_script));
+    $('input:radio[name="check_gender"][value="'+data.check_gender+'"]').prop('checked', true);
+    $('input[name="check_age_min"]').val(data.check_age_min);
+    $('input[name="check_age_max"]').val(data.check_age_max);
+
+    if(data.duplicate_term){
+        $('input:radio[name="duplicate_term"][value="'+data.duplicate_term+'"]').prop('checked', true);
+    }else{
+        $('input:radio[name="duplicate_term"][value="180"]').prop('checked', true);
+    }
+    $('input:radio[name="check_phone"][value="'+data.check_phone+'"]').prop('checked', true);
+    $('input:radio[name="check_name"][value="'+data.check_name+'"]').prop('checked', true);
+    $('input:radio[name="check_cookie"][value="'+data.check_cookie+'"]').prop('checked', true);
+    $('select[name="duplicate_precheck"]').val(data.duplicate_precheck);
 }
 
 $('input[name="adv_name"]').on("focus", function(){
@@ -843,39 +872,38 @@ $('input[name="keyword"]').tagit({
 }).data("ui-tagit").tagInput.addClass("tagit-input");
 
 $('#regiModal').on('show.bs.modal', function(e) {
-    chkLead();
-    chkInterlock();
-
     var $btn = $(e.relatedTarget);
     if ($btn.attr('id') === 'updateBtn') {
         var $tr = $btn.closest('tr');
         var seq = $tr.attr('id');
+        $('.landing_info').show();
         $.ajax({
             type: "get",
-            url: "<?=base_url()?>/eventmanage/event/"+seq,
+            url: "<?=base_url()?>/eventmanage/event/view",
+            data: {'seq':seq},
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
                 console.log(data);
                 setEvent(data);
+                chkLead();
+                chkInterlock();
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
             }
         });
+        
+    }else{
+        $('.landing_info').hide();
+        $('input[name="adv_name"]').removeAttr('disabled');
+        chkLead();
+        chkInterlock();
     }
 })
-.on('hidden.bs.modal', function(e) { //modal Reset
-    /* companyId = '';
-    $(this).removeAttr('data-id');
-    $('#userTable').DataTable().destroy(); 
-    $('#adAccountListTable').DataTable().destroy();
-    $('#adAccountListTable tbody').empty();
-    $('#userTable tbody').empty(); 
-    $('form[name="adv-show-form"]')[0].reset();
-    $('form[name="adaccount-form"]')[0].reset();
-    $('form[name="belong-user-form"]')[0].reset();
-    $('#adv-show-table tbody tr td span').text(''); */
+.on('hidden.bs.modal', function(e) { 
+    $('form[name="event-register-form"]')[0].reset();
+    $('.custom-row-wrap .update_custom_box').empty();
 });
 
 $('form[name="event-register-form"]').bind('submit', function() {

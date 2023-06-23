@@ -149,9 +149,10 @@ class EventController extends BaseController
         }
     }
 
-    public function getEvent($seq)
+    public function getEvent()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+            $seq = $this->request->getGet('seq');
             $result = $this->event->getEvent($seq);
             return $this->respond($result);
         }else{

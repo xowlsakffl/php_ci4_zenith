@@ -155,10 +155,8 @@ class EventModel extends Model
         $builder->select('info.*, adv.name AS advertiser_name, med.media AS media_name');
         $builder->join('event_advertiser AS adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media AS med', 'info.media = med.seq', 'left');
-        if(!empty($stx)){
-            $builder->where('info.seq', $seq);
-        }
-
+        $builder->where('info.seq', $seq);
+        
         $result = $builder->get()->getRowArray();
         return $result;
     }
