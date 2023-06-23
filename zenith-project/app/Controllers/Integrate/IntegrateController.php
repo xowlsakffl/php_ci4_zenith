@@ -11,9 +11,13 @@ class IntegrateController extends BaseController
     use ResponseTrait;
     
     protected $integrate;
+    protected $is_pravate_perm = false;
     public function __construct() 
     {
         $this->integrate = model(IntegrateModel::class);
+        if(auth()->user()->inGroup('superadmin','admin','developer')) {
+            $this->is_pravate_perm = true;
+        }
     }
 
     public function index()
@@ -39,6 +43,19 @@ class IntegrateController extends BaseController
                 $etc = [];
                 if(!empty($d['email'])) {
                     $etc[] = $d['email'];
+                }
+                if(!$this->is_pravate_perm) {
+                    if(!preg_match('/test|테스트/i', $d['name']) && $d['status'] != 7) {
+                        $d['dec_phone'] = substr($d['dec_phone'],0,3).'<i class="masking">&#9618;&#9618;</i>'.substr($d['dec_phone'],-4);
+                        $name = trim($d['name']);
+                        $d['name'] = '';
+                        for($ii=0; $ii<mb_strlen($name); $ii++) {
+                            if(mb_strlen($name) >= 4 && $ii > 2 && mb_strlen($name)-1 != $ii)
+                                continue;
+                            else 
+                                $d['name'] .= (($ii>0&&$ii<mb_strlen($name)-1)||$ii==1)?'<i class="masking">&#9618;</i>':mb_substr($name, $ii, 1);
+                        }
+                    }
                 }
                 for($i2=1;$i2<6;$i2++){
                     if(!empty($d['add'.$i2])){		
@@ -70,6 +87,9 @@ class IntegrateController extends BaseController
                 }
                 $add = implode('/', $etc);    
                 $d['add'][] = $add;
+            }
+            if(isset($arg['noLimit'])) {
+                return $this->respond($list['data']);
             }
 
             $leadsAll = $this->integrate->getEventLeadCount($arg);

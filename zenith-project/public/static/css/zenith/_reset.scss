@@ -36,7 +36,8 @@ select:focus{outline:none;}
 select::-ms-expand{display:none;}
 ::-moz-selection {color:#fff; background:#009dff;}
 ::selection {color:#fff; background:#009dff;}
-
+.masking{font-style:normal; font-family:Gulim; letter-spacing:0px;}
+.masking:last-child{padding-right:1.5px;}
 @include medium{
     html, body{font-size:14px;}
 }

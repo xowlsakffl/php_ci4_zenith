@@ -107,7 +107,9 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 input[type=submit], button {
@@ -146,7 +148,9 @@ textarea:focus {
 }
 
 select {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 select:focus {
@@ -165,6 +169,16 @@ select::-ms-expand {
 ::selection {
   color: #fff;
   background: #009dff;
+}
+
+.masking {
+  font-style: normal;
+  font-family: Gulim;
+  letter-spacing: 0px;
+}
+
+.masking:last-child {
+  padding-right: 1.5px;
 }
 
 @media screen and (max-width: 1024px) {
@@ -1365,6 +1379,4 @@ div.dataTables_processing > div:last-child > div {
   .table-modal {
     min-width: 800px;
   }
-}
-
-/*# sourceMappingURL=ui.css.map */
+}/*# sourceMappingURL=ui.css.map */

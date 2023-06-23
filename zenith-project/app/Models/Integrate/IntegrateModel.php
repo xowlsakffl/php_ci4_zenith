@@ -109,7 +109,7 @@ class IntegrateModel extends Model
         }
         $orderBy[] = "seq DESC";
         $builder->orderBy(implode(",", $orderBy),'',true);
-        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        if(isset($data['length']) && !isset($data['noLimit'])) $builder->limit($data['length'], $data['start']);
         // dd($builder->getCompiledSelect());
         // 결과 반환
         $result = $builder->get()->getResultArray();

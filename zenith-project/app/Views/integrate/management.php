@@ -16,6 +16,8 @@
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
+<script src="/static/js/pdfmake/pdfmake.min.js"></script>
+<script src="/static/js/pdfmake/vfs_fonts.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -144,10 +146,15 @@ var lead_status = {
     "13":"쿠키중복", 
     "99":"확인", 
 };
+var exportCommon = {
+    'exportOptions': { //{'columns': 'th:not(:last-child)'},
+        'modifier': {'page':'all'},
+    }
+};
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
-let dataTable, tableParam;
+let dataTable, tableParam = {};
 getList();
 function setSearchData() {
     var data = tableParam;
@@ -165,6 +172,26 @@ function setSearchData() {
     debug('searchData 세팅')
     if(typeof dataTable != 'undefined') dataTable.state.save();
 }
+$.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serverside export
+    var arr = [];
+    $.ajax({
+        "url": "<?=base_url()?>/integrate/list",
+        "data": {"searchData":tableParam.searchData, "noLimit":true},
+        "type": "GET",
+        "contentType": "application/json",
+        "dataType": "json",
+        "success": function (result) {
+            console.log(result);
+            $.each(result, function(i,row) {
+                // arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
+                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
+            });
+        },
+        "async": false
+    });
+    // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
+    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"]};
+} );
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
@@ -229,15 +256,29 @@ function getList(data = []) { //리스트 세팅
                             'removeAllStates'
                         ]
                     },
+                    '<h3>내보내기</h3>',
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'copyHtml5'
+                    } ),
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'excelHtml5'
+                    } ),
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL'
+                    } )
+                    /*
                     {
                         'extend': 'excelHtml5',
+                        'autoiFilter': true,
                         'exportOptions': { //{'columns': 'th:not(:last-child)'},
                             'customizeData': function(data) {
                                 var header = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"];
                                 var body = [];
                                 $.each(data['body'], function(i, row) {
                                     var row = row[0];
-                                    body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, row.status];
+                                    body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]];
                                 });
                                 data.header = header;
                                 data.body = body;
@@ -245,6 +286,7 @@ function getList(data = []) { //리스트 세팅
                             }
                         }
                     }
+                    */
                 ]
             },
             
@@ -272,7 +314,7 @@ function getList(data = []) { //리스트 세팅
             { "data": "tab_name" },
             { "data": "name", "width": "50px",
               "render": function(data) {
-                return '<span title="'+data+'">'+data+'</span>';
+                return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
               } 
             },
             { "data": "dec_phone", "width": "90px" },
@@ -444,7 +486,7 @@ function setLeadCount(data) {
             if(v.count != v.total) cnt_txt = v.count + "/" + v.total;
             button = $(`#${type}-list .col[data-name="${v.label}"] button`);
             button.siblings('.progress').children('.txt').text(`${cnt_txt}`);
-            if(tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "") return true;
+            if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
             if(v.count) button.addClass('on');
         });
     });
