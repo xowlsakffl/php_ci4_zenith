@@ -142,8 +142,10 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('adv', 'EventManage\EventController::getAdv');
             $routes->get('media', 'EventManage\EventController::getMedia');
             $routes->post('create', 'EventManage\EventController::createEvent');
+            $routes->post('copy', 'EventManage\EventController::copyEvent');
             $routes->put('update', 'EventManage\EventController::updateEvent');
             $routes->get('view', 'EventManage\EventController::getEvent');
+            $routes->delete('delete', 'EventManage\EventController::deleteEvent');
         });
 
         $routes->get('advertiser', 'EventManage\AdvertiserController::index');

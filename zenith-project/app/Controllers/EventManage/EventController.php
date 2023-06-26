@@ -106,7 +106,7 @@ class EventController extends BaseController
     public function createEvent()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
-            $arg = $this->request->getPost();
+            $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
             $data['advertiser'] = $arg['advertiser'];
             $data['ei_datetime'] = date('Y-m-d H:i:s');
@@ -142,6 +142,7 @@ class EventController extends BaseController
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
+            $data['seq'] = $arg['seq'];
             $data['ei_updatetime'] = date('Y-m-d H:i:s');
 
             $validation = \Config\Services::validation();
@@ -166,6 +167,47 @@ class EventController extends BaseController
         }
     }
 
+    public function copyEvent()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
+            $data = $this->request->getRawInput();
+            if(empty($data['seq'])){
+                return $this->fail("잘못된 요청");
+            }
+            $result = $this->event->copyEvent($data['seq']);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function deleteEvent()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'delete'){
+            $data = $this->request->getRawInput();
+            if(empty($data['seq'])){
+                return $this->fail("잘못된 요청");
+            }
+            $url = "https://event.hotblood.co.kr/filecheck/".$data['seq'];
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            if (!$response) {
+                $result = $this->event->deleteEvent($data['seq']);
+                return $this->respond($result);
+            } else {
+                $result = $this->event->deleteEvent($data['seq']);
+                return $this->respond($result);
+                return $this->fail("삭제할 수 없는 이벤트입니다.");
+            }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function getEvent()
     {
         if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
@@ -183,6 +225,10 @@ class EventController extends BaseController
             'description' => $arg['description'],
             'db_price' => $arg['db_price'],
             'interlock' => $arg['interlock'],
+            'partner_id' => $arg['partner_id'],
+            'partner_name' => $arg['partner_name'],
+            'paper_code' => $arg['paper_code'],
+            'paper_name' => $arg['paper_name'],
             'lead' => $arg['lead'],
             'creative_id' => $arg['creative_id'],
             'bizform_apikey' => $arg['bizform_apikey'],

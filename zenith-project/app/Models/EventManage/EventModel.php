@@ -143,6 +143,21 @@ class EventModel extends Model
         return true;
     }
 
+    public function copyEvent($seq)
+    {
+        $data = $this->db->table('event_information')->select('advertiser, media, lead, title, description, subtitle, object, object_items, interlock, partner_id, partner_name, paper_code, paper_name, pixel_id, view_script, done_script, db_price, check_gender, check_age_min, check_age_max, duplicate_term, check_phone, check_name, check_cookie')
+            ->where('seq', $seq)
+            ->get()->getRowArray();
+
+        $data['is_stop'] = 0;
+        $data['username'] = auth()->user()->username;
+        $data['ei_datetime'] = date('Y-m-d H:i:s');
+
+        $this->db->table('event_information')->insert($data);
+
+        return true;
+    }
+
     public function getEvent($seq)
     {
         $builder = $this->db->table('event_information AS info');
@@ -153,5 +168,14 @@ class EventModel extends Model
         
         $result = $builder->get()->getRowArray();
         return $result;
+    }
+
+    public function deleteEvent($seq)
+    {
+        $builder = $this->db->table('event_information');
+        $builder->where('seq', $seq);
+        $builder->delete();
+
+        return true;
     }
 }

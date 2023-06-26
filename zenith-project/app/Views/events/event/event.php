@@ -909,7 +909,7 @@ $('#regiModal').on('show.bs.modal', function(e) {
         $('.update-btn-wrap').show();
         $('.create-btn-wrap').hide();
         $.ajax({
-            type: "get",
+            type: "GET",
             url: "<?=base_url()?>/eventmanage/event/view",
             data: {'seq':seq},
             dataType: "json",
@@ -928,13 +928,18 @@ $('#regiModal').on('show.bs.modal', function(e) {
         $('.landing_info').hide();
         $('.update-btn-wrap').hide();
         $('.create-btn-wrap').show();
+        $('input[name="keyword"]').tagit("removeAll");
         $('input[name="adv_name"]').removeAttr('disabled');
         chkLead();
         chkInterlock();
     }
 })
 .on('hidden.bs.modal', function(e) { 
+    $('input[name="seq"]').val('');
+    $('input[name="advertiser"]').val('');
+    $('input[name="media"]').val('');
     $('form[name="event-register-form"]')[0].reset();
+    $('form[name="event-register-form"] textarea').text('');
     $('.custom-row-wrap .update_custom_box').empty();
 });
 
@@ -958,16 +963,62 @@ $('form[name="event-register-form"]').bind('submit', function(e) {
     var clickedButton = $(document.activeElement).attr('id');
     if(clickedButton == 'createActionBtn'){
         createEvent(data);
-    }else if(clickedButton == 'updateActionBtn'){
+    }
+    
+    if(clickedButton == 'updateActionBtn'){
         updateEvent(data);
-    }else{
-
     }
     
     return false;
 });
 
+$('#copyActionBtn').on('click', function(e) {
+    seq = $('#regiModal input[name="seq"]').val();
+    if(confirm("복사하시겠습니까?") && seq){
+        $.ajax({
+            type: "POST",
+            url: "<?=base_url()?>/eventmanage/event/copy",
+            data: {'seq':seq},
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                if(data == true){
+                    dataTable.draw();
+                    alert("복사되었습니다.");
+                    $('#regiModal').modal('hide');
+                }
+            },
+            error: function(error, status, msg){
+                console.log()
+                alert("상태코드: " + error.responseJSON.status + " 에러메시지: " + error.responseJSON.messages.error );
+            }
+        });
+    }
+});
 
+$('#deleteActionBtn').on('click', function(e) {
+    seq = $('#regiModal input[name="seq"]').val();
+    if(confirm("삭제하시겠습니까?") && seq){
+        $.ajax({
+            type: "DELETE",
+            url: "<?=base_url()?>/eventmanage/event/delete",
+            data: {'seq':seq},
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                if(data == true){
+                    dataTable.draw();
+                    alert("삭제되었습니다.");
+                    $('#regiModal').modal('hide');
+                }
+            },
+            error: function(error, status, msg){
+                console.log()
+                alert("상태코드: " + error.responseJSON.status + " 에러메시지: " + error.responseJSON.messages.error );
+            }
+        });
+    }
+});
 
 </script>
 <?=$this->endSection();?>
