@@ -32,7 +32,7 @@ CHAIN 열혈광고 - 회계 관리 / 미수금 관리
                     </div>
                 </form>
             </div>
-            <p class="mb-4">* 2019년 9월 1일부터 세부내역 조회가 가능하며, 문의사랑이 있을 경우 경영지원실로 문의하시기 바랍니다.</p>
+            <p class="mb-4">* 2019년 9월 1일부터 세부내역 조회가 가능하며, 문의사항이 있을 경우 경영지원실로 문의하시기 바랍니다.</p>
 
             <div class="table-responsive">
                 <table class="table table-striped table-hover table-default caption-top">

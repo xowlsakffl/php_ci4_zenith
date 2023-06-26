@@ -13,16 +13,16 @@
             select{background-color:#fff; padding:0.2rem 1rem;}
         }
     
-        .dataTables_info{float:unset; position: absolute; right:0;
+        .dataTables_info{float:unset; position: absolute; right:0;  padding-top:1.755em;
             i.bi{color:red; padding-right:6px;}
             span{color:#878787; position:relative;
                 &:hover{font-weight:900;}
                 @include underline-effect($bg:#878787);
             }
         }
-
-        .dataTables_paginate{float:unset; text-align: center; padding-bottom:1.755em;
-            .paginate_button{border:none;
+    
+        .dataTables_paginate{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
+            .paginate_button{border:none; padding:0.25rem 0.5rem;
                 &.disabled,
                 &.disabled:hover{color:#aaa !important;}
 
@@ -31,13 +31,14 @@
                     @include underline-effect;
                 }
                 &.current{
-                    color:#fff !important; background-color:red; border:none;
+                    color:#fff !important; background-color:red; border:none; padding:0.2rem 1rem; border-radius:4px;
                     &:hover{color:#fff !important; background-color:red; border:none;}
                 } 
                 &:active{background:none; border:none;}
             }            
         }
-        table.dataTable{
+    
+        table.dataTable{            
             tbody tr{background-color:#fff;}
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
             select.data-del{padding:3px; border-radius:4px;}
@@ -66,7 +67,7 @@
 @media screen and (max-width: 767px){
     .sub-contents-wrap{
         .dataTables_wrapper{
-            .dataTables_info{padding-top: 1.755em;}
+            .dataTables_info,
             .dataTables_paginate{padding-top:1.25em;}
         }
     }    

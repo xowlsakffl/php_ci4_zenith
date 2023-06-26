@@ -28,31 +28,62 @@ class AdvManagerController extends BaseController
         return view('advertisements/manage');
     }
 
-    public function getAccounts()
-    {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = [
-                'dates' => [
-                    'sdate' => $this->request->getGet('sdate'),
-                    'edate' => $this->request->getGet('edate'),
-                ],
-                'media' => $this->request->getGet('media'),
-            ];
+    public function getData(){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
 
-            if(empty($arg['media'])){
-                $result = [];
-                return $this->respond($result);
+            if(empty($arg['searchData']['media'])){
+                return $this->fail("잘못된 요청");
             }
 
-            $result  = [];    
-            $accounts = $this->admanager->getAccounts($arg);
-            //$accounts = $this->setAccountData($accounts);
-            $result = array_merge($result, $accounts); 
+            if(!isset($arg['searchData'])) {
+                $arg['searchData'] = [
+                    'sdate'=> date('Y-m-d'),
+                    'edate'=> date('Y-m-d')
+                ];
+            }
 
+            switch ($arg['searchData']['type']) {
+                case 'ads':
+                    $result = $this->getAds($arg);
+                    break;
+                case 'adsets':
+                    $result = $this->getAdSets($arg);
+                    break;
+                case 'campaigns':
+                    $result = $this->getCampaigns($arg);
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
+
+            foreach ($result['data'] as &$value) {
+                $value['budget'] = number_format($value['budget']);
+                $value['impressions'] = number_format($value['impressions']);
+                $value['click'] = number_format($value['click']);
+                $value['spend'] = number_format($value['spend']);
+                $value['sales'] = number_format($value['sales']);
+                $value['unique_total'] = number_format($value['unique_total']);
+                $value['margin'] = number_format($value['margin']);
+                $value['cpa'] = number_format($value['cpa']);
+                $value['cpc'] = number_format($value['cpc']);
+            }
+
+            $result['accounts'] = $this->getAccounts($arg);
+            $result['report'] = $this->getReport($arg);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    private function getAccounts($arg)
+    {
+        $result  = [];    
+        $accounts = $this->admanager->getAccounts($arg);
+        //$accounts = $this->setAccountData($accounts);
+        $result = array_merge($result, $accounts); 
+        return $result;
     }
 
     /* private function setAccountData($accounts)
@@ -107,119 +138,59 @@ class AdvManagerController extends BaseController
 
         return $data;
     } */
-
-    public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
-
-            if(empty($arg['searchData']['media'])){
-                $result = [];
-                return $this->respond($result);
-            }
-
-            $arg['searchData']['dates'] = [
-                'sdate' => $arg['searchData']['sdate'],
-                'edate' => $arg['searchData']['edate'],
-            ];
-
-            switch ($arg['searchData']['type']) {
-                case 'ads':
-                    $result = $this->getAds($arg);
-                    break;
-                case 'adsets':
-                    $result = $this->getAdSets($arg);
-                    break;
-                case 'campaigns':
-                    $result = $this->getCampaigns($arg);
-                    break;
-                default:
-                    return $this->fail("잘못된 요청");
-            }
-            
-            foreach ($result['data'] as &$value) {
-                $value['budget'] = number_format($value['budget']);
-                $value['impressions'] = number_format($value['impressions']);
-                $value['click'] = number_format($value['click']);
-                $value['spend'] = number_format($value['spend']);
-                $value['sales'] = number_format($value['sales']);
-                $value['unique_total'] = number_format($value['unique_total']);
-                $value['margin'] = number_format($value['margin']);
-                $value['cpa'] = number_format($value['cpa']);
-                $value['cpc'] = number_format($value['cpc']);
-            }
-
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        }
-    }
-
-    public function getReport()
-    {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
-            $arg['dates'] = [
-                'sdate' => $arg['sdate'],
-                'edate' => $arg['edate'],
-            ];
-
-            if(empty($arg['media'])){
-                $result = [];
-                return $this->respond($result);
-            }
-
-            $result = $this->admanager->getReport($arg);
-            $columnIndex = 0;
-            $data = [];
-            foreach($result as $row) {
-                $data[] = $row;
-                foreach ($row as $col => $val) {
-                    if ($val == NULL) $val = "0";
-                    $total[$col][$columnIndex] = $val;
-                }
-                $columnIndex++;
-            }
-
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] = 0;
     
-            if(!empty($result)){
-                $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-                $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
-                if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
-                    $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
-                }
-                $report['spend_sum'] = array_sum($total['spend']); //총 지출액
-                $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
-                if ($report['clicks_sum'] != 0) {
-                    $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
-                } else {
-                    $report['cpc'] = 0;
-                }
-                $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
-                if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
-                    $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
-                }
-                if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
-                    $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
-                }
-                $report['price_sum'] = array_sum($total['price']); //총 매출액
-                $report['profit_sum'] = array_sum($total['profit']); //총 수익
-                if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
-                    $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
-                }
+    private function getReport($arg)
+    {
+        $result = $this->admanager->getReport($arg);
+        $columnIndex = 0;
+        $data = [];
+        foreach($result as $row) {
+            $data[] = $row;
+            foreach ($row as $col => $val) {
+                if ($val == NULL) $val = "0";
+                $total[$col][$columnIndex] = $val;
+            }
+            $columnIndex++;
+        }
 
-                $report['impressions_sum'] = number_format($report['impressions_sum']);
-                $report['clicks_sum'] = number_format($report['clicks_sum']);
-                $report['spend_sum'] = number_format($report['spend_sum']);
-                $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
-                $report['spend_ratio_sum'] = number_format($report['spend_ratio_sum']);
-                $report['price_sum'] = number_format($report['price_sum']);
+        $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] = 0;
+
+        if(!empty($result)){
+            $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+            $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
+            if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100, 2); //총 클릭률    
+            }
+            $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+            $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
+            if ($report['clicks_sum'] != 0) {
+                $report['cpc'] = round($report['spend_sum'] / $report['clicks_sum'], 2);
+            } else {
+                $report['cpc'] = 0;
+            }
+            $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+            if ($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'], 0); //총 db당 단가
+            }
+            if ($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100, 2); //총 전환율
+            }
+            $report['price_sum'] = array_sum($total['price']); //총 매출액
+            $report['profit_sum'] = array_sum($total['profit']); //총 수익
+            if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
             }
 
-            return $this->respond($report);
-        }else{
-            return $this->fail("잘못된 요청");
+            $report['impressions_sum'] = number_format($report['impressions_sum']);
+            $report['clicks_sum'] = number_format($report['clicks_sum']);
+            $report['spend_sum'] = number_format($report['spend_sum']);
+            $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
+            $report['spend_ratio_sum'] = number_format($report['spend_ratio_sum']);
+            $report['price_sum'] = number_format($report['price_sum']);
+            $report['profit_sum'] = number_format($report['profit_sum']);
         }
+
+        return $report;
     }
 
     private function getCampaigns($arg)

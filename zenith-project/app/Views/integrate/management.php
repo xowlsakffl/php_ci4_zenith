@@ -70,7 +70,7 @@
             <div class="statusCount detail d-flex minWd"></div>     
         </div>
 
-        <div class="row table-responsive">
+        <div class="table-responsive pt-4">
             <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
                 <button type="button" class="btns-memo" value="modal" title="새창으로 표시"><i class="bi bi-window-stack"></i></button>

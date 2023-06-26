@@ -17,7 +17,7 @@ class AdvManagerModel extends Model
 
     public function getAccounts($data)
     {
-        return $this->getQueryResults($data, 'getAccounts');
+        return $this->getQueryResults($data['searchData'], 'getAccounts');
     }
 
     public function getCampaigns($data)
@@ -37,24 +37,24 @@ class AdvManagerModel extends Model
 
     public function getReport($data)
     {
-        return $this->getQueryResults($data, 'getReport');
+        return $this->getQueryResults($data['searchData'], 'getReport');
     }
 
     private function getQueryResults($data, $type)
     {
         $builders = [];
-
-        if (in_array('facebook', $data['media'])) {
+        $media = explode("|", $data['media']);
+        if (in_array('facebook', $media)) {
             $facebookBuilder = $this->facebook->$type($data);
             $builders[] = $facebookBuilder;
         }
 
-        if (in_array('google', $data['media'])) {
+        if (in_array('google', $media)) {
             $googleBuilder = $this->google->$type($data);
             $builders[] = $googleBuilder;
         }
 
-        if (in_array('kakao', $data['media'])) {
+        if (in_array('kakao', $media)) {
             $kakaoBuilder = $this->kakao->$type($data);
             $builders[] = $kakaoBuilder;
         }

@@ -6,8 +6,17 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.js"></script>
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
+<script src="/static/js/jszip.min.js"></script>
+<script src="/static/js/pdfmake/pdfmake.min.js"></script>
+<script src="/static/js/pdfmake/vfs_fonts.js"></script>
 <style>
     .inner button.disapproval::after{
         position: absolute;
@@ -45,7 +54,7 @@
     </div>
 
     <div class="search-wrap">
-        <form class="search d-flex justify-content-center">
+        <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
                 <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
@@ -55,50 +64,11 @@
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" id="search_btn" type="button">조회</button>
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
             </div>
         </form>
-        <div class="detail row d-flex justify-content-center" id="reportData">
-            <dl class="col">
-                <dt>노출수</dt>
-                <dd id="impressions_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>클릭수</dt>
-                <dd id="clicks_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>클릭률</dt>
-                <dd id="click_ratio_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>지출액</dt>
-                <dd id="spend_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>매체비</dt>
-                <dd id="spend_ratio_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>DB수</dt>
-                <dd id="unique_total_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>DB당 단가</dt>
-                <dd id="unique_one_price_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>전환율</dt>
-                <dd id="conversion_ratio_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>수익률</dt>
-                <dd id="per_sum"></dd>
-            </dl>
-            <dl class="col">
-                <dt>매출</dt>
-                <dd id="price_01_sum"></dd>
-            </dl>
+        <div class="detail row d-flex justify-content-center">
+            <div class="reportData detail d-flex minWd"></div> 
         </div>
     </div>
 
@@ -112,7 +82,7 @@
             </div>
             <div class="col">
                 <div class="inner">
-                    <button type="button" value="kakao" id="media_btn" class="media_btn">카카오</button>
+                    <button type="button" value="kakao" id="media_btn" class="media_btn active">카카오</button>
                 </div>
             </div>
             <div class="col">
@@ -120,11 +90,6 @@
                     <button type="button" value="google" id="media_btn" class="media_btn">구글</button>
                 </div>
             </div>
-            <!-- <div class="col">
-                <div class="inner">
-                    <button type="button" value="naver" id="media_btn" class="media_btn">네이버</button>
-                </div>
-            </div> -->
         </div>
     </div>
 
@@ -321,173 +286,163 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
+var exportCommon = {
+    'exportOptions': { //{'columns': 'th:not(:last-child)'},
+        'modifier': {'page':'all'},
+    }
+};
+
 var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
-let data = {};
-let dataTable;
-var tableId = '#campaigns-table';
-setDate();
-getReport();
-getAccount();
-getList(tableId);
-
-function setData() {
-    data = {
+let dataTable, tableParam = {};
+if(typeof tableParam != 'undefined'){
+    tableParam.searchData = {
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
-        'stx': $('#stx').val(),
         'type': $('.tab-link.active').val(),
-        'media': $('#media_btn.active').map(function(){return $(this).val();}).get(),
-        'business': $('#business_btn.active').map(function(){return $(this).val();}).get().join('|'),
-        'company': $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
+        'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
     };
-
-    return data;
 }
-
-function getReport(){
-    var data = setData();
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/report",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            setReport(data);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+console.log(tableParam.searchData.type);
+switch (tableParam.searchData.type) {
+    case 'campaigns':
+        tableId = '#campaigns-table';
+        break;
+        
+    default:
+        break;
 }
+getList();
+function setSearchData() {
+    var data = tableParam;
+    $('#media_btn, #business_btn, #company_btn, .reportData dl').removeClass('active');
+    if(typeof data.searchData == 'undefined') return;
 
-function setReport(data){
-    $('#reportData dl dd').text('')
-    $('#impressions_sum').text(data.impressions_sum);//노출수
-    $('#clicks_sum').text(data.clicks_sum);//클릭수
-    $('#click_ratio_sum').text(data.click_ratio_sum);//클릭률
-    $('#spend_sum').text(data.spend_sum);//지출액
-    $('#spend_ratio_sum').text(data.spend_ratio_sum);//매체비
-    $('#unique_total_sum').text(data.unique_total_sum);//DB수
-    $('#unique_one_price_sum').text(data.unique_one_price_sum);//DB당 단가
-    $('#conversion_ratio_sum').text(data.conversion_ratio_sum);//전환율
-    $('#per_sum').text(data.per_sum);//수익률
-    $('#price_01_sum').text(data.price_sum);//매출
-}
-
-/* function getGoogleManageAccount(){
-    var data = setData();
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/google/manageaccounts",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            $('.googlebiz .row').empty();
-            var html = '';
-            var set_ratio = '';
-            $.each(data, function(idx, v) {     
-                html += '<div class="col"><div class="inner"><button type="button" value="'+v.customerId+'" id="business_btn" class="filter_btn">'+v.name+'</button></div></div>';
-            });
-
-            $('.googlebiz .row').html(html);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-} */
-
-function getAccount(){
-    var data = setData();
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/accounts",
-        data: data,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            if(data){
-                setAccount(data);
-            }
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-}
-
-function setAccount(data) {
-    var $row = $('.advertiser .row');
-
-    var existingIds = [];
-    $row.find('.filter_btn').each(function() {
-        existingIds.push($(this).val());
-    });
-
-    var html = '';
-    $.each(data, function(idx, v) {
-        var companyId = v.company_id.toString();
-
-        if (existingIds.includes(companyId)) {
-            existingIds = existingIds.filter(id => id !== companyId);
-        } else {
-            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn">' + v.company_name + '</button></div></div>';
-        }
-    });
-
-    $row.find('.filter_btn').filter(function() {
-        return existingIds.includes($(this).val());
-    }).parent().parent().remove();
-
-    $row.append(html);
-}
-
-/* function setAccount(data){
-    $('.advertiser .row').empty();
-    var html = '';
-    var set_ratio = '';
-    $.each(data, function(idx, v) {     
-        html += '<div class="col"><div class="inner"><button type="button" value="'+v.company_id+'" id="company_btn" class="filter_btn">'+v.company_name+'</button></div></div>';
-    });
-
-    $('.advertiser .row').html(html);
-} */
-
-function getList(tableId){
-    if ($.fn.DataTable.isDataTable(tableId)) {
-        $(tableId).DataTable().destroy();
+    if(data.searchData.media){
+        data.searchData.media.split('|').map(function(txt){ $(`#media_btn[value="${txt}"]`).addClass('active'); });
+    }
+    
+    if(data.searchData.company){
+        data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
     }
 
-    dataTable = $(tableId).DataTable({
+    if(data.searchData.report){
+        data.searchData.report.split('|').map(function(txt){
+            $('.reportData dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
+        });
+    }
+
+    $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
+    $('#sdate').val(data.searchData.sdate);
+    $('#edate').val(data.searchData.edate);
+    $('#stx').val(data.searchData.stx);
+    debug('searchData 세팅')
+    if(typeof dataTable != 'undefined') dataTable.state.save();
+}
+
+$.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serverside export
+    var arr = [];
+    $.ajax({
+        "url": "<?=base_url()?>/advertisements/data",
+        "data": {"searchData":tableParam.searchData, "noLimit":true},
+        "type": "GET",
+        "contentType": "application/json",
+        "dataType": "json",
+        "success": function (result) {
+            console.log(result);
+            $.each(result, function(i,row) {
+                // arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
+                //arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
+            });
+        },
+        "async": false
+    });
+    // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
+    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"]};
+} );
+
+function getList(data = []){
+    dataTable = $('#campaigns-table').DataTable({
         "autoWidth": false,
+        "columnDefs": [
+            { targets: '_all', visible: true },
+        ],
         "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
         "searching": false,
         "ordering": true,
-        "bLengthChange" : false, 
-        "deferRender": false,
-        "serverSide" : true,
         "paging": false,
         "info": false,
+        "scrollX": true,
+        "scrollY": 500,
+        "scrollCollapse": true,
+        "stateSave": true,
+        "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
+            debug('state 저장')
+            //data.memoView = $('.btns-memo.active').val();
+            data.searchData = {
+                'sdate': $('#sdate').val(),
+                'edate': $('#edate').val(),
+                'stx': $('#stx').val(),
+                'type': $('.tab-link.active').val(),
+                'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
+                'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
+                'report' : $('.reportData dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+            };
+            tableParam = data;
+            debug(tableParam.searchData);
+        },
+        "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
+            debug('state 로드')
+            //$(`.btns-memo[value="${data.memoView}"]`).addClass('active');
+            tableParam = data;
+            setSearchData();
+            debug(tableParam.searchData);
+        },
+        "deferRender": true,
+        "buttons": [
+            {
+                'extend': 'collection',
+                'text': "<i class='bi bi-list'></i>",
+                'className': 'custom-btn-collection',
+                'fade': true,
+                'buttons': [
+                    'pageLength',
+                    'colvis',
+                    {
+                        'extend':'savedStates',
+                        'buttons': [
+                            'createState',
+                            'removeAllStates'
+                        ]
+                    },
+                    '<h3>내보내기</h3>',
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'copyHtml5'
+                    } ),
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'excelHtml5'
+                    } ),
+                    $.extend( true, {}, exportCommon, {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL'
+                    } )
+                ]
+            },
+            
+        ],
         "ajax": {
             "url": "<?=base_url()?>/advertisements/data",
             "data": function(d) {
-                d.searchData = setData();
+                if(typeof tableParam != 'undefined')
+                    d.searchData = tableParam.searchData;
             },
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
-            "dataSrc": function(res){
-                if(!res.total){
-                    $('#total td').text('');
-                }else{
-                    setDataTableTotal(res, tableId);
-                    return res.data;
-                }
-            }
         },
         "columns": [
             { "data": "media", "width": "6%"},
@@ -506,7 +461,7 @@ function getList(tableId){
             { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
             { "data": "cvr", "width": "3%"}, //전환율
         ],
-        "columnDefs": [
+        /* "columnDefs": [
             {
                 "render": function (data, type, row) {
                     switch (row.media) {
@@ -610,21 +565,28 @@ function getList(tableId){
                 },
                 targets: 14,
             },
-        ],
+        ], */
         "createdRow": function(row, data, dataIndex) {
             $(row).attr("data-id", data.media+"_"+data.id);
             $(row).attr("data-customerId", data.customerId ? data.customerId : '');
         },
         "language": {
-            "emptyTable": "데이터가 존재하지 않습니다.",
-            "infoEmpty": "데이터가 존재하지 않습니다.",
-            "zeroRecords": "데이터가 존재하지 않습니다.",
-            "loadingRecords": "로딩중...",
-        }
-    });
+            "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신
+        },
+    }).on('xhr.dt', function( e, settings, data, xhr ) {
+        /* setButtons(data.buttons);
+        setLeadCount(data.buttons)
+        setStatusCount(data.buttons.status); */
+        setReport(data.report);
+        setAccount(data.accounts)
+        setDataTableTotal(data, tableId)
+        setDate();
+        setSearchData();
+    });;
 }
 
 function setDataTableTotal(res, tableId){
+    console.log(tableId);
     if(res.total.margin < 0){
         $(tableId+' #total-margin').css('color', 'red');
     }
@@ -638,7 +600,7 @@ function setDataTableTotal(res, tableId){
     $(tableId+' #avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
     $(tableId+' #total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
     $(tableId+' #total-spend').text('\u20A9'+res.total.spend);
-    $(tableId+' #total-margin').text('\u20A9'+res.total.margin);
+    //$(tableId+' #total-margin').text('\u20A9'+res.total.margin);
     $(tableId+' #avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
     $(tableId+' #total-sales').text('\u20A9'+res.total.sales);
     $(tableId+' #total-impressions').text(res.total.impressions);
@@ -646,6 +608,96 @@ function setDataTableTotal(res, tableId){
     $(tableId+' #avg-cpc').text('\u20A9'+res.total.avg_cpc);
     $(tableId+' #avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
     $(tableId+' #avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+}
+
+/* function getReport(){
+    var data = setData();
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/report",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setReport(data);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+} */
+
+function setReport(data){
+    $('.reportData').empty();
+    $.each(data, function(key, value) {
+        switch (key) {
+            case 'impressions_sum':
+                newKey = '노출수';
+                break;
+            case 'clicks_sum':
+                newKey = '클릭수';
+                break;
+            case 'click_ratio_sum':
+                newKey = '클릭률';
+                break;
+            case 'spend_sum':
+                newKey = '지출액';
+                break;
+            case 'spend_ratio_sum':
+                newKey = '매체비';
+                break;
+            case 'unique_total_sum':
+                newKey = 'DB수';
+                break;
+            case 'unique_one_price_sum':
+                newKey = 'DB당 단가';
+                break;
+            case 'conversion_ratio_sum':
+                newKey = '전환율';
+                break;
+            case 'per_sum':
+                newKey = '수익률';
+                break;
+            case 'profit_sum':
+                newKey = '수익';
+                break;
+            case 'price_sum':
+                newKey = '매출';
+                break;
+            case 'cpc':
+                newKey = 'CPC';
+                break;
+            default:
+                break;
+        }
+        $('.reportData').append('<dl class="col"><dt>' + newKey + '</dt><dd>' + value + '</dd></dl>');
+    });
+}
+
+function setAccount(data) {
+    var $row = $('.advertiser .row');
+
+    var existingIds = [];
+    $row.find('.filter_btn').each(function() {
+        existingIds.push($(this).val());
+    });
+
+    var html = '';
+    $.each(data, function(idx, v) {
+        var companyId = v.company_id.toString();
+
+        if (existingIds.includes(companyId)) {
+            existingIds = existingIds.filter(id => id !== companyId);
+        } else {
+            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn">' + v.company_name + '</button></div></div>';
+        }
+    });
+
+    $row.find('.filter_btn').filter(function() {
+        return existingIds.includes($(this).val());
+    }).parent().parent().remove();
+
+    $row.append(html);
 }
 
 function setDate(){
@@ -758,60 +810,18 @@ function handleInput(tab, id, tmp_name, inputElement) {
     }
 }
 
-$('body').on('click', '.media_btn', function(){
-    $(this).toggleClass("active");
-    var data = setData();
-    /* if(data.media.includes('google')){
-        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 구글 매니저 계정</h3><div class="row"></div>'
-        $('.googlebiz').html(html);
-        getGoogleManageAccount(data);
-    }else{
-        $('.googlebiz').empty();
-    } */
-
-    /* if(data.media.includes('facebook')){
-        html = '<h3 class="content-title toggle"><i class="bi bi-chevron-down"></i> 페이스북 비즈니스 계정</h3><div class="row"><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="316991668497111">열혈 패밀리</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="2859468974281473">케어랩스5</button></div></div><div class="col"><div class="inner"><button type="button" class="filter_btn" id="business_btn" value="213123902836946">케어랩스7</button></div></div></div>';
-        $('.facebookbiz').html(html);
-    }else{
-        $('.facebookbiz').empty();
-    } */
-
-    getReport(data);
-    getAccount(data);
+$('body').on('click', '#media_btn, #company_btn, .tab-link', function() {
+    $(this).toggleClass('active');
+    debug('필터링 탭 클릭');
+    dataTable.state.save();
     dataTable.draw();
 });
 
-$('body').on('click', '.tab-link', function(){
-    tab = $(this).val();
-    switch (tab) {
-    case "ads":
-        tableId = '#ads-table'
-        break;
-    case "adsets":
-        tableId = '#adsets-table'
-        break;
-    default:
-        tableId = '#campaigns-table'
-    }
-    var data = setData();
-    getList(tableId);
-});
-
-$('body').on('click', '#business_btn, #company_btn', function(){
-    $(this).toggleClass("active");
-    
-    /* if ($(this).attr('id') === 'business_btn') {
-        //getAccount();
-    } */
-
-    getReport(data);
+$('form[name="search-form"]').bind('submit', function() {
+    debug('검색 전송')
+    dataTable.state.save();
     dataTable.draw();
-});
-
-$('body').on('click', '#search_btn', function() {
-    getReport(data);
-    getAccount(data);
-    dataTable.draw();
+    return false;
 });
 
 $('body').on('focus', '#status_btn', function(){
@@ -865,7 +875,9 @@ $("body").on("click", '#mediaName p[data-editable="true"]', function(){
     }
 });
 
-
+function debug(msg) {
+    console.log(msg);
+}
 </script>
 <?=$this->endSection();?>
 

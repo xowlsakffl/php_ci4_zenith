@@ -88,7 +88,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     // 광고관리
     $routes->group('advertisements', static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
-        $routes->get('accounts', 'AdvertisementManager\AdvManagerController::getAccounts');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');

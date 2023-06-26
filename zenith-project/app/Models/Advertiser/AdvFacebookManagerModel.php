@@ -21,9 +21,9 @@ class AdvFacebookManagerModel extends Model
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
 		
         return $builder;
@@ -55,9 +55,9 @@ class AdvFacebookManagerModel extends Model
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
         if(!empty($data['business'])){
@@ -106,9 +106,9 @@ class AdvFacebookManagerModel extends Model
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
         if(!empty($data['business'])){
@@ -157,9 +157,9 @@ class AdvFacebookManagerModel extends Model
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
         if(!empty($data['business'])){
@@ -205,9 +205,9 @@ class AdvFacebookManagerModel extends Model
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
         if(!empty($data['business'])){
