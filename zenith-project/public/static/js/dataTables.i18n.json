@@ -34,7 +34,7 @@
         },
         "pdf": "<i class=\"bi bi-filetype-pdf\"></i> PDF",
         "print": "인쇄",
-        "collection": "<i class='bi bi-list'></i>",
+        "collection": "모음",
         "colvis": "컬럼 보기",
         "colvisRestore": "보기 복원",
         "copy": "<i class=\"bi bi-clipboard\"></i> 복사",

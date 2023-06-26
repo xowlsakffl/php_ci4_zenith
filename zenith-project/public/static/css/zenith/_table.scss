@@ -4,6 +4,7 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
 .btns-memo-style{display:inline; width:auto; position:absolute; right:0; top:0; z-index:1;
     button.active{color:var(--bs-red);}
 }
+.custom-btn-collection>.dt-down-arrow {display:none;}
 .table{
     thead th{/*position:sticky; top:0; z-index:2;*/}
 

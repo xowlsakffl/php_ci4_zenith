@@ -245,7 +245,9 @@ function getList(data = []) { //리스트 세팅
         "buttons": [
             {
                 'extend': 'collection',
+                'text': "<i class='bi bi-list'></i>",
                 'className': 'custom-btn-collection',
+                'fade': true,
                 'buttons': [
                     'pageLength',
                     'colvis',
@@ -268,25 +270,6 @@ function getList(data = []) { //리스트 세팅
                         orientation: 'landscape',
                         pageSize: 'LEGAL'
                     } )
-                    /*
-                    {
-                        'extend': 'excelHtml5',
-                        'autoiFilter': true,
-                        'exportOptions': { //{'columns': 'th:not(:last-child)'},
-                            'customizeData': function(data) {
-                                var header = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"];
-                                var body = [];
-                                $.each(data['body'], function(i, row) {
-                                    var row = row[0];
-                                    body[i] = [row.seq, row.info_seq, row.advertiser, row.media, row.event, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]];
-                                });
-                                data.header = header;
-                                data.body = body;
-                                //return은 하면 안됨. data 오브젝트를 변형시켜서만 사용
-                            }
-                        }
-                    }
-                    */
                 ]
             },
             

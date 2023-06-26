@@ -990,6 +990,10 @@ div.dataTables_processing > div:last-child > div {
   color: var(--bs-red);
 }
 
+.custom-btn-collection > .dt-down-arrow {
+  display: none;
+}
+
 .table thead th { /*position:sticky; top:0; z-index:2;*/ }
 .table .none {
   padding: 50px 0;
