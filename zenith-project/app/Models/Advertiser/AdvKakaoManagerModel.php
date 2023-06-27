@@ -21,9 +21,9 @@ class AdvKakaoManagerModel extends Model
         $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
         return $builder;
@@ -56,9 +56,9 @@ class AdvKakaoManagerModel extends Model
         $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
 
         if(!empty($data['company'])){
@@ -103,9 +103,9 @@ class AdvKakaoManagerModel extends Model
         $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
 
         if(!empty($data['company'])){
@@ -150,9 +150,9 @@ class AdvKakaoManagerModel extends Model
         $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
 
         if(!empty($data['company'])){
@@ -194,10 +194,10 @@ class AdvKakaoManagerModel extends Model
 		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
         $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
-
-		if(!empty($data['dates']['sdate']) && !empty($data['dates']['edate'])){
-            $builder->where('DATE(A.date) >=', $data['dates']['sdate']);
-            $builder->where('DATE(A.date) <=', $data['dates']['edate']);
+        
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
         }
 
         if(!empty($data['company'])){

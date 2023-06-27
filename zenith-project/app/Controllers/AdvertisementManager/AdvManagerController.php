@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
-                return $this->fail("잘못된 요청");
+                return $this->fail("데이터가 존재하지 않습니다.");
             }
 
             if(!isset($arg['searchData'])) {
@@ -42,7 +42,7 @@ class AdvManagerController extends BaseController
                     'edate'=> date('Y-m-d')
                 ];
             }
-
+            
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
@@ -56,6 +56,20 @@ class AdvManagerController extends BaseController
                 default:
                     return $this->fail("잘못된 요청");
             }
+            
+            $orderBy = [];
+            if(!empty($arg['order'])) {
+                foreach($arg['order'] as $row) {
+                    if($row['dir'] == 'desc'){
+                        $sort = SORT_DESC;
+                    }else{
+                        $sort = SORT_ASC;
+                    }
+                    $col = $arg['columns'][$row['column']]['data'];
+                    if($col) $orderBy[$col] = $sort;
+                }
+                array_sort_by_multiple_keys($result['data'], $orderBy);
+            }
 
             foreach ($result['data'] as &$value) {
                 $value['budget'] = number_format($value['budget']);
@@ -68,7 +82,7 @@ class AdvManagerController extends BaseController
                 $value['cpa'] = number_format($value['cpa']);
                 $value['cpc'] = number_format($value['cpc']);
             }
-
+            
             $result['accounts'] = $this->getAccounts($arg);
             $result['report'] = $this->getReport($arg);
             return $this->respond($result);

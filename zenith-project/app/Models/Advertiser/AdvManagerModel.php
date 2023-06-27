@@ -17,45 +17,45 @@ class AdvManagerModel extends Model
 
     public function getAccounts($data)
     {
-        return $this->getQueryResults($data['searchData'], 'getAccounts');
+        return $this->getQueryResults($data, 'getAccounts');
     }
 
     public function getCampaigns($data)
     {
-        return $this->getQueryResults($data['searchData'], 'getCampaigns');
+        return $this->getQueryResults($data, 'getCampaigns');
     }
 
     public function getAdSets($data)
     {
-        return $this->getQueryResults($data['searchData'], 'getAdsets');
+        return $this->getQueryResults($data, 'getAdsets');
     }
 
     public function getAds($data)
     {
-        return $this->getQueryResults($data['searchData'], 'getAds');
+        return $this->getQueryResults($data, 'getAds');
     }
 
     public function getReport($data)
     {
-        return $this->getQueryResults($data['searchData'], 'getReport');
+        return $this->getQueryResults($data, 'getReport');
     }
 
     private function getQueryResults($data, $type)
     {
         $builders = [];
-        $media = explode("|", $data['media']);
+        $media = explode("|", $data['searchData']['media']);
         if (in_array('facebook', $media)) {
-            $facebookBuilder = $this->facebook->$type($data);
+            $facebookBuilder = $this->facebook->$type($data['searchData']);
             $builders[] = $facebookBuilder;
         }
 
         if (in_array('google', $media)) {
-            $googleBuilder = $this->google->$type($data);
+            $googleBuilder = $this->google->$type($data['searchData']);
             $builders[] = $googleBuilder;
         }
 
         if (in_array('kakao', $media)) {
-            $kakaoBuilder = $this->kakao->$type($data);
+            $kakaoBuilder = $this->kakao->$type($data['searchData']);
             $builders[] = $kakaoBuilder;
         }
 
@@ -73,6 +73,12 @@ class AdvManagerModel extends Model
                 $unionBuilder->groupBy('G.id');
                 $unionBuilder->orderBy('G.id', 'asc');
             }
+            
+            if($type == 'getCampaigns' || $type == 'getAdsets' || $type == 'getAds'){   
+                $unionBuilder->groupBy('G.id');
+                $unionBuilder->orderBy('G.id', 'asc');
+            }
+
             $result = $unionBuilder->get()->getResultArray();
         } else {
             $result = null;
