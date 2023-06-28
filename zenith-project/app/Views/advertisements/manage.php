@@ -149,7 +149,7 @@
             </div> -->
             <div class="tab-pane active">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-default" id="adv-table">
+                    <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">매체명</th>
@@ -297,6 +297,7 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
 
 function getList(data = []){
     dataTable = $('#adv-table').DataTable({
+        "dom": '<Bfr<t>ip>',
         "autoWidth": false,
         "columnDefs": [
             { targets: [0], orderable: false},
@@ -344,7 +345,6 @@ function getList(data = []){
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [
-                    'pageLength',
                     'colvis',
                     {
                         'extend':'savedStates',
