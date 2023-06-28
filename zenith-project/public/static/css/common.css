@@ -1699,6 +1699,12 @@ div.dataTables_processing > div:last-child > div {
   float: right;
 }
 
+.sub-contents-wrap .btns-memo-style button:hover i.bi::before {
+  animation: sidebarShake 0.3s infinite linear alternate;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi {
+  color: red;
+}
 .sub-contents-wrap .dataTables_wrapper .paging {
   padding-top: 1.755em;
   position: sticky;
@@ -1799,6 +1805,10 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:active {
   background: none;
   border: none;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
+  color: pink;
+  opacity: 0.9;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
   background-color: #fff;
