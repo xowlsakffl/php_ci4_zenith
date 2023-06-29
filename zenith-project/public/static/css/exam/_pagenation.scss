@@ -6,19 +6,34 @@
 }
 
 .sub-contents-wrap{
-    .dataTables_wrapper{
+    .btns-memo-style{
+        button{
+            &:hover{
+                i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
+            }            
+        }
+    }
+
+    .dataTables_wrapper{  
+        .dt-buttons{position:absolute; top:-1.8rem; z-index:1;
+            i.bi-list{color:$red; transition:all 0.3s; font-size:150%;
+                &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}
+            }
+        }
         .paging{padding-top:1.755em; position:sticky; bottom:0; background-color:#f7f7f7;}      
 
         .dataTables_length{margin-bottom:2rem;
-            select{background-color:#fff; padding:0.2rem 1rem;}
+            select{background-color:#fff; padding:0.2rem 1rem; border-radius:4px; border:1px dashed $red;}
         }
     
-        .dataTables_info{float:unset; position: absolute; right:0;  padding-top:1.755em;
-            i.bi{color:red; padding-right:6px;}
-            span{color:#878787; position:relative;
-                &:hover{font-weight:900;}
-                @include underline-effect($bg:#878787);
-            }
+        .dataTables_info{float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;
+            i.bi{color:$red; padding-right:6px;}
+            .txt-info{display:inline-block;
+                span{color:#878787; position:relative;
+                    &:hover{font-weight:900;}
+                    @include underline-effect($bg:#878787);
+                }
+            }           
         }
     
         .dataTables_paginate{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
@@ -26,25 +41,28 @@
                 &.disabled,
                 &.disabled:hover{color:#aaa !important;}
 
-                &:hover{color:red !important; border:none; background:none; transition:0.2s;}
+                &:hover{color:$red !important; border:none; background:none; transition:0.2s;}
                 &:not(.previous,.next,.current){@include dot-effect;
                     @include underline-effect;
                 }
                 &.current{
-                    color:#fff !important; background-color:red; border:none; padding:0.2rem 1rem; border-radius:4px;
-                    &:hover{color:#fff !important; background-color:red; border:none;}
+                    color:#fff !important; background-color:$red; border:none; padding:0.2rem 1rem; border-radius:4px;
+                    &:hover{color:#fff !important; background-color:$red; border:none;}
                 } 
                 &:active{background:none; border:none;}
             }            
         }
     
-        table.dataTable{            
-            tbody tr{background-color:#fff;}
+        table.dataTable{ 
+            thead tr{
+                .sorting_asc:before,.sorting_desc:after{color:chartreuse; opacity:1;}  
+            }   
+            tbody tr{background-color:#fff;}     
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
-            select.data-del{padding:3px; border-radius:4px;}
+            select.data-del{padding:3px; border-radius:4px; font-size:98%; letter-spacing:-1px;}
             button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px;}
             button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px; transition:0.5s;   
-                &:hover{box-shadow:inset 0 -3em 0 0 red;}   
+                &:hover{box-shadow:inset 0 -3em 0 0 $red;}   
             }
         }
     }
@@ -55,9 +73,9 @@
 
     .detail.minWd{flex-wrap: wrap; min-width:1000px;  
         .col{padding: 0; flex: 1 0 auto; cursor:pointer;
-            &:hover, &.active{color:red;}
+            &:hover, &.active{color:$red;}
             dt{font-size: 1rem;}
-            &:hover{
+            &:hover,&.active{
                 dd{font-weight:900;}
             }
         }        
@@ -67,8 +85,8 @@
 @media screen and (max-width: 767px){
     .sub-contents-wrap{
         .dataTables_wrapper{
-            .dataTables_info,
-            .dataTables_paginate{padding-top:1.25em;}
+            .dataTables_info{padding-top:0.4em;}
+            .dataTables_paginate{padding-top:2em;}
         }
     }    
 }

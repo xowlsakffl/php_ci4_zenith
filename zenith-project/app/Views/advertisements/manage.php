@@ -149,11 +149,11 @@
             </div> -->
             <div class="tab-pane active">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-default" id="adv-table">
+                    <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">매체명</th>
-                                <th scope="col">캠페인명</th>
+                                <th scope="col">제목</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재 <br>DB단가</th>
@@ -223,6 +223,17 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
+var media_str = {
+    "facebook":"페이스북", 
+    "kakao":"카카오", 
+    "google":"구글", 
+};
+
+var status_str = {
+    "ON":"활성", 
+    "OFF":"비활성", 
+};
+
 var exportCommon = {
     'exportOptions': { //{'columns': 'th:not(:last-child)'},
         'modifier': {'page':'all'},
@@ -285,18 +296,18 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         "success": function (result) {
             console.log(result);
             $.each(result, function(i,row) {
-                // arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
-                //arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
+                //arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
+                arr.push([row.id, media_str[row.media], row.name, status_str[row.status], row.budget, row.impressions, row.click, row.spend, row.sales, row.unique_total, row.margin, row.margin_ratio, row.cpc, row.ctr, row.cpa, row.cvr]);
             });
         },
         "async": false
     });
-    // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
-    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"]};
+    return {body: arr , header: ["고유 ID","매체명","제목","상태","예산","현재 DB단가","유효 DB","지출액","수익","수익률","매출액","노출수","링크클릭","CPC","CTR","DB 전환률"]};
 } );
 
 function getList(data = []){
     dataTable = $('#adv-table').DataTable({
+        "dom": '<Bfr<t>ip>',
         "autoWidth": false,
         "columnDefs": [
             { targets: [0], orderable: false},
@@ -344,7 +355,6 @@ function getList(data = []){
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [
-                    'pageLength',
                     'colvis',
                     {
                         'extend':'savedStates',

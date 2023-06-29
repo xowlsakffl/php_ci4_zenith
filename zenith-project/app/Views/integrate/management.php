@@ -130,22 +130,7 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-var lead_status = {
-    "1":"인정", 
-    "2":"중복", 
-    "3":"성별불량", 
-    "4":"나이불량", 
-    "5":"콜불량", 
-    "6":"번호불량", 
-    "7":"테스트", 
-    "8":"이름불량", 
-    "9":"지역불량", 
-    "10":"업체불량", 
-    "11":"미성년자", 
-    "12":"본인아님", 
-    "13":"쿠키중복", 
-    "99":"확인", 
-};
+var lead_status = {"1":"인정", "2":"중복", "3":"성별불량", "4":"나이불량", "5":"콜불량", "6":"번호불량", "7":"테스트", "8":"이름불량", "9":"지역불량", "10":"업체불량", "11":"미성년자", "12":"본인아님", "13":"쿠키중복", "99":"확인"};
 var exportCommon = {
     'exportOptions': { //{'columns': 'th:not(:last-child)'},
         'modifier': {'page':'all'},
@@ -156,7 +141,7 @@ $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
 getList();
-function setSearchData() {
+function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
     $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData == 'undefined') return;
@@ -196,12 +181,6 @@ function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
         "autoWidth": false,
-        "columnDefs": [
-            { targets: [0], orderable: false},
-            { targets: [1], visible: false},
-            { targets: '_all', visible: true },
-            { targets: [6], className: 'nowrap'}
-        ],
         "order": [[12,'desc']],
         "processing" : true,
         "serverSide" : true,
@@ -212,6 +191,10 @@ function getList(data = []) { //리스트 세팅
         "scrollY": 500,
         "scrollCollapse": true,
         "stateSave": true,
+        "deferRender": true,
+        "rowId": "seq",
+        "lengthMenu": [[ 25, 10, 50, -1 ],[ '25개', '10개', '50개', '전체' ]],
+        "language": {"url": '/static/js/dataTables.i18n.json'}, //한글화 파일
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
@@ -236,13 +219,7 @@ function getList(data = []) { //리스트 세팅
             setSearchData();
             debug(tableParam.searchData);
         },
-        "deferRender": true,
-        "rowId": "seq",
-        "lengthMenu": [
-            [ 25, 10, 50, -1 ],
-            [ '25개', '10개', '50개', '전체' ]
-        ],
-        "buttons": [
+        "buttons": [ //Set Button
             {
                 'extend': 'collection',
                 'text': "<i class='bi bi-list'></i>",
@@ -274,16 +251,12 @@ function getList(data = []) { //리스트 세팅
             },
             
         ],
-        "ajax": {
-            "url": "<?=base_url()?>/integrate/list",
-            "data": function(d) {
-                if(typeof tableParam != 'undefined')
-                    d.searchData = tableParam.searchData;
-            },
-            "type": "GET",
-            "contentType": "application/json",
-            "dataType": "json",
-        },
+        "columnDefs": [
+            { targets: [0], orderable: false},
+            { targets: [1], visible: false},
+            { targets: '_all', visible: true },
+            { targets: [6], className: 'nowrap'}
+        ],
         "columns": [
             { "data": null, "width": "40px" },
             { "data": "seq" },
@@ -321,9 +294,6 @@ function getList(data = []) { //리스트 세팅
                 }
             },
         ],
-        "language": {
-            "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신
-        },
         "rowCallback": function(row, data, index) {
             var api = this.api();
             var startIndex = api.page() * api.page.len();
@@ -332,8 +302,18 @@ function getList(data = []) { //리스트 세팅
         },
         "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
+        },
+        "ajax": { //ServerSide Load
+            "url": "<?=base_url()?>/integrate/list",
+            "data": function(d) {
+                if(typeof tableParam != 'undefined')
+                    d.searchData = tableParam.searchData;
+            },
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
         }
-    }).on('xhr.dt', function( e, settings, data, xhr ) {
+    }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
         setButtons(data.buttons);
         setLeadCount(data.buttons)
         setStatusCount(data.buttons.status);
@@ -458,7 +438,7 @@ function setMemoList(data) { //메모 리스트 생성
     wrap.prepend(html);
     
 }
-function setLeadCount(data) {
+function setLeadCount(data) { //Filter Count 표시
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
@@ -475,7 +455,7 @@ function setLeadCount(data) {
     });
 }
 
-function setStatusCount(data){
+function setStatusCount(data){ //상태 Count 표시
     $('.statusCount').empty();
     $.each(data, function(key, value) {
         $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
@@ -525,22 +505,6 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         $('#'+type+'-list').html(html);
     });
     fontAutoResize();
-}
-		
-function getLead(){
-    $.ajax({
-        type: "get",
-        url: "<?=base_url()?>/integrate/leadcount",
-        data: tableParam.searchData,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){
-            setButtons(data);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
 }
 
 function setDate(){

@@ -16,8 +16,8 @@
         "previous": "이전"
     },
     "aria": {
-        "sortAscending": ": 오름차순 정렬",
-        "sortDescending": ": 내림차순 정렬"
+        "sortAscending": ": 내림차순 정렬",
+        "sortDescending": ": 오름차순 정렬"
     },
     "buttons": {
         "copyKeys": "ctrl키 나 u2318 + C키로 테이블 데이터를 시스텝 복사판에서 복사하고 취소하려면 이 메시지를 클릭하거나 ESC키를 누르면됩니다. to copy the table data to your system clipboard. To cancel, click this message or press escape.",

@@ -82,7 +82,9 @@ class AdvManagerController extends BaseController
                 $value['cpa'] = number_format($value['cpa']);
                 $value['cpc'] = number_format($value['cpc']);
             }
-            
+            if(isset($arg['noLimit'])) {
+                return $this->respond($result['data']);
+            }
             $result['accounts'] = $this->getAccounts($arg);
             $result['report'] = $this->getReport($arg);
             return $this->respond($result);
@@ -301,8 +303,7 @@ class AdvManagerController extends BaseController
             if(in_array($status, ['ENABLED', 'ACTIVE', 'LIVE', 'ON'])){$status = 'ON';}
             else if(in_array($status, ['READY'])){$status = 'READY';}
             else if(in_array($status, ['FINISHED'])){$status = 'FINISHED';}
-            else if(in_array($status, ['PAUSED'])){$status = 'STOPPED';}
-            else if(in_array($status, ['OFF'])){$status = 'OFF';}
+            else if(in_array($status, ['OFF', 'PAUSED'])){$status = 'OFF';}
             else if(in_array($status, ['ARCHIVED'])){$status = 'ARCHIVED';}
             else if(in_array($status, ['DELETED', 'REMOVED'])){$status = 'DELETED';}
             else if(in_array($status, ['UNKNOWN'])){$status = 'UNKNOWN';}

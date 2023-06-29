@@ -16,16 +16,20 @@ $(function(){
         }
     });
 
+    $('.dataTables_info > i').on('click',function(){
+        $('.txt-info').toggle();
+    });
+
      //slide up 효과
-    let account = document.querySelector('.sub-contents-wrap');
-    let effect = account.querySelectorAll('.sub-contents-wrap > div');
-    let e=0;
-    let timer = setInterval(function(){
-        effect[e].classList.add('up');     
-        e++;
+    // let account = document.querySelector('.sub-contents-wrap');
+    // let effect = account.querySelectorAll('.sub-contents-wrap > div');
+    // let e=0;
+    // let timer = setInterval(function(){
+    //     effect[e].classList.add('up');     
+    //     e++;
     
-        if(e >= effect.length){
-            clearInterval(timer); 
-        }              
-    },300); 
+    //     if(e >= effect.length){
+    //         clearInterval(timer); 
+    //     }              
+    // },300); 
 });

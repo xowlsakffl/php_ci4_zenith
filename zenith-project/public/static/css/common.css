@@ -1699,6 +1699,22 @@ div.dataTables_processing > div:last-child > div {
   float: right;
 }
 
+.sub-contents-wrap .btns-memo-style button:hover i.bi::before {
+  animation: sidebarShake 0.3s infinite linear alternate;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-buttons {
+  position: absolute;
+  top: -1.8rem;
+  z-index: 1;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list {
+  color: red;
+  transition: all 0.3s;
+  font-size: 150%;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list:hover::before {
+  animation: rotate-turn 0.3s infinite linear alternate;
+}
 .sub-contents-wrap .dataTables_wrapper .paging {
   padding-top: 1.755em;
   position: sticky;
@@ -1711,25 +1727,32 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper .dataTables_length select {
   background-color: #fff;
   padding: 0.2rem 1rem;
+  border-radius: 4px;
+  border: 1px dashed red;
 }
 .sub-contents-wrap .dataTables_wrapper .dataTables_info {
   float: unset;
   position: absolute;
   right: 0;
   padding-top: 1.755em;
+  transition: all 0.5s;
+  cursor: pointer;
 }
 .sub-contents-wrap .dataTables_wrapper .dataTables_info i.bi {
   color: red;
   padding-right: 6px;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info span {
+.sub-contents-wrap .dataTables_wrapper .dataTables_info .txt-info {
+  display: inline-block;
+}
+.sub-contents-wrap .dataTables_wrapper .dataTables_info .txt-info span {
   color: #878787;
   position: relative;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info span:hover {
+.sub-contents-wrap .dataTables_wrapper .dataTables_info .txt-info span:hover {
   font-weight: 900;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info span:hover::after {
+.sub-contents-wrap .dataTables_wrapper .dataTables_info .txt-info span:hover::after {
   position: absolute;
   bottom: -5px;
   left: 0%;
@@ -1800,6 +1823,10 @@ div.dataTables_processing > div:last-child > div {
   background: none;
   border: none;
 }
+.sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
+  color: chartreuse;
+  opacity: 1;
+}
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
   background-color: #fff;
 }
@@ -1812,6 +1839,8 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper table.dataTable select.data-del {
   padding: 3px;
   border-radius: 4px;
+  font-size: 98%;
+  letter-spacing: -1px;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.save {
   background-color: #009dff;
@@ -1851,14 +1880,16 @@ div.dataTables_processing > div:last-child > div {
 .db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;
 }
-.db-manage-contaniner .detail.minWd .col:hover dd {
+.db-manage-contaniner .detail.minWd .col:hover dd, .db-manage-contaniner .detail.minWd .col.active dd {
   font-weight: 900;
 }
 
 @media screen and (max-width: 767px) {
-  .sub-contents-wrap .dataTables_wrapper .dataTables_info,
+  .sub-contents-wrap .dataTables_wrapper .dataTables_info {
+    padding-top: 0.4em;
+  }
   .sub-contents-wrap .dataTables_wrapper .dataTables_paginate {
-    padding-top: 1.25em;
+    padding-top: 2em;
   }
 }
 @media screen and (max-width: 1400px) {
@@ -2022,6 +2053,14 @@ div.dataTables_processing > div:last-child > div {
   }
   100% {
     transform: translateY(10px);
+  }
+}
+@keyframes rotate-turn {
+  0% {
+    transform: rotateX(0deg);
+  }
+  100% {
+    transform: rotateX(45deg);
   }
 }
 .agree-container {

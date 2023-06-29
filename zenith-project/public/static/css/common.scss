@@ -4,6 +4,7 @@ $breakpoint-tablet:1024px;
 $breakpoint-lg-mobile:500px;
 $breakpoint-md-mobile:415px;
 $breakpoint-sm-mobile:300px;
+$red:red;
 
 @mixin tablet-1024{
     @media screen and (max-width : #{$breakpoint-tablet}){
