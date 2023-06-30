@@ -17,21 +17,19 @@ class ChatBot {
         'client_secret' => 'b5f4688cc4b85ad81a34bfcf6fb07348',
     ];
     
-    public $token = 'xoxp-633137239556-5111601338212-5527075430960-f7596bbe7643406c33b62ccd2b09b19e';
+    public $token = 'xoxb-633137239556-5358898316181-xwEUhVz6wE99kINHlrvZY9Qs';
+    //public $userToken = 'xoxp-633137239556-5111601338212-5527075430960-f7596bbe7643406c33b62ccd2b09b19e';
     private $redirectUrl = 'https://local.vrzenith.com/auth/slack/callback';
-    private $userId = 'U05AJSE9A5B';
-    private $botId = 'B05B0E0BVNV';
 
     public function __construct() 
     {   
-        /* DriverManager::loadDriver(\BotMan\Drivers\Slack\SlackDriver::class);
-        
+        DriverManager::loadDriver(\BotMan\Drivers\Slack\SlackDriver::class);
         $config = [
             'slack' => [
                 'token' => $this->token
             ],
         ];
-        $this->botman = BotManFactory::create($config); */
+        $this->botman = BotManFactory::create($config);
     }
 
     public function get_code()
@@ -39,13 +37,14 @@ class ChatBot {
         $data = array(
             'client_id' => $this->credentials['client_id'],
             'redirect_uri' => $this->redirectUrl,
-            'scope' => 'users:read, channels:read, chat:write, groups:read, im:read, mpim:read',
+            'scope' => 'incoming-webhook,chat:write',
+            'user_scope' => 'channels:read,chat:write,users:read'
         );
         $data = http_build_query($data);
         $redirectUrl = 'https://slack.com/oauth/v2/authorize'.'?'.$data;
         return $redirectUrl;
     }
-    
+
     public function oauth($data)
     {
         if ($data['code']) {
@@ -70,23 +69,28 @@ class ChatBot {
 
         //메세지
         $data = array(
-            'text' => '테스트',
-            'channel' => 'C052ZKG6UQH',
+            'text' => '테스트1',
+            'channel' => 'C05ELGJ1JA2',
         );
         $url = 'https://slack.com/api/chat.postMessage';
         $response = $this->curl($url, $this->token, $data, 'POST');
         dd($response);
+
+        //봇 테스트
+        /* $url = 'https://slack.com/api/bots.info';
+        $response = $this->curl($url, $this->token, NULL);
+        dd($response); */
     }
 
     public function sendMessage($message)
     {
-        $channel = 'C052ZKG6UQH';
+        $channel = 'C05ELGJ1JA2';
         try {
             $response = $this->botman->say($message, $channel);
-
-        } catch (BotManException $e) {
-            dd($e);
-        } 
+            //dd($response);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
         
     }
 
