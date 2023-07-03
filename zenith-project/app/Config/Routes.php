@@ -166,10 +166,10 @@ $routes->get('example/(:any)', 'ExampleController::view/$1');
 $routes->cli('chatbot/(:any)', 'Advertisement\GoogleAds::$1');
 
 $routes->get('calendar', 'Calendar\CalendarController::index');
-$routes->get('slack/code', 'Slack\SlackController::getCode');
-$routes->get('auth/slack/callback', 'Slack\SlackController::getToken');
-$routes->get('slack/test', 'Slack\SlackController::test');
-$routes->get('slack/message-send', 'Slack\SlackController::sendMessage');
+
+$routes->get('slack/code', '\App\ThirdParty\botman\ChatBot::getCode');
+$routes->get('auth/slack/callback', '\App\ThirdParty\botman\ChatBot::getToken');
+$routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::test');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
