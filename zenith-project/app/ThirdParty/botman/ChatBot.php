@@ -10,10 +10,12 @@ use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\BotMan\Storages\Drivers\FileStorage;
 use BotMan\Drivers\Slack\SlackDriver;
 
+
 class ChatBot extends BaseController{
-    private $botman, $driver;
+    private $botman;
     private $credentials = [
         'app_id' => 'A057ZJSCU5A',
         'client_id' => '633137239556.5271638436180',
@@ -21,23 +23,22 @@ class ChatBot extends BaseController{
     ];
     
     private $token = 'xoxb-633137239556-5358898316181-xwEUhVz6wE99kINHlrvZY9Qs';
-    //public $userToken = 'xoxp-633137239556-5111601338212-5527075430960-f7596bbe7643406c33b62ccd2b09b19e';
     private $redirectUrl = 'https://local.vrzenith.com/auth/slack/callback';
 
     public function __construct() 
     {   
         DriverManager::loadDriver(SlackDriver::class);
         $config = [
-            'driver' => 'slack',
+            'driver' => SlackDriver::class,
             'slack' => [
                 'token' => $this->token,
             ],
         ];
         
         $this->botman = BotManFactory::create($config);
-        //dd($this->botman);
+        log_message('error', 'Botman : '.print_r($this->botman->getDriver(), true));
     }
-
+    
     public function get_code()
     {
         $data = array(
@@ -92,48 +93,66 @@ class ChatBot extends BaseController{
         $response = $this->curl($url, $this->token, NULL);
         dd($response); */
 
+        /* $this->botman->on('event', function($payload, $bot) {
+            log_message('error', 'Slack : '.print_r($this->botman));
+        });
+
+        $this->botman->hears('hello', function (BotMan $bot) {
+            log_message('error', 'Slack : '.print_r($this->botman));
+            $bot->reply('Hello! How can I help you?');
+        })->driver(SlackDriver::class); */
+
         //메세지 보내기 봇맨
-        //$this->sendMessage('안녕');
+        $this->sendMessage('안녕');
 
         //채널리스트 봇맨
         //$this->getChannelList();
 
-        $this->curlSample();
+        //웹훅 테스트
+        //$this->curlSample();
+
+        //$this->responseTest();
     }
 
     public function sendMessage($message)
     {
         $channel = 'C05ELGJ1JA2';
-        $imagePath = '/img/logo.png';
 
-        $attachment = new Image('http://image-url-here.jpg', [
+        $attachment = new Image('https://carezenith.co.kr/img/logo.png', [
             'custom_payload' => true,
         ]);
-
-        $message = OutgoingMessage::create($message)
-            ->withAttachment($attachment);
-            
-        $response = $this->botman->say($message, $channel);
-        dd($response);
+        $message = OutgoingMessage::create($message)->withAttachment($attachment);
+        $response = $this->botman->say($message, $channel, SlackDriver::class);
     }
 
     public function getChannelList()
     {
         $url = 'https://slack.com/api/conversations.list';
         $response = $this->curl($url, $this->token, NULL);
-        foreach ($response['channels'] as $channel) {
-            dd($this->botman->reply($channel));
-        }
+        dd($response);
     }
 
     public function curlSample()
     {
         $url = 'https://hooks.slack.com/services/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';
         $data = [
-            'text' => 'Hello',
+            'text' => '테스트',
         ];
-        $response = $this->curl($url, NULL, $data, 'POST');
+        $response = $this->curl($url, NULL, json_encode($data), 'POST');
         dd($response);
+    }
+
+    public function responseTest()
+    {
+        $payload = json_decode($this->request->getBody(), true);
+        log_message('error', 'Slack Payload: '.print_r($payload));
+
+        $type = $payload['type'];
+
+        if ($type === 'url_verification') {
+            $challenge = $payload['challenge'];
+            return $this->response->setBody($challenge)->setContentType('text/plain');
+        }
     }
 
     /* public function sendMessage() {
