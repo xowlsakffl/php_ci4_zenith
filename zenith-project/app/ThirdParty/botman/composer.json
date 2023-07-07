@@ -1,6 +1,8 @@
 {
     "require": {
+        "botman/installer": "^1.0",
         "botman/botman": "^2.8",
-        "botman/driver-slack": "^2.2"
+        "botman/driver-slack": "^2.2",
+        "botman/driver-web": "dev-master"
     }
 }

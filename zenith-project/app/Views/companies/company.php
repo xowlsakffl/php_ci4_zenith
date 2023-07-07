@@ -327,7 +327,6 @@ function getCompanyList(){
         "columnDefs": [
             { targets: [0], orderable: false},
         ],
-        "order": [[1,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
