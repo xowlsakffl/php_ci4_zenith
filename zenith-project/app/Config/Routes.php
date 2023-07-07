@@ -151,7 +151,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('exel', 'EventManage\ExelController::index');
     });
 });
-
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
@@ -172,6 +171,8 @@ $routes->get('auth/slack/callback', '\App\ThirdParty\botman\ChatBot::getToken');
 $routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::test'); */
 
 $routes->match(['get', 'post'], 'slack/(:any)', '\App\ThirdParty\slack_api\SlackChat::$1');
+
+$routes->get('dz/(:any)', 'Douzone\DouzoneController::$1');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

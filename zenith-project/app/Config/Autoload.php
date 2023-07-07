@@ -61,7 +61,8 @@ class Autoload extends AutoloadConfig
      *
      * @var array<string, string>
      */
-    public $classmap = [];
+    public $classmap = [
+    ];
 
     /**
      * -------------------------------------------------------------------

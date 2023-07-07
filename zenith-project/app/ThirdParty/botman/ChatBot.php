@@ -9,13 +9,19 @@ use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Attachments\Image;
+use BotMan\BotMan\Messages\Attachments\Audio;
+use BotMan\BotMan\Messages\Attachments\Video;
+use BotMan\BotMan\Messages\Attachments\Location;
+use BotMan\BotMan\Messages\Attachments\File;
+use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\BotMan\Storages\Drivers\FileStorage;
 use BotMan\Drivers\Slack\SlackDriver;
+// use BotMan\Drivers\Slack\SlackRTMDriver;
 
-
-class ChatBot extends BaseController{
+class ChatBot extends BaseController {
     private $botman;
+    private $conversation;
     private $credentials = [
         'app_id' => 'A057ZJSCU5A',
         'client_id' => '633137239556.5271638436180',
@@ -23,7 +29,7 @@ class ChatBot extends BaseController{
     ];
     
     private $token = 'xoxb-633137239556-5358898316181-xwEUhVz6wE99kINHlrvZY9Qs';
-    private $redirectUrl = 'https://local.vrzenith.com/auth/slack/callback';
+    private $redirectUrl = 'https://local.carezenith.co.kr/auth/slack/callback';
 
     public function __construct() 
     {   
@@ -70,6 +76,14 @@ class ChatBot extends BaseController{
 
     public function test()
     {
+        // $message = "TEST";
+        // // Create attachment
+        // $attachment = new Image('https://botman.io/img/logo.png');
+        // $attachment->title('botmanLogo');
+        // // Build message object
+        // $message = OutgoingMessage::create(date('Y-m-d H:i:s'), $attachment);
+        // $this->botman->say($message, 'C05G82NMG8G', SlackDriver::class);
+        $this->curlSample();
         //유저 테스트
         /* $url = 'https://slack.com/api/auth.test';
         $response = $this->curl($url, $this->token, NULL);
@@ -103,7 +117,7 @@ class ChatBot extends BaseController{
         })->driver(SlackDriver::class); */
 
         //메세지 보내기 봇맨
-        $this->sendMessage('안녕');
+        // $this->sendMessage('안녕');
 
         //채널리스트 봇맨
         //$this->getChannelList();
@@ -116,7 +130,7 @@ class ChatBot extends BaseController{
 
     public function sendMessage($message)
     {
-        $channel = 'C05ELGJ1JA2';
+        $channel = 'C05G82NMG8G';
 
         $attachment = new Image('https://carezenith.co.kr/img/logo.png', [
             'custom_payload' => true,
@@ -127,8 +141,7 @@ class ChatBot extends BaseController{
 
     public function getChannelList()
     {
-        $url = 'https://slack.com/api/conversations.list';
-        $response = $this->curl($url, $this->token, NULL);
+        $response = $this->botman->sendRequest("conversations.list");
         dd($response);
     }
 
