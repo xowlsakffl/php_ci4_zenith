@@ -545,10 +545,7 @@ function getList(){
         "scrollCollapse": true,
         "deferRender": true,
         "rowId": "seq",
-        "lengthMenu": [
-            [ 25, 10, 50, -1 ],
-            [ '25개', '10개', '50개', '전체' ]
-        ],
+        "lengthMenu": [[ 25, 10, 50, -1 ],[ '25개', '10개', '50개', '전체' ]],
         "ajax": {
             "url": "<?=base_url()?>/eventmanage/event/list",
             "data": function(d) {
@@ -558,6 +555,10 @@ function getList(){
             "contentType": "application/json",
             "dataType": "json",
         },
+        "columnDefs": [
+            { targets: [10], orderable: false},
+            { targets: [11], orderable: false},
+        ],
         "columns": [
             { 
                 "data": "seq",
@@ -578,7 +579,7 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "10%",
                 "render": function(data, type, row) {
-                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
+                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" target="_blank" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
                 }
             },
             { "data": "media_name", "width": "5%"},
@@ -604,7 +605,7 @@ function getList(){
                     if(data.developer){
                         name += data.developer;
                     }
-                    return '<a href="https://mantis.chainsaw.co.kr/view.php?id='+data.id+'">'+name+'</a>';
+                    return '<a href="https://mantis.chainsaw.co.kr/view.php?id='+data.id+'" target="_blank">'+name+'</a>';
                 }
             },
             { 

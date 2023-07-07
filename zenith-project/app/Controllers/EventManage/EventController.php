@@ -38,6 +38,8 @@ class EventController extends BaseController
 
                 if($list[$i]['interlock']){
                     $list[$i]['interlock'] = 'O';
+                }else{
+                    $list[$i]['interlock'] = 'X';
                 }
 
                 if($list[$i]['lead']){

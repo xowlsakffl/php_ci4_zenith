@@ -26,35 +26,22 @@
     <div class="search-wrap">
         <form class="search d-flex justify-content-center">
             <div class="input">
-                <input class="" type="text" placeholder="검색어를 입력하세요">
-                <button class="btn-primary" type="submit">조회</button>
-                <button class="btn-special ms-2" type="button" data-bs-toggle="modal" data-bs-target="#clientModal">등록</button>
+                <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                <button class="btn-primary" id="search_btn" type="submit">조회</button>
+                <button class="btn-special ms-2" id="createBtn" data-bs-toggle="modal" data-bs-target="#clientModal" type="button">등록</button>
             </div>
         </form>
     </div>
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <button type="button" class="btn btn-danger">이벤트 관리</button>
-            <button type="button" class="btn btn-danger">매체 관리</button>
-            <button type="button" class="btn btn-danger">전환 관리</button>
+            <a href="/eventmanage/event"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
+            <a href="/eventmanage/media"><button type="button" class="btn btn-danger">매체 관리</button></a>
+            <a href="/eventmanage/change"><button type="button" class="btn btn-danger">전환 관리</button></a>
         </div>
 
         <div class="table-responsive">
             <table class="table table-striped table-hover table-default">
-                <colgroup>
-                    <col style="width:6%">
-                    <col>
-                    <col style="width:5%">
-                    <col style="width:12%">
-                    <col style="width:12%">
-                    <col style="width:5%">
-                    <col style="width:10%">
-                    <col style="width:5%">
-                    <col style="width:8%">
-                    <col style="width:5%">
-                    <col style="width:5%">
-                </colgroup>
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">번호</th>
