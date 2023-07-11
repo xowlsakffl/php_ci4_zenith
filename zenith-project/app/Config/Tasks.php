@@ -37,5 +37,7 @@ class Tasks extends BaseConfig
         $schedule->command('EventCron')->everyMinute(5)->named('event');
 
         $schedule->command('GwCron')->everyMinute(30)->betweenHours(10,19)->named('gw');
+
+        $schedule->shell('php /home/zenith/zenith-project/public/index.php hr/updateUsersByDouzone')->hours([10,12,14,16,18])->minutes([0])->named('updateUsersByDouzone');
     }
 }

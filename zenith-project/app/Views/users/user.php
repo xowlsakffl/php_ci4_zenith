@@ -102,7 +102,7 @@
                                         <col style="width:30%;">
                                         <col style="width:70%;">
                                     </colgroup>
-                                    <tbody></tbody>
+                                    <tbody>
                                         <tr>
                                             <th scope="row">소속</th>
                                             <td id="userBelong">
@@ -404,6 +404,15 @@ function setUserShow(data) {
     $('#user-show #usernameText').text(data.username);
     $('#user-show #emailText').text(data.email);
     $('#user-show #userCreatedAt').text(data.created_at);
+    $('#user-show table .dp_info').remove();
+    if(typeof data.division == 'string') {
+        var html = "";
+        html += `<tr class="dp_info"><th>이름</th><td>${data.nickname}</td></tr>`;
+        html += `<tr class="dp_info"><th>직급</th><td>${data.position}</td></tr>`;
+        html += `<tr class="dp_info"><th>부서</th><td>${data.division}</td></tr>`;
+        html += `<tr class="dp_info"><th>팀</th><td>${data.team}</td></tr>`;
+        $('#user-show table tr:eq(2)').after(html);
+    }
     if(data.status){
         $('#user-show #userStatus select').val(data.status);
     }

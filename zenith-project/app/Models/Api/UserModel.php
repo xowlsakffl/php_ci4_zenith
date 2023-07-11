@@ -96,12 +96,13 @@ class UserModel extends ShieldUserModel
     public function getUser($data)
     {
         $builder = $this->db->table('users AS u');
-        $builder->select('cu.company_id AS company_id, c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) AS groups, GROUP_CONCAT(DISTINCT apu.permission) AS permissions, u.created_at');
+        $builder->select('cu.company_id AS company_id, c.name AS belong, u.id AS user_id, u.username, u.nickname, up.division, up.team, up.position, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) AS groups, GROUP_CONCAT(DISTINCT apu.permission) AS permissions, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
         $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
         $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id', 'left');
+        $builder->join('users_department AS up', 'u.id = up.user_id');
         $builder->where('u.id', $data['user_id']);
         $result = $builder->get()->getRowArray();
         return $result;

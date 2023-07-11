@@ -179,7 +179,7 @@ $routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::t
 
 $routes->match(['get', 'post'], 'slack/(:any)', '\App\ThirdParty\slack_api\SlackChat::$1');
 
-$routes->get('dz/(:any)', 'Douzone\DouzoneController::$1');
+$routes->cli('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 /*
  * --------------------------------------------------------------------
  * Additional Routing

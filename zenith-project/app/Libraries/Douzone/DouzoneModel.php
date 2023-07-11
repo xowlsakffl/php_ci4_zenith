@@ -1,5 +1,5 @@
 <?php
-namespace App\Models\Douzone;
+namespace App\Libraries\Douzone;
 
 use CodeIgniter\Model;
 Class DouzoneModel extends Model {
@@ -28,7 +28,7 @@ Class DouzoneModel extends Model {
 
     public function getMemberList() {
         $builder = $this->gwdb->table('v_user_info AS usr');
-        $builder->select("email_addr, substring_index(emp_name, '_',-1) AS name, dpm.dp_name, mobile_tel_num AS phone, path_name");
+        $builder->select("email_addr, substring_index(emp_name, '_',-1) AS name, dpm.dp_name AS position, mobile_tel_num AS phone, path_name");
         $builder->join("t_co_comp_duty_position_multi AS dpm", "usr.dept_duty_code = dpm.dp_seq");
         $builder->like("emp_name", "DM_%");
         $builder->where("erp_emp_num <>", "");
