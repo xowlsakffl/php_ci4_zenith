@@ -145,7 +145,14 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->delete('delete', 'EventManage\EventController::deleteEvent');
         });
 
-        $routes->get('advertiser', 'EventManage\AdvertiserController::index');
+        $routes->group('advertiser', static function($routes){   
+            $routes->get('', 'EventManage\AdvertiserController::index');
+            $routes->get('list', 'EventManage\AdvertiserController::getList');
+            $routes->get('view', 'EventManage\AdvertiserController::getAdvertiser');
+            $routes->post('create', 'EventManage\AdvertiserController::createAdv');
+            $routes->put('update', 'EventManage\AdvertiserController::updateAdv');
+        });
+        
         $routes->get('media', 'EventManage\MediaController::index');
         $routes->get('change', 'EventManage\ChangeController::index');
         $routes->get('exel', 'EventManage\ExelController::index');

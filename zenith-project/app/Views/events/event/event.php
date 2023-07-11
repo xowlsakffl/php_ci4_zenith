@@ -944,6 +944,11 @@ $('#regiModal').on('show.bs.modal', function(e) {
     $('.custom-row-wrap .update_custom_box').empty();
 });
 
+$('form[name="search-form"]').bind('submit', function() {
+    dataTable.draw();
+    return false;
+});
+
 $('form[name="event-register-form"]').bind('submit', function(e) {
     e.preventDefault();
     var cus_array = new Array();
