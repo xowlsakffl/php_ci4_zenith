@@ -180,7 +180,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title" id="regiModalLabel">이벤트 등록</h1>
+                <h1 class="modal-title" id="regiModalLabel"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -906,6 +906,7 @@ $('#regiModal').on('show.bs.modal', function(e) {
     if ($btn.attr('id') === 'updateBtn') {
         var $tr = $btn.closest('tr');
         var seq = $tr.attr('id');
+        $('#regiModalLabel').text('이벤트 수정');
         $('.landing_info').show();
         $('.update-btn-wrap').show();
         $('.create-btn-wrap').hide();
@@ -926,6 +927,7 @@ $('#regiModal').on('show.bs.modal', function(e) {
         });
         
     }else{
+        $('#regiModalLabel').text('이벤트 등록');
         $('.landing_info').hide();
         $('.update-btn-wrap').hide();
         $('.create-btn-wrap').show();

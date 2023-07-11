@@ -59,11 +59,11 @@ class AdvertiserModel extends Model
         return $result;
     }
 
-    public function getOverwatchByAdvertiser($data)
+    public function getOverwatchByAdvertiser($seq)
     {
         $builder = $this->db->table('event_overwatch');
         $builder->select('*');
-        $builder->where('advertiser', $data['seq']);
+        $builder->where('advertiser', $seq);
 
         $result = $builder->get()->getRowArray();
         return $result;
@@ -92,10 +92,10 @@ class AdvertiserModel extends Model
         return true;
     }
 
-    public function updateAdv($data)
+    public function updateAdv($data, $seq)
     {
         $builder = $this->db->table('event_advertiser');
-        $builder->where('seq', $data['seq']);
+        $builder->where('seq', $seq);
         $builder->update($data);
 
         return true;

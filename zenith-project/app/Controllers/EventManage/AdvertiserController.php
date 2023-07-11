@@ -136,7 +136,6 @@ class AdvertiserController extends BaseController
 				'account_balance' => $arg['account_balance'],
 				'is_stop' => $arg['is_stop']
             ];
-            $data['seq'] = $arg['seq'];
             $data['ea_datetime'] = date('Y-m-d H:i:s');
 
             $validation = \Config\Services::validation();
@@ -160,12 +159,12 @@ class AdvertiserController extends BaseController
                 return $this->failValidationErrors($errors);
             }
 
-            $result = $this->advertiser->updateAdv($data);
+            $result = $this->advertiser->updateAdv($data, $arg['seq']);
 
             // OVERWATCH
             $db = \Config\Database::connect();
             $builder = $db->table('event_overwatch');
-			$ow = $this->advertiser->getOverwatchByAdvertiser($data);
+			$ow = $this->advertiser->getOverwatchByAdvertiser($arg['seq']);
 			$contact = implode(';',$arg['contact']);
 			// INSERT / UPDATE / DELETE
 			if($arg['sms_alert']=='1' && !$ow){

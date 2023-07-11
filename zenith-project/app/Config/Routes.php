@@ -153,8 +153,22 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->put('update', 'EventManage\AdvertiserController::updateAdv');
         });
         
-        $routes->get('media', 'EventManage\MediaController::index');
-        $routes->get('change', 'EventManage\ChangeController::index');
+        $routes->group('media', static function($routes){   
+            $routes->get('', 'EventManage\MediaController::index');
+            $routes->get('list', 'EventManage\MediaController::getList');
+            $routes->get('view', 'EventManage\MediaController::getMedia');
+            $routes->post('create', 'EventManage\MediaController::createMedia');
+            $routes->put('update', 'EventManage\MediaController::updateMedia');
+        });
+
+        $routes->group('change', static function($routes){   
+            $routes->get('', 'EventManage\ChangeController::index');
+            $routes->get('list', 'EventManage\ChangeController::getList');
+            $routes->get('view', 'EventManage\ChangeController::getChange');
+            $routes->post('create', 'EventManage\ChangeController::createChange');
+            $routes->put('update', 'EventManage\ChangeController::updateChange');
+        });
+
         $routes->get('exel', 'EventManage\ExelController::index');
     });
 });

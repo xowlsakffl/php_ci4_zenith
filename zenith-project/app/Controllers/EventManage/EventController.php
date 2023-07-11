@@ -144,7 +144,6 @@ class EventController extends BaseController
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
-            $data['seq'] = $arg['seq'];
             $data['ei_updatetime'] = date('Y-m-d H:i:s');
 
             $validation = \Config\Services::validation();
@@ -162,7 +161,7 @@ class EventController extends BaseController
                 return $this->failValidationErrors($errors);
             }
 
-            $result = $this->event->updateEvent($data);
+            $result = $this->event->updateEvent($data, $arg['seq']);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

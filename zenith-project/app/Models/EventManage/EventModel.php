@@ -134,10 +134,10 @@ class EventModel extends Model
         return true;
     }
 
-    public function updateEvent($data)
+    public function updateEvent($data, $seq)
     {
         $builder = $this->db->table('event_information');
-        $builder->where('seq', $data['seq']);
+        $builder->where('seq', $seq);
         $builder->update($data);
 
         return true;

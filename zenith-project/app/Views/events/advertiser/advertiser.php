@@ -73,7 +73,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title" id="clientModalLabel">광고주 등록</h1>
+                <h1 class="modal-title" id="clientModalLabel"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -188,19 +188,13 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-var today = moment().format('YYYY-MM-DD');
-$('#sdate, #edate').val(today);
-
 let data = {};
 let dataTable;
 
-setDate();
 getList();
 
 function setData() {
     data = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
         'stx': $('#stx').val(),
     };
 
@@ -263,53 +257,6 @@ function getList(){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
 
-    });
-}
-
-function setDate(){
-    $('#sdate, #edate').val(today);
-    $('#sdate, #edate').daterangepicker({
-        locale: {
-                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
-                "applyLabel": "확인",                    // 확인 버튼 텍스트
-                "cancelLabel": "취소",                   // 취소 버튼 텍스트
-                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-        },
-        alwaysShowCalendars: true,                        // 시간 노출 여부
-        showDropdowns: true,                     // 년월 수동 설정 여부
-        autoApply: true,                         // 확인/취소 버튼 사용여부
-        maxDate: new Date(),
-        autoUpdateInput: false,
-        ranges: {
-            '오늘': [moment(), moment()],
-            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '지난 일주일': [moment().subtract(6, 'days'), moment()],
-            '지난 한달': [moment().subtract(29, 'days'), moment()],
-            '이번달': [moment().startOf('month'), moment().endOf('month')],
-        }
-    }, function(start, end, label) {
-        // Lets update the fields manually this event fires on selection of range
-        startDate = start.format('YYYY-MM-DD'); // selected start
-        endDate = end.format('YYYY-MM-DD'); // selected end
-
-        $checkinInput = $('#sdate');
-        $checkoutInput = $('#edate');
-
-        // Updating Fields with selected dates
-        $checkinInput.val(startDate);
-        $checkoutInput.val(endDate);
-
-        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
-        var checkOutPicker = $checkoutInput.data('daterangepicker');
-        checkOutPicker.setStartDate(startDate);
-        checkOutPicker.setEndDate(endDate);
-
-        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
-        var checkInPicker = $checkinInput.data('daterangepicker');
-        checkInPicker.setStartDate($checkinInput.val(startDate));
-        checkInPicker.setEndDate(endDate);
-    
     });
 }
 
@@ -410,6 +357,7 @@ $('#clientModal').on('show.bs.modal', function(e) {
     if ($btn.attr('id') === 'updateBtn') {
         var $tr = $btn.closest('tr');
         var seq = $tr.attr('id');
+        $('#clientModalLabel').text('광고주 수정');
         $('.ow_update').show();
         $('.update-btn-wrap').show();
         $('.create-btn-wrap').hide();
@@ -429,6 +377,7 @@ $('#clientModal').on('show.bs.modal', function(e) {
         });
         
     }else{
+        $('#clientModalLabel').text('광고주 등록');
         $('.ow_update').hide();
         $('.update-btn-wrap').hide();
         $('.create-btn-wrap').show();
