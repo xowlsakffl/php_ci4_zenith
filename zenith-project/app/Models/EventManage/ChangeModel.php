@@ -6,36 +6,66 @@ use CodeIgniter\Model;
 
 class ChangeModel extends Model
 {
-    protected $DBGroup          = 'default';
-    protected $table            = 'changes';
-    protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [];
+    public function getChanges($data)
+    {
+        $srch = $data['searchData'];
+        $builder = $this->db->table('event_conversion');
+        $builder->select('*, COUNT(id) AS total');
 
-    // Dates
-    protected $useTimestamps = false;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+        if(!empty($srch['stx'])){
+            $builder->groupStart();
+            $builder->like('id', $srch['stx']);
+            $builder->orLike('name', $srch['stx']);
+            $builder->groupEnd();
+        }
+        $builder->groupBy('id');
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
 
-    // Validation
-    protected $validationRules      = [];
-    protected $validationMessages   = [];
-    protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "ec_datetime desc";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if(isset($data['length']) && !isset($data['noLimit']) && ($data['length'] != -1)) $builder->limit($data['length'], $data['start']);
 
-    // Callbacks
-    protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
-    protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
-    protected $afterUpdate    = [];
-    protected $beforeFind     = [];
-    protected $afterFind      = [];
-    protected $beforeDelete   = [];
-    protected $afterDelete    = [];
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+    }
+
+    public function getChange($id)
+    {
+        $builder = $this->db->table('event_conversion');
+        $builder->select('*');
+        $builder->where('id', $id);
+
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
+
+    public function createMedia($data)
+    {
+        $builder = $this->db->table('event_media');
+        $builder->insert($data);
+
+        return true;
+    }
+
+    public function updateMedia($data, $seq)
+    {
+        $builder = $this->db->table('event_media');
+        $builder->where('seq', $seq);
+        $builder->update($data);
+
+        return true;
+    }
 }
