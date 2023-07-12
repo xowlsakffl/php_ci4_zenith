@@ -174,7 +174,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('list', 'EventManage\BlackListController::getList');
             $routes->get('view', 'EventManage\BlackListController::getBlackList');
             $routes->post('create', 'EventManage\BlackListController::createBlackList');
-            $routes->put('update', 'EventManage\BlackListController::updateBlackList');
+            $routes->delete('delete', 'EventManage\BlackListController::deleteBlackList');
         });
 
         $routes->get('exel', 'EventManage\ExelController::index');

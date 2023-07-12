@@ -6,9 +6,6 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script>
-    console.log('header')
-</script>
 <?=$this->endSection();?>
 
 <!--바디-->

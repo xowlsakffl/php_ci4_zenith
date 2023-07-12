@@ -106,7 +106,7 @@ class AdvertiserController extends BaseController
             ];
             $validationMessages   = [
                 'name' => [
-                    'required' => '광고주가 입력되지 않았습니다.',
+                    'required' => '광고주명은 필수 입력 사항입니다.',
                     'is_unique' => '이미 등록된 광고주입니다.'
                 ],
             ];
