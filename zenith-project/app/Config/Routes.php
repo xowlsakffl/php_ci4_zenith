@@ -169,6 +169,14 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->put('update', 'EventManage\ChangeController::updateChange');
         });
 
+        $routes->group('blacklist', static function($routes){   
+            $routes->get('', 'EventManage\BlackListController::index');
+            $routes->get('list', 'EventManage\BlackListController::getList');
+            $routes->get('view', 'EventManage\BlackListController::getBlackList');
+            $routes->post('create', 'EventManage\BlackListController::createBlackList');
+            $routes->put('update', 'EventManage\BlackListController::updateBlackList');
+        });
+
         $routes->get('exel', 'EventManage\ExelController::index');
     });
 });

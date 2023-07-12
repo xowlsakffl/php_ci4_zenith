@@ -52,20 +52,27 @@ class ChangeModel extends Model
         return $result;
     }
 
-    public function createMedia($data)
+    public function createChange($data)
     {
-        $builder = $this->db->table('event_media');
+        $builder = $this->db->table('event_conversion');
         $builder->insert($data);
 
         return true;
     }
 
-    public function updateMedia($data, $seq)
+    public function updateChange($data)
     {
-        $builder = $this->db->table('event_media');
-        $builder->where('seq', $seq);
-        $builder->update($data);
-
+        $builder = $this->db->table('event_conversion');
+        $builder->set('id', $data['id']);
+        $builder->set('name', $data['name']);
+        $builder->set('token', $data['token']);
+        if($data['old_id'] != $data['id']){
+            $builder->where('id', $data['old_id']);
+        }else{
+            $builder->where('id', $data['id']);
+        }
+        $builder->update();
+    
         return true;
     }
 }

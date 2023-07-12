@@ -2,7 +2,7 @@
 
 <!--타이틀-->
 <?=$this->section('title');?>
-    CHAIN 열혈광고 - 이벤트 / 광고주 관리
+    CHAIN 열혈광고 - 이벤트 / 블랙리스트 관리
 <?=$this->endSection();?>
 
 <!--헤더-->
@@ -22,7 +22,7 @@
 <?=$this->section('content');?>
 <div class="sub-contents-wrap">
     <div class="title-area">
-        <h2 class="page-title">광고주 관리</h2>
+        <h2 class="page-title">블랙리스트 관리</h2>
     </div>
 
     <div class="search-wrap">
@@ -30,7 +30,7 @@
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
-                <button class="btn-special ms-2" id="createBtn" data-bs-toggle="modal" data-bs-target="#clientModal" type="button">등록</button>
+                <button class="btn-special ms-2" id="createBtn" data-bs-toggle="modal" data-bs-target="#blackModal" type="button">등록</button>
             </div>
         </form>
     </div>
@@ -38,9 +38,9 @@
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
             <a href="/eventmanage/event"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
+            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-danger">광고주 관리</button></a>
             <a href="/eventmanage/media"><button type="button" class="btn btn-danger">매체 관리</button></a>
             <a href="/eventmanage/change"><button type="button" class="btn btn-danger">전환 관리</button></a>
-            <a href="/eventmanage/blacklist"><button type="button" class="btn btn-danger">블랙리스트 관리</button></a>
         </div>
 
         <div class="table-responsive">

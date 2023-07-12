@@ -40,6 +40,7 @@
             <a href="/eventmanage/event"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
             <a href="/eventmanage/advertiser"><button type="button" class="btn btn-danger">광고주 관리</button></a>
             <a href="/eventmanage/media"><button type="button" class="btn btn-danger">매체 관리</button></a>
+            <a href="/eventmanage/blacklist"><button type="button" class="btn btn-danger">블랙리스트 관리</button></a>
         </div>
 
         <div class="table-responsive">
@@ -73,6 +74,7 @@
             </div>
             <div class="modal-body">
                 <form name="change-register-form" id="change-register-form">
+                    <input type="hidden" name="old_id" value="">
                     <div class="table-responsive">
                         <table class="table table-bordered table-left-header">
                             <colgroup>
@@ -99,10 +101,10 @@
             </div>
             <div class="modal-footer">
                 <div class="create-btn-wrap">
-                    <button type="submit" class="btn btn-primary" form="media-register-form" id="createActionBtn">생성</button>
+                    <button type="submit" class="btn btn-primary" form="change-register-form" id="createActionBtn">생성</button>
                 </div>
                 <div class="update-btn-wrap">
-                    <button type="submit" class="btn btn-primary" form="media-register-form" id="updateActionBtn">수정</button>
+                    <button type="submit" class="btn btn-primary" form="change-register-form" id="updateActionBtn">수정</button>
                 </div>
             </div>
         </div>
@@ -129,13 +131,12 @@ function setData() {
 
 function getList(){
     dataTable = $('#change-table').DataTable({
-        "order": [[0,'desc']],
         "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
-        "ordering": true,
+        "ordering": false,
         "scrollX": true,
         "scrollY": 500,
         "scrollCollapse": true,
@@ -171,6 +172,7 @@ function getList(){
 }
 
 function setChange(data){
+    $('input[name="old_id"]').val(data.id);
     $('input[name="id"]').val(data.id);
     $('input[name="name"]').val(data.name);
     $('input[name="token"]').val(data.token);
@@ -187,6 +189,7 @@ function createChange(data){
             if(data == true){
                 dataTable.draw();
                 alert("생성되었습니다.");
+                
                 $('#changeModal').modal('hide');
             }
         }
@@ -209,6 +212,7 @@ function updateChange(data){
             if(data == true){
                 dataTable.draw();
                 alert("수정되었습니다.");
+                
                 $('#changeModal').modal('hide');
             }
         }
@@ -266,7 +270,6 @@ $('form[name="change-register-form"]').bind('submit', function(e) {
     if(clickedButton == 'updateActionBtn'){
         updateChange(data);
     }
-    
     return false;
 });
 </script>

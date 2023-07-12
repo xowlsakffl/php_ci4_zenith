@@ -57,18 +57,23 @@ class ChangeController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $arg = $this->request->getRawInput();
             $data = [
-                'media' => $arg['media'],
-				'target' => $arg['target'],
+                'id' => $arg['id'],
+				'name' => $arg['name'],
+                'token' => $arg['token'],
             ];
-
+            $data['ec_datetime'] = date('Y-m-d H:i:s');
             $validation = \Config\Services::validation();
             $validationRules      = [
-                'media' => 'required|is_unique[event_media.media]',
+                'id' => 'required|is_unique[event_conversion.id]',
+                'token' => 'required'
             ];
             $validationMessages   = [
-                'media' => [
-                    'required' => '매체명은 필수 입력 사항입니다.',
-                    'is_unique' => '이미 등록된 매체입니다.'
+                'id' => [
+                    'required' => '전환ID는 필수 입력 사항입니다.',
+                    'is_unique' => '이미 등록된 아이디입니다.'
+                ],
+                'token' => [
+                    'required' => 'Access Token은 필수 입력 사항입니다.',
                 ],
             ];
             $validation->setRules($validationRules, $validationMessages);
@@ -77,29 +82,39 @@ class ChangeController extends BaseController
                 return $this->failValidationErrors($errors);
             }
             
-            $result = $this->media->createMedia($data);
+            $result = $this->change->createChange($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
     }
-
+    
     public function updateChange()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = [
-                'media' => $arg['media'],
-				'target' => $arg['target'],
+                'old_id' => $arg['old_id'],
+                'id' => $arg['id'],
+				'name' => $arg['name'],
+                'token' => $arg['token'],
             ];
-
+            $data['ec_datetime'] = date('Y-m-d H:i:s');
             $validation = \Config\Services::validation();
             $validationRules      = [
-                'media' => 'required',
+                'id' => 'required',
+                'token' => 'required'
             ];
+            if($data['old_id'] != $data['id']){
+                $validationRules['id'] = 'required|is_unique[event_conversion.id]';
+            }
             $validationMessages   = [
-                'media' => [
-                    'required' => '매체명은 필수 입력 사항입니다.',
+                'id' => [
+                    'required' => '전환ID는 필수 입력 사항입니다.',
+                    'is_unique' => '이미 등록된 아이디입니다.'
+                ],
+                'token' => [
+                    'required' => 'Access Token은 필수 입력 사항입니다.',
                 ],
             ];
             $validation->setRules($validationRules, $validationMessages);
@@ -107,9 +122,8 @@ class ChangeController extends BaseController
                 $errors = $validation->getErrors();
                 return $this->failValidationErrors($errors);
             }
-
-            $result = $this->media->updateMedia($data, $arg['seq']);
-
+            
+            $result = $this->change->updateChange($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
