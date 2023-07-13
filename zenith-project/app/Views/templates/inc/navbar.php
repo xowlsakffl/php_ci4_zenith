@@ -34,7 +34,7 @@ $uri = current_url(true)->getPath();
                         <li><a href="/eventmanage/media" class="<?php if($uri === '/eventmanage/media'){ echo "active";}?>">매체 관리</a></li>
                         <li><a href="/eventmanage/change" class="<?php if($uri === '/eventmanage/change'){ echo "active";}?>">전환 관리</a></li>
                         <li><a href="/eventmanage/blacklist" class="<?php if($uri === '/eventmanage/blacklist'){ echo "active";}?>">블랙리스트 관리</a></li>
-                        <li><a href="/eventmanage/exel" class="<?php if($uri === '/eventmanage/exel'){ echo "active";}?>">엑셀 업로드</a></li>
+                        <li><a href="/eventmanage/excel" class="<?php if($uri === '/eventmanage/excel'){ echo "active";}?>">엑셀 업로드</a></li>
                     </ul>
                 </div>
             </li>

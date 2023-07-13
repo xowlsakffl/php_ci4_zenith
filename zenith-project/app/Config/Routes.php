@@ -177,7 +177,11 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->delete('delete', 'EventManage\BlackListController::deleteBlackList');
         });
 
-        $routes->get('exel', 'EventManage\ExelController::index');
+        $routes->group('excel', static function($routes){   
+            $routes->get('', 'EventManage\ExcelController::index');
+            $routes->post('upload', 'EventManage\ExcelController::upload');
+        });
+        
     });
 });
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
