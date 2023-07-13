@@ -16,12 +16,13 @@ class Douzone {
         $result = [];
         foreach($list as $row) {
             $data = [
-                'email' => $row['email_addr'],
+                'email' => $row['email_addr'] . "@carelabs.co.kr",
                 'name' => preg_replace('/^.+_(.+)$/', '$1', $row['user_nm']),
                 'title' => $row['doc_title'],
                 'status' => $row['doc_sts'],
                 'reg_time' => $row['rep_dt'],
-                'end_time' => $row['end_dt']
+                'end_time' => $row['end_dt'],
+                'rep_dt' => $row['rep_dt']
             ];
             $data = array_merge($data, $this->getDayOffDesc($row));
             if(preg_match('/시간차/', $data['title']) || preg_match('/시간차/', $data['reason'])) continue;

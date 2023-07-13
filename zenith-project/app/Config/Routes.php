@@ -203,9 +203,10 @@ $routes->get('calendar', 'Calendar\CalendarController::index');
 $routes->get('auth/slack/callback', '\App\ThirdParty\botman\ChatBot::getToken');
 $routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::test'); */
 
-$routes->match(['get', 'post'], 'slack/(:any)', '\App\ThirdParty\slack_api\SlackChat::$1');
+$routes->match(['get', 'post'], 'slack/(:any)', '\App\Libraries\slack_api\SlackChat::$1');
 
 $routes->cli('hr/(:any)', 'HumanResource\HumanResourceController::$1');
+$routes->get('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
