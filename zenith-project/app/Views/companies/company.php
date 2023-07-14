@@ -369,7 +369,6 @@ function getCompanyList(){
 function getBelongUsers(){
     userTable = $('#userTable').DataTable({
         "destroy": true,
-        "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -425,7 +424,6 @@ function getBelongUsers(){
 function getCompanyAdAccounts(){
     adaccountTable = $('#adAccountListTable').DataTable({
         "destroy": true,
-        "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
