@@ -205,6 +205,8 @@ $routes->match(['get', 'post'], 'slack/(:any)', '\App\Libraries\slack_api\SlackC
 
 $routes->cli('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 $routes->get('hr/(:any)', 'HumanResource\HumanResourceController::$1');
+
+$routes->match(['get', 'post'], 'jira/(:any)', 'Api\JiraController::$1');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
