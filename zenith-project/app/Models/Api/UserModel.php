@@ -124,7 +124,7 @@ class UserModel extends ShieldUserModel
     public function getBelongUsers($companyId)
     {
         $builder = $this->db->table('users AS u');
-        $builder->select('u.id, u.username, u.created_at');
+        $builder->select('u.id, u.username, u.nickname, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->where('cu.company_id', $companyId);
         $result = $builder->get()->getResultArray();

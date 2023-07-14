@@ -7,11 +7,11 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
     .ui-autocomplete{
         z-index: 10000000;
@@ -438,7 +438,7 @@ function updateUser(data){
             if(data == true){
                 dataTable.draw();
                 alert("변경되었습니다.");
-                $('#adv-show').modal('hide');
+                $('#user-show').modal('hide');
             }
         }
         ,error : function(error){
@@ -473,6 +473,7 @@ $('#user-show').on('show.bs.modal', function(e) {
     $('#user-show #usernameText').text('');
     $('#user-show #emailText').text('');
     $('#user-show #userCreatdeAt').text('');
+    $('.dp_info td').text('');
     $('#groupHide').remove();
 });
 

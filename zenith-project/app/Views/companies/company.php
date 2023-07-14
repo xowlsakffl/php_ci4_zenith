@@ -6,11 +6,11 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-dt/css/jquery.dataTables.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-dt/css/fixedHeader.dataTables.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
     .ui-autocomplete{
         z-index: 10000000;
@@ -169,14 +169,6 @@
                             </form>
                             <!--매체별 연결 광고주 리스트-->
                             <table class="dataTable table table-striped table-hover" id="adAccountListTable">
-                                <colgroup>
-                                    <col style="width:5%;">
-                                    <col style="width:25%;">
-                                    <col style="width:15%;">
-                                    <col style="width:35%;">
-                                    <col style="width:10%;">
-                                    <col style="width:10%;">
-                                </colgroup>
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="first">#</th>
@@ -218,16 +210,11 @@
                             </form>
                             <!--유저리스트-->
                             <table class="dataTable table table-striped table-hover" id="userTable">
-                                <colgroup>
-                                    <col style="width:10%;">
-                                    <col style="width:60%;">
-                                    <col style="width:20%;">
-                                    <col style="width:10%;">
-                                </colgroup>
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="first">#</th>
-                                        <th>사용자 이름</th>
+                                        <th>아이디</th>
+                                        <th>이름</th>
                                         <th>생성일</th>
                                         <th></th>
                                     </tr>
@@ -402,16 +389,19 @@ function getBelongUsers(){
             }
         },
         "columns": [
-            { "data": null },
-            { "data": "username"},
+            { "data": null, "width": "10%"},
+            { "data": "username", "width": "30%"},
+            { "data": "nickname", "width": "30%"},
             { 
                 "data": "created_at",
+                "width": "20%",
                 "render": function(data){
                     return data.substr(0, 10);
                 }
             },
             { 
                 "data": "null",
+                "width": "10%",
                 "render": function(){
                     return '<button class="btn btn-danger" id="exceptUserBelongBtn">제외</button>';
                 }
@@ -455,10 +445,11 @@ function getCompanyAdAccounts(){
             }
         },
         "columns": [
-            { "data": null },
-            { "data": "accountId"},
+            { "data": null, "width": "5%"},
+            { "data": "accountId", "width": "25%"},
             { 
                 "data": "media",
+                "width": "15%",
                 "render": function(data){
                     switch (data) {
                         case 'facebook':
@@ -476,10 +467,11 @@ function getCompanyAdAccounts(){
                     return media;
                 }
             },
-            { "data": "name"},
-            { "data": "status"},
+            { "data": "name", "width": "35%"},
+            { "data": "status", "width": "10%"},
             { 
                 "data": "null",
+                "width": "10%",
                 "render": function(){
                     return '<button class="btn btn-danger" id="exceptAdAccountBtn">제외</button>';
                 }

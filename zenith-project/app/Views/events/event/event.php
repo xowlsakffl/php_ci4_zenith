@@ -593,7 +593,6 @@ function getList(){
             { 
                 "data": "db_price",
                 "width": "8%",
-
             },
             { "data": "username", "width": "5%"},
             { 
