@@ -64,12 +64,12 @@ class UserModel extends ShieldUserModel
             $builder->orLike('ai.secret', $srch['stx']);
             $builder->groupEnd();
         }
-        
+        $builder->groupBy('u.id');
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
 
         // limit 적용한 쿼리
-        $builder->groupBy('u.id');
+        
         $orderBy = [];
         if(!empty($data['order'])) {
             foreach($data['order'] as $row) {

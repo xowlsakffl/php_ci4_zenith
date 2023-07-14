@@ -51,12 +51,12 @@ class CompanyModel extends Model
             $builder->orLike('parent_c.name', $srch['stx']);
             $builder->groupEnd();
         }
-        
+        $builder->groupBy('c.id');
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
 
         // limit 적용한 쿼리
-        $builder->groupBy('c.id');
+        
         $orderBy = [];
         if(!empty($data['order'])) {
             foreach($data['order'] as $row) {
