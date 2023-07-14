@@ -65,16 +65,18 @@
                         <col style="width:5%;">
                         <col style="width:15%;">
                         <col style="width:15%;">
-                        <col style="width:25%;">
+                        <col style="width:15%;">
+                        <col style="width:22%;">
+                        <col style="width:5%;">
+                        <col style="width:18%;">
                         <col style="width:10%;">
-                        <col style="width:15%;">
-                        <col style="width:15%;">
                 </colgroup>
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">소속</th>
                         <th scope="col">아이디</th>
+                        <th scope="col">이름</th>
                         <th scope="col">이메일</th>
                         <th scope="col">상태</th>
                         <th scope="col">권한</th>
@@ -96,6 +98,7 @@
                     <div class="modal-body">
                         <div class="table-responsive">
                             <form name="user-show-form" id="userForm">
+                                <input type="hidden" name="user_id" value="">
                                 <h2 class="body-title">회원정보 수정</h2>
                                 <table class="table table-bordered table-left-header">
                                     <colgroup>
@@ -106,7 +109,6 @@
                                         <tr>
                                             <th scope="row">소속</th>
                                             <td id="userBelong">
-                                                <input type="hidden" name="user_id">
                                                 <input type="text" name="company_name" class="form-control" id="belongCompany" placeholder="광고주/광고대행사 검색">
                                             </td>
                                         </tr>
@@ -121,10 +123,10 @@
                                         <tr>
                                             <th scope="row">상태</th>
                                             <td id="userStatus">
-                                                <select class="form-select" aria-label="상태 선택" name="status">
+                                                <select class="form-select" aria-label="상태 선택" name="active">
                                                     <option selected hidden disabled>-선택-</option>
                                                     <option value="1">활성</option>
-                                                    <option value="2">비활성</option>
+                                                    <option value="0">비활성</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -259,16 +261,14 @@ function setData() {
 function getUserList(){
     dataTable = $('#userTable').DataTable({
         "autoWidth": true,
-        "columnDefs": [
-            { targets: [0], orderable: false},
-        ],
-        "order": [[6, 'desc']],
+        "order": [[0, 'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
         "ordering": true,
         "deferRender": false,
+        "rowId": "user_id",
         "lengthMenu": [
             [ 25, 10, 50, -1 ],
             [ '25개', '10개', '50개', '전체' ]
@@ -286,8 +286,9 @@ function getUserList(){
             { "data": null },
             { "data": "belong" },
             { "data": "username"},
+            { "data": "nickname"},
             { "data": "email" },
-            { "data": "status" },
+            { "data": "active" },
             { "data": "groups" },
             { 
                 "data": "created_at",
@@ -297,7 +298,6 @@ function getUserList(){
             },
         ],
         "createdRow": function(row, data, dataIndex) {
-            $(row).attr("data-user-id", data.user_id);
             $(row).attr("data-bs-toggle", "modal");
             $(row).attr("data-bs-target", "#user-show");
         },
@@ -413,9 +413,9 @@ function setUserShow(data) {
         html += `<tr class="dp_info"><th>팀</th><td>${data.team}</td></tr>`;
         $('#user-show table tr:eq(2)').after(html);
     }
-    if(data.status){
-        $('#user-show #userStatus select').val(data.status);
-    }
+
+    $('#user-show #userStatus select').val(data.active);
+    
     data.groups.forEach(function(value) {
         if(value === 'superadmin'){
             $("#userGroup").prepend('<div class="form-check-inline" id="groupHide">최고관리자</div>');
@@ -451,8 +451,8 @@ function updateUser(data){
 
 $('#user-show').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
-    var id = $btn.data('user-id');
-    $(this).attr('data-user-id', id);
+    var id = $btn.attr('id');
+    $('input[name="user_id"]').val(id);
     $.ajax({
         type: "get",
         url: "<?=base_url()?>/user/get-user",
@@ -468,7 +468,7 @@ $('#user-show').on('show.bs.modal', function(e) {
     });
 })
 .on('hidden.bs.modal', function(e) { //modal Reset
-    $(this).removeAttr('data-id');
+    $('input[name="user_id"]').val('');
     $('form[name="user-show-form"]')[0].reset();
     $('#user-show #usernameText').text('');
     $('#user-show #emailText').text('');

@@ -26,9 +26,7 @@ $routes->setAutoRoute(false);
  * Route Definitions
  * --------------------------------------------------------------------
  */
-service('auth')->routes($routes, ['except' => ['register']]);
-$routes->get('register', 'Auth\RegisterController::registerView');
-$routes->post('register', 'Auth\RegisterController::registerAction');
+service('auth')->routes($routes);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 

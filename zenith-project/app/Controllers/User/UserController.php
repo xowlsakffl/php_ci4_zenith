@@ -28,7 +28,7 @@ class UserController extends \CodeIgniter\Controller
     }
 
     public function getUsers(){
-        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getUsers($param);
             foreach ($result['data'] as &$row) {
@@ -62,6 +62,12 @@ class UserController extends \CodeIgniter\Controller
                     }
                 }
                 $row['groups'] = implode(',', $groups);
+
+                if($row['active']){
+                    $row['active'] = '활성';
+                }else{
+                    $row['active'] = '비활성';
+                }
             }; 
 
             $result = [
@@ -118,21 +124,12 @@ class UserController extends \CodeIgniter\Controller
             $param = $this->request->getRawInput();
             if (!empty($param)) {
                 $company = $this->company->getCompanyByName($param['company_name']);
-                if(empty($company)) {
-                    return $this->failValidationErrors(["company" => "존재하지 않는 광고주/광고대행사입니다."]);
-                }
-
-                $param['company_id'] = $company['id'];
-                
-                switch ($param['status']) {
-                    case 1:
-                        $param['status_message'] = '활성';
-                        break;
-                    case 2:
-                        $param['status_message'] = '비활성';
-                        break;
-                    default:
-                        break;
+                if(!empty($param['company_name'])){
+                    if(empty($company)) {
+                        return $this->failValidationErrors(["company" => "존재하지 않는 광고주/광고대행사입니다."]);
+                    }else{
+                        $param['company_id'] = $company['id'];
+                    }
                 }
 
                 $result = $this->user->setUser($param);

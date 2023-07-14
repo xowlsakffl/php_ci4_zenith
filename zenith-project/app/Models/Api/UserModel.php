@@ -16,8 +16,6 @@ class UserModel extends ShieldUserModel
 
     protected $allowedFields = [
         'username',
-        'status',
-        'status_message',
         'active',
         'last_active',
         'deleted_at',
@@ -47,7 +45,7 @@ class UserModel extends ShieldUserModel
     {
         $srch = $data['searchData'];
         $builder = $this->db->table('users AS u');
-        $builder->select('c.name AS belong, u.id AS user_id, u.username, ai.secret AS email, u.status_message as status, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
+        $builder->select('c.name AS belong, u.id AS user_id, u.username, u.nickname, ai.secret AS email, u.active as active, GROUP_CONCAT(DISTINCT agu.group) as groups, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
@@ -96,13 +94,13 @@ class UserModel extends ShieldUserModel
     public function getUser($data)
     {
         $builder = $this->db->table('users AS u');
-        $builder->select('cu.company_id AS company_id, c.name AS belong, u.id AS user_id, u.username, u.nickname, up.division, up.team, up.position, ai.secret AS email, u.status, GROUP_CONCAT(DISTINCT agu.group) AS groups, GROUP_CONCAT(DISTINCT apu.permission) AS permissions, u.created_at');
+        $builder->select('cu.company_id AS company_id, c.name AS belong, u.id AS user_id, u.username, u.nickname, up.division, up.team, up.position, ai.secret AS email, u.active, GROUP_CONCAT(DISTINCT agu.group) AS groups, GROUP_CONCAT(DISTINCT apu.permission) AS permissions, u.created_at');
         $builder->join('companies_users as cu', 'u.id = cu.user_id', 'left');
         $builder->join('companies as c', 'c.id = cu.company_id', 'left');
         $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
         $builder->join('auth_groups_users as agu', 'u.id = agu.user_id', 'left');
         $builder->join('auth_permissions_users as apu', 'u.id = apu.user_id', 'left');
-        $builder->join('users_department AS up', 'u.id = up.user_id');
+        $builder->join('users_department AS up', 'u.id = up.user_id', 'left');
         $builder->where('u.id', $data['user_id']);
         $result = $builder->get()->getRowArray();
         return $result;
@@ -146,10 +144,9 @@ class UserModel extends ShieldUserModel
     {
         $user = $this->findById($data['user_id']);
         $this->db->transStart();
-        if(!empty($data['status'])){
+        if(!empty($data['active'])){
             $builder_1 = $this->db->table('users');
-            $builder_1->set('status', $data['status']);
-            $builder_1->set('status_message', $data['status_message']);
+            $builder_1->set('active', $data['active']);
             $builder_1->where('id', $data['user_id']);
             $builder_1->update();
         }
@@ -171,6 +168,12 @@ class UserModel extends ShieldUserModel
             $builder_2->where('company_id', $data['company_id']);
             $builder_2->where('user_id', $data['user_id']);
             $builder_2->update();
+        }
+
+        if(empty($data['company_name'])){
+            $builder_2 = $this->db->table('companies_users');
+            $builder_2->where('user_id', $data['user_id']);
+            $builder_2->delete();
         }
 
         if(!empty($data['group'])){
