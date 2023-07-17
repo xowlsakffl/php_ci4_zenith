@@ -19,9 +19,26 @@ class JiraController extends BaseController
                 $user = new UserModel();
                 $userData = $user->getUserByName($param->issue->fields->reporter->displayName);
                 $slack = new SlackChat();
+                $link = 'https://carelabs-dm.atlassian.net/jira/core/projects/'.$param->issue->fields->project->key.'/board?selectedIssue='.$param->issue->key.'';
                 $data = [
                     'channel' => $slack->config['UserID'][$userData['nickname']],
-                    'text' => '['.$param->issue->fields->project->name.']['.$param->issue->fields->summary.'('.$param->issue->key.')]'.$param->user->displayName.'님이 완료처리 하였습니다.<br><a href="https://carelabs-dm.atlassian.net/jira/core/projects/DEV/board?selectedIssue=DEV-18"></a>',
+                    'blocks' => [
+                        [
+                            'type' => 'section',
+                            'text' => [
+                                'type' => 'mrkdwn',
+                                'text' => '['.$param->issue->fields->project->name.']['.$param->issue->fields->summary.'('.$param->issue->key.')]'.$param->user->displayName.'님이 완료처리 하였습니다.',
+                            ],
+                            "block_id" => "text1"
+                        ],
+                        [
+                            'type' => 'section',
+                            'text' => [
+                                'type' => 'mrkdwn',
+                                'text' => "<$link>"
+                            ],
+                        ],
+                    ],
                 ];
                 $result = $slack->sendMessage($data);
                 log_message('info', print_r($result, true));
