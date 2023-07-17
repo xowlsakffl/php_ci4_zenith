@@ -52,7 +52,7 @@ $uri = current_url(true)->getPath();
     <div class="user-nav">
         <p><?php echo auth()->user()->username;?> 로그인 중</p>
         <div class="util-nav">
-            <a href="#">마이페이지</a>
+            <a href="/mypage">마이페이지</a>
             <a href="/logout">로그아웃</a>
         </div>
     </div>

@@ -27,6 +27,11 @@ class UserController extends \CodeIgniter\Controller
         return view('users/user');
     }
 
+    public function myPage()
+    {
+        return view('users/mypage');
+    }
+
     public function getUsers(){
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();

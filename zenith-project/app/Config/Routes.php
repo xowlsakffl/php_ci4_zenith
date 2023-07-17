@@ -75,6 +75,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
         //사용자 관리
         $routes->get('user', 'User\UserController::index');
+        $routes->get('mypage', 'User\UserController::myPage');
         $routes->get('user/get-users', 'User\UserController::getUsers');
         $routes->get('user/get-user', 'User\UserController::getUser');
         $routes->get('company/get-search-companies', 'Company\CompanyController::getSearchCompanies');

@@ -17,11 +17,11 @@ class JiraController extends BaseController
             $param = $this->request->getVar();
             if($param){
                 $user = new UserModel();
-                $userData = $user->getUserByEmail($param->user->emailAddress);
+                $userData = $user->getUserByName($param->issue->fields->reporter->displayName);
                 $slack = new SlackChat();
                 $data = [
                     'channel' => $slack->config['UserID'][$userData['nickname']],
-                    'text' => '['.$param->issue->fields->project->name.']['.$param->issue->fields->summary.'('.$param->issue->key.')]'.$userData['nickname'].'님이 완료처리 하였습니다.'
+                    'text' => '['.$param->issue->fields->project->name.']['.$param->issue->fields->summary.'('.$param->issue->key.')]'.$param->user->displayName.'님이 완료처리 하였습니다.<br><a href="https://carelabs-dm.atlassian.net/jira/core/projects/DEV/board?selectedIssue=DEV-18"></a>',
                 ];
                 $result = $slack->sendMessage($data);
                 log_message('info', print_r($result, true));
