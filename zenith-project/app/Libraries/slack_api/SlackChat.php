@@ -4,7 +4,8 @@ use App\Controllers\BaseController;
 class SlackChat extends BaseController
 {
 
-    private $config, $client;
+    private $client;
+    public $config;
 
     public function __construct() {
         $this->config = parse_ini_file(APPPATH.'Libraries/slack_api/config.ini', true);

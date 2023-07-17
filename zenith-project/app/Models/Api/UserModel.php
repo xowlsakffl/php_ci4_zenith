@@ -215,4 +215,16 @@ class UserModel extends ShieldUserModel
 
         return $result;
     }
+
+    public function getUserByEmail($email)
+    {
+        $builder = $this->db->table('users AS u');
+        $builder->select('u.id, u.username, u.nickname, ai.secret as email, u.created_at');
+        $builder->join('auth_identities as ai', 'u.id = ai.user_id', 'left');
+        $builder->where('ai.secret', $email);
+        $builder->where('ai.type', 'email_password');
+        $result = $builder->get()->getRowArray();
+
+        return $result;
+    }
 }
