@@ -1619,7 +1619,7 @@ div.dataTables_processing > div:last-child > div {
   margin: 0 auto;
 }
 .register-container .card {
-  margin: 0 auto;
+  margin: 7% auto 0;
   --bs-card-border-color:transparent;
   --bs-card-bg:inherit;
   max-width: 500px;
@@ -1676,6 +1676,9 @@ div.dataTables_processing > div:last-child > div {
 }
 .register-container form .form-control:-webkit-autofill, .register-container form .form-control:-internal-autofill-selected {
   transition: background-color 5000s ease-in-out 0s;
+}
+.register-container form p.text-start a:hover {
+  color: #ce1922;
 }
 
 .myPage-container h1 {

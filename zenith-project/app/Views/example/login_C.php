@@ -4,6 +4,7 @@
 
 <?= $this->section('guestContent') ?>
 
+<!-- ===================================================== -->
 <div class="row container-fluid register-container">
     <div class="card col-lg-6 col-12">
     <form action="<?= url_to('login') ?>" method="post">
@@ -62,4 +63,5 @@
         }              
     },150); 
 </script>
+<!-- ======================================================== -->
 <?= $this->endSection() ?>

@@ -28,8 +28,8 @@ class HumanResourceController extends BaseController
 
     public function getMemberList() {
         $lists = $this->hr->getMemberList();
-        dd($lists);
-        // foreach($lists as $row) echo $row['nickname'].':'.$row['secret'].'<br>';
+        foreach($lists as $row) $data[] = [$row['nickname'],$row['division'],$row['secret']];
+        dd($data);
         return $lists;
     }
 

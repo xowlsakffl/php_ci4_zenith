@@ -7,7 +7,7 @@ $icon-pd:3.75rem; //60px
 }
 
 .register-container{margin:0 auto;   
-    .card{margin:0 auto; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
+    .card{margin:7% auto 0; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
 
     .card-title{font-size:1.5rem; margin:2.5rem 0;}
 
@@ -25,8 +25,11 @@ $icon-pd:3.75rem; //60px
             &:-webkit-autofill,    
             &:-internal-autofill-selected {transition: background-color 5000s ease-in-out 0s; } 
         }
-        
+        p.text-start a{
+            &:hover{color:#ce1922;}
+        }
     }
+    
     
 }
 

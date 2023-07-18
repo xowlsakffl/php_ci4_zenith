@@ -51,6 +51,8 @@ class CheckDayOff extends BaseCommand
      */
     protected $options = [];
 
+    private $sendList = ['개발팀'];
+
     /**
      * Actually execute a command.
      *
@@ -87,22 +89,35 @@ class CheckDayOff extends BaseCommand
                 if($row['start'] == $row['end'])
                     $term = date('Y년m월d일', strtotime($row['start']));
             }
-            $msg[] = ["type"=>"divider"];
-            $msg[] = [
+            $slackMsg = [
                 "type" => "section",
                 "text" => [
                     "type" => "mrkdwn",
                     "text" => "*{$row['name']}* _({$row['position']}-{$row['team']})_\n`[{$row['type']}]` {$term}"
                 ]
-            ];
+                ];
+            $msg['연차공유'][] = ["type"=>"divider"];
+            $msg['연차공유'][] = $slackMsg;
+            $msg['연차알림'][] = ["type"=>"divider"];
+            $msg['연차알림'][] = $slackMsg;
+            foreach($this->sendList as $list) {
+                if($list != $row['team']) continue;
+                $msg[$list][] = ["type"=>"divider"];
+                $msg[$list][] = $slackMsg;
+            }
         }
         if(!count($msg)) return;
-        $data = [
-            'channel' => '연차공유',
-            'text' => '',
-            'blocks' => json_encode($msg,JSON_UNESCAPED_UNICODE)
-        ];
-        if($sendType == 'debug') dd($data);
-        $response = $slack->sendMessage($data);
+        if($sendType == 'debug') dd($msg);
+        foreach($msg as $channel => $row) {
+            if(preg_match('/.+(팀|실)/', $channel))
+                $channel = $channel."_연차공유";
+            $data = [
+                'channel' => $channel,
+                'text' => '',
+                'blocks' => json_encode($row,JSON_UNESCAPED_UNICODE)
+            ];
+            // print_r($data);
+            $response = $slack->sendMessage($data);
+        }
     }
 }

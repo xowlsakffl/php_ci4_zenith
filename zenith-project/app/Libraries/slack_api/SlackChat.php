@@ -77,18 +77,18 @@ class SlackChat extends BaseController
             $params['text'] = $data['text'];
         if(isset($data['blocks']))
             $params['blocks'] = $data['blocks'];
+        /*
+        [
+            'channel' => $this->getChannelId($data['channel']),
+            'text' => $data['text'],
+            'blocks' => $data['blocks']
+        ]
+        */
         $response = $this->client->request('POST', 'https://slack.com/api/chat.postMessage', [
             'headers' => ["Authorization" => "Bearer {$this->config['token']}"],
             'json' => $params
-                /*
-                [
-                    'channel' => $this->getChannelId($data['channel']),
-                    'text' => $data['text'],
-                    'blocks' => $data['blocks']
-                ]
-                */
-            
         ]);
+        
         $body = $response->getBody();
         if (strpos($response->header('content-type'), 'application/json') !== false) {
             $body = json_decode($body);
