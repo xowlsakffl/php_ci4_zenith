@@ -345,6 +345,31 @@ class AdvGoogleManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
+		if(isset($data['check'])){
+			$google_ids = [];
+			foreach ($data['check'] as $row) {
+				$id = explode("_", $row);
+				if($id[0] == 'google'){
+					$google_ids[] = $id[1];
+				}
+			}
+			
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.id', $google_ids);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.id', $google_ids);
+					break;
+				case 'ads':
+					$builder->whereIn('B.id', $google_ids);
+					break;
+				default:
+					return false;
+					break;
+			}
+        }
+
         if(!empty($data['business'])){
 			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }

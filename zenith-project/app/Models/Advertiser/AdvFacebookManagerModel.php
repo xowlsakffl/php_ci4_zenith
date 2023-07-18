@@ -209,7 +209,32 @@ class AdvFacebookManagerModel extends Model
             $builder->where('DATE(A.date) >=', $data['sdate']);
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
-        
+
+		if(isset($data['check'])){
+			$facebook_ids = [];
+			foreach ($data['check'] as $row) {
+				$id = explode("_", $row);
+				if($id[0] == 'facebook'){
+					$facebook_ids[] = $id[1];
+				}
+			}
+			
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.campaign_id', $facebook_ids);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.adset_id', $facebook_ids);
+					break;
+				case 'ads':
+					$builder->whereIn('B.ad_id', $facebook_ids);
+					break;
+				default:
+					return false;
+					break;
+			}
+        }
+
         if(!empty($data['business'])){
 			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }

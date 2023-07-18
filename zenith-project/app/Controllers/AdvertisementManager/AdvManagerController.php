@@ -29,7 +29,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
@@ -155,11 +155,23 @@ class AdvManagerController extends BaseController
         return $data;
     } */
     
+    public function getDiffReport(){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            
+            $result['report'] = $this->getReport($arg);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     private function getReport($arg)
     {
         $result = $this->admanager->getReport($arg);
         $columnIndex = 0;
         $data = [];
+
         foreach($result as $row) {
             $data[] = $row;
             foreach ($row as $col => $val) {
@@ -172,6 +184,7 @@ class AdvManagerController extends BaseController
         $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] = 0;
 
         if(!empty($result)){
+
             $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
             $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
             if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {

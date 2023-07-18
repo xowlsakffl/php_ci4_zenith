@@ -38,6 +38,9 @@
     .hl-red{
         color: red;
     }
+    .dt-buttons{
+        position: initial !important;
+    }
 </style>
 <?=$this->endSection();?>
 
@@ -120,7 +123,7 @@
 
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
-        <div class="row">
+        <div class="row" id="advertiser-list">
         </div>
     </div>
 
@@ -139,8 +142,8 @@
         <div class="tab-content">
             <div class="btn-wrap">
                 <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
-                <button type="button" class="btn btn-outline-danger">데이터 비교</button>
-                <button type="button" class="btn btn-outline-danger"><i class="bi bi-file-text"></i> 메모확인</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
             </div>
             <!-- <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
@@ -216,6 +219,94 @@
             </div>
         </div>
         <!-- //개별 메모 -->
+        <!-- 메모 확인 -->
+        <div class="modal fade" id="memo-check-modal" tabindex="-1" aria-labelledby="memo-check-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="memo-check-modal-label"><i class="bi bi-file-text"></i> 메모 확인</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- //메모 확인 -->
+        <!-- 데이터 비교 -->
+        <div class="modal fade" id="data-modal" tabindex="-1" aria-labelledby="data-modal-label" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="data-modal-label">데이터 비교</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="sorting d-flex justify-content-between align-items-end">
+                            <div class="d-flex">
+                                <button type="button" class="active" value="7days">최근 7일</button>
+                                <button type="button" value="14days">최근 14일</button>
+                                <button type="button" value="30days">최근 30일</button>
+                                <button type="button" value="prevmonth">지난달</button>
+                                <button type="button" value="thismonth">이번달</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-data">
+                                <colgroup>
+                                    <col style="width:calc(100% / 6);">
+                                    <col style="width:calc(100% / 6);">
+                                    <col style="width:calc(100% / 6);">
+                                    <col style="width:calc(100% / 6);">
+                                    <col style="width:calc(100% / 6);">
+                                    <col style="width:calc(100% / 6);">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">DB 단가</th>
+                                        <th scope="col">DB 수</th>
+                                        <th scope="col">수익률</th>
+                                        <th scope="col">CPC</th>
+                                        <th scope="col">전환률</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="dataDiffToday">
+                                        <th scope="col">오늘</th>
+                                        <td>9,326</td>
+                                        <td>140</td>
+                                        <td>93.26</td>
+                                        <td>9,326.50</td>
+                                        <td>93.26</td>
+                                    </tr>
+                                    <tr id="dataDiffYesterday">
+                                        <th scope="col">어제</th>
+                                        <td>9,326</td>
+                                        <td>140</td>
+                                        <td>93.26</td>
+                                        <td>9,326.50</td>
+                                        <td>93.26</td>
+                                    </tr>
+                                    <tr id="dataDiffPrev">
+                                        <th scope="col" class="text-danger">최근 7일</th>
+                                        <td>9,326</td>
+                                        <td>140</td>
+                                        <td>93.26</td>
+                                        <td>9,326.50</td>
+                                        <td>93.26</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="term">2023.02.11~ 2023.02.18</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- //데이터 비교 -->
     </div>
 </div>
 <?=$this->endSection();?>
@@ -259,7 +350,8 @@ if(typeof tableParam != 'undefined'){
 getList();
 function setSearchData() {
     var data = tableParam;
-    $('#media_btn, #business_btn, #company_btn, .reportData dl').removeClass('active');
+    $('#media_btn, #business_btn, #company_btn').removeClass('active');
+    $('.check input[name="check01"]').prop('checked', false);
     if(typeof data.searchData == 'undefined') return;
 
     if(data.searchData.media){
@@ -270,12 +362,11 @@ function setSearchData() {
         data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
     }
 
-    if(data.searchData.report){
-        data.searchData.report.split('|').map(function(txt){
-            $('.reportData dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
-        });
-    }
-
+    /* if(data.searchData.check && $('.check input').is(':visible')){
+        data.searchData.check.split('|').map(function(txt){ 
+            $(`.check input[name="check01"][value="${txt}"]`).prop('checked', true); });
+    } */
+    
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#sdate').val(data.searchData.sdate);
@@ -309,11 +400,7 @@ function getList(data = []){
     dataTable = $('#adv-table').DataTable({
         "dom": '<Bfr<t>ip>',
         "autoWidth": false,
-        "columnDefs": [
-            { targets: [0], orderable: false},
-            { targets: [2], orderable: false},
-            { targets: '_all', visible: true },
-        ],
+        "order": [[1,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -328,17 +415,25 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            data.searchData = {
-                'sdate': $('#sdate').val(),
-                'edate': $('#edate').val(),
-                'stx': $('#stx').val(),
-                'type': $('.tab-link.active').val(),
-                'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                'report' : $('.reportData dl.active').map(function(){return $('dt',this).text();}).get().join('|')
-            };
-            tableParam = data;
-            debug(tableParam.searchData);
+            if($('#advertiser-list>div').is(':visible') && $('.check input').is(':visible')) {
+                if(tableParam.searchData.check){
+                    tableParam.searchData.check.map(function(txt){ 
+                        $(`.check input[name="check01"][value="${txt}"]`).prop('checked', true); });
+                }
+
+                data.searchData = {
+                    'sdate': $('#sdate').val(),
+                    'edate': $('#edate').val(),
+                    'stx': $('#stx').val(),
+                    'type': $('.tab-link.active').val(),
+                    'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
+                    'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
+                    'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
+                };
+                //console.log($('.check input[name=check01]:checked').length);
+                tableParam = data;
+                debug(tableParam.searchData);
+            }
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드')
@@ -389,6 +484,11 @@ function getList(data = []){
             "contentType": "application/json",
             "dataType": "json",
         },
+        "columnDefs": [
+            { targets: [0], orderable: false},
+            { targets: [2], orderable: false},
+            { targets: '_all', visible: true },
+        ],
         "columns": [
             { 
                 "data": "media", 
@@ -407,7 +507,7 @@ function getList(data = []){
                         default:
                             break;
                     }
-                    media = '<div class="check"><input type="checkbox" name="check01" data="'+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><label for="label_'+row.id+'">'+media+'</label>';
+                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><p>'+media+'</p>';
                     return media;
                 },
             },
@@ -756,6 +856,32 @@ $('form[name="search-form"]').bind('submit', function() {
     return false;
 });
 
+$('body').on('change', '.check input[name=check01]', function() {
+    debug('체크 선택')
+    if($(this).prop('checked') == false){
+        for(let i = 0; i < tableParam.searchData.check.length; i++) {
+            if(tableParam.searchData.check[i] === $(this).val()) {
+                tableParam.searchData.check.splice(i, 1);
+                i--;
+            }
+        }   
+    };
+    dataTable.state.save();
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/diff-report",
+        data: {"searchData":tableParam.searchData},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setReport(data.report);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
+
 var prevVal;
 $('body').on('focus', '#status_btn', function(){
     prevVal = $(this).val();
@@ -806,6 +932,33 @@ $("body").on("click", '.mediaName p[data-editable="true"]', function(){
 
         $('.mediaName p[data-editable="false"]').attr("data-editable", "true");
     }
+});
+
+$('#data-modal').on('show.bs.modal', function(e) {
+    data = tableParam.searchData;
+    sortingBtnVal = $('.sorting button.active').val();
+    data.diff = sortingBtnVal;
+    console.log(data.diff);
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/diff-report",
+        data: {"searchData":tableParam.searchData},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            console.log(data)
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+})
+.on('hidden.bs.modal', function(e) { 
+    
+});
+
+$("body").on("click", '.sorting button', function(){
+    
 });
 
 function debug(msg) {

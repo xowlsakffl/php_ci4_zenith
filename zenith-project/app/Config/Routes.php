@@ -87,6 +87,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
+        $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
 
