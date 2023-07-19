@@ -244,7 +244,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="sorting d-flex justify-content-between align-items-end">
-                            <div class="d-flex">
+                            <div class="d-flex" id="diffBtn">
                                 <button type="button" class="active" value="7days">최근 7일</button>
                                 <button type="button" value="14days">최근 14일</button>
                                 <button type="button" value="30days">최근 30일</button>
@@ -276,32 +276,32 @@
                                 <tbody>
                                     <tr id="dataDiffToday">
                                         <th scope="col">오늘</th>
-                                        <td>9,326</td>
-                                        <td>140</td>
-                                        <td>93.26</td>
-                                        <td>9,326.50</td>
-                                        <td>93.26</td>
+                                        <td class="unique_one_price_sum"></td>
+                                        <td class="unique_total_sum"></td>
+                                        <td class="per_sum"></td>
+                                        <td class="cpc"></td>
+                                        <td class="conversion_ratio_sum"></td>
                                     </tr>
                                     <tr id="dataDiffYesterday">
                                         <th scope="col">어제</th>
-                                        <td>9,326</td>
-                                        <td>140</td>
-                                        <td>93.26</td>
-                                        <td>9,326.50</td>
-                                        <td>93.26</td>
+                                        <td class="unique_one_price_sum"></td>
+                                        <td class="unique_total_sum"></td>
+                                        <td class="per_sum"></td>
+                                        <td class="cpc"></td>
+                                        <td class="conversion_ratio_sum"></td>
                                     </tr>
                                     <tr id="dataDiffPrev">
-                                        <th scope="col" class="text-danger">최근 7일</th>
-                                        <td>9,326</td>
-                                        <td>140</td>
-                                        <td>93.26</td>
-                                        <td>9,326.50</td>
-                                        <td>93.26</td>
+                                        <th scope="col" class="text-danger" id="customDiffTh">최근 7일</th>
+                                        <td class="unique_one_price_sum"></td>
+                                        <td class="unique_total_sum"></td>
+                                        <td class="per_sum"></td>
+                                        <td class="cpc"></td>
+                                        <td class="conversion_ratio_sum"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <p class="term">2023.02.11~ 2023.02.18</p>
+                        <p class="term"></p>
                     </div>
                 </div>
             </div>
@@ -335,6 +335,7 @@ var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
+let loadData = false;
 if(typeof tableParam != 'undefined'){
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#media_btn[value="facebook"]').addClass('active');
@@ -362,11 +363,10 @@ function setSearchData() {
         data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
     }
 
-    /* if(data.searchData.check && $('.check input').is(':visible')){
-        data.searchData.check.split('|').map(function(txt){ 
-            $(`.check input[name="check01"][value="${txt}"]`).prop('checked', true); });
-    } */
-    
+    if(data.searchData.check){
+        data.searchData.check.map(function(txt){ $(`.check input[value="${txt}"]`).prop('checked', true); });
+    }
+
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#sdate').val(data.searchData.sdate);
@@ -415,12 +415,7 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            if($('#advertiser-list>div').is(':visible') && $('.check input').is(':visible')) {
-                if(tableParam.searchData.check){
-                    tableParam.searchData.check.map(function(txt){ 
-                        $(`.check input[name="check01"][value="${txt}"]`).prop('checked', true); });
-                }
-
+            if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
@@ -428,9 +423,9 @@ function getList(data = []){
                     'type': $('.tab-link.active').val(),
                     'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
+                    //'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
                 };
-                //console.log($('.check input[name=check01]:checked').length);
+
                 tableParam = data;
                 debug(tableParam.searchData);
             }
@@ -608,7 +603,7 @@ function getList(data = []){
         },
         "language": {
             "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신
-        },
+        }
     }).on('xhr.dt', function( e, settings, data, xhr ) {
         if(data){
             setReport(data.report);
@@ -858,15 +853,7 @@ $('form[name="search-form"]').bind('submit', function() {
 
 $('body').on('change', '.check input[name=check01]', function() {
     debug('체크 선택')
-    if($(this).prop('checked') == false){
-        for(let i = 0; i < tableParam.searchData.check.length; i++) {
-            if(tableParam.searchData.check[i] === $(this).val()) {
-                tableParam.searchData.check.splice(i, 1);
-                i--;
-            }
-        }   
-    };
-    dataTable.state.save();
+    /* dataTable.state.save();
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/advertisements/diff-report",
@@ -879,7 +866,7 @@ $('body').on('change', '.check input[name=check01]', function() {
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
-    });
+    }); */
 });
 
 var prevVal;
@@ -934,31 +921,47 @@ $("body").on("click", '.mediaName p[data-editable="true"]', function(){
     }
 });
 
-$('#data-modal').on('show.bs.modal', function(e) {
+function getDiffData(){
     data = tableParam.searchData;
     sortingBtnVal = $('.sorting button.active').val();
     data.diff = sortingBtnVal;
-    console.log(data.diff);
+
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/advertisements/diff-report",
-        data: {"searchData":tableParam.searchData},
+        data: {"searchData":data},
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            console.log(data)
+            setDiffData(data);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
-})
-.on('hidden.bs.modal', function(e) { 
-    
+}
+function setDiffData(data) {
+    $('#dataDiffToday td, #dataDiffYesterday td, #dataDiffPrev td').text('');
+    $('#data-modal .term').text(data.customDate.date.sdate+" ~ "+data.customDate.date.edate);
+    const dataFields = ['unique_one_price_sum', 'unique_total_sum', 'per_sum', 'cpc', 'conversion_ratio_sum'];
+    dataFields.forEach(field => {
+        $('#dataDiffToday .' + field).text(data.today[field]);
+        $('#dataDiffYesterday .' + field).text(data.yesterday[field]);
+        $('#dataDiffPrev .' + field).text(data.customDate[field]);
+    });
+}
+
+$('#data-modal').on('show.bs.modal', function(e) {
+    getDiffData();
+}).on('hidden.bs.modal', function(e) { 
+    $('#dataDiffToday td, #dataDiffYesterday td, #dataDiffPrev td').text('');
 });
 
 $("body").on("click", '.sorting button', function(){
-    
+    $('.sorting button').removeClass('active');
+    $(this).addClass('active');
+    $('#customDiffTh').text($(this).text());
+    getDiffData();
 });
 
 function debug(msg) {

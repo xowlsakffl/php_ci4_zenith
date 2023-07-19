@@ -37,6 +37,51 @@ class AdvManagerModel extends Model
 
     public function getReport($data)
     {
+        if(!empty($data['searchData']['check'])){
+            $kakaoNumbers = array();
+            $googleNumbers = array();
+            $facebookNumbers = array();
+
+            foreach ($data['searchData']['check'] as $value) {
+                $parts = explode('_', $value);
+                $id = $parts[1];
+                
+                switch ($parts[0]) {
+                    case 'kakao':
+                        $kakaoNumbers[] = $id;
+                        break;
+                    case 'google':
+                        $googleNumbers[] = $id;
+                        break;
+                    case 'facebook':
+                        $facebookNumbers[] = $id;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            $data['searchData']['facebookCheck'] = $facebookNumbers;
+            $data['searchData']['googleCheck'] = $googleNumbers;
+            $data['searchData']['kakaoCheck'] = $kakaoNumbers;
+            unset($facebookNumbers, $googleNumbers, $kakaoNumbers, $data['searchData']['media']);
+            $data['searchData']['media'] = [];
+
+            if(!empty($data['searchData']['facebookCheck'])){
+                array_push($data['searchData']['media'], 'facebook');
+            }
+            
+            if(!empty($data['searchData']['googleCheck'])){
+                array_push($data['searchData']['media'], 'google');
+            }
+            
+            if(!empty($data['searchData']['kakaoCheck'])){
+                array_push($data['searchData']['media'], 'kakao');
+            }
+
+            $data['searchData']['media'] = implode("|", $data['searchData']['media']);
+        }
+
         return $this->getQueryResults($data, 'getReport');
     }
 

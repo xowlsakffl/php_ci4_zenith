@@ -20,6 +20,7 @@
     "datatables.net-staterestore-bs5": "^1.*",
     "daterangepicker": "^3.*",
     "jquery": "^3.*",
+    "jquery-datatables-checkboxes": "^1.2.13",
     "jquery-ui": "^1.13.*"
   }
 }

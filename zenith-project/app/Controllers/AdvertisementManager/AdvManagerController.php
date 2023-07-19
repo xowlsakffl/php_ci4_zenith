@@ -158,8 +158,45 @@ class AdvManagerController extends BaseController
     public function getDiffReport(){
         if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+            $currentDate = date("Y-m-d");
+            $arg['searchData']['sdate'] = $currentDate;
+            $arg['searchData']['edate'] = $currentDate;
+            $result['today'] = $this->getReport($arg);
+
+            $arg['searchData']['sdate'] = date("Y-m-t", strtotime("-1 days", strtotime($currentDate)));
+            $arg['searchData']['edate'] = date("Y-m-t", strtotime("-1 days", strtotime($currentDate)));
+            $result['yesterday'] = $this->getReport($arg);
             
-            $result['report'] = $this->getReport($arg);
+            switch ($arg['searchData']['diff']) {
+                case '7days':
+                    $arg['searchData']['sdate'] = date("Y-m-d", strtotime("-1 week"));
+                    $arg['searchData']['edate'] = $currentDate;
+                break;
+                case '14days':
+                    $arg['searchData']['sdate'] = date("Y-m-d", strtotime("-2 week"));
+                    $arg['searchData']['edate'] = $currentDate;
+                break;
+                case '30days':
+                    $arg['searchData']['sdate'] = date("Y-m-d", strtotime("-1 month"));
+                    $arg['searchData']['edate'] = $currentDate;
+                break;
+                case 'prevmonth':
+                    $arg['searchData']['sdate'] = date("Y-m-01", strtotime("-1 month", strtotime($currentDate)));
+                    $arg['searchData']['edate'] = date("Y-m-t", strtotime("-1 month", strtotime($currentDate)));
+                break;
+                case 'thismonth':
+                    $arg['searchData']['sdate'] = date("Y-m-01", strtotime($currentDate));
+                    $arg['searchData']['edate'] = $currentDate;
+                break;
+                default:
+                break;
+            }
+            
+            $result['customDate'] = $this->getReport($arg);
+            $result['customDate']['date'] = [
+                'sdate' => $arg['searchData']['sdate'],
+                'edate' => $arg['searchData']['edate'],
+            ];
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -181,7 +218,7 @@ class AdvManagerController extends BaseController
             $columnIndex++;
         }
 
-        $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] = 0;
+        $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] =$report['cpc'] = 0;
 
         if(!empty($result)){
 

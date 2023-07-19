@@ -200,27 +200,18 @@ class AdvKakaoManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
 
-        if(isset($data['check'])){
-			$kakao_ids = [];
-			foreach ($data['check'] as $row) {
-				$id = explode("_", $row);
-				if($id[0] == 'kakao'){
-					$kakao_ids[] = $id[1];
-				}
-			}
-			
+        if(!empty($data['kakaoCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
-					$builder->whereIn('D.id', $kakao_ids);
-					break;
-				case 'adsets':
-					$builder->whereIn('C.id', $kakao_ids);
-					break;
-				case 'ads':
-					$builder->whereIn('B.id', $kakao_ids);
-					break;
+                    $builder->whereIn('D.id', $data['kakaoCheck']);
+                    break;
+                case 'adsets':
+                    $builder->whereIn('C.id', $data['kakaoCheck']);
+                    break;
+                case 'ads':
+                    $builder->whereIn('B.id', $data['kakaoCheck']);
+                    break;
 				default:
-					return false;
 					break;
 			}
         }

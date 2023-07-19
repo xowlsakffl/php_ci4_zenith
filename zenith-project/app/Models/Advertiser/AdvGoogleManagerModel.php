@@ -345,31 +345,22 @@ class AdvGoogleManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
-		if(isset($data['check'])){
-			$google_ids = [];
-			foreach ($data['check'] as $row) {
-				$id = explode("_", $row);
-				if($id[0] == 'google'){
-					$google_ids[] = $id[1];
-				}
-			}
-			
+		if(!empty($data['googleCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
-					$builder->whereIn('D.id', $google_ids);
+					$builder->whereIn('D.id', $data['googleCheck']);
 					break;
 				case 'adsets':
-					$builder->whereIn('C.id', $google_ids);
+					$builder->whereIn('C.id', $data['googleCheck']);
 					break;
 				case 'ads':
-					$builder->whereIn('B.id', $google_ids);
+					$builder->whereIn('B.id', $data['googleCheck']);
 					break;
 				default:
-					return false;
 					break;
 			}
         }
-
+		
         if(!empty($data['business'])){
 			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
         }
@@ -379,6 +370,7 @@ class AdvGoogleManagerModel extends Model
         }
 		
         $builder->groupBy('A.date');
+		
 		return $builder;
 	}
     /* public function getDisapproval()
