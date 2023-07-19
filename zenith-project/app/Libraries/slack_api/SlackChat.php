@@ -44,6 +44,26 @@ class SlackChat extends BaseController
         return $body;
     }
 
+    public function channelMsgs($channel)
+    {
+        $response = $this->client->request('POST', 'https://slack.com/api/conversations.history', [
+            'headers' => [
+                "Authorization" => "Bearer {$this->config['token']}",
+            ],
+            'body' => "limit=1000&channel=".$this->getChannelId($channel)
+        ]);
+        $body = $response->getBody();
+        if (strpos($response->header('content-type'), 'application/json') !== false) {
+            $body = json_decode($body);
+        }
+        dd($body);
+        return $body;
+    }
+
+    public function getSubscriptions($request) {
+        log_message('info', $request);
+    }
+
     private function getChannelId($name) {
         if(preg_match('/^[0-9a-z]+$/i', $name)) return $name;
         return $this->config['ChannelID'][$name];

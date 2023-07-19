@@ -3,6 +3,7 @@ namespace App\ThirdParty\botman;
 
 require_once __DIR__.'/vendor/autoload.php';
 
+use React\EventLoop\Factory;
 use App\Controllers\BaseController;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\BotManFactory;
@@ -17,7 +18,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\BotMan\Storages\Drivers\FileStorage;
 use BotMan\Drivers\Slack\SlackDriver;
-// use BotMan\Drivers\Slack\SlackRTMDriver;
+use BotMan\Drivers\Slack\SlackRTMDriver;
 
 class ChatBot extends BaseController {
     private $botman;
@@ -32,7 +33,7 @@ class ChatBot extends BaseController {
     private $redirectUrl = 'https://local.carezenith.co.kr/auth/slack/callback';
 
     public function __construct() 
-    {   
+    {   /*
         DriverManager::loadDriver(SlackDriver::class);
         $config = [
             'driver' => SlackDriver::class,
@@ -43,6 +44,7 @@ class ChatBot extends BaseController {
         
         $this->botman = BotManFactory::create($config);
         log_message('error', 'Botman : '.print_r($this->botman->getDriver(), true));
+        */
     }
     
     public function get_code()
@@ -76,6 +78,21 @@ class ChatBot extends BaseController {
 
     public function test()
     {
+        // Load driver
+        DriverManager::loadDriver(SlackRTMDriver::class);
+
+        $loop = Factory::create();
+        $botman = BotManFactory::createForRTM([
+            'slack' => [
+                'token' => $this->token,
+            ],
+        ], $loop);
+
+        $botman->hears('keyword', function($bot) {
+            $bot->reply('I heard you! :)');
+        });
+
+        $loop->run();
         // $message = "TEST";
         // // Create attachment
         // $attachment = new Image('https://botman.io/img/logo.png');
