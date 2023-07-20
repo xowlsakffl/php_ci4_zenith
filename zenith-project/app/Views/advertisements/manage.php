@@ -423,7 +423,7 @@ function getList(data = []){
                     'type': $('.tab-link.active').val(),
                     'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    //'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
+                    'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
                 };
 
                 tableParam = data;
@@ -853,10 +853,10 @@ $('form[name="search-form"]').bind('submit', function() {
 
 $('body').on('change', '.check input[name=check01]', function() {
     debug('체크 선택')
-    /* dataTable.state.save();
+    dataTable.state.save();
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/diff-report",
+        url: "<?=base_url()?>/advertisements/check-report",
         data: {"searchData":tableParam.searchData},
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -866,7 +866,7 @@ $('body').on('change', '.check input[name=check01]', function() {
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
         }
-    }); */
+    });
 });
 
 var prevVal;

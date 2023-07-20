@@ -155,8 +155,19 @@ class AdvManagerController extends BaseController
         return $data;
     } */
     
+    public function getCheckReport(){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result['report'] = $this->getReport($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function getDiffReport(){
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $currentDate = date("Y-m-d");
             $arg['searchData']['sdate'] = $currentDate;
