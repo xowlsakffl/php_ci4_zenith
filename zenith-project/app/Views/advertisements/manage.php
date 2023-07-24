@@ -197,28 +197,30 @@
                 </div>
             </div>
         </div>
-        <!-- 개별 메모 -->
-        <div class="modal fade" id="modal-integrate-memo" tabindex="-1" aria-labelledby="modal-integrate-memo-label" aria-hidden="true">
+        <!-- 메모 작성 -->
+        <div class="modal fade" id="memo-write-modal" tabindex="-1" aria-labelledby="memo-write-modal-label" aria-hidden="true">
             <div class="modal-dialog modal-sm sm-txt">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title" id="modal-integrate-memo-label"><i class="bi bi-file-text"></i> 개별 메모<span class="title"></span></h1>
+                        <h1 class="modal-title" id="memo-write-modal-label"><i class="bi bi-file-text"></i> 메모 작성</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="regi-form">
+                        <form name="memo-regi-form" class="regi-form">
+                        <input type="hidden" name="id">
+			            <input type="hidden" name="media">
+                        <input type="hidden" name="type">
                             <fieldset>
                                 <legend>메모 작성</legend>
-                                <textarea></textarea>
-                                <button type="button" class="btn-regi">작성</button>
+                                <textarea name="memo"></textarea>
+                                <button type="submit" class="btn-regi">작성</button>
                             </fieldset>
                         </form>
-                        <ul class="memo-list m-2"></ul>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- //개별 메모 -->
+        <!-- //메모 작성 -->
         <!-- 메모 확인 -->
         <div class="modal fade" id="memo-check-modal" tabindex="-1" aria-labelledby="memo-check-modal-label" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -228,7 +230,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <textarea></textarea>
+                        <ul class="memo-list m-2"></ul>
                     </div>
                 </div>
             </div>
@@ -336,7 +338,7 @@ $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
 let loadData = false;
-if(typeof tableParam != 'undefined'){
+//if(typeof tableParam != 'undefined'){
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#media_btn[value="facebook"]').addClass('active');
 
@@ -346,14 +348,16 @@ if(typeof tableParam != 'undefined'){
         'type': $('.tab-link.active').val(),
         'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
     };
-}
+//}
 
 getList();
 function setSearchData() {
     var data = tableParam;
+    console.log(data.searchData);
+    if(typeof data.searchData == 'undefined') return;
+
     $('#media_btn, #business_btn, #company_btn').removeClass('active');
     $('.check input[name="check01"]').prop('checked', false);
-    if(typeof data.searchData == 'undefined') return;
 
     if(data.searchData.media){
         data.searchData.media.split('|').map(function(txt){ $(`#media_btn[value="${txt}"]`).addClass('active'); });
@@ -385,7 +389,6 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         "contentType": "application/json",
         "dataType": "json",
         "success": function (result) {
-            console.log(result);
             $.each(result, function(i,row) {
                 //arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
                 arr.push([row.id, media_str[row.media], row.name, status_str[row.status], row.budget, row.impressions, row.click, row.spend, row.sales, row.unique_total, row.margin, row.margin_ratio, row.cpc, row.ctr, row.cpa, row.cvr]);
@@ -415,7 +418,7 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            if($('#advertiser-list>div').is(':visible')) {
+            //if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
@@ -428,7 +431,7 @@ function getList(data = []){
 
                 tableParam = data;
                 debug(tableParam.searchData);
-            }
+            //}
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드')
@@ -510,7 +513,7 @@ function getList(data = []){
                 "data": "name", 
                 "width": "10%",
                 "render": function (data, type, row) {
-                    name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#modal-integrate-memo"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                    name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     return name;
                 },
             },
@@ -616,27 +619,32 @@ function getList(data = []){
 }
 
 function setTotal(res){
-    if(res.total.margin < 0){
-        $('#total-margin').css('color', 'red');
-    }
     
-    if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
-        $('#avg_margin_ratio').css('color', 'red');
-    }
+    if(!res.total){
+        return false;
+    }else{
+        if(res.total.margin < 0){
+            $('#total-margin').css('color', 'red');
+        }
+        
+        if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
+            $('#avg_margin_ratio').css('color', 'red');
+        }
 
-    $('#total-count').text(res.data.length+"건 결과");
-    $(' #total-budget').text('\u20A9'+res.total.budget);//예산
-    $('#avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
-    $('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
-    $('#total-spend').text('\u20A9'+res.total.spend);
-    $('#total-margin').text('\u20A9'+res.total.margin);
-    $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
-    $('#total-sales').text('\u20A9'+res.total.sales);
-    $('#total-impressions').text(res.total.impressions);
-    $('#total-click').text(res.total.click);
-    $('#avg-cpc').text('\u20A9'+res.total.avg_cpc);
-    $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
-    $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+        $('#total-count').text(res.data.length+"건 결과");
+        $(' #total-budget').text('\u20A9'+res.total.budget);//예산
+        $('#avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
+        $('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+        $('#total-spend').text('\u20A9'+res.total.spend);
+        $('#total-margin').text('\u20A9'+res.total.margin);
+        $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
+        $('#total-sales').text('\u20A9'+res.total.sales);
+        $('#total-impressions').text(res.total.impressions);
+        $('#total-click').text(res.total.click);
+        $('#avg-cpc').text('\u20A9'+res.total.avg_cpc);
+        $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+        $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
+    };
 }
 
 function setReport(data){
@@ -962,6 +970,162 @@ $("body").on("click", '.sorting button', function(){
     $(this).addClass('active');
     $('#customDiffTh').text($(this).text());
     getDiffData();
+});
+
+function getMemoList() { //메모 수신
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>advertisements/getmemo",
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setMemoList(data);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function registerMemo(data) { //메모 등록
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>advertisements/addmemo",
+        data: data,
+        dataType: "json",
+        success: function(response){  
+            if(response == true) {
+                alert("등록되었습니다.");
+                $('#memo-write-modal').modal('hide');
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function setMemoList(data) { //메모 리스트 생성
+    var html =  '';
+    $.each(data, function(i,row) {
+        var name = '';
+        switch (row.type) {
+            case 'campaigns':
+                name = row.campaign_name;
+                break;
+            case 'adsets':
+                name = row.adset_name;
+                break;
+            case 'ads':
+                name = row.ad_name;
+                break;
+            default:
+                break;
+        }
+        switch (row.media) {
+            case 'facebook':
+                row.media = '페이스북';
+                break;
+            case 'google':
+                row.media = '구글';
+                break;
+            case 'kakao':
+                row.media = '카카오';
+                break;
+            default:
+                break;
+        }
+
+        switch (row.type) {
+            case 'campaigns':
+                row.type = '캠페인';
+                break;
+            case 'adsets':
+                row.type = '광고 세트';
+                break;
+            case 'ads':
+                row.type = '광고';
+                break;
+            default:
+                break;
+        }
+        html += '    <li class="d-flex justify-content-between align-items-start" data-id="'+row.seq+'">';
+        html += '        <div class="detail d-flex align-items-start">';
+        html += '           <input type="checkbox" name="is_done" '+(row.is_done == 1 ? "checked" : "")+'>';
+        html += '            <p class="ms-1 '+(row.is_done == 1 ? "text-decoration-line-through" : "")+'">['+ row.media +'] ['+ row.type +'] '+ row.memo +'</p>';
+        html += '        </div>';
+        html += '        <div class="d-flex">';
+        html += '            <p style="width:50px;margin-right:15px">'+ row.nickname +'</p>';
+        html += '            <p style="min-width:150px">'+ row.datetime +'</p>';
+        html += '        </div>';
+        html += '    </li>';
+    });
+    
+    $('ul.memo-list').prepend(html);
+}
+
+$('#memo-check-modal').on('show.bs.modal', function(e) { 
+    getMemoList();
+})
+.on('hidden.bs.modal', function(e) { 
+    $('ul.memo-list').empty();
+});
+
+$('#memo-write-modal').on('show.bs.modal', function(e) { 
+    var clickedButton = $(document.activeElement).closest('tr').data('id');
+    idMedia = clickedButton.split("_");
+    memoType = $('.tab-link.active').val();
+    $('form[name="memo-regi-form"] input[name=id]').val(idMedia[1]);
+    $('form[name="memo-regi-form"] input[name=media]').val(idMedia[0]);
+    $('form[name="memo-regi-form"] input[name=type]').val(memoType);
+})
+.on('hidden.bs.modal', function(e) { 
+    $('form[name="memo-regi-form"] input[name=id]').val('');
+    $('form[name="memo-regi-form"] input[name=media]').val('');
+    $('form[name="memo-regi-form"] input[name=type]').val('');
+    $('form[name="memo-regi-form"] textarea').val('');
+});
+
+$('form[name="memo-regi-form"]').bind('submit', function() {
+    var formData = $(this).serialize();
+    registerMemo(formData);
+    return false;
+});
+
+$("body").on("click", '.memo-list input[name="is_done"]', function(){
+    $this = $(this);
+    $li = $this.closest("li");
+	$seq = $li.data("id");
+    $is_done = $this.is(':checked');
+    if($is_done == true){
+        $is_done = 1;
+    }else{
+        $is_done = 0;
+    }
+    data = {
+        'is_done': $is_done,
+        'seq': $seq
+    };
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>advertisements/checkmemo",
+        data: data,
+        dataType: "json",
+        success: function(response){  
+            if(response == true) {
+                alert("처리되었습니다.");
+                if ($is_done == 1){
+                    $this.siblings('p').addClass('text-decoration-line-through');
+                }else {
+                    $this.siblings('p').removeClass('text-decoration-line-through');
+                }
+                
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
 });
 
 function debug(msg) {

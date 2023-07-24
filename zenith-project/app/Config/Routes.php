@@ -91,7 +91,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
-
+        $routes->get('getmemo', 'AdvertisementManager\AdvManagerController::getMemo');
+        $routes->post('addmemo', 'AdvertisementManager\AdvManagerController::addMemo');
+        $routes->post('checkmemo', 'AdvertisementManager\AdvManagerController::checkMemo');
         $routes->group('facebook', static function($routes){
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
         });

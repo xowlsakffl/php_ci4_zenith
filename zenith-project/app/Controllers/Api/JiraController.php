@@ -6,11 +6,19 @@ use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use App\Libraries\slack_api\SlackChat;
 use App\Models\Api\UserModel;
+use App\ThirdParty\jira_api\ZenithJira;
 
 class JiraController extends BaseController
 {
     use ResponseTrait;
     
+    private $jira;
+
+    public function __construct()
+    {
+        $this->jira = new ZenithJira();
+    }
+
     public function getIssueComplete()
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
@@ -46,5 +54,11 @@ class JiraController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    public function test()
+    {  
+        $result = $this->jira->getProjects();
+        dd($result);
     }
 }
