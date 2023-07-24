@@ -61,7 +61,7 @@ class MagicLinkController extends ShieldMagicLinkController
         $user = $authenticator->getUser();
         
         $this->recordLoginAttempt($identifier, true, $user->id);
-        dd($identifier);
+
         // Give the developer a way to know the user
         // logged in via a magic link.
         session()->setTempdata('magicLogin', true);
@@ -69,7 +69,7 @@ class MagicLinkController extends ShieldMagicLinkController
         Events::trigger('magicLogin');
 
         // Get our login redirect url
-        return redirect()->route('set_password');
+        return route_to('PasswordChangeController::changePasswordView', $user->id, $identifier);
     }
 
     private function recordLoginAttempt(

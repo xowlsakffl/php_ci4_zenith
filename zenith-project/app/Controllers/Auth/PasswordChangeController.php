@@ -6,8 +6,9 @@ use App\Controllers\BaseController;
 
 class PasswordChangeController extends BaseController
 {
-    public function index()
+    public function changePasswordView()
     {
-        //
+        $data = $this->request->getGet();
+        dd($data);
     }
 }
