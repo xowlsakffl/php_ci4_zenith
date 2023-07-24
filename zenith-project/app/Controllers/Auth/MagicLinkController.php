@@ -71,22 +71,4 @@ class MagicLinkController extends ShieldMagicLinkController
         // Get our login redirect url
         return redirect()->to(config(Auth::class)->loginRedirect());
     }
-
-    private function recordLoginAttempt(
-        string $identifier,
-        bool $success,
-        $userId = null
-    ): void {
-        /** @var LoginModel $loginModel */
-        $loginModel = model(LoginModel::class);
-
-        $loginModel->recordLoginAttempt(
-            Session::ID_TYPE_MAGIC_LINK,
-            $identifier,
-            $success,
-            $this->request->getIPAddress(),
-            (string) $this->request->getUserAgent(),
-            $userId
-        );
-    }
 }
