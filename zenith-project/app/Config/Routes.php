@@ -26,7 +26,10 @@ $routes->setAutoRoute(false);
  * Route Definitions
  * --------------------------------------------------------------------
  */
-service('auth')->routes($routes);
+service('auth')->routes($routes, ['except' => ['magic-link']]);
+$routes->get('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginView', ['as' => 'magic-link']);
+$routes->post('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginAction');
+$routes->get('login/verify-magic-link', '\App\Controllers\Auth\MagicLinkController::verify', ['as' => 'verify-magic-link']);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
@@ -34,6 +37,7 @@ service('auth')->routes($routes);
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
+
 //관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
