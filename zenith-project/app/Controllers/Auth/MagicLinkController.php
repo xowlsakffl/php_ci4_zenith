@@ -65,10 +65,28 @@ class MagicLinkController extends ShieldMagicLinkController
         // Give the developer a way to know the user
         // logged in via a magic link.
         session()->setTempdata('magicLogin', true);
-
+        dd(session()->getTempdata('item'));
         Events::trigger('magicLogin');
 
         // Get our login redirect url
         return redirect()->to(config(Auth::class)->loginRedirect());
+    }
+
+    private function recordLoginAttempt(
+        string $identifier,
+        bool $success,
+        $userId = null
+    ): void {
+        /** @var LoginModel $loginModel */
+        $loginModel = model(LoginModel::class);
+
+        $loginModel->recordLoginAttempt(
+            Session::ID_TYPE_MAGIC_LINK,
+            $identifier,
+            $success,
+            $this->request->getIPAddress(),
+            (string) $this->request->getUserAgent(),
+            $userId
+        );
     }
 }
