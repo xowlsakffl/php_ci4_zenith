@@ -41,12 +41,12 @@ return [
     'needAccount'        => 'Need an account?',
     'rememberMe'         => '로그인 유지',
     'forgotPassword'     => '비밀번호 찾기',
-    'useMagicLink'       => 'Use a Login Link',
+    'useMagicLink'       => '로그인 링크',
     'magicLinkSubject'   => 'Your Login Link',
     'magicTokenNotFound' => 'Unable to verify the link.',
     'magicLinkExpired'   => 'Sorry, link has expired.',
-    'checkYourEmail'     => 'Check your email!',
-    'magicLinkDetails'   => 'We just sent you an email with a Login link inside. It is only valid for {0} minutes.',
+    'checkYourEmail'     => '이메일을 확인하세요!',
+    'magicLinkDetails'   => '로그인 링크가 메일로 전송되었습니다. 60분간 유효합니다.',
     'successLogout'      => '로그아웃 되었습니다.',
 
     // Passwords
