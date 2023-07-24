@@ -21,7 +21,7 @@ class MagicLinkController extends ShieldMagicLinkController
         $identityModel = model(UserIdentityModel::class);
 
         $identity = $identityModel->getIdentityBySecret(Session::ID_TYPE_MAGIC_LINK, $token);
-        dd($identity);
+        
         $identifier = $token ?? '';
 
         // No token found?
@@ -59,13 +59,13 @@ class MagicLinkController extends ShieldMagicLinkController
         $authenticator->loginById($identity->user_id);
 
         $user = $authenticator->getUser();
-        dd($user);
+        
         $this->recordLoginAttempt($identifier, true, $user->id);
 
         // Give the developer a way to know the user
         // logged in via a magic link.
         session()->setTempdata('magicLogin', true);
-        dd(session()->getTempdata('item'));
+        dd(session()->getTempdata('magicLogin'));
         Events::trigger('magicLogin');
 
         // Get our login redirect url
