@@ -14,7 +14,7 @@
         <?php if (session('error') !== null) : ?>
             <div class="alert alert-danger lh-base" role="alert"><?= session('error') ?></div>
         <?php elseif (session('errors') !== null) : ?>
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger lh-base" role="alert">
                 <?php if (is_array(session('errors'))) : ?>
                     <?php foreach (session('errors') as $error) : ?>
                         <?= $error ?>
