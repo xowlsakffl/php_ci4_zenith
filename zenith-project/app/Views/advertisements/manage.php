@@ -208,7 +208,7 @@
                     <div class="modal-body">
                         <form name="memo-regi-form" class="regi-form">
                         <input type="hidden" name="id">
-			            <input type="hidden" name="media">
+                        <input type="hidden" name="media">
                         <input type="hidden" name="type">
                             <fieldset>
                                 <legend>메모 작성</legend>
@@ -505,7 +505,7 @@ function getList(data = []){
                         default:
                             break;
                     }
-                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">체크</label></div><p>'+media+'</p>';
+                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'"></label></div><p>'+media+'</p>';
                     return media;
                 },
             },
@@ -529,7 +529,7 @@ function getList(data = []){
                 "data": "budget", 
                 "width": "8%",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="">상향아이콘</span></button><button class="btn-budget-down"><span class="">하향아이콘</span></button></div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class=""><i class="bi bi-arrow-up"></i></span></button><button class="btn-budget-down"><span class=""><i class="bi bi-arrow-down"></i></span></button></div>';
                     return budget;
                 },
             },
