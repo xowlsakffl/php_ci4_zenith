@@ -65,7 +65,7 @@ class MagicLinkController extends ShieldMagicLinkController
         // Give the developer a way to know the user
         // logged in via a magic link.
         session()->setTempdata('magicLogin', true);
-        dd(session()->getTempdata('magicLogin'));
+        //dd(session()->getTempdata('magicLogin'));
         Events::trigger('magicLogin');
 
         // Get our login redirect url
