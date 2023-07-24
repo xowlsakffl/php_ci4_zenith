@@ -17,7 +17,7 @@ return [
     'oldToken'              => 'The access token has expired.',
     'noUserEntity'          => 'User Entity must be provided for password validation.',
     'invalidEmail'          => 'Unable to verify the email address matches the email on record.',
-    'unableSendEmailToUser' => 'Sorry, there was a problem sending the email. We could not send an email to "{0}".',
+    'unableSendEmailToUser' => '"{0}"로 이메일 전송을 실패하였습니다. ',
     'throttled'             => 'Too many requests made from this IP address. You may try again in {0} seconds.',
     'notEnoughPrivilege'    => 'You do not have the necessary permission to perform the desired operation.',
 
@@ -47,7 +47,7 @@ return [
     'magicLinkExpired'   => 'Sorry, link has expired.',
     'checkYourEmail'     => 'Check your email!',
     'magicLinkDetails'   => 'We just sent you an email with a Login link inside. It is only valid for {0} minutes.',
-    'successLogout'      => 'You have successfully logged out.',
+    'successLogout'      => '로그아웃 되었습니다.',
 
     // Passwords
     'errorPasswordLength'       => 'Passwords must be at least {0, number} characters long.',

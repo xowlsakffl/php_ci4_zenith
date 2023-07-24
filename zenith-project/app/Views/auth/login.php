@@ -12,7 +12,7 @@
         <h1 class="card-title">로그인</h1>   
 
         <?php if (session('error') !== null) : ?>
-            <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+            <div class="alert alert-danger lh-base" role="alert"><?= session('error') ?></div>
         <?php elseif (session('errors') !== null) : ?>
             <div class="alert alert-danger" role="alert">
                 <?php if (is_array(session('errors'))) : ?>
