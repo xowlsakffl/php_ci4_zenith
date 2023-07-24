@@ -21,7 +21,7 @@ class MagicLinkController extends ShieldMagicLinkController
         $identityModel = model(UserIdentityModel::class);
 
         $identity = $identityModel->getIdentityBySecret(Session::ID_TYPE_MAGIC_LINK, $token);
-
+        dd($identity);
         $identifier = $token ?? '';
 
         // No token found?
