@@ -69,7 +69,7 @@ class MagicLinkController extends ShieldMagicLinkController
         Events::trigger('magicLogin');
 
         // Get our login redirect url
-        return redirect()->to('/set-password/'.$user->id."/".$identifier);
+        return redirect()->to('/set-password/'.$user."/".$identifier);
     }
 
     private function recordLoginAttempt(

@@ -3,12 +3,19 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
+use CodeIgniter\HTTP\Response;
 
 class PasswordChangeController extends BaseController
 {
-    public function changePasswordView()
+    private $loginModel;
+
+    public function __construct()
     {
-        $data = $this->request->getGet();
-        dd($data);
+        $this->loginModel = model(LoginModel::class);
+    }
+
+    public function changePasswordView($user, $identifier)
+    {
+        $this->response->setStatusCode(404, 'Nope. Not here.');
     }
 }
