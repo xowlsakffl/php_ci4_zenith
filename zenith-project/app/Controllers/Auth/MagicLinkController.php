@@ -59,7 +59,7 @@ class MagicLinkController extends ShieldMagicLinkController
         $authenticator->loginById($identity->user_id);
 
         $user = $authenticator->getUser();
-
+        dd($user);
         $this->recordLoginAttempt($identifier, true, $user->id);
 
         // Give the developer a way to know the user
