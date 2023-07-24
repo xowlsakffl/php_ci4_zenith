@@ -41,6 +41,6 @@ class Tasks extends BaseConfig
         $exec_updateUsersByDouzone = 'php '.FCPATH.'index.php hr/updateUsersByDouzone';
         $schedule->shell($exec_updateUsersByDouzone)->hours([10,12,14,16,18])->minutes([0])->named('updateUsersByDouzone');
 
-        $schedule->command('todayDayOff')->cron('0 * * * *')->named('sendSlackForDayOff');
+        $schedule->command('todayDayOff')->cron('0 9-19 * * *')->named('sendSlackForDayOff');
     }
 }

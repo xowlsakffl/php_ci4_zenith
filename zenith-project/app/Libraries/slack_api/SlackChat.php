@@ -60,8 +60,18 @@ class SlackChat extends BaseController
         return $body;
     }
 
-    public function getSubscriptions($request) {
-        log_message('info', $request);
+    public function getSubscriptions() {
+        header("Access-Control-Allow-Origin: *");
+        header("Access-Control-Allow-Headers: *");
+        $_POST = json_decode(file_get_contents('php://input'), true);
+        $fp = fopen(WRITEPATH.'/logs/slack_log', 'w+');
+        $fw = fwrite($fp, json_encode($_POST));
+        fclose($fp);
+        $data = [];
+        if(isset($_POST['challenge']))
+            $data['challenge'] = $_POST['challenge'];
+        
+        echo json_encode($data);
     }
 
     private function getChannelId($name) {
