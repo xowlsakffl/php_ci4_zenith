@@ -35,7 +35,7 @@ class Filters extends BaseConfig
             'session' => ['except' => ['login*', 'register', 'auth/a/*', 'slack/*', 'jira/*']],
         ],
         'after' => [
-            'toolbar',
+            // 'toolbar',
             // 'honeypot',
             // 'secureheaders',
         ],

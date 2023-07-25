@@ -70,7 +70,7 @@
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
             </div>
         </form>
-        <div class="detail row d-flex justify-content-center">
+        <div class="row d-flex justify-content-center">
             <div class="reportData detail d-flex minWd">
 
             </div> 
@@ -151,7 +151,7 @@
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div> -->
             <div class="tab-pane active">
-                <div class="table-responsive">
+                <div class="table-responsive text-center">
                     <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
@@ -540,7 +540,7 @@ function getList(data = []){
                     return '\u20A9'+data;
                 },
             },
-            { "data": "unique_total", "width": "3%"},
+            { "data": "unique_total", "width": "5%"},
             {
                 "data": "spend",
                 "width": "8%",
@@ -594,7 +594,7 @@ function getList(data = []){
             { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
             { 
                 "data": "cvr", 
-                "width": "3%",
+                "width": "5%",
                 "render": function (data, type, row) {
                     return data+'\u0025';
                 },
