@@ -23,7 +23,7 @@ class MagicLinkController extends ShieldMagicLinkController
         $identity = $identityModel->getIdentityBySecret(Session::ID_TYPE_MAGIC_LINK, $token);
         
         $identifier = $token ?? '';
-
+        dd($token);
         // No token found?
         if ($identity === null) {
             $this->recordLoginAttempt($identifier, false);
