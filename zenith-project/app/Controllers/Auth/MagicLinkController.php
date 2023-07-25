@@ -67,9 +67,13 @@ class MagicLinkController extends ShieldMagicLinkController
         session()->setTempdata('magicLogin', true);
 
         Events::trigger('magicLogin');
-
+        $data = [
+            'userId' => $user->id,
+            'token' => $identifier
+        ];
+        $param = http_build_query($data);
         // Get our login redirect url
-        return redirect()->to('/set-password/'.$user."/".$identifier);
+        return redirect()->to('/set-password?'.$param);
     }
 
     private function recordLoginAttempt(

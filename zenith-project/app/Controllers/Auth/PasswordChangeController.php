@@ -3,19 +3,29 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\Response;
+use App\Models\Api\UserModel;
+use CodeIgniter\Shield\Models\LoginModel;
 
 class PasswordChangeController extends BaseController
 {
-    private $loginModel;
+    private $userModel, $loginModel;
 
     public function __construct()
     {
+        $this->userModel = model(UserModel::class);
         $this->loginModel = model(LoginModel::class);
+        $this->response = service('response');
     }
 
-    public function changePasswordView($user, $identifier)
+    public function changePasswordView()
     {
-        $this->response->setStatusCode(404, 'Nope. Not here.');
+        $data = $this->request->getGet();
+        if(empty($data['userId']) || empty($data['token'])){
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $user = $this->userModel->find($data['userId']);
+        $lastLogin = $this->loginModel->lastLogin($user);
+        dd($lastLogin);
     }
 }

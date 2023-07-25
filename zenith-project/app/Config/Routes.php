@@ -30,7 +30,7 @@ service('auth')->routes($routes, ['except' => ['magic-link']]);
 $routes->get('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginView', ['as' => 'magic-link']);
 $routes->post('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginAction');
 $routes->get('login/verify-magic-link', '\App\Controllers\Auth\MagicLinkController::verify', ['as' => 'verify-magic-link']);
-$routes->get('set-password/(:num)/(:any)', '\App\Controllers\Auth\PasswordChangeController::changePasswordView', ['as' => 'set_password']);
+$routes->get('set-password', '\App\Controllers\Auth\PasswordChangeController::changePasswordView', ['as' => 'set_password']);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
