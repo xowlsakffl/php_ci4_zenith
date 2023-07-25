@@ -52,7 +52,7 @@ class MagicLinkController extends ShieldMagicLinkController
 
         // If an action has been defined
         if ($authenticator->hasAction($identity->user_id)) {
-            return redirect()->route('auth-action-show')->with('error', lang('Auth.needActivate'));
+            return redirect()->route('auth-action-show')->with('error', lang('Auth.forcePasswordChange'));
         }
 
         // Log the user in
