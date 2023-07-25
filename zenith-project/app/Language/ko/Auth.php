@@ -23,6 +23,7 @@ return [
 
     'email'           => '이메일 주소',
     'username'        => '아이디',
+    'old_password'    => '기존 비밀번호',
     'password'        => '비밀번호',
     'passwordConfirm' => '비밀번호 확인',
     'haveAccount'     => 'Already have an account?',

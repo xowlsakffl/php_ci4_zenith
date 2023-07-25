@@ -140,7 +140,7 @@ CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
                         <th scope="col">대표자명</th>
                         <th scope="col">내역</th>
                         <th scope="col">공급가액</th>
-                        <th scope="col">총금액(VAT 포함)</th>
+                        <th scope="col">총금액<br>(VAT 포함)</th>
                         <th scope="col">비고</th>
                         <th scope="col">결과</th>
                     </tr>

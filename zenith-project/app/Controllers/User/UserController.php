@@ -4,6 +4,7 @@ namespace App\Controllers\User;
 use App\Models\Api\CompanyModel;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\Api\UserModel;
+use CodeIgniter\Shield\Authentication\Passwords;
 use CodeIgniter\Shield\Entities\User;
 
 class UserController extends \CodeIgniter\Controller 
@@ -30,6 +31,43 @@ class UserController extends \CodeIgniter\Controller
     public function myPage()
     {
         return view('users/mypage', ['user'=>$this->logginedUser]);
+    }
+
+    public function myPageUpdate()
+    {
+        $data = $this->request->getPost();
+
+        $credentials = [
+            'email'    => $this->logginedUser->getEmail(),
+            'password' => $data['old_password'],
+        ];
+        
+        $validCreds = auth()->check($credentials);
+        if (! $validCreds->isOK()) {
+            return redirect()->back()->with('error', '기존 비밀번호가 일치하지 않습니다.');
+        }
+
+        $rules = [
+            'password' => [
+                'label'  => 'Auth.password',
+                'rules'  => 'required|' . Passwords::getMaxLengthRule() . '|strong_password[]',
+                'errors' => [
+                    'max_byte' => 'Auth.errorPasswordTooLongBytes',
+                ],
+            ],
+            'password_confirm' => [
+                'label' => 'Auth.passwordConfirm',
+                'rules' => 'required|matches[password]',
+            ],
+        ];
+
+        if (! $this->validateData($data, $rules, [], config('Auth')->DBGroup)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $cuser = auth()->user();
+        $cuser->fill($data);
+        $result = $this->user->save($cuser);
+        return redirect()->back()->with('message', '비밀번호가 변경되었습니다.');
     }
 
     public function getUsers(){

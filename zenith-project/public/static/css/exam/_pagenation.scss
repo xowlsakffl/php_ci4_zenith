@@ -15,15 +15,6 @@
     }
 
     .dataTables_wrapper{  
-        table.dataTable{
-            thead{
-                th,td{text-align: center;}
-            }
-            tfoot{
-                th,td{text-align: center;}
-            }
-        }
-        
         .dt-buttons{position:absolute; top:-1.8rem; z-index:1;
             i.bi-list{color:$red; transition:all 0.3s; font-size:150%;
                 &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}
@@ -36,7 +27,7 @@
         }
     
         .dataTables_info{float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;
-            i.bi{color:$red; padding-right:6px;}
+            i.bi{color:$red; padding-right:6px; font-size:110%; display: inline-block; vertical-align: top;}
             .txt-info{display:inline-block;
                 span{color:#878787; position:relative;
                     &:hover{font-weight:900;
@@ -61,13 +52,17 @@
                 } 
                 &:active{background:none; border:none;}
             }            
-        }
-    
+        }    
+
         table.dataTable{ 
             thead tr{
+                th,td{text-align: center;}
                 .sorting_asc:before,.sorting_desc:after{color:chartreuse; opacity:1;}  
             }   
-            tbody tr{background-color:#fff;}     
+            tbody tr{background-color:#fff;}    
+            tfoot tr{
+                th,td{text-align: center;}
+            } 
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
             select.data-del{padding:3px; border-radius:4px; font-size:98%; letter-spacing:-1px;}
             button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px;}

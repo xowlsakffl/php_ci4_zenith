@@ -22,6 +22,9 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
     td{
         .regi-form{float:right;}
         .memo-list{float:left; width:75%;}
+        .btn-budget{margin:1.5rem auto 0; display: flex; justify-content: space-between; width:80%;
+            button:hover{color:red;}
+        }
     }
 }
 .table-default{table-layout:fixed; min-width:1400px;

@@ -24,7 +24,7 @@
     
     <div class="sub-contents-wrap">
         <main class="container my-5">
-            <h1 class="text-center">Nick Name</h1>
+            <h1 class="text-center"><?php echo $user->nickname?></h1>
             <div class="row justify-content-center mt-4">
                 <div class="col-md-6">
                     <div class="card">
@@ -32,31 +32,49 @@
                             <h3 class="card-title mb-0">Profile</h3>
                         </div>
                         <div class="card-body">
-                            <dl>
-                                <dt>아이디:</dt>
-                                <dd><?php echo $user->username?></dd> 
-                            </dl>
-                            <dl>
-                                <dt>이메일:</dt>
-                                <dd>john.doe@example.com</dd> 
-                            </dl>
-                            <dl>
-                                <dt>기존 비밀번호:</dt>
-                                <dd></dd>
-                            </dl>
-                            <dl>
-                                <dt>신규 비밀번호:</dt>
-                                <dd></dd>
-                            </dl>
-                            <dl>
-                                <dt>비밀번호 확인:</dt>
-                                <dd></dd>
-                            </dl>
-                            <dl>
-                                <dt>전화번호:</dt>
-                                <dd>010-0000-0000</dd> 
-                            </dl>
-                            <button type="button" class="btn btn-primary">작성완료</button>
+                        <?php if (session('error') !== null) : ?>
+                        <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+                        <?php elseif (session('errors') !== null) : ?>
+                            <div class="alert alert-danger" role="alert">
+                                <?php if (is_array(session('errors'))) : ?>
+                                    <?php foreach (session('errors') as $error) : ?>
+                                        <?= $error ?>
+                                        <br>
+                                    <?php endforeach ?>
+                                <?php else : ?>
+                                    <?= session('errors') ?>
+                                <?php endif ?>
+                            </div>
+                        <?php endif ?>
+                        <?php if (session('message') !== null) : ?>
+                            <div class="alert alert-success" role="alert"><?= session('message') ?></div>
+                        <?php endif ?>
+                            <form action="/mypage/update" method="post">
+                                <dl>
+                                    <dt>아이디:</dt>
+                                    <dd><?php echo $user->username?></dd> 
+                                </dl>
+                                <dl>
+                                    <dt>이메일:</dt>
+                                    <dd><?php echo $user->getEmail()?></dd> 
+                                </dl>
+                                <dl>
+                                    <dt>기존 비밀번호:</dt>
+                                    <dd><input type="password" class="form-control" name="old_password" placeholder="<?= lang('Auth.old_password') ?>"
+                            value="" /></dd>
+                                </dl>
+                                <dl>
+                                    <dt>신규 비밀번호:</dt>
+                                    <dd><input type="password" class="form-control" name="password" placeholder="<?= lang('Auth.password') ?>"
+                            value="" /></dd>
+                                </dl>
+                                <dl>
+                                    <dt>비밀번호 확인:</dt>
+                                    <dd><input type="password" class="form-control" name="password_confirm" placeholder="<?= lang('Auth.passwordConfirm') ?>"
+                            value="" /></dd>
+                                </dl>
+                                <button type="submit" class="btn btn-primary">작성완료</button>
+                            </form>
                         </div>
                     </div>
                 </div>

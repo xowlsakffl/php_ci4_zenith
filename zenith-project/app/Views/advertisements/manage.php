@@ -529,7 +529,7 @@ function getList(data = []){
                 "data": "budget", 
                 "width": "8%",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class=""><i class="bi bi-arrow-up"></i></span></button><button class="btn-budget-down"><span class=""><i class="bi bi-arrow-down"></i></span></button></div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
                 },
             },

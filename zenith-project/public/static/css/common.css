@@ -1043,6 +1043,15 @@ div.dataTables_processing > div:last-child > div {
   float: left;
   width: 75%;
 }
+.table td .btn-budget {
+  margin: 1.5rem auto 0;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+.table td .btn-budget button:hover {
+  color: red;
+}
 
 .table-default {
   table-layout: fixed;
@@ -1723,12 +1732,6 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable thead th, .sub-contents-wrap .dataTables_wrapper table.dataTable thead td {
-  text-align: center;
-}
-.sub-contents-wrap .dataTables_wrapper table.dataTable tfoot th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot td {
-  text-align: center;
-}
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   position: absolute;
   top: -1.8rem;
@@ -1768,6 +1771,9 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper .dataTables_info i.bi {
   color: red;
   padding-right: 6px;
+  font-size: 110%;
+  display: inline-block;
+  vertical-align: top;
 }
 .sub-contents-wrap .dataTables_wrapper .dataTables_info .txt-info {
   display: inline-block;
@@ -1850,12 +1856,18 @@ div.dataTables_processing > div:last-child > div {
   background: none;
   border: none;
 }
+.sub-contents-wrap .dataTables_wrapper table.dataTable thead tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr td {
+  text-align: center;
+}
 .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
   color: chartreuse;
   opacity: 1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
   background-color: #fff;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr td {
+  text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
   padding: 0px;

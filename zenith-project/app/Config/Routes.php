@@ -46,6 +46,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->get('/home', 'HomeController::index');
     $routes->get('/home/report', 'HomeController::getReports');
     $routes->get('pages/(:any)', 'PageController::view/$1');
+    $routes->get('mypage', 'User\UserController::myPage');
+    $routes->post('mypage/update', 'User\UserController::myPageUpdate');
 
     // 게시판
     $routes->group('boards', static function($routes){     
@@ -81,7 +83,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
         //사용자 관리
         $routes->get('user', 'User\UserController::index');
-        $routes->get('mypage', 'User\UserController::myPage');
         $routes->get('user/get-users', 'User\UserController::getUsers');
         $routes->get('user/get-user', 'User\UserController::getUser');
         $routes->get('company/get-search-companies', 'Company\CompanyController::getSearchCompanies');
