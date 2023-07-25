@@ -29,7 +29,7 @@ class UserController extends \CodeIgniter\Controller
 
     public function myPage()
     {
-        return view('users/mypage');
+        return view('users/mypage', ['user'=>$this->logginedUser]);
     }
 
     public function getUsers(){

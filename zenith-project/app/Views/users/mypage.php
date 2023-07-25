@@ -32,12 +32,30 @@
                             <h3 class="card-title mb-0">Profile</h3>
                         </div>
                         <div class="card-body">
-                            <dl><dt>아이디:</dt><dd>John Doe</dd> </dl>
-                            <dl><dt>이메일:</dt><dd>john.doe@example.com</dd> </dl>
-                            <dl><dt>기존 비밀번호:</dt><dd></dd></dl>
-                            <dl><dt>신규 비밀번호:</dt><dd></dd></dl>
-                            <dl><dt>비밀번호 확인:</dt><dd></dd></dl>
-                            <dl><dt>전화번호:</dt><dd>010-0000-0000</dd> </dl>
+                            <dl>
+                                <dt>아이디:</dt>
+                                <dd><?php echo $user->username?></dd> 
+                            </dl>
+                            <dl>
+                                <dt>이메일:</dt>
+                                <dd>john.doe@example.com</dd> 
+                            </dl>
+                            <dl>
+                                <dt>기존 비밀번호:</dt>
+                                <dd></dd>
+                            </dl>
+                            <dl>
+                                <dt>신규 비밀번호:</dt>
+                                <dd></dd>
+                            </dl>
+                            <dl>
+                                <dt>비밀번호 확인:</dt>
+                                <dd></dd>
+                            </dl>
+                            <dl>
+                                <dt>전화번호:</dt>
+                                <dd>010-0000-0000</dd> 
+                            </dl>
                             <button type="button" class="btn btn-primary">작성완료</button>
                         </div>
                     </div>

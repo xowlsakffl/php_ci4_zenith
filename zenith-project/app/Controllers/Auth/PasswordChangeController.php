@@ -22,6 +22,10 @@ class PasswordChangeController extends BaseController
 
     public function changePasswordView()
     {
+        if (!session('magicLogin')) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         return view(setting('Auth.views')['set-password']);
     }
 

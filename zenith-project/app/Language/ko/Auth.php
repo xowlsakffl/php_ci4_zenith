@@ -48,7 +48,7 @@ return [
     'checkYourEmail'     => '이메일을 확인하세요!',
     'magicLinkDetails'   => '로그인 링크가 메일로 전송되었습니다. 60분간 유효합니다.',
     'successLogout'      => '로그아웃 되었습니다.',
-
+    
     // Passwords
     'errorPasswordLength'       => '비밀번호는 최소 {0, number}자리여야 합니다.',
     'suggestPasswordLength'     => 'Pass phrases - up to 255 characters long - make more secure passwords that are easy to remember.',
@@ -64,7 +64,7 @@ return [
     'passwordChangeSuccess'     => 'Password changed successfully',
     'userDoesNotExist'          => 'Password was not changed. User does not exist',
     'resetTokenExpired'         => 'Sorry. Your reset token has expired.',
-
+    'forcePasswordChange'       => '비밀번호를 변경해주세요.',
     // Email Globals
     'emailInfo'      => 'Some information about the person:',
     'emailIpAddress' => 'IP Address:',
