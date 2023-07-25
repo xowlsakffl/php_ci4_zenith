@@ -22,10 +22,6 @@ class PasswordChangeController extends BaseController
 
     public function changePasswordView()
     {
-        if ($this->user->requiresPasswordReset()) {
-            return redirect()->to('set-password')->with('error', lang('Auth.needActivate'));
-        }
-
         return view(setting('Auth.views')['set-password']);
     }
 
