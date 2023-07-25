@@ -159,14 +159,14 @@
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
-                                <th scope="col">현재 <br>DB단가</th>
-                                <th scope="col">유효 <br>DB</th>
+                                <th scope="col">현재<br>DB단가</th>
+                                <th scope="col">유효<br>DB</th>
                                 <th scope="col">지출액</th>
                                 <th scope="col">수익</th>
                                 <th scope="col">수익률</th>
                                 <th scope="col">매출액</th>
                                 <th scope="col">노출수</th>
-                                <th scope="col">링크클릭</th>
+                                <th scope="col">링크<br>클릭</th>
                                 <th scope="col">CPC</th>
                                 <th scope="col">CTR</th>
                                 <th scope="col">DB <br>전환률</th>

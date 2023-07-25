@@ -28,7 +28,7 @@ class HumanResourceModel extends Model
         $builder = $this->zenith->table('users as usr');
         $builder->select('usr.*, ai.secret, up.*');
         $builder->join('auth_identities as ai', 'usr.id = ai.user_id AND ai.type = "email_password"', 'left');
-        $builder->join('users_department as up', 'usr.id = up.user_id');
+        $builder->join('users_department as up', 'usr.id = up.user_id', 'left');
         $builder->where('ai.secret', $email);
         $builder->groupBy('usr.id');
         $result = $builder->get()->getRowArray();

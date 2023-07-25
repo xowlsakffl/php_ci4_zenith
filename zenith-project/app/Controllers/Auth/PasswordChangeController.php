@@ -9,6 +9,7 @@ use CodeIgniter\Shield\Models\LoginModel;
 class PasswordChangeController extends BaseController
 {
     private $userModel, $loginModel;
+    protected $helpers = ['setting'];
 
     public function __construct()
     {
@@ -24,8 +25,15 @@ class PasswordChangeController extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
+        return view(setting('Auth.views')['login']);
+    }
+
+    public function changePasswordAction(){
+        $data = $this->request->getPost();
         $user = $this->userModel->find($data['userId']);
         $lastLogin = $this->loginModel->lastLogin($user);
-        dd($lastLogin);
+        if($data['token'] == $lastLogin->identifier){
+
+        }
     }
 }

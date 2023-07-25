@@ -35,6 +35,7 @@ class Auth extends ShieldAuth
         'magic-link-login'            => '\App\Views\auth\magic_link_form',
         'magic-link-message'          => '\App\Views\auth\magic_link_message',
         'magic-link-email'            => '\App\Views\auth\email\magic_link_email',
+        'set-password'                => '\App\Views\auth\set_password',
     ];
 
     /**
