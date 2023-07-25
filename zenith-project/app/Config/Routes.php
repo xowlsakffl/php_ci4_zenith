@@ -26,7 +26,12 @@ $routes->setAutoRoute(false);
  * Route Definitions
  * --------------------------------------------------------------------
  */
-service('auth')->routes($routes);
+service('auth')->routes($routes, ['except' => ['magic-link']]);
+$routes->get('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginView', ['as' => 'magic-link']);
+$routes->post('login/magic-link', '\App\Controllers\Auth\MagicLinkController::loginAction');
+$routes->get('login/verify-magic-link', '\App\Controllers\Auth\MagicLinkController::verify', ['as' => 'verify-magic-link']);
+$routes->get('set-password', '\App\Controllers\Auth\PasswordChangeController::changePasswordView', ['as' => 'set_password']);
+$routes->post('set-password', '\App\Controllers\Auth\PasswordChangeController::changePasswordAction', ['as' => 'set_password_action']);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 
@@ -34,6 +39,7 @@ service('auth')->routes($routes);
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
+
 //관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
     $routes->get('/', 'HomeController::index');
@@ -87,10 +93,13 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
+        $routes->get('check-report', 'AdvertisementManager\AdvManagerController::getCheckReport');
         $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
-
+        $routes->get('getmemo', 'AdvertisementManager\AdvManagerController::getMemo');
+        $routes->post('addmemo', 'AdvertisementManager\AdvManagerController::addMemo');
+        $routes->post('checkmemo', 'AdvertisementManager\AdvManagerController::checkMemo');
         $routes->group('facebook', static function($routes){
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');
         });

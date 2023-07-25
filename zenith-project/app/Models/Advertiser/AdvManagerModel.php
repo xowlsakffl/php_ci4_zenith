@@ -108,27 +108,82 @@ class AdvManagerModel extends Model
         foreach ($builders as $builder) {
             if ($unionBuilder) {
                 $unionBuilder->union($builder);
+                
             } else {
                 $unionBuilder = $builder;
             }
+            
         }
 
         if ($unionBuilder) {
+            $resultQuery = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
+
             if($type == 'getAccounts'){   
-                $unionBuilder->groupBy('G.id');
-                $unionBuilder->orderBy('G.id', 'asc');
+                $resultQuery->groupBy('adv.company_id');
+                $resultQuery->orderBy('adv.company_name', 'asc');
             }
             
-            if($type == 'getCampaigns' || $type == 'getAdsets' || $type == 'getAds'){   
-                $unionBuilder->groupBy('G.id');
-                $unionBuilder->orderBy('G.id', 'asc');
-            }
-
-            $result = $unionBuilder->get()->getResultArray();
+            /* if($type == 'getCampaigns' || $type == 'getAdsets' || $type == 'getAds'){   
+                $resultQuery->groupBy('id');
+                $resultQuery->orderBy('id', 'asc');
+                $result = $resultQuery->get()->getResultArray();
+                dd($result);
+            } */
+            $result = $resultQuery->get()->getResultArray();
+            //dd($result);
         } else {
             $result = null;
         }
 
         return $result;
+    }
+
+    public function getMemo()
+    {
+        $fbBuilder = $this->zenith->table('z_facebook.fb_ad_account AS faa');
+        $fbBuilder->select('am.*, faa.name AS account_name, fc.campaign_name AS campaign_name, fas.adset_name AS adset_name, fa.ad_name AS ad_name');   
+        $fbBuilder->join('z_facebook.fb_campaign AS fc', 'faa.ad_account_id = fc.account_id');
+        $fbBuilder->join('z_facebook.fb_adset AS fas', 'fc.campaign_id = fas.campaign_id');
+        $fbBuilder->join('z_facebook.fb_ad AS fa', 'fas.adset_id = fa.adset_id');
+        $fbBuilder->join('zenith.advertisement_memo AS am', "am.media = 'facebook' AND ((fa.ad_id = am.id AND am.type = 'ads') OR (fas.adset_id = am.id AND am.type = 'adsets') OR (fc.campaign_id = am.id AND am.type = 'campaigns'))");
+
+        $ggBuilder = $this->zenith->table('z_adwords.aw_ad_account AS aaa');
+        $ggBuilder->select('am.*, aaa.name AS account_name, ac.name AS campaign_name, aag.name AS adset_name, aa.name AS ad_name');
+        $ggBuilder->join('z_adwords.aw_campaign ac', 'aaa.customerId = ac.customerId');
+        $ggBuilder->join('z_adwords.aw_adgroup aag', 'ac.id = aag.campaignId');
+        $ggBuilder->join('z_adwords.aw_ad aa', 'aag.id = aa.adgroupId');
+        $ggBuilder->join('zenith.advertisement_memo AS am', "am.media = 'google' AND ((aa.id = am.id AND am.type = 'ads') OR (aag.id = am.id AND am.type = 'adsets') OR (ac.id = am.id AND am.type = 'campaigns'))");
+
+        $kkBuilder = $this->zenith->table('z_moment.mm_ad_account AS maa');
+        $kkBuilder->select('am.*, maa.name AS account_name, mc.name AS campaign_name, mag.name AS adset_name, mct.name AS ad_name');
+        $kkBuilder->join('z_moment.mm_campaign mc', 'maa.id = mc.ad_account_id');
+        $kkBuilder->join('z_moment.mm_adgroup mag', 'mc.id = mag.campaign_id');
+        $kkBuilder->join('z_moment.mm_creative mct', 'mag.id = mct.adgroup_id');
+        $kkBuilder->join('zenith.advertisement_memo AS am', "am.media = 'kakao' AND ((mct.id = am.id AND am.type = 'ads') OR (mag.id = am.id AND am.type = 'adsets') OR (mc.id = am.id AND am.type = 'campaigns'))");
+
+        $fbBuilder->union($ggBuilder)->union($kkBuilder);
+        $resultQuery = $this->zenith->newQuery()->fromSubquery($fbBuilder, 'memo');
+        $resultQuery->where("(memo.datetime >= DATE_SUB(NOW(), INTERVAL 3 DAY) OR (memo.datetime <= DATE_SUB(NOW(), INTERVAL 3 DAY) AND memo.is_done = 0))");
+        $resultQuery->groupBy('memo.seq');
+        $resultQuery->orderBy('memo.datetime', 'desc');
+        $result = $resultQuery->get()->getResultArray();
+        return $result;
+    }
+
+    public function addMemo($data)
+    {
+        $builder = $this->zenith->table('advertisement_memo');
+        $builder->insert($data);
+        return true;
+    }
+
+    public function checkMemo($data)
+    {
+        $builder = $this->zenith->table('advertisement_memo');
+        $builder->set('is_done', $data['is_done']);
+        $builder->set('done_nickname', $data['done_nickname']);
+        $builder->where('seq', $data['seq']);
+        $builder->update();
+        return true;
     }
 }

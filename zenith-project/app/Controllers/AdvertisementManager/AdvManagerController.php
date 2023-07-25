@@ -29,20 +29,23 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
-                return $this->fail("데이터가 존재하지 않습니다.");
+                $result = [
+                    'data' => []
+                ];
+                return $this->respond($result);
             }
 
             if(!isset($arg['searchData'])) {
-                $arg['searchData'] = [
-                    'sdate'=> date('Y-m-d'),
-                    'edate'=> date('Y-m-d')
-                ];
+                $arg['searchData']['sdate'] = '2023-06-07';//date('Y-m-d')
+                $arg['searchData']['sdate'] = date('Y-m-d');
+                $arg['searchData']['type'] = 'campaigns';
+                $arg['searchData']['media'] = 'facebook';
             }
-            
+            //$arg['searchData']['sdate'] = '2023-06-07';//date('Y-m-d')
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
@@ -155,8 +158,19 @@ class AdvManagerController extends BaseController
         return $data;
     } */
     
+    public function getCheckReport(){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result['report'] = $this->getReport($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function getDiffReport(){
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $currentDate = date("Y-m-d");
             $arg['searchData']['sdate'] = $currentDate;
@@ -681,6 +695,41 @@ class AdvManagerController extends BaseController
             }else{
                 return $this->fail("잘못된 요청");
             }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getMemo()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $result = $this->admanager->getMemo();
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function addMemo()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $param = $this->request->getPost();
+            $param['nickname'] = auth()->user()->nickname;
+            $param['is_done'] = 0;
+            $result = $this->admanager->addMemo($param);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function checkMemo()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $param = $this->request->getPost();
+            $param['done_nickname'] = auth()->user()->nickname;
+            $result = $this->admanager->checkMemo($param);
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }

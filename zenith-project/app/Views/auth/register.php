@@ -5,25 +5,25 @@
 <?= $this->section('guestContent') ?>
     <div class="row container-fluid register-container">
         <div class="card col-lg-6 col-12">
-            <?php if (session('error') !== null) : ?>
-                <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
-            <?php elseif (session('errors') !== null) : ?>
-                <div class="alert alert-danger" role="alert">
-                    <?php if (is_array(session('errors'))) : ?>
-                        <?php foreach (session('errors') as $error) : ?>
-                            <?= $error ?>
-                            <br>
-                        <?php endforeach ?>
-                    <?php else : ?>
-                        <?= session('errors') ?>
-                    <?php endif ?>
-                </div>
-            <?php endif ?>
+            
 
             <form action="<?= url_to('register') ?>" method="post">
                 <?= csrf_field() ?>
                 <h5 class="card-title"><?= lang('Auth.register') ?></h5>
-                
+                <?php if (session('error') !== null) : ?>
+                <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+                <?php elseif (session('errors') !== null) : ?>
+                    <div class="alert alert-danger lh-base" role="alert">
+                        <?php if (is_array(session('errors'))) : ?>
+                            <?php foreach (session('errors') as $error) : ?>
+                                <?= $error ?>
+                                <br>
+                            <?php endforeach ?>
+                        <?php else : ?>
+                            <?= session('errors') ?>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
                 <!-- Email -->
                 <div class="mb-2 position-relative">
                     <i class="fa fa-envelope-o"></i>

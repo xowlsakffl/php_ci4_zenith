@@ -3,7 +3,7 @@
     &.up{transform: translateY(0); visibility:visible;}
 }
 
-.sub-contents-wrap{flex:1; height:100vh; overflow:auto; padding:80px 4.4271vw; transition:all 0.3s;
+.sub-contents-wrap{flex:1; height:100vh; overflow:auto; /*padding:80px 4.4271vw;*/ /*padding: 40px 1.4583vw 50px;*/ padding:40px 2.9908vw 50px; transition:all 0.3s;
     // > div{@include effect;}
 }
 .title-area{display:flex; align-items:center; margin:0 0 20px;
@@ -23,6 +23,14 @@
         }
     }
 }
+.col.half {
+    .search-wrap .search .input{
+        input[type="text"]{font-size:90%;}
+        .btn-primary{height: 50px;}
+        .form-select{padding: .375rem 1.25rem .375rem .75rem;}
+    }
+}
+
 .search-wrap{overflow:hidden; margin:0 0 50px; border:1px solid #c3c3c3; border-radius:$radius $radius 0 0; 
     .search{padding:35px 10.4167vw; text-align:center; background:#fff;
         .term{flex:1; height:50px; padding:0 25px; border-top:2px solid #e2e2e2; border-bottom:2px solid #e2e2e2;
@@ -36,10 +44,12 @@
             .btn-special{width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:var(--bs-blue);}
         }
         * + .input{margin:0 0 0 20px;}
+
+        
     }
     .detail{padding:20px 0; text-align:center; border-top:1px solid #c3c3c3; background:#e9e9e9;
         .col{flex:0 0 auto; width:auto; padding:0 30px; color:#929292; font-weight:500;
-            dt{margin:0 0 5px; font-size:1.125rem; color:$color-dark;}
+            dt{margin:0 0 5px; /*font-size:1.125rem;*/font-size:1rem; color:$color-dark;}
         }
     }
     select{width:20%; height:50px; margin:0 0 0 20px;}
@@ -97,12 +107,21 @@
         }
     }
 }
-.tab-content{position:relative; padding:16px 24px 50px; border-radius:0 0 10px 10px; border:1px solid #dbdbdb; border-top:0; background:#fff;
+.tab-content{position:relative; /*padding:16px 24px 50px;*/ padding:0.75rem 0.75rem 1.75rem; border-radius:0 0 10px 10px; border:1px solid #dbdbdb; border-top:0; background:#fff;
     .btn-wrap{margin:0 0 12px;
         .btn{height:27px; padding:0 15px; font-size:0.813rem; color:$color-dark; line-height:27px; border-radius:14px;
             &:hover,
             &.active{color:#fff;}
         }
+    }
+}
+
+.dataTables_scrollBody{ /*table 스크롤바 안보임*/
+    -ms-overflow-style: none; /* 익스플로러, 앳지 */
+    scrollbar-width: none; /* 파이어폭스 */
+
+    &::-webkit-scrollbar {
+        display: none; /* 크롬, 사파리, 오페라 */
     }
 }
 

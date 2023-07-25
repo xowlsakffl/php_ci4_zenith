@@ -641,7 +641,7 @@ class ZenithKM
         if ($metrics)
             $param['metricsGroup'] = $metrics;
         if(!$this->ad_account_id) $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
-        if ($adAccountId) $this->ad_account_id = $adAccountId;
+        if(isset($adAccountId)) $this->ad_account_id = $adAccountId;
         $result = $this->getCall($request, $param);
         return $result;
     }
@@ -810,7 +810,7 @@ class ZenithKM
                 // echo '<h3>'.$adgroup_ids.'</h3>';
                 $data = [];
                 $report = $this->getCreativeReport($creative_ids, $datePreset, $dimension, $metrics);
-                if ($report['message'] == 'Success' && count($report['data']) > 0) {
+                if (isset($report['message']) && $report['message'] == 'Success' && isset($report['data'])) {
                     $i = 0;
                     foreach ($report['data'] as $row) {
                         if (count($row['metrics'])) {
@@ -822,7 +822,7 @@ class ZenithKM
                         }
                     }
                 }
-                $ids = $new_ids;
+                if(isset($new_ids)) $ids = $new_ids;
                 $this->ad_account_id = $creative['ad_account_id'];
                 ob_flush();
                 flush();
@@ -927,7 +927,8 @@ class ZenithKM
         if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
             $urls = parse_url($data['landingUrl']);
             parse_str($urls['query'], $urls['qs']);
-            $event_id = array_pop(explode('/', $urls['path']));
+            $path = explode('/', $urls['path']);
+            $event_id = array_pop($path);
             $site = @$urls['qs']['site'];
         } else {
             $event_id = $matches[2][0];

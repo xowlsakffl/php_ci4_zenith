@@ -87,8 +87,8 @@ class ZenithFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
-    private $access_token = 'EAAKNGLMV4o4BAJhyop1mNFKcAyWtRPucOMyHfyO0hpoiTbYfKaA1FVdY0d1JgH4ABkWwXJKkX1pWrVTXl1UnLGxZBSJT6yJmYsfauYMT0c6TL5zeROfE2JcWBjZBtFvUO8A7qDA057siFuORTos4ZCZCdwQKwWH3ZCpqXY0xXhNpNk25ZCZC3nB07ZBFp1wtU95KQVLHVIV2WOv3Qjxo0T0rr0jHJOtbUNUZD';
-    private $longLivedAccessToken = 'EAAKNGLMV4o4BACAAS6mOXmRA6xDsXvnbyqrlVhz3q1RfBwZBjn9DV046TL2vaZARZACkUPZC4J87F0j8kU2TZANn7DQxjr8MskirAoZCVjhUz0uXi2tR9l2OIplyZAWpCKJW43fG7DMGbw6QkHnHis4T8JQOP0YLltj7hibheHUjUzNGftxBVgJ';
+    private $access_token = 'EAAKNGLMV4o4BAGjK3GVBlpZBsjYYQjrfLzt22KAoJO5Jpbw4upgVLFkOykdZCJsyNq1k5btTJ3IHzpgrnRzVL3lO1xoxqbnpZBvxhbqoiMZAT0ifXnArBNIaBHZBHrivs8Lcoc0ew3w9CUNJZCiuANnAEFVF0hQTRzq9mucDLxVN5dtFXMO9VUrf0O1sxwQID4BXn0IVYZB8zKSPQHNgT4Md6H8zLiiBekZD';
+    private $longLivedAccessToken = 'EAAKNGLMV4o4BADZChadpn1dG23KqHguUAU1osVFqCyKG96Ob421uhFLQZA7E59MlhXX7nbfABLhKOkuBuHtm8drjgVmN4AFinQIKKnBM63Pn2qwJuephE15OLRzJnE3aCYv3YpiIV8MVxYrygHPSX7tZBXRapZCs43gfAvoLc5FhjkJ1rdKq';
     private $db;
     private $fb, $fb_app;
     private $business_id_list = [
