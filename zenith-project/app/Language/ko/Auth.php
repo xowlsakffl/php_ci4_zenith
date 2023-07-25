@@ -43,7 +43,7 @@ return [
     'rememberMe'         => '로그인 유지',
     'forgotPassword'     => '비밀번호 찾기',
     'useMagicLink'       => '로그인 링크',
-    'magicLinkSubject'   => '로그인 링크',
+    'magicLinkSubject'   => '제니스 비밀번호 재설정 링크',
     'magicTokenNotFound' => '잘못된 주소입니다.',
     'magicLinkExpired'   => '링크가 만료되었습니다.',
     'checkYourEmail'     => '이메일을 확인하세요!',
