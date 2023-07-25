@@ -22,6 +22,9 @@ class PasswordChangeController extends BaseController
 
     public function changePasswordView()
     {
+        if (!session('magicLogin')) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
 
         return view(setting('Auth.views')['set-password']);
     }
@@ -50,6 +53,7 @@ class PasswordChangeController extends BaseController
         $result = $this->userModel->save($this->user);
         if($result == true){
             $this->user->undoForcePasswordReset();
+            session()->removeTempdata('magicLogin');
         }
 
         return redirect()->to("/");
