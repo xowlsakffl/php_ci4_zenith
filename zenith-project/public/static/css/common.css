@@ -1733,9 +1733,8 @@ div.dataTables_processing > div:last-child > div {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
-  position: absolute;
-  top: -1.8rem;
   z-index: 1;
+  text-align: left;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list {
   color: red;

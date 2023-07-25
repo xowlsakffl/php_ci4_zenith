@@ -15,7 +15,7 @@
     }
 
     .dataTables_wrapper{  
-        .dt-buttons{position:absolute; top:-1.8rem; z-index:1;
+        .dt-buttons{z-index:1; text-align: left;
             i.bi-list{color:$red; transition:all 0.3s; font-size:150%;
                 &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}
             }
