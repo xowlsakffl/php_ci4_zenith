@@ -15,6 +15,15 @@
     }
 
     .dataTables_wrapper{  
+        table.dataTable{
+            thead{
+                th,td{text-align: center;}
+            }
+            tfoot{
+                th,td{text-align: center;}
+            }
+        }
+        
         .dt-buttons{position:absolute; top:-1.8rem; z-index:1;
             i.bi-list{color:$red; transition:all 0.3s; font-size:150%;
                 &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}
@@ -30,7 +39,8 @@
             i.bi{color:$red; padding-right:6px;}
             .txt-info{display:inline-block;
                 span{color:#878787; position:relative;
-                    &:hover{font-weight:900;}
+                    &:hover{font-weight:900;
+                    }
                     @include underline-effect($bg:#878787);
                 }
             }           

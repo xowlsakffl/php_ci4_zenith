@@ -70,8 +70,8 @@
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
             </div>
         </form>
-        <div class="row d-flex justify-content-center">
-            <div class="reportData detail d-flex minWd">
+        <div class="row d-flex">
+            <div class="reportData detail d-flex minWd justify-content-center">
 
             </div> 
         </div>
@@ -141,7 +141,7 @@
         </ul>
         <div class="tab-content">
             <div class="btn-wrap">
-                <button type="button" class="btn btn-outline-danger active">수동 업데이트</button>
+                <button type="button" class="btn btn-outline-danger">수동 업데이트</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
             </div>

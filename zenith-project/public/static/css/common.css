@@ -520,8 +520,8 @@ body {
 .sub-contents-wrap {
   flex: 1;
   height: 100vh;
-  overflow: auto; /*padding:80px 4.4271vw;*/
-  padding: 40px 1.4583vw 50px;
+  overflow: auto; /*padding:80px 4.4271vw;*/ /*padding: 40px 1.4583vw 50px;*/
+  padding: 40px 2.9908vw 50px;
   transition: all 0.3s;
 }
 
@@ -667,8 +667,8 @@ body {
   font-weight: 500;
 }
 .search-wrap .detail .col dt {
-  margin: 0 0 5px;
-  font-size: 1.125rem;
+  margin: 0 0 5px; /*font-size:1.125rem;*/
+  font-size: 1rem;
   color: #2d2e34;
 }
 .search-wrap select {
@@ -1722,6 +1722,12 @@ div.dataTables_processing > div:last-child > div {
 
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable thead th, .sub-contents-wrap .dataTables_wrapper table.dataTable thead td {
+  text-align: center;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable tfoot th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot td {
+  text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   position: absolute;

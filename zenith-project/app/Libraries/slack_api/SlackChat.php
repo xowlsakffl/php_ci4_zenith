@@ -94,7 +94,7 @@ class SlackChat extends BaseController
                             ]
                         ],
                     ];
-                    $this->writeLog(json_encode($message));
+                    // $this->writeLog(json_encode($message));
                     $result = $this->sendMessage($message);
                 }
             }
