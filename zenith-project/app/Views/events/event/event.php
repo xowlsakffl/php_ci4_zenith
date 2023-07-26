@@ -135,7 +135,7 @@
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
-                <button class="btn-special ms-2" id="createBtn" data-bs-toggle="modal" data-bs-target="#regiModal" type="button">등록</button>
+                <button class="btn-special ms-2" data-button-type="createBtn" data-bs-toggle="modal" data-bs-target="#regiModal" type="button">등록</button>
             </div>
         </form>
     </div>
@@ -595,7 +595,7 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "10%",
                 "render": function(data, type, row) {
-                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
+                    return '<p>'+data+'</p>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
                 }
             },
             { "data": "media_name", "width": "5%"},
@@ -631,6 +631,11 @@ function getList(){
                 }
             }
         ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-button-type", "updateBtn");
+            $(row).attr("data-bs-toggle", "modal");
+            $(row).attr("data-bs-target", "#regiModal");
+        },
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
@@ -918,9 +923,8 @@ $('input[name="keyword"]').tagit({
 
 $('#regiModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
-    if ($btn.attr('id') === 'updateBtn') {
-        var $tr = $btn.closest('tr');
-        var seq = $tr.attr('id');
+    if ($btn.data('button-type') === 'updateBtn') {
+        var seq = $btn.attr('id');
         $('#regiModalLabel').text('이벤트 수정');
         $('.landing_info').show();
         $('.update-btn-wrap').show();
