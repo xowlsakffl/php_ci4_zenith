@@ -508,6 +508,21 @@
     </div>
 </div>
 <!-- //이벤트 등록 -->
+<!-- 이벤트 랜딩보기 -->
+<div class="modal fade" id="landingView" tabindex="-1" aria-labelledby="landingViewLabel"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="landingViewLabel">랜딩보기</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" id="eventContent" width="100%" height="700"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //이벤트 랜딩보기 -->
 <?=$this->endSection();?>
 
 <!--스크립트-->
@@ -580,7 +595,7 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "10%",
                 "render": function(data, type, row) {
-                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<a href="https://event.hotblood.co.kr/'+row.seq+'" target="_blank" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</a>';
+                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
                 }
             },
             { "data": "media_name", "width": "5%"},
@@ -677,7 +692,7 @@ function setDate(){
 
 function fileCheck() {
     $.getJSON("https://event.hotblood.co.kr/getfiles", function(response) {
-        $('a.btn_landing').each(function(i, obj) {
+        $('.btn_landing').each(function(i, obj) {
             var filename = $(obj).data('filename') + '.php';
             if ($.inArray(filename, response) != -1) {
                 $(obj).removeClass('hide');
@@ -1037,6 +1052,17 @@ $('body').on('click', '.event_seq', function() {
         .catch(function(err) {
             console.error("복사 실패: ", err);
         });
+});
+
+
+$('#landingView').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var link = $btn.data('link');
+    var iframeContent = $('#eventContent');
+    iframeContent.attr('src', link);
+})
+.on('hidden.bs.modal', function(e) { 
+    $('#eventContent').attr('src', '');
 });
 
 </script>
