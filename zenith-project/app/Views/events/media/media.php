@@ -158,7 +158,13 @@ function getList(){
                 }
             },
             { "data": "target", "width": "15%"},
-            { "data": "total", "width": "5%"},
+            { 
+                "data": "total", 
+                "width": "5%",
+                "render": function(data, type, row) {
+                    return '<button id="totalBtn" data-media="'+row.media+'">'+data+'</button>';
+                }
+            },
         ],
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
@@ -271,6 +277,17 @@ $('form[name="media-register-form"]').bind('submit', function(e) {
     }
     
     return false;
+});
+
+$('body').on('click', '#totalBtn', function() {
+    var media = $(this).data('media');
+    var data = {
+        media: media
+    };
+    
+    storageValue = JSON.stringify(data);
+    window.localStorage.setItem('event_media_name', storageValue);
+    window.location.href = '/eventmanage/event';
 });
 </script>
 <?=$this->endSection();?>
