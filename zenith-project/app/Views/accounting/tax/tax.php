@@ -108,9 +108,9 @@ CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <a href="/accounting/taxList"><button type="button" class="btn btn-danger">업체목록(세금계산서)</button></a>
-            <a href="#"><button type="button" class="btn btn-danger">글쓰기(세금계산서)</button></a>
-            <a href="#"><button type="button" class="btn btn-danger">엑셀백업</button></a>
+            <a href="/accounting/taxList"><button type="button" class="btn btn-outline-danger">업체목록(세금계산서)</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-danger">글쓰기(세금계산서)</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-danger">엑셀백업</button></a>
         </div>
 
         <div class="table-responsive">

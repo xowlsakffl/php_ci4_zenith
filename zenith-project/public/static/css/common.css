@@ -313,6 +313,23 @@ body {
   color: #aaa;
 }
 
+.btn-wrap a { /*이벤트 > 상세 페이지 버튼*/ }
+.btn-wrap a button.btn-outline-danger {
+  color: #000;
+  border-radius: 14px;
+  padding: var(--bs-btn-padding-y) 15px;
+}
+.btn-wrap a button.btn-outline-danger:hover {
+  color: var(--bs-btn-hover-color);
+}
+
+.section.position-relative .btn-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .main-contents-wrap {
   flex: 1;
   padding: 80px 6.7708vw;
@@ -1735,6 +1752,7 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   z-index: 1;
   text-align: left;
+  margin-bottom: 1rem;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list {
   color: red;

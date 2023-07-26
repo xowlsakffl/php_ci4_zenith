@@ -321,6 +321,13 @@ body {
   color: var(--bs-btn-hover-color);
 }
 
+.section.position-relative .btn-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .main-contents-wrap {
   flex: 1;
   padding: 80px 6.7708vw;

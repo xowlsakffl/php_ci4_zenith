@@ -35,8 +35,8 @@
         </form>
     </div>
 
-    <div class="section ">
-        <div class="btn-wrap text-end mb-2">
+    <div class="section position-relative">
+        <div class="btn-wrap">
             <a href="/eventmanage/event"><button type="button" class="btn btn-outline-danger">이벤트 관리</button></a>
             <a href="/eventmanage/advertiser"><button type="button" class="btn btn-outline-danger">광고주 관리</button></a>
             <a href="/eventmanage/change"><button type="button" class="btn btn-outline-danger">전환 관리</button></a>
@@ -158,7 +158,13 @@ function getList(){
                 }
             },
             { "data": "target", "width": "15%"},
-            { "data": "total", "width": "5%"},
+            { 
+                "data": "total", 
+                "width": "5%",
+                "render": function(data, type, row) {
+                    return '<button id="totalBtn" data-media="'+row.media+'">'+data+'</button>';
+                }
+            },
         ],
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
@@ -271,6 +277,17 @@ $('form[name="media-register-form"]').bind('submit', function(e) {
     }
     
     return false;
+});
+
+$('body').on('click', '#totalBtn', function() {
+    var media = $(this).data('media');
+    var data = {
+        media: media
+    };
+    
+    storageValue = JSON.stringify(data);
+    window.localStorage.setItem('event_media_name', storageValue);
+    window.location.href = '/eventmanage/event';
 });
 </script>
 <?=$this->endSection();?>
