@@ -59,6 +59,8 @@ class UserModel extends ShieldUserModel
         if(!empty($srch['stx'])){
             $builder->groupStart();
             $builder->like('u.username', $srch['stx']);
+            $builder->orLike('c.name', $srch['stx']);
+            $builder->orLike('u.nickname', $srch['stx']);
             $builder->orLike('ai.secret', $srch['stx']);
             $builder->groupEnd();
         }
@@ -176,15 +178,26 @@ class UserModel extends ShieldUserModel
             $builder_2->delete();
         }
 
+
         if(!empty($data['group'])){
             if ($user->inGroup('superadmin')) {
                 array_push($data['group'], 'superadmin');
             }
             $user->syncGroups(...$data['group']);
+        }else{
+            $groups = array_values($user->getGroups());
+            if ($user->inGroup('superadmin')) {
+                $user->removeGroup('admin', 'developer', 'user', 'agency', 'advertiser', 'guest');
+            }else{          
+                $user->removeGroup(...$groups);
+            }
         }
-        
+
         if(!empty($data['permission'])){
             $user->syncPermissions(...$data['permission']);
+        }else{
+            $permissions = array_values($user->getPermissions());
+            $user->removePermission(...$permissions);
         }
         
         $result = $this->db->transComplete();

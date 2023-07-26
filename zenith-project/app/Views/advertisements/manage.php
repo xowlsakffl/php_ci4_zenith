@@ -1128,6 +1128,13 @@ $("body").on("click", '.memo-list input[name="is_done"]', function(){
     });
 });
 
+$("body").on("click", '.btn-budget button', function(){
+    $this = $(this);
+    $id = $this.closest("tr").data('id');
+    console.log(document.activeElement);
+
+});
+
 function debug(msg) {
     console.log(msg);
 }

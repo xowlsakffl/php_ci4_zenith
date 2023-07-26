@@ -261,7 +261,7 @@ function setData() {
 function getUserList(){
     dataTable = $('#userTable').DataTable({
         "autoWidth": true,
-        "order": [[0, 'desc']],
+        "order": [[7, 'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -282,6 +282,9 @@ function getUserList(){
             "contentType": "application/json",
             "dataType": "json",
         },
+        "columnDefs": [
+            { targets: [0], orderable: false},
+        ],
         "columns": [
             { "data": null },
             { "data": "belong" },

@@ -71,39 +71,29 @@ class UserController extends \CodeIgniter\Controller
     }
 
     public function getUsers(){
-        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getUsers($param);
             foreach ($result['data'] as &$row) {
                 $groups = explode(",", $row['groups']);
+                $groupsMapping = [
+                    'superadmin' => '최고관리자',
+                    'admin' => '관리자',
+                    'developer' => '개발자',
+                    'user' => '직원',
+                    'agency' => '광고대행사',
+                    'advertiser' => '광고주',
+                    'guest' => '게스트',
+                ];
+                
                 foreach ($groups as &$group) {
-                    switch ($group) {
-                        case 'superadmin':
-                            $group = '최고관리자';
-                            break;
-                        case 'admin':
-                            $group = '관리자';
-                            break;
-                        case 'developer':
-                            $group = '개발자';
-                            break;
-                        case 'user':
-                            $group = '사용자';
-                            break;
-                        case 'agency':
-                            $group = '광고대행사';
-                            break;
-                        case 'advertiser':
-                            $group = '광고주';
-                            break;
-                        case 'guest':
-                            $group = '게스트';
-                            break;
-                        default:
-                            $group = '';
-                            break;
-                    }
+                    $group = $groupsMapping[$group] ?? '';
                 }
+
+                usort($groups, function ($a, $b) {
+                    return strcmp($a, $b);
+                });
+
                 $row['groups'] = implode(',', $groups);
 
                 if($row['active']){
@@ -270,4 +260,5 @@ class UserController extends \CodeIgniter\Controller
 
         return true;
     }
+
 }

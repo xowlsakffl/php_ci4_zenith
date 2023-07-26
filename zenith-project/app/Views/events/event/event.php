@@ -573,7 +573,7 @@ function getList(){
                     if(row.config == 'enabled'){
                         config = '<span class="ads_status '+row.config+'" title="광고 운영중"></span>';
                     }
-                    return config+'<button data-clipboard-text="https://event.hotblood.co.kr/'+data+'">'+data+'</button>';
+                    return config+'<button data-text="https://event.hotblood.co.kr/'+data+'" class="event_seq">'+data+'</button>';
                 }
             },
             { 
@@ -1026,6 +1026,17 @@ $('#deleteActionBtn').on('click', function(e) {
             }
         });
     }
+});
+
+$('body').on('click', '.event_seq', function() {
+    var textToCopy = $(this).data('text');
+    navigator.clipboard.writeText(textToCopy)
+        .then(function() {
+            alert("복사되었습니다. ");
+        })
+        .catch(function(err) {
+            console.error("복사 실패: ", err);
+        });
 });
 
 </script>
