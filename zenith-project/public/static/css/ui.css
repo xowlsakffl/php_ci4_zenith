@@ -311,6 +311,16 @@ body {
   color: #aaa;
 }
 
+.btn-wrap a { /*이벤트 > 상세 페이지 버튼*/ }
+.btn-wrap a button.btn-outline-danger {
+  color: #000;
+  border-radius: 14px;
+  padding: var(--bs-btn-padding-y) 15px;
+}
+.btn-wrap a button.btn-outline-danger:hover {
+  color: var(--bs-btn-hover-color);
+}
+
 .main-contents-wrap {
   flex: 1;
   padding: 80px 6.7708vw;
@@ -518,8 +528,8 @@ body {
 .sub-contents-wrap {
   flex: 1;
   height: 100vh;
-  overflow: auto; /*padding:80px 4.4271vw;*/
-  padding: 40px 1.4583vw 50px;
+  overflow: auto; /*padding:80px 4.4271vw;*/ /*padding: 40px 1.4583vw 50px;*/
+  padding: 40px 2.9908vw 50px;
   transition: all 0.3s;
 }
 
@@ -665,8 +675,8 @@ body {
   font-weight: 500;
 }
 .search-wrap .detail .col dt {
-  margin: 0 0 5px;
-  font-size: 1.125rem;
+  margin: 0 0 5px; /*font-size:1.125rem;*/
+  font-size: 1rem;
   color: #2d2e34;
 }
 .search-wrap select {
@@ -1040,6 +1050,15 @@ div.dataTables_processing > div:last-child > div {
 .table td .memo-list {
   float: left;
   width: 75%;
+}
+.table td .btn-budget {
+  margin: 1.5rem auto 0;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+}
+.table td .btn-budget button:hover {
+  color: red;
 }
 
 .table-default {

@@ -37,10 +37,10 @@
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <a href="/eventmanage/event"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
-            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-danger">광고주 관리</button></a>
-            <a href="/eventmanage/change"><button type="button" class="btn btn-danger">전환 관리</button></a>
-            <a href="/eventmanage/blacklist"><button type="button" class="btn btn-danger">블랙리스트 관리</button></a>
+            <a href="/eventmanage/event"><button type="button" class="btn btn-outline-danger">이벤트 관리</button></a>
+            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-outline-danger">광고주 관리</button></a>
+            <a href="/eventmanage/change"><button type="button" class="btn btn-outline-danger">전환 관리</button></a>
+            <a href="/eventmanage/blacklist"><button type="button" class="btn btn-outline-danger">블랙리스트 관리</button></a>
         </div>
 
         <div class="table-responsive">

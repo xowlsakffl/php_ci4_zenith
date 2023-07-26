@@ -37,10 +37,10 @@
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <a href="/eventmanage/event"><button type="button" class="btn btn-danger">이벤트 관리</button></a>
-            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-danger">광고주 관리</button></a>
-            <a href="/eventmanage/media"><button type="button" class="btn btn-danger">매체 관리</button></a>
-            <a href="/eventmanage/change"><button type="button" class="btn btn-danger">전환 관리</button></a>
+            <a href="/eventmanage/event"><button type="button" class="btn btn-outline-danger">이벤트 관리</button></a>
+            <a href="/eventmanage/advertiser"><button type="button" class="btn btn-outline-danger">광고주 관리</button></a>
+            <a href="/eventmanage/media"><button type="button" class="btn btn-outline-danger">매체 관리</button></a>
+            <a href="/eventmanage/change"><button type="button" class="btn btn-outline-danger">전환 관리</button></a>
         </div>
 
         <div class="table-responsive">
@@ -103,7 +103,7 @@
                     <button type="submit" class="btn btn-primary" form="black-register-form" id="createActionBtn">생성</button>
                 </div>
                 <div class="delete-btn-wrap">
-                    <button type="submit" class="btn btn-danger" form="black-register-form" id="deleteActionBtn">삭제</button>
+                    <button type="submit" class="btn btn-outline-secondary" form="black-register-form" id="deleteActionBtn">삭제</button>
                 </div>
             </div>
         </div>
