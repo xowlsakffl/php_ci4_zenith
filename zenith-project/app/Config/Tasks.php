@@ -36,10 +36,10 @@ class Tasks extends BaseConfig
     {
         $schedule->command('EventCron')->everyMinute(5)->named('event');
 
-        $schedule->command('GwCron')->everyMinute(30)->betweenHours(10,19)->named('gw');
+        $schedule->command('GwCron')->cron('0 11-19 * * *')->named('gw');
         
         $exec_updateUsersByDouzone = 'php '.FCPATH.'index.php hr/updateUsersByDouzone';
-        $schedule->shell($exec_updateUsersByDouzone)->hours([10,12,14,16,18])->minutes([0])->named('updateUsersByDouzone');
+        $schedule->shell($exec_updateUsersByDouzone)->hours([11,12,14,16,18])->minutes([0])->named('updateUsersByDouzone');
 
         $schedule->command('todayDayOff')->cron('0 9-19 * * *')->named('sendSlackForDayOff');
     }

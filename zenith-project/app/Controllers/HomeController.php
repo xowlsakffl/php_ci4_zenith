@@ -8,6 +8,7 @@ class HomeController extends BaseController
 {
     public function index()
     {
-        return PageController::index();
+        $page = new PageController();
+        return $page->view();
     }
 }

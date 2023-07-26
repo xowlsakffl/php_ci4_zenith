@@ -68,8 +68,9 @@ class CheckDayOff extends BaseCommand
         $slack = new SlackChat();
         $msg = [];
         $Tdate = date('Ymd');
+        $now = date('H');
         foreach($lists as $row) {
-            if(date('H') == 10 || $sendType == 'today') { //업무시작시간에 당일 연/시차 전체 전송
+            if($now == "10" || $sendType == 'today') { //업무시작시간에 당일 연/시차 전체 전송
                 if(date('Ymd', strtotime($row['start'])) != $Tdate) continue;
             } else { //그 외 매시간 새로 등록된 당일 연/시차 전송
                 if(date('Ymd', strtotime($row['start'])) != $Tdate || strtotime($row['datetime']) <= strtotime('-1 hour')) continue;

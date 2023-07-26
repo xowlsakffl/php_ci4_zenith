@@ -125,7 +125,7 @@ class ZenithFB
                 'app_id' => $this->app_id,
                 'app_secret' => $this->app_secret,
                 'default_access_token' => $this->access_token,
-                'default_graph_version' => 'v16.0'
+                'default_graph_version' => 'v17.0'
             ]);
             $this->fb_app = new FacebookApp($this->app_id, $this->app_secret);
             if ($bs_id) $this->business_id = $bs_id;

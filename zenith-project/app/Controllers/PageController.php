@@ -5,7 +5,8 @@ class PageController extends BaseController
 {
     public function index()
     {
-        return PageController::view();
+        $page = new PageController();
+        return $page->view();
     }
 
     public function view($page = 'home')

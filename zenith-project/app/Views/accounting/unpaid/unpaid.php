@@ -90,7 +90,7 @@ CHAIN 열혈광고 - 회계 관리 / 미수금 관리
                     <input type="text" class="form-control" placeholder="사업자등록번호">
                     <input type="text" class="form-control" placeholder="입금액">
                     <input type="text" class="form-control" placeholder="적요/비고">
-                    <button class="btn btn-dark ms-2" type="submit">등록</button>
+                    <button class="btn btn-primary ms-2" type="submit">등록</button>
                 </form>
             </div>
 

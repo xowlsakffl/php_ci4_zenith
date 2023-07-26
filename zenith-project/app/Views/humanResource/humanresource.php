@@ -131,7 +131,7 @@
                                 </div>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-danger">등록</button>
+                                <button type="button" class="btn btn-primary">등록</button>
                             </td>
                         </tr>
                     </tbody>

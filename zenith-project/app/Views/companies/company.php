@@ -62,7 +62,7 @@
 
     <div class="position-relative">
         <div id="create-button-wrap" class="position-absolute top-0 end-0" style="z-index:1">
-            <button id="create-btn-modal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adv-create">생성</button>
+            <button id="create-btn-modal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adv-create">등록</button>
         </div>
         <div class="row table-responsive">
             <table class="dataTable table table-striped table-hover table-default" id="deviceTable">

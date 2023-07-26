@@ -97,7 +97,7 @@
                 </table>                    
             </div>
             <div class="btn-area text-center">
-                <button type="submit" class="btn btn-primary">확인</button>
+                <button type="submit" class="btn btn-primary">등록</button>
                 <a href="/eventmanage/event"><button type="button" class="btn btn-secondary">이벤트 목록</button></a>
             </div>
         </form>

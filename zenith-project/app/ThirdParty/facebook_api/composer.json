@@ -1,6 +1,6 @@
 {
     "require": {
-        "facebook/php-business-sdk": "^16.0",
+        "facebook/php-business-sdk": "^17.0",
         "facebook/graph-sdk": "^5.7"
     }
 }

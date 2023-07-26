@@ -131,6 +131,7 @@ class SlackChat extends BaseController
         if(!isset($_POST['text']) && !$_POST['text']) return null;
         switch($_POST['command']) {
             case '/키워드' : $result = $this->add_keyword($_POST); break;
+            case '/전송' : $result = $this->sendMsg($_POST); break;
         }
         echo $result;
     }
@@ -170,6 +171,20 @@ class SlackChat extends BaseController
         $body = $response->getBody();
         if (strpos($response->header('content-type'), 'application/json') !== false) {
             $body = json_decode($body,true);
+        }
+    }
+
+    private function sendMsg($param) {
+        preg_match_all("/^([^\s]+)\s+(.+)$/i", $param['text'], $matches);
+        $channel = $matches[1][0];
+        $message = $matches[2][0];
+        $data = [
+            'channel' => $channel,
+            'text' => $message
+        ];
+        $result = $this->sendMessage($data);
+        if($result['ok'] == true) {
+            echo "전송되었습니다.";
         }
     }
 
