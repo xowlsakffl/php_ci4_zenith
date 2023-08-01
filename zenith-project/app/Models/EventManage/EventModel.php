@@ -16,9 +16,11 @@ class EventModel extends Model
         $builder->join('event_media AS med', 'info.media = med.seq', 'left');
         $builder->join('event_impressions_history AS imp', 'info.seq = imp.seq', 'left');
 
-        /* $builder->where('DATE(info.ei_datetime) >=', $srch['sdate']);
-        $builder->where('DATE(info.ei_datetime) <=', $srch['edate']); */
-
+        if(!empty($srch['sdate']) && !empty($srch['edate'])){
+            $builder->where('DATE(info.ei_datetime) >=', $srch['sdate']);
+            $builder->where('DATE(info.ei_datetime) <=', $srch['edate']);
+        }
+        
         if(!empty($srch['stx'])){
             $builder->groupStart();
             $builder->like('info.title', $srch['stx']);

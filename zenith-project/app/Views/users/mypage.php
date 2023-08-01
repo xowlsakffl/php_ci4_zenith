@@ -73,7 +73,7 @@
                                     <dd><input type="password" class="form-control" name="password_confirm" placeholder="<?= lang('Auth.passwordConfirm') ?>"
                             value="" /></dd>
                                 </dl>
-                                <button type="submit" class="btn btn-primary">작성완료</button>
+                                <button type="submit" class="btn btn-primary">등록</button>
                             </form>
                         </div>
                     </div>

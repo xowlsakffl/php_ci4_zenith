@@ -70,7 +70,7 @@
             <div class="statusCount detail d-flex minWd"></div>     
         </div>
 
-        <div class="table-responsive pt-4">
+        <div class="table-responsive">
             <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
                 <button type="button" class="btns-memo" value="modal" title="새창으로 표시"><i class="bi bi-window-stack"></i></button>
@@ -235,7 +235,7 @@ function getList(data = []) { //리스트 세팅
                             'removeAllStates'
                         ]
                     },
-                    '<h3>내보내기</h3>',
+                    '<div class="export">내보내기</div>',
                     $.extend( true, {}, exportCommon, {
                         extend: 'copyHtml5'
                     } ),
@@ -261,17 +261,17 @@ function getList(data = []) { //리스트 세팅
             { "data": null, "width": "40px" },
             { "data": "seq" },
             { "data": "info_seq", "width": "40px",
-              "render": function(data) {
+                "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
-              }
+                }
             },
             { "data": "advertiser" },
             { "data": "media" },
             { "data": "tab_name" },
             { "data": "name", "width": "50px",
-              "render": function(data) {
-                return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
-              } 
+                "render": function(data) {
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                } 
             },
             { "data": "dec_phone", "width": "90px" },
             { "data": "age", "width": "30px" },
@@ -284,8 +284,8 @@ function getList(data = []) { //리스트 세팅
                 var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-target="#modal-integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
                 html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-'+data+'">'+data+'</span>';
                 html += '</a>';
-                return html;
-              }
+                    return html;
+                }
             },
             { 
                 "data": 'status', "width": "60px",

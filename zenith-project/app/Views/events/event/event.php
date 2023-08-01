@@ -140,8 +140,8 @@
         </form>
     </div>
 
-    <div class="section">
-        <div class="btn-wrap text-end mb-2">
+    <div class="section position-relative">
+        <div class="btn-wrap">
             <a href="/eventmanage/advertiser"><button type="button" class="btn btn-outline-danger">광고주 관리</button></a>
             <a href="/eventmanage/media"><button type="button" class="btn btn-outline-danger">매체 관리</button></a>
             <a href="/eventmanage/change"><button type="button" class="btn btn-outline-danger">전환 관리</button></a>
@@ -152,13 +152,13 @@
             <table class="table table-striped table-hover table-default"  id="event-table">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">이벤트번호</th>
+                        <th scope="col">이벤트<br>번호</th>
                         <th scope="col">광고주</th>
                         <th scope="col">매체</th>
                         <th scope="col">브라우저 타이틀</th>
                         <th scope="col">이벤트 구분</th>
-                        <th scope="col">외부연동</th>
-                        <th scope="col">사용여부</th>
+                        <th scope="col">외부<br>연동</th>
+                        <th scope="col">사용<br>여부</th>
                         <th scope="col">유입수</th>
                         <th scope="col">유효DB</th>
                         <th scope="col">DB단가</th>
@@ -528,8 +528,20 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-var today = moment().format('YYYY-MM-DD');
-$('#sdate, #edate').val(today);
+
+if(window.localStorage.getItem('event_advertiser_name')){
+    var advertiser = window.localStorage.getItem('event_advertiser_name');
+    var advertiser = JSON.parse(advertiser);
+    $('#stx').val(advertiser.advertiser);
+    window.localStorage.removeItem('event_advertiser_name');
+}
+
+if(window.localStorage.getItem('event_media_name')){
+    var media = window.localStorage.getItem('event_media_name');
+    var media = JSON.parse(media);
+    $('#stx').val(media.media);
+    window.localStorage.removeItem('event_media_name');
+}
 
 let data = {};
 let dataTable;
@@ -644,7 +656,6 @@ function getList(){
 }
 
 function setDate(){
-    $('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷

@@ -455,8 +455,8 @@ function getList(data = []){
                             'createState',
                             'removeAllStates'
                         ]
-                    },
-                    '<h3>내보내기</h3>',
+                    }, 
+                    '<div class="export">내보내기</div>',
                     $.extend( true, {}, exportCommon, {
                         extend: 'copyHtml5'
                     } ),
@@ -467,10 +467,9 @@ function getList(data = []){
                         extend: 'pdfHtml5',
                         orientation: 'landscape',
                         pageSize: 'LEGAL'
-                    } )
+                    } )                  
                 ]
-            },
-            
+            },           
         ],
         "ajax": {
             "url": "<?=base_url()?>/advertisements/data",
@@ -494,18 +493,18 @@ function getList(data = []){
                 "render": function (data, type, row) {
                     switch (row.media) {
                         case 'facebook':
-                            media = '페이스북';
+                            media = '<i class="facebook"></i>';
                             break;
                         case 'google':
-                            media = '구글';
+                            media = '<i class="google"></i>';
                             break;
                         case 'kakao':
-                            media = '카카오';
+                            media = '<i class="kakao"></i>';
                             break;
                         default:
                             break;
                     }
-                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'"></label></div><p>'+media+'</p>';
+                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">'+media+'</label></div>';
                     return media;
                 },
             },
@@ -521,7 +520,7 @@ function getList(data = []){
                 "data": "status", 
                 "width": "7%",
                 "render": function (data, type, row) {
-                    status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide">내역확인아이콘</span></button>';
+                    status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide"></span><span class="material-symbols-outlined">fact_check</span></button>';
                     return status;
                 },
             },

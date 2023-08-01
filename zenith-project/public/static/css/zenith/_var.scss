@@ -4,7 +4,7 @@ $size-base:16px;
 $color-primary:#ce1922;
 $color-dark:#2d2e34;
 $radius:10px;
-
+$red:red;
 //bootstrap color
 :root{
 	--bs-blue: #0d6efd;
@@ -60,11 +60,38 @@ $radius:10px;
     display:-webkit-box; overflow:hidden; text-overflow: ellipsis; -webkit-line-clamp: $line-cnt; -webkit-box-orient:vertical;
 }
 
+
 //reponsive
+$breakpoint-sm-mobile:300px;
+$breakpoint-md-mobile:415px;
+$breakpoint-lg-mobile:500px;
+
 $small: 768px;
 $medium: 1024px;
+$breakpoint-tablet:1024px;
 $large: 1200px;
 $x-large: 1400px;
+$breakpoint-desktop:1920px;
+
+
+
+@mixin mobile-375{
+    @media screen and (max-width : #{$breakpoint-sm-mobile}){
+        @content;
+    }
+}
+@mixin mobile-415{
+    @media screen and (max-width : #{$breakpoint-md-mobile}){
+        $input-pd:0.93rem !global; //먹히지 않음
+        $icon-pd:3.43rem !global;  //먹히지 않음
+        @content;
+    }
+}
+@mixin mobile-500{
+    @media screen and (max-width : #{$breakpoint-lg-mobile}){
+        @content;
+    }
+}
 @mixin small{
 	@media screen and (max-width:$small){
 		@content;
@@ -74,6 +101,11 @@ $x-large: 1400px;
 	@media screen and (max-width: $medium){
 		@content;
 	}
+}
+@mixin tablet-1024{
+    @media screen and (max-width : #{$breakpoint-tablet}){
+        @content;
+    }
 }
 @mixin large{
 	@media screen and (max-width: $large){

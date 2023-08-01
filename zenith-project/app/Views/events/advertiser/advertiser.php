@@ -35,8 +35,8 @@
         </form>
     </div>
 
-    <div class="section ">
-        <div class="btn-wrap text-end mb-2">
+    <div class="section position-relative">
+        <div class="btn-wrap">
             <a href="/eventmanage/event"><button type="button" class="btn btn-outline-danger">이벤트 관리</button></a>
             <a href="/eventmanage/media"><button type="button" class="btn btn-outline-danger">매체 관리</button></a>
             <a href="/eventmanage/change"><button type="button" class="btn btn-outline-danger">전환 관리</button></a>
@@ -235,10 +235,22 @@ function getList(){
                     return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#clientModal">'+data+'</button>';
                 }
             },
-            { "data": "sum_db", "width": "5%"},
+            { 
+                "data": "sum_db", 
+                "width": "5%",
+                "render": function(data, type, row) {
+                    return '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                }
+            },
             { "data": "sum_price", "width": "8%"},
             { "data": "remain_balance","width": "8%"},
-            { "data": "total", "width": "5%"},
+            { 
+                "data": "total", 
+                "width": "5%",
+                "render": function(data, type, row) {
+                    return '<button id="totalBtn" data-name="'+row.name+'">'+data+'</button>';
+                }
+            },
             { "data": "agent","width": "15%"},
             { "data": "interlock_url","width": "5%"},
             { "data": "agreement_url","width": "5%"},
@@ -416,6 +428,62 @@ $('form[name="adv-register-form"]').bind('submit', function(e) {
     }
     
     return false;
+});
+
+$('body').on('click', '#sumDB', function() {
+    var currentDate = new Date();
+    var firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
+    var lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+
+    var formattedFirstDay = firstDay.toISOString().slice(0, 10);
+    var formattedLastDay = lastDay.toISOString().slice(0, 10);
+
+    var advertiser = $(this).data('name');
+    if(window.localStorage.getItem('DataTables_deviceTable_/integrate')){
+        var integrateStorage = window.localStorage.getItem('DataTables_deviceTable_/integrate');
+        var data = JSON.parse(integrateStorage);
+        data.searchData.advertiser = advertiser;
+        data.searchData.sdate = formattedFirstDay;
+        data.searchData.edate = formattedLastDay;
+        data.searchData.event = '';
+        data.searchData.media = '';
+        data.searchData.status = '';
+        data.searchData.stx = '';
+    }else{
+        var data = {
+            time: Date.now(),
+            start: 0,
+            length: 25,
+            order: [[12, "desc"]],
+            search: { search: "", smart: true, regex: false, caseInsensitive: true },
+            columns: [],
+            memoView: "modal",
+            searchData: {
+                sdate: formattedFirstDay,
+                edate: formattedLastDay,
+                advertiser: advertiser,
+                media: "",
+                event: "",
+                status: "",
+                stx: ""
+            }
+        };
+    }
+    
+    updatedStorageValue = JSON.stringify(data);
+    window.localStorage.setItem('DataTables_deviceTable_/integrate', updatedStorageValue);
+    window.location.href = '/integrate';
+});
+
+$('body').on('click', '#totalBtn', function() {
+    var advertiser = $(this).data('name');
+    var data = {
+        advertiser: advertiser
+    };
+    
+    storageValue = JSON.stringify(data);
+    window.localStorage.setItem('event_advertiser_name', storageValue);
+    window.location.href = '/eventmanage/event';
 });
 </script>
 <?=$this->endSection();?>

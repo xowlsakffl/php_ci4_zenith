@@ -15,7 +15,7 @@
     }
 
     .dataTables_wrapper{  
-        .dt-buttons{z-index:1; text-align: left;
+        .dt-buttons{z-index:1; text-align: left; margin-bottom:1rem;
             i.bi-list{color:$red; transition:all 0.3s; font-size:150%;
                 &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}
             }
@@ -69,8 +69,15 @@
             button.delete{background-color:#000; color:#fff; margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px; transition:0.5s;   
                 &:hover{box-shadow:inset 0 -3em 0 0 $red;}   
             }
+        
+            .check > label{display:block; margin:5px auto; cursor:pointer;
+                i{display:inline-block; width:28px; height:28px;}
+                .facebook{@include bg('ico_facebook.png', center, 0);}
+                .kakao{@include bg('ico_kakao.png', center, 0);}
+                .google{@include bg('ico_google.png', center, 0);} 
+            }
         }
-    }
+    }   
 }
 
 .db-manage-contaniner{
@@ -85,6 +92,23 @@
             }
         }        
     }
+}
+
+.dt-button-collection{padding:0;    
+    .export{display: none;}
+    button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;          
+        span{display: block; padding:0.3rem 0 0.3rem 0.5rem;
+            &:hover{font-weight: 900; background-color: var(--bs-gray-200);
+                i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
+            }            
+        }
+        span.dt-down-arrow{display:none;}
+        &.active span{background-color: var(--bs-gray-300);
+        } 
+    } 
+    .dt-btn-split-wrapper:active:not(.disabled) button,
+    .dt-btn-split-wrapper.active:not(.disabled) button{background-color:var(--bs-warning);}
+    h3{font-size: 1.3em;}
 }
 
 @media screen and (max-width: 767px){

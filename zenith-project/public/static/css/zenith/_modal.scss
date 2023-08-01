@@ -35,7 +35,7 @@
                 .bi{font-size:15px;}
             }
         }
-    }
+    }   
 }
 .sorting{margin:0 0 20px;
     button{width:135px; height:40px; margin:0 8px 0 0; font-size:20px; text-align:center; border:1px solid $color-dark; border-radius:20px;
@@ -70,6 +70,21 @@
     span{display:block; padding:5px 0; border-bottom:1px solid #dee2e6; background:#f7f7f7;}
     div{height:100px;}
 }
+
+.dtsr-confirmation{
+    > *:not(.dtsr-rename-modal) {padding:.5rem .5rem;}
+    .dtsr-confirmation-title-row{font-size:18px; border-bottom:2px solid $color-primary; overflow:hidden; text-overflow:ellipsis; display: inline-block; padding-bottom:1%;}
+    .dtsr-confirmation-text{border:1px solid var(--bs-border-color);
+        > * {padding:.5rem .5rem;}
+        .dtsr-confirmation-message{display:block !important; background-color:#f7f7f7; text-align:left !important;}
+        input.dtsr-input{margin:.5rem .5rem; width:96%;}
+    }
+    .dtsr-popover-close{width:auto; height:auto; font-size:1.7rem; background-color:unset; border:none;}
+    .dtsr-confirmation-button{background: var(--bs-blue); color: var(--bs-white); padding: 0.75rem 0.375rem; border-radius:0.375rem;}
+}
+
+form[name='adv-show-form'],form[name='adaccount-form'], form[name='belong-user-form']{max-width: var(--bs-modal-width); overflow-x:scroll;}
+
 
 @include x-large{
 

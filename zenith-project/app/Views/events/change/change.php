@@ -35,8 +35,8 @@
         </form>
     </div>
 
-    <div class="section ">
-        <div class="btn-wrap text-end mb-2">
+    <div class="section position-relative">
+        <div class="btn-wrap">
             <a href="/eventmanage/event"><button type="button" class="btn btn-outline-danger">이벤트 관리</button></a>
             <a href="/eventmanage/advertiser"><button type="button" class="btn btn-outline-danger">광고주 관리</button></a>
             <a href="/eventmanage/media"><button type="button" class="btn btn-outline-danger">매체 관리</button></a>

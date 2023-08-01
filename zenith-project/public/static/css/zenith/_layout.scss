@@ -43,6 +43,10 @@ body{background:#f7f7f7;}
     }
 }
 
+.section.position-relative{
+    .btn-wrap{position:absolute; top:0; right:0; z-index:1;}
+}
+
 .main-contents-wrap{flex:1; padding:80px 6.7708vw;}
 .ad-list{
     .row{text-align:left;}

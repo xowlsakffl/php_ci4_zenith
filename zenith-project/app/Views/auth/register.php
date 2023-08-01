@@ -53,7 +53,7 @@
                     <button type="submit" class="btn btn-outline-primary btn-block"><?= lang('Auth.register') ?></button>
                 </div>
 
-                <p class="text-start"><a href="<?= url_to('login') ?>"><?= lang('Auth.login') ?></a></p>
+                <div class="icon"><a href="<?= url_to('login') ?>"><span class="material-symbols-outlined">input</span><?= lang('Auth.login') ?></a></div>
 
             </form>
         </div>

@@ -6,6 +6,8 @@ $icon-pd:3.75rem; //60px
     &.effect{transform: translateY(0%); visibility:visible;}
 }
 
+
+//로그인,가입하기
 .register-container{margin:0 auto;   
     .card{margin:7% auto 0; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
 
@@ -25,20 +27,26 @@ $icon-pd:3.75rem; //60px
             &:-webkit-autofill,    
             &:-internal-autofill-selected {transition: background-color 5000s ease-in-out 0s; } 
         }
-        p.text-start a{
-            &:hover{color:#ce1922;}
+        .form-check{
+            .form-check-input{margin-top:0;}
+        }
+        .icon  a{color:#787676;        
+            span.material-symbols-outlined{font-size:130%; vertical-align: middle; padding-right:0.25rem;}
+            &:hover{font-weight: 900; transition:0.2s;
+                span.material-symbols-outlined{transform: scale(1.4);}
+            }
         }
     }
-    
-    
 }
 
+
+//마이페이지
 .myPage-container{ 
     h1{font-size:180%; font-weight:bold;}     
     
     .card{           
         .card-body{
-            dl{display: flex; justify-content: flex-start; margin:1rem 0;}
+            dl{display: flex; justify-content: flex-start; margin:1rem 0; align-items:center;}
             dt{margin-right:0.5rem;}
         &::after{content: ''; display: block; clear: both;}
         }

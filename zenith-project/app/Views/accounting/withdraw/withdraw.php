@@ -108,13 +108,13 @@ CHAIN 열혈광고 - 회계 관리 / 출금요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <a href="/accounting/withdrawList"><button type="button" class="btn btn-danger">업체목록(출금요청)</button></a>
-            <a href="#"><button type="button" class="btn btn-danger">글쓰기(출금요청)</button></a>
-            <a href="#"><button type="button" class="btn btn-danger">엑셀백업</button></a>
+            <a href="/accounting/withdrawList"><button type="button" class="btn btn-outline-danger">업체목록(출금요청)</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-danger">글쓰기(출금요청)</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-danger">엑셀백업</button></a>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover table-default table-sm">
+            <table class="table table-striped table-hover table-default">
                 <colgroup>
                     <col style="width:3%">
                     <col style="width:8%">

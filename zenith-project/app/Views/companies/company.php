@@ -26,10 +26,6 @@
     .ui-widget{
         font-family: "NanumSquareNeo", "Noto Sans", dotum, Gulim, sans-serif;
     }
-
-    .modal .dataTable{
-        width: 100% !important;
-    }
 </style>
 <?=$this->endSection();?>
 <!--바디-->
@@ -102,12 +98,12 @@
                             <form name="adv-show-form">
                                 <table class="table table-bordered table-modal" id="adv-show-table">
                                     <colgroup>
-                                        <col style="width:20%;">
-                                        <col style="width:10%;">
+                                        <col style="width:15%;">
+                                        <col style="width:15%;">
                                         <col style="width:22%;">
                                         <col style="width:19%;">
-                                        <col style="width:15%;">
-                                        <col style="width:17%;">
+                                        <col style="width:12%;">
+                                        <col style="width:22%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -449,11 +445,11 @@ function getCompanyAdAccounts(){
             }
         },
         "columns": [
-            { "data": null, "width": "5%"},
-            { "data": "accountId", "width": "25%"},
+            { "data": null, "width": "8%"},
+            { "data": "accountId", "width": "20%"},
             { 
                 "data": "media",
-                "width": "15%",
+                "width": "20%",
                 "render": function(data){
                     switch (data) {
                         case 'facebook':
@@ -471,7 +467,7 @@ function getCompanyAdAccounts(){
                     return media;
                 }
             },
-            { "data": "name", "width": "35%"},
+            { "data": "name", "width": "30%"},
             { "data": "status", "width": "10%"},
             { 
                 "data": "null",

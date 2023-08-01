@@ -56,14 +56,15 @@
             <button type="submit" class="btn btn-outline-primary btn-block"><?= lang('Auth.login') ?></button>
         </div>
 
-        <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
-            <p class="text-start"><a href="<?= url_to('magic-link') ?>"><?= lang('Auth.forgotPassword') ?> </a></p>
-        <?php endif ?>
+        <div class="d-flex justify-content-between">
+            <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
+                <div class="d-flex align-items-center icon"><a href="<?= url_to('magic-link') ?>"><span class="material-symbols-outlined">lock_person</span><?= lang('Auth.forgotPassword') ?> </a></div>
+            <?php endif ?>
 
-        <?php if (setting('Auth.allowRegistration')) : ?>
-            <p class="text-start"><a href="<?= url_to('register') ?>"><?= lang('Auth.register') ?></a></p>
-        <?php endif ?>
-
+            <?php if (setting('Auth.allowRegistration')) : ?>
+                <div class="d-flex align-items-center icon"><a href="<?= url_to('register') ?>"><span class="material-symbols-outlined">how_to_reg</span><?= lang('Auth.register') ?></a></div>
+            <?php endif ?>
+        </div>
     </form>
     </div>
 </div>
