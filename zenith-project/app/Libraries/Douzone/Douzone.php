@@ -1,10 +1,10 @@
 <?php
 namespace App\Libraries\Douzone;
-
+use App\Controllers\BaseController;
 use App\Libraries\Douzone\DouzoneModel;
 use PHPHtmlParser\Dom;
 use App\Libraries\slack_api\SlackChat;
-class Douzone {
+class Douzone extends BaseController {
     private $douzone;
     public function __construct()
     {
@@ -15,20 +15,23 @@ class Douzone {
         $list = $this->douzone->getDayOff();
         $result = [];
         foreach($list as $row) {
-            $data = [
-                'email' => $row['email_addr'] . "@carelabs.co.kr",
-                'name' => preg_replace('/^.+_(.+)$/', '$1', $row['user_nm']),
-                'title' => $row['doc_title'],
-                'status' => $row['doc_sts'],
-                'reg_time' => $row['rep_dt'],
-                'end_time' => $row['end_dt'],
-                'rep_dt' => $row['rep_dt']
-            ];
-            $data = array_merge($data, $this->getDayOffDesc($row));
-            if(preg_match('/시간차/', $data['title']) || preg_match('/시간차/', $data['reason'])) continue;
-            $result[] = $data;
+            $desc = $this->getDayOffDesc($row);
+            foreach($desc as $v) {
+                if(preg_match('/시간차/', $row['doc_title']) || preg_match('/시간차/', $v['reason'])) continue;
+                $data = [
+                    'email' => $row['email_addr'] . "@carelabs.co.kr",
+                    'name' => preg_replace('/^.+_(.+)$/', '$1', $row['user_nm']),
+                    'title' => $row['doc_title'],
+                    'status' => $row['doc_sts'],
+                    'reg_time' => $row['rep_dt'],
+                    'end_time' => $row['end_dt'],
+                    'rep_dt' => $row['rep_dt'],
+                    ...$v
+                ];
+                $result[] = $data;
+            }
         }
-        
+        // dd($result);
         return $result;
     }
 
@@ -37,13 +40,18 @@ class Douzone {
         $xml->loadStr($data['doc_xml']);
         $contents = new DOM;
         $contents->loadStr($data['doc_contents']);
-        $result = [
-            'type' => trim($xml->find('div',1)->find('table tbody',0)->find('td',0)->text()), //근태구분
-            'start' => trim($xml->find('div',1)->find('table tbody',0)->find('td',1)->text()), //시작일자
-            'end' => trim($xml->find('div',1)->find('table tbody',0)->find('td',2)->text()), //종료일자
-            'used' => trim($xml->find('div',1)->find('table tbody',0)->find('td',4)->text()), //연차차감
-            'reason' => trim(str_replace("&nbsp;", " ", $contents->find('table tbody')->find('tr',1)->find('td',1)->innerText())), //사유
-        ];
+        $rows = $xml->find('div',1)->find('table tbody',0)->find('tr');
+        $result = [];
+        foreach($rows as $row) {
+            $result[] = [
+                'type' => trim($row->find('td',0)->text()), //근태구분
+                'start' => trim($row->find('td',1)->text()), //시작일자
+                'end' => trim($row->find('td',2)->text()), //종료일자
+                'used' => trim($row->find('td',4)->text()), //연차차감
+                'reason' => trim(str_replace("&nbsp;", " ", $contents->find('table tbody')->find('tr',1)->find('td',1)->innerText())), //사유
+            ];
+        }
+
         return $result;
     }
 

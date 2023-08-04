@@ -26,6 +26,9 @@
     .ui-widget{
         font-family: "NanumSquareNeo", "Noto Sans", dotum, Gulim, sans-serif;
     }
+    .modal .dataTable{
+        width: 100% !important;
+    }
 </style>
 <?=$this->endSection();?>
 <!--바디-->
@@ -34,7 +37,7 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
-<div class="sub-contents-wrap db-manage-contaniner">
+<div class="sub-contents-wrap company-contaniner">
     <div class="title-area">
         <h2 class="page-title">광고주/광고대행사 관리</h2>
         <p class="title-disc">내가 더 멀리 보았다면 이는 거인들의 어깨 위에 올라 서있었기 때문이다.</p>
@@ -99,11 +102,11 @@
                                 <table class="table table-bordered table-modal" id="adv-show-table">
                                     <colgroup>
                                         <col style="width:15%;">
-                                        <col style="width:15%;">
-                                        <col style="width:22%;">
-                                        <col style="width:19%;">
                                         <col style="width:12%;">
-                                        <col style="width:22%;">
+                                        <col style="width:20%;">
+                                        <col style="width:20%;">
+                                        <col style="width:16%;">
+                                        <col style="width:*;">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -168,7 +171,7 @@
                                 </table>
                             </form>
                             <!--매체별 연결 광고주 리스트-->
-                            <table class="dataTable table table-striped table-hover" id="adAccountListTable">
+                            <table class="dataTable table table-striped table-hover adAccountListTable" id="adAccountListTable">
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="first">#</th>

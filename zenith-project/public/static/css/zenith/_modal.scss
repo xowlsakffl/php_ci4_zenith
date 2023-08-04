@@ -83,8 +83,32 @@
     .dtsr-confirmation-button{background: var(--bs-blue); color: var(--bs-white); padding: 0.75rem 0.375rem; border-radius:0.375rem;}
 }
 
-form[name='adv-show-form'],form[name='adaccount-form'], form[name='belong-user-form']{max-width: var(--bs-modal-width); overflow-x:scroll;}
+/*회원관리 > 광고주 관리 팝업*/
+.company-contaniner{
+    .modal{
+        form[name='adv-show-form'],form[name='adaccount-form'], form[name='belong-user-form']{max-width: var(--bs-modal-width); overflow-x:scroll;}
 
+        .dataTables_wrapper{overflow: scroll;}
+        table.adAccountListTable{text-align: center;
+            tbody tr{
+                th{
+                    &:nth-child(2){width:20%;}
+                    &:nth-child(3){width:15%;}
+                    &:nth-child(4){width:25%;}
+                }
+                td{
+                    &:nth-child(2){width:20%;}
+                    &:nth-child(3){width:15%;}
+                    &:nth-child(4){width:25%;}
+                }
+            } 
+        }
+        form[name='adv-show-form'],form[name='belong-user-form']{
+            .form-control{text-align: center;}
+            span{text-align: center; display: block; font-size:1rem;}
+        }
+    }    
+}
 
 @include x-large{
 
@@ -106,6 +130,13 @@ form[name='adv-show-form'],form[name='adaccount-form'], form[name='belong-user-f
     }
     .table-data,
     .table-modal{min-width:800px;}
+
+    .company-contaniner{      
+        .modal{
+            .table.adAccountListTable{min-width:600px}
+            .table-modal:not(form[name='adv-show-form'] .table-modal){min-width: unset;}
+        }      
+    }
 }
 @include small{
     

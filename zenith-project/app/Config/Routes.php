@@ -213,6 +213,8 @@ $routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::t
 
 $routes->match(['get', 'post'], 'slack/(:any)', '\App\Libraries\slack_api\SlackChat::$1');
 $routes->cli('slack/(:any)', '\App\Libraries\slack_api\SlackChat::$1');
+$routes->get('dz/(:any)', '\App\Libraries\Douzone\Douzone::$1');
+$routes->cli('dz/(:any)', '\App\Libraries\Douzone\Douzone::$1');
 
 $routes->cli('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 $routes->get('hr/(:any)', 'HumanResource\HumanResourceController::$1');

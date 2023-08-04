@@ -608,21 +608,21 @@ function getList(){
             },
             { 
                 "data": "advertiser_name", 
-                "width": "10%",
+                "width": "12%",
                 "render": function(data, type, row) {
                     return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
                 }
             },
-            { "data": "media_name", "width": "5%"},
-            { "data": "title", "width": "23%"},
-            { "data": "description","width": "12%"},
-            { "data": "interlock", "width": "5%"},
-            { "data": "is_stop","width": "5%"},
-            { "data": "impressions","width": "5%"},
-            { "data": "db","width": "5%"},
+            { "data": "media_name", "width": "8%"},
+            { "data": "title", "width": "18%"},
+            { "data": "description","width": "21%"},
+            { "data": "interlock", "width": "4%"},
+            { "data": "is_stop","width": "4%"},
+            { "data": "impressions","width": "4%"},
+            { "data": "db","width": "4%"},
             { 
                 "data": "db_price",
-                "width": "8%",
+                "width": "6%",
             },
             { "data": "username", "width": "5%"},
             { 
@@ -640,7 +640,7 @@ function getList(){
             },
             { 
                 "data": "ei_datetime", 
-                "width": "5%",
+                "width": "7%",
                 "render": function(data){
                     return data.substr(0, 10);
                 }

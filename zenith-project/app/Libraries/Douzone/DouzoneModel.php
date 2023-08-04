@@ -18,11 +18,11 @@ Class DouzoneModel extends Model {
         $builder->join("viberc_gw_interlock AS gwi", "gw.doc_id = gwi.doc_id", "left");
         $builder->where("gw.form_id", "18");
         $builder->where("gw.doc_sts <=", 90); //90:결재완료
-        $builder->where("gw.rep_dt >= DATE_SUB(NOW(), INTERVAL 60 DAY)");
+        $builder->where("gw.rep_dt >= DATE_SUB(NOW(), INTERVAL 30 DAY)");
         $builder->groupBy("gw.doc_id");
         $builder->orderBy("gw.rep_dt", "desc");
+        // dd($builder->getCompiledSelect());
         $result = $builder->get()->getResultArray();
-
         return $result;
     }
 
