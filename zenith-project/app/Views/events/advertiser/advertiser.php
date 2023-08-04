@@ -156,6 +156,7 @@
                                         <li>* 00시 ~ 06시에는 문자를 발송하지 않습니다.</li>
                                         <li>* 알림 문자는 매체별로 1일 1회 발송됩니다.</li>
                                         <li>* 기타 문의사항은 [개발팀-정문숙]에게 문의 부탁드립니다.</li>
+                                        <li>* 전체값 입력시 매체별 db수량 입력과 문자발송이 비활성화됩니다.</li>
                                     </ul>
                                 </td>
                             </tr>
@@ -165,6 +166,13 @@
                                     <input type="text" class="form-control mb-2" name="contact[]" id="contact_0" placeholder="숫자만 입력해주세요">
                                     <input type="text" class="form-control mb-2" name="contact[]" id="contact_1" placeholder="숫자만 입력해주세요">
                                     <input type="text" class="form-control" name="contact[]" id="contact_2" placeholder="숫자만 입력해주세요">
+                                </td>
+                            </tr>
+                            <tr class="ow_info ow_update">
+                                <th scope="row" class="text-end">전체</th>
+                                <td>
+                                    <input type="text" class="form-control mb-2" name="watch_all" placeholder="숫자만 입력해주세요">
+                                    <p class="text-danger" id="watch_all_txt">전체값 입력시 매체별 db수량 입력과 문자발송이 비활성화됩니다.</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -347,7 +355,7 @@ function setAdv(data){
             watch_list = 0;
         }
         for (let i = 0; i < data.wl.length; i++) {
-            html = '<tr class="ow_info ow_update watch_list"><th scope="row" class="text-end">'+data.wl[i].media+'</th><td><input type="hidden" name="media_seq[]" value="'+data.wl[i].seq+'"><input type="text" class="form-control mb-2" name="strain[]" value="'+(watch_list[data.wl[i].seq] ? watch_list[data.wl[i].seq] : 0)+'"></td></tr>';
+            html = '<tr class="ow_info ow_update watch_list"><th scope="row" class="text-end">'+data.wl[i].media+'</th><td><input type="hidden" name="media_seq[]" value="'+data.wl[i].seq+'"><input type="text" class="form-control mb-2 wl-input" name="strain[]" value="'+(watch_list[data.wl[i].seq] ? watch_list[data.wl[i].seq] : 0)+'"></td></tr>';
             $('#modalTable tbody').append(html)
         }
     }
@@ -396,6 +404,7 @@ $('#clientModal').on('show.bs.modal', function(e) {
         $('.create-btn-wrap').show();
         $('.watch_list').remove();
         chkInput();
+        addDisabled();
     }
 })
 .on('hidden.bs.modal', function(e) { 
@@ -484,6 +493,18 @@ $('body').on('click', '#totalBtn', function() {
     storageValue = JSON.stringify(data);
     window.localStorage.setItem('event_advertiser_name', storageValue);
     window.location.href = '/eventmanage/event';
+});
+
+function addDisabled(){
+    if ($('input[name="watch_all"]').val() === "") {
+        $('.wl-input').prop('disabled', false);
+    } else {
+        $('.wl-input').prop('disabled', true);
+    }
+}
+
+$('body').on('keyup', 'input[name="watch_all"]', function() {
+    addDisabled();
 });
 </script>
 <?=$this->endSection();?>
