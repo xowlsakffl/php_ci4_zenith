@@ -127,6 +127,30 @@ class AdvertiserController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
+            $validation = \Config\Services::validation();
+            $validationRules      = [
+                'name' => 'required',
+            ];
+
+            if($arg['sms_alert']){
+                $validationRules['contact.0'] = 'required';
+            }
+
+            $validationMessages   = [
+                'name' => [
+                    'required' => '광고주명은 필수 입력 사항입니다.',
+                ],
+                'contact.0' => [
+                    'required' => '연락처는 필수 입력 사항입니다.'
+                ],
+            ];
+
+            $validation->setRules($validationRules, $validationMessages);
+            if (!$validation->run($arg)) {
+                $errors = $validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
+
             $data = [
                 'name' => $arg['name'],
 				'agent' => $arg['agent'],
@@ -134,58 +158,36 @@ class AdvertiserController extends BaseController
 				'interlock_url' => $arg['interlock_url'],
 				'agreement_url' => $arg['agreement_url'],
 				'account_balance' => $arg['account_balance'],
-				'is_stop' => $arg['is_stop']
+				'is_stop' => $arg['is_stop'],
             ];
             $data['ea_datetime'] = date('Y-m-d H:i:s');
-
-            $validation = \Config\Services::validation();
-            $validationRules      = [
-                'name' => 'required',
-            ];
-            if($arg['sms_alert']){
-                $validationRules['contact'] = 'required';
-            }
-            $validationMessages   = [
-                'name' => [
-                    'required' => '광고주명은 필수 입력 사항입니다.',
-                ],
-                'contact' => [
-                    'required' => '연락처는 필수 입력 사항입니다.'
-                ]
-            ];
-            $validation->setRules($validationRules, $validationMessages);
-            if (!$validation->run($data)) {
-                $errors = $validation->getErrors();
-                return $this->failValidationErrors($errors);
-            }
-
             $result = $this->advertiser->updateAdv($data, $arg['seq']);
 
             // OVERWATCH
             $db = \Config\Database::connect();
             $builder = $db->table('event_overwatch');
-			$ow = $this->advertiser->getOverwatchByAdvertiser($arg['seq']);
-			$contact = implode(';',$arg['contact']);
-			// INSERT / UPDATE / DELETE
-			if($arg['sms_alert']=='1' && !$ow){
-				$overwatch = [
+            $ow = $this->advertiser->getOverwatchByAdvertiser($arg['seq']);
+            $contact = implode(';',$arg['contact']);
+            // INSERT / UPDATE / DELETE
+            if($arg['sms_alert'] && !$ow){
+                $overwatch = [
                     'advertiser' => $arg['seq'],
                     'contact' => $contact,
                     'watch_list' => $arg['watch_list'],
                     'username' => auth()->user()->username
-				];
-				$overwatch['eo_datetime'] = date('Y-m-d H:i:s');
+                ];
+                $overwatch['eo_datetime'] = date('Y-m-d H:i:s');
                 $builder->insert($overwatch);
-			}else if($arg['sms_alert']=='1' && $ow){
+            }else if($arg['sms_alert'] && $ow){
                 $builder->set('contact', $contact);
                 $builder->set('watch_list', $arg['watch_list']);
                 $builder->where('seq', $ow['seq']);
                 $builder->update();
-			}else if($arg['sms_alert']=='0' && $ow){
+            }else if(!$arg['sms_alert'] && $ow){
                 $builder->where('seq', $ow['seq']);
                 $builder->delete();
-			}
-
+            }
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

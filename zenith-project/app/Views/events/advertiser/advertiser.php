@@ -340,7 +340,7 @@ function setAdv(data){
         $('input:hidden[name="watch_list"]').val(data.ow.watch_list);
         var contact = data.ow.contact.split(';');
         
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             $('#contact_'+i+'').val(contact[i]);
         }
     }else{
@@ -366,6 +366,7 @@ function chkInput() {
         $('.ow_info').show();
     }else{
         $('.ow_info').hide();
+        $('input[name="contact[]"]').val('');
     }
 }
 
