@@ -47,8 +47,8 @@ CHAIN 열혈광고 - 세금계산서 요청
 
     <div class="section ">
         <div class="btn-wrap text-end mb-2">
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#bizModal">업체등록(세금계산서)</button>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#taxModal">리스트(세금계산서)</button>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#bizModal">업체등록(세금계산서)</button>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#taxModal">리스트(세금계산서)</button>
         </div>
 
         <div class="table-responsive">

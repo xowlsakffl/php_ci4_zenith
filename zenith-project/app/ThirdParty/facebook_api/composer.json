@@ -1,6 +1,12 @@
 {
     "require": {
-        "facebook/php-business-sdk": "^17.0",
-        "facebook/graph-sdk": "^5.7"
+        "janu-software/facebook-php-sdk": "*",
+        "facebook/php-business-sdk": "*",
+        "php-http/guzzle7-adapter": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

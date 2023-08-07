@@ -4,10 +4,11 @@
 
 <?= $this->section('guestContent') ?>
 
-<div class="container d-flex justify-content-center p-5">
-    <div class="card col-12 col-md-5 shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title mb-5">비밀번호 재설정</h5>
+<div class="row container-fluid account-container">
+    <div class="card col-lg-6 col-12">
+        <form action="/set-password" method="post">
+            <?= csrf_field() ?>
+            <h1 class="card-title">비밀번호 재설정</h1>   
 
             <?php if (session('error') !== null) : ?>
                 <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
@@ -24,27 +25,36 @@
                 </div>
             <?php endif ?>
 
-            <form action="/set-password" method="post">
-                <?= csrf_field() ?>
+            <!-- Email -->
+            <div class="mb-2 position-relative">
+                <i class="bi bi-lock"></i>
+                <input type="password" class="form-control" name="password" placeholder="<?= lang('Auth.password') ?>" value=""/>
+            </div>
 
-                <!-- Email -->
-                <div class="mb-2">
-                    <input type="password" class="form-control" name="password" placeholder="<?= lang('Auth.password') ?>"
-                           value="" />
-                </div>
+            <div class="mb-2 position-relative">
+                <i class="bi bi-check-circle"></i>
+                <input type="password" class="form-control" name="password_confirm" placeholder="<?= lang('Auth.passwordConfirm') ?>" value=""/>
+            </div>
 
-                <div class="mb-2">
-                    <input type="password" class="form-control" name="password_confirm" placeholder="<?= lang('Auth.passwordConfirm') ?>"
-                           value="" />
-                </div>
+            <div class="my-5">
+                <button type="submit" class="btn btn-outline-primary btn-block">비밀번호 변경</button>
+            </div>
 
-                <div class="d-grid col-12 col-md-8 mx-auto m-3">
-                    <button type="submit" class="btn btn-primary btn-block">비밀번호 변경</button>
-                </div>
-
-            </form>
-        </div>
+        </form>
     </div>
 </div>
+<script>
+    //slide up 효과
+    let account = document.querySelector('.account-container form');
+    let effect = account.querySelectorAll('form > div');
+    let i=0;
+    let timer = setInterval(function(){
+        effect[i].classList.add('effect');     
+        i++;
 
+        if(i >= effect.length){
+            clearInterval(timer); 
+        }              
+    },150); 
+</script>
 <?= $this->endSection() ?>

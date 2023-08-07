@@ -4,14 +4,15 @@
 
 <?= $this->section('guestContent') ?>
 
-<div class="container d-flex justify-content-center p-5">
-    <div class="card col-12 col-md-5 shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title mb-5"><?= lang('Auth.useMagicLink') ?></h5>
+<div class="row container-fluid account-container">
+    <div class="card col-lg-6 col-12">
+        <h1 class="card-title"><?= lang('Auth.useMagicLink') ?></h1>
 
-            <p><b><?= lang('Auth.checkYourEmail') ?></b></p>
+        <div class="mb- position-relative">
+            <i class="fa fa-envelope-o me-2"></i>
+            <b><?= lang('Auth.checkYourEmail') ?></b>
 
-            <p><?= lang('Auth.magicLinkDetails', [setting('Auth.magicLinkLifetime') / 60]) ?></p>
+            <p class="mt-3"><?= lang('Auth.magicLinkDetails', [setting('Auth.magicLinkLifetime') / 60]) ?></p>
         </div>
     </div>
 </div>

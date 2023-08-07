@@ -3,7 +3,7 @@
 <?= $this->section('title') ?><?= lang('Auth.register') ?> <?= $this->endSection() ?>
 
 <?= $this->section('guestContent') ?>
-    <div class="row container-fluid register-container">
+    <div class="row container-fluid account-container">
         <div class="card col-lg-6 col-12">
             
 
@@ -60,7 +60,7 @@
     </div>
 <script>
     //slide up 효과
-    let account = document.querySelector('.register-container form');
+    let account = document.querySelector('.account-container form');
     let effect = account.querySelectorAll('form > div');
     let i=0;
     let timer = setInterval(function(){

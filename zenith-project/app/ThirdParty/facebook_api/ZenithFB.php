@@ -12,7 +12,8 @@ require_once __DIR__ . '/vendor/autoload.php';
 use App\ThirdParty\facebook_api\FBDB;
 use CodeIgniter\CLI\CLI;
 
-use Facebook\Facebook;
+use JanuSoftware\Facebook\Facebook;
+
 use Facebook\FacebookApp;
 use Facebook\FacebookRequest;
 use Facebook\FacebookResponse;
@@ -90,7 +91,7 @@ class ZenithFB
     private $access_token = 'EAAKNGLMV4o4BAGjK3GVBlpZBsjYYQjrfLzt22KAoJO5Jpbw4upgVLFkOykdZCJsyNq1k5btTJ3IHzpgrnRzVL3lO1xoxqbnpZBvxhbqoiMZAT0ifXnArBNIaBHZBHrivs8Lcoc0ew3w9CUNJZCiuANnAEFVF0hQTRzq9mucDLxVN5dtFXMO9VUrf0O1sxwQID4BXn0IVYZB8zKSPQHNgT4Md6H8zLiiBekZD';
     private $longLivedAccessToken = 'EAAKNGLMV4o4BADZChadpn1dG23KqHguUAU1osVFqCyKG96Ob421uhFLQZA7E59MlhXX7nbfABLhKOkuBuHtm8drjgVmN4AFinQIKKnBM63Pn2qwJuephE15OLRzJnE3aCYv3YpiIV8MVxYrygHPSX7tZBXRapZCs43gfAvoLc5FhjkJ1rdKq';
     private $db;
-    private $fb, $fb_app;
+    private $fb;
     private $business_id_list = [
         '213123902836946' //케어랩스7
         ,'2859468974281473' //케어랩스5
@@ -111,23 +112,15 @@ class ZenithFB
 
         try {
             $this->db = new FBDB();
-            // $account = $this->db->getAccessToken();
-
-            // $this->account_id = "act_" . $account['ad_account_id'];
-            // $this->access_token = $account['access_token'];
             if($this->longLivedAccessToken)
                 $this->access_token = $this->longLivedAccessToken;
             Api::init($this->app_id, $this->app_secret, $this->access_token, false);
-
-            // $this->account = new AdAccount($this->account_id);
-
             $this->fb = new Facebook([
                 'app_id' => $this->app_id,
                 'app_secret' => $this->app_secret,
                 'default_access_token' => $this->access_token,
                 'default_graph_version' => 'v17.0'
             ]);
-            $this->fb_app = new FacebookApp($this->app_id, $this->app_secret);
             if ($bs_id) $this->business_id = $bs_id;
             else $this->business_id = $this->business_id_list[0];
         } catch (Exception $ex) {
@@ -143,16 +136,8 @@ class ZenithFB
             // 주석된 부분이 토큰을 연장하는 부분
             $oAuth2Client = $this->fb->getOAuth2Client();
             $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($this->access_token);
-            $accesstoken = new AccessToken($longLivedAccessToken);
             $this->access_token = $longLivedAccessToken;
             CLI::write("longLivedAccessToken at ". CLI::color($longLivedAccessToken, "white"), "yellow");
-
-            // 현재 토큰 정보 조회
-            $accesstoken = new AccessToken($this->access_token);
-            
-            echo '<pre>'. print_r($accesstoken,1) .'</pre>';
-            echo '<p>Issued at ' . $accesstoken->isLongLived() .'</p>';
-            echo '<p>Expirest at ' . $accesstoken->getValue()->getExpiresAt()->format('Y-m-d\TH:i:s') .'</p>';
             
         } catch (Exception $ex) {
             echo $ex->getMessage();
@@ -179,12 +164,13 @@ class ZenithFB
 
         do {
             foreach ($edges as $account) {
+                $account = $account->asArray();
                 $pixel_id = 'NULL';
                 $funding_source = 'NULL';
-                if ($account['adspixels']) {
+                if (isset($account['adspixels'])) {
                     $pixel_id = $account['adspixels'][0]['id'];
                 }
-                if ($account['funding_source_details']) {
+                if (isset($account['funding_source_details']) && isset($account['funding_source_details']['display_string'])) {
                     $funding_source = $account['funding_source_details']['display_string'];
                 }
                 array_push($results, array($this->business_id, $account['account_id'], $account['name'], $funding_source, $account['account_status'], $pixel_id));
@@ -794,12 +780,6 @@ class ZenithFB
             $this->db->updateAdAccounts($accounts);
             $result = array_merge($result, $accounts);
         }
-        // echo '<pre>'.print_r($accounts,1).'</pre>';
-        // $accounts = $this->getFBInstagramAccounts();
-        // $this->db->updateInstagramAccounts($accounts);
-
-        // // $accounts = $this->getFBPages();
-        // $this->db->updatePages($accounts);
         return $result;
     }
 

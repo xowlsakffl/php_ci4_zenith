@@ -36,7 +36,8 @@ class GADB
 		if ($is_hidden == '0') {
 			$is_update = 1; //1 업데이트, 0 제외
 		}
-		$data['Name'] = $this->db->escape($data['Name']);
+		if(!isset($data['customerId'])) return;
+		$data['Name'] = isset($data['Name']) ? $this->db->escape($data['Name']) : "";
 		$sql = "INSERT INTO aw_ad_account (customerId, manageCustomer, name, status, canManageClients, currencyCode, dateTimeZone, testAccount, is_hidden, create_time)
                 VALUES ({$data['customerId']}, {$data['manageCustomer']}, {$data['name']}, {$data['status']}, {$data['canManageClients']}, {$data['currencyCode']}, {$data['dateTimeZone']}, {$data['testAccount']}, {$data['is_hidden']}, NOW()) ON DUPLICATE KEY
                 UPDATE customerId = {$data['customerId']}, manageCustomer = {$data['manageCustomer']}, is_update = {$is_update}, name = {$data['name']}, status = {$data['status']},  canManageClients = {$data['canManageClients']}, currencyCode = {$data['currencyCode']}, dateTimeZone = {$data['dateTimeZone']}, testAccount = {$data['testAccount']}, is_hidden = {$data['is_hidden']}, update_time=NOW();";

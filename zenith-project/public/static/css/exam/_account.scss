@@ -8,7 +8,7 @@ $icon-pd:3.75rem; //60px
 
 
 //로그인,가입하기
-.register-container{margin:0 auto;   
+.account-container{margin:0 auto;   
     .card{margin:7% auto 0; --bs-card-border-color:transparent; --bs-card-bg:inherit; max-width: 500px;}
 
     .card-title{font-size:1.5rem; margin:2.5rem 0;}
@@ -17,6 +17,7 @@ $icon-pd:3.75rem; //60px
 
     .btn-outline-primary{display: block; width:100%; margin-top:1.5rem; border-radius:14px; height:4.375rem; text-align: center; font-size:1.25rem; --bs-btn-color:#ce1922; --bs-btn-border-color:#ce1922;
         &:hover{--bs-btn-hover-bg:#ce1922;--bs-btn-hover-border-color:#ce1922;}
+        &:active{background-color: var(--bs-btn-hover-bg); border-color: var(--bs-btn-hover-bg);}
     }
 
     form{

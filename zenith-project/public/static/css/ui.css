@@ -1725,23 +1725,23 @@ div.dataTables_processing > div:last-child > div {
   border-top: 0px;
 }
 
-.register-container {
+.account-container {
   margin: 0 auto;
 }
-.register-container .card {
+.account-container .card {
   margin: 7% auto 0;
   --bs-card-border-color:transparent;
   --bs-card-bg:inherit;
   max-width: 500px;
 }
-.register-container .card-title {
+.account-container .card-title {
   font-size: 1.5rem;
   margin: 2.5rem 0;
 }
-.register-container .card-body {
+.account-container .card-body {
   padding: 0;
 }
-.register-container .btn-outline-primary {
+.account-container .btn-outline-primary {
   display: block;
   width: 100%;
   margin-top: 1.5rem;
@@ -1752,21 +1752,25 @@ div.dataTables_processing > div:last-child > div {
   --bs-btn-color:#ce1922;
   --bs-btn-border-color:#ce1922;
 }
-.register-container .btn-outline-primary:hover {
+.account-container .btn-outline-primary:hover {
   --bs-btn-hover-bg:#ce1922;
   --bs-btn-hover-border-color:#ce1922;
 }
-.register-container form > div {
+.account-container .btn-outline-primary:active {
+  background-color: var(--bs-btn-hover-bg);
+  border-color: var(--bs-btn-hover-bg);
+}
+.account-container form > div {
   transition: all linear 0.5s;
   transform: translateY(150%);
   visibility: hidden;
   transition: all linear 0.3s;
 }
-.register-container form > div.effect {
+.account-container form > div.effect {
   transform: translateY(0%);
   visibility: visible;
 }
-.register-container form > div i {
+.account-container form > div i {
   position: absolute;
   top: 52%;
   transform: translateY(-50%);
@@ -1775,7 +1779,7 @@ div.dataTables_processing > div:last-child > div {
   width: 1.5rem;
   color: #787676;
 }
-.register-container form .form-control {
+.account-container form .form-control {
   width: 100%;
   height: 4.375rem;
   padding: 0 3.4rem;
@@ -1784,25 +1788,25 @@ div.dataTables_processing > div:last-child > div {
   border: 1px solid #c3c3c3;
   background-color: #ededed;
 }
-.register-container form .form-control:-webkit-autofill, .register-container form .form-control:-internal-autofill-selected {
+.account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
   transition: background-color 5000s ease-in-out 0s;
 }
-.register-container form .form-check .form-check-input {
+.account-container form .form-check .form-check-input {
   margin-top: 0;
 }
-.register-container form .icon a {
+.account-container form .icon a {
   color: #787676;
 }
-.register-container form .icon a span.material-symbols-outlined {
+.account-container form .icon a span.material-symbols-outlined {
   font-size: 130%;
   vertical-align: middle;
   padding-right: 0.25rem;
 }
-.register-container form .icon a:hover {
+.account-container form .icon a:hover {
   font-weight: 900;
   transition: 0.2s;
 }
-.register-container form .icon a:hover span.material-symbols-outlined {
+.account-container form .icon a:hover span.material-symbols-outlined {
   transform: scale(1.4);
 }
 

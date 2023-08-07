@@ -4,7 +4,7 @@
 
 <?= $this->section('guestContent') ?>
 
-<div class="row container-fluid register-container">
+<div class="row container-fluid account-container">
     <div class="card col-lg-6 col-12">
     <form action="<?= url_to('login') ?>" method="post">
         <?= csrf_field() ?>
@@ -38,7 +38,7 @@
 
         <!-- Password -->
         <div class="mb-2 position-relative">
-            <i class="fa fa-envelope-o"></i>
+            <i class="bi bi-lock"></i>
             <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" />
         </div>
 
@@ -70,7 +70,7 @@
 </div>
 <script>
     //slide up 효과
-    let account = document.querySelector('.register-container form');
+    let account = document.querySelector('.account-container form');
     let effect = account.querySelectorAll('form > div');
     let i=0;
     let timer = setInterval(function(){
