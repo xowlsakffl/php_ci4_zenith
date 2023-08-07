@@ -30,18 +30,16 @@ class BlackListController extends BaseController
             $list = $result['data'];
             for ($i = 0; $i < count($list); $i++) {   
                 if($list[$i]['term']){
-                    if($list[$i]['term'] != '0000-00-00 00:00:00'){
-                        $originTime = $list[$i]['term'];
-                        $dateTime = new DateTime($originTime);
-                        $list[$i]['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
-                    }
-                    
-                    if($list[$i]['term'] == '0000-00-00 00:00:00' && $list[$i]['forever']){
-                        $list[$i]['term'] = '영구차단';
-                    }
+                    $originTime = $list[$i]['term'];
+                    $dateTime = new DateTime($originTime);
+                    $list[$i]['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
                 }
-
-                if(empty($list[$i]['username'])){
+                
+                if((!$list[$i]['term'] && $list[$i]['forever']) || !empty($list[$i]['phone'])){
+                    $list[$i]['term'] = '영구차단';
+                }
+                
+                if(!empty($list[$i]['ip']) && empty($list[$i]['username'])){
                     $list[$i]['username'] = '시스템';
                 }
             }
@@ -61,24 +59,31 @@ class BlackListController extends BaseController
     public function getBlackList()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
-            $result = $this->blacklist->getBlacklist($arg);
-
-            if($result['term']){
-                if($result['term'] != '0000-00-00 00:00:00'){
-                    $originTime = $result['term'];
-                    $dateTime = new DateTime($originTime);
-                    $result['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
-                }
-                
-                if($result['term'] == '0000-00-00 00:00:00' && $result['forever']){
-                    $result['term'] = '영구차단';
-                }
+            $seq = $this->request->getGet('seq');
+            $sliceSeq = explode("_", $seq);
+            if($sliceSeq[0] == 'ip'){
+                $result = $this->blacklist->getBlacklist($sliceSeq[1]);
+                $result['type'] = 'ip';
+            }else{
+                $result = $this->blacklist->getBlacklistPhone($sliceSeq[1]);
+                $result['type'] = 'phone';
             }
+            
+            if(!empty($result['term'])){
+                $originTime = $result['term'];
+                $dateTime = new DateTime($originTime);
+                $result['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
+            }
+            
+            if((empty($result['term']) && !empty($result['forever'])) || !empty($result['phone'])){
+                $result['term'] = '영구차단';
+            }
+            
 
-            if(empty($result['username'])){
+            if(!empty($result['ip']) && empty($result['username'])){
                 $result['username'] = '시스템';
             }
+
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -112,7 +117,7 @@ class BlackListController extends BaseController
                     $data['term'] = date('Y-m-d H:i:s', strtotime('+3 months'));
                     break;
                 case 'forever':
-                    $data['term'] = '0000-00-00 00:00:00';
+                    $data['term'] = null;
                     $data['forever'] = 1;
                     break;
                 default:
@@ -164,9 +169,49 @@ class BlackListController extends BaseController
     public function deleteBlackList()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete'){
-            $arg = $this->request->getRawInput();
+            $seq = $this->request->getRawInput();
+            $sliceSeq = explode("_", $seq['seq']);
+            
+            if($sliceSeq[0] == 'ip'){
+                $result = $this->blacklist->deleteBlackList($sliceSeq[1]);
+            }else{
+                $result = $this->blacklist->deleteBlackListPhone($sliceSeq[1]);
+            }
 
-            $result = $this->blacklist->deleteBlackList($arg['seq']);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function createBlackListPhone()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $arg = $this->request->getRawInput();
+            $data = [
+                'phone' => $arg['phone'],
+                'reg_date' => date('Y-m-d H:i:s')
+            ];
+            $checkRow = $this->blacklist->getBlackListByPhone($data['phone']);
+            if($checkRow){
+                return $this->failValidationErrors(['term'=>'이미 존재하는 전화번호입니다.']);
+            }
+            $validation = \Config\Services::validation();
+            $validationRules      = [
+                'phone' => 'required',
+            ];
+            $validationMessages   = [
+                'phone' => [
+                    'required' => '전화번호는 필수 입력 사항입니다.',
+                ],
+            ];
+            $validation->setRules($validationRules, $validationMessages);
+            if (!$validation->run($data)) {
+                $errors = $validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
+    
+            $result = $this->blacklist->createBlackListPhone($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
