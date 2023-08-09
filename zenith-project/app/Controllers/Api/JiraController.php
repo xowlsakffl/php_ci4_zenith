@@ -23,7 +23,7 @@ class JiraController extends BaseController
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
-            //log_message('info', print_r($param, true));
+            log_message('info', print_r($param, true));
             if(!empty($param)){
                 $reporter = $param->issue->fields->reporter->displayName ?? '';
                 $projectName = $param->issue->fields->project->name ?? '';
