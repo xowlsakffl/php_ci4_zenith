@@ -23,11 +23,18 @@ class JiraController extends BaseController
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
-            if($param){
+            //log_message('info', print_r($param, true));
+            if(!empty($param)){
+                $reporter = $param->issue->fields->reporter->displayName;
+                $projectName = $param->issue->fields->project->name;
+                $projectType = $param->issue->fields->project->key;
+                $projectSummary = $param->issue->fields->summary;
+                $issueKey = $param->issue->key;
+                $actionUser = $param->user->displayName;
                 $user = new UserModel();
-                $userData = $user->getUserByName($param->issue->fields->reporter->displayName);
+                $userData = $user->getUserByName($reporter);
                 $slack = new SlackChat();
-                $link = 'https://carelabs-dm.atlassian.net/jira/core/projects/'.$param->issue->fields->project->key.'/board?selectedIssue='.$param->issue->key.'';
+                $link = 'https://carelabs-dm.atlassian.net/jira/core/projects/'.$projectType.'/board?selectedIssue='.$issueKey.'';
                 $data = [
                     'channel' => $slack->config['UserID'][$userData['nickname']],
                     'blocks' => [
@@ -35,16 +42,9 @@ class JiraController extends BaseController
                             'type' => 'section',
                             'text' => [
                                 'type' => 'mrkdwn',
-                                'text' => '['.$param->issue->fields->project->name.']['.$param->issue->fields->summary.'('.$param->issue->key.')]'.$param->user->displayName.'님이 완료처리 하였습니다.',
+                                'text' => '['.$projectName.']['.$projectSummary.'] <'.$link.'|'.$issueKey.'> '.$actionUser.'님이 완료처리 하였습니다.',
                             ],
                             "block_id" => "text1"
-                        ],
-                        [
-                            'type' => 'section',
-                            'text' => [
-                                'type' => 'mrkdwn',
-                                'text' => "<$link>"
-                            ],
                         ],
                     ],
                 ];
@@ -54,11 +54,5 @@ class JiraController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
-    }
-
-    public function test()
-    {  
-        $result = $this->jira->getProjects();
-        dd($result);
     }
 }
