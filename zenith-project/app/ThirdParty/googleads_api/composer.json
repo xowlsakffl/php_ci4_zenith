@@ -1,6 +1,7 @@
 {
     "require": {
         "googleads/google-ads-php": "^19.0",
-        "symfony/console": "^5.4"
+        "symfony/console": "^5.4",
+        "monolog/monolog": "^2.0"
     }
 }

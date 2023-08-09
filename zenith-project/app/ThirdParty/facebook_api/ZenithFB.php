@@ -492,7 +492,18 @@ class ZenithFB
                 $ads = $this->ad->getSelf(array(), $params);
                 $response = $ads->getData();
                 CLI::showProgress($step++, $total);
-                $result[] = $response;
+                $result[] = [
+                    'tracking_specs' => $response['tracking_specs'],
+                    'conversion_specs' => $response['conversion_specs'],
+                    'created_time' => $response['created_time'],
+                    'updated_time' => $response['updated_time'],
+                    'name' => $response['name'],
+                    'id' => $response['id'],
+                    'adset_id' => $response['adset_id'],
+                    'campaign_id' => $response['campaign_id'],
+                    'effective_status' => $response['effective_status'],
+                    'fb_pixel' => $response['fb_pixel'],
+                ];
             }
             $this->db->updateAds($result);
         }
@@ -541,7 +552,20 @@ class ZenithFB
                 $response = $adset->getData();
                 // echo '<pre>'.print_r($response,1).'</pre>'; exit;
                 CLI::showProgress($step++, $total);
-                $result[] = $response;
+                $result[] = [
+                    'budget_remaining' => $response['budget_remaining'],
+                    'start_time' => $response['start_time'],
+                    'created_time' => $response['created_time'],
+                    'updated_time' => $response['updated_time'],
+                    'name' => $response['name'],
+                    'lifetime_budget' => $response['lifetime_budget'],
+                    'daily_budget' => $response['daily_budget'],
+                    'learning_stage_info' => $response['learning_stage_info'],
+                    'id' => $response['id'],
+                    'campaign_id' => $response['campaign_id'],
+                    'effective_status' => $response['effective_status'],
+                    'status' => $response['status'],
+                ];
             }
             $this->db->updateAdsets($result);
         }
@@ -591,7 +615,23 @@ class ZenithFB
                 $campaign = $this->campaign->getSelf(array(), $params);
                 $response = $campaign->getData();
                 CLI::showProgress($step++, $total);
-                $result[] = $response;
+                $result[] = [
+                    'budget_remaining' => $response['budget_remaining'],
+                    'start_time' => $response['start_time'],
+                    'created_time' => $response['created_time'],
+                    'updated_time' => $response['updated_time'],
+                    'name' => $response['name'],
+                    'can_use_spend_cap' => $response['can_use_spend_cap'],
+                    'budget_rebalance_flag' => $response['budget_rebalance_flag'],
+                    'spend_cap' => $response['spend_cap'],
+                    'lifetime_budget' => $response['lifetime_budget'],
+                    'daily_budget' => $response['daily_budget'],
+                    'id' => $response['id'],
+                    'account_id' => $response['account_id'],
+                    'effective_status' => $response['effective_status'],
+                    'status' => $response['status'],
+                    'objective' => $response['objective'],
+                ];
             }
             $this->db->updateCampaigns($result);
         }

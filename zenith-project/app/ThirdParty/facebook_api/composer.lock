@@ -74,16 +74,16 @@
         },
         {
             "name": "facebook/php-business-sdk",
-            "version": "17.0.1",
+            "version": "17.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/facebook-php-business-sdk.git",
-                "reference": "c2be28d3c6959b6e2c4450183882c15dea090965"
+                "reference": "7df79347120112b21b632e7d080406ea628b1758"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/facebook-php-business-sdk/zipball/c2be28d3c6959b6e2c4450183882c15dea090965",
-                "reference": "c2be28d3c6959b6e2c4450183882c15dea090965",
+                "url": "https://api.github.com/repos/facebook/facebook-php-business-sdk/zipball/7df79347120112b21b632e7d080406ea628b1758",
+                "reference": "7df79347120112b21b632e7d080406ea628b1758",
                 "shasum": ""
             },
             "require": {
@@ -114,9 +114,9 @@
             ],
             "support": {
                 "issues": "https://github.com/facebook/facebook-php-business-sdk/issues",
-                "source": "https://github.com/facebook/facebook-php-business-sdk/tree/17.0.1"
+                "source": "https://github.com/facebook/facebook-php-business-sdk/tree/17.0.2"
             },
-            "time": "2023-06-16T23:32:41+00:00"
+            "time": "2023-08-08T16:33:40+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
