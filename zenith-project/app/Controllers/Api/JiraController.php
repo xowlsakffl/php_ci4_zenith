@@ -25,12 +25,12 @@ class JiraController extends BaseController
             $param = $this->request->getVar();
             //log_message('info', print_r($param, true));
             if(!empty($param)){
-                $reporter = $param->issue->fields->reporter->displayName;
-                $projectName = $param->issue->fields->project->name;
-                $projectType = $param->issue->fields->project->key;
-                $projectSummary = $param->issue->fields->summary;
-                $issueKey = $param->issue->key;
-                $actionUser = $param->user->displayName;
+                $reporter = $param->issue->fields->reporter->displayName ?? '';
+                $projectName = $param->issue->fields->project->name ?? '';
+                $projectType = $param->issue->fields->project->key ?? '';
+                $projectSummary = $param->issue->fields->summary ?? '';
+                $issueKey = $param->issue->key ?? '';
+                $actionUser = $param->user->displayName ?? '';
                 $user = new UserModel();
                 $userData = $user->getUserByName($reporter);
                 $slack = new SlackChat();
