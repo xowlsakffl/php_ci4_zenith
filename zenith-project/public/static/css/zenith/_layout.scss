@@ -74,7 +74,9 @@ body{background:#f7f7f7;}
         dd{margin:8px 0 0; color:#929292;}
     }
 }
-
+    .dayOff-contanier{
+        .form-select{font-size: 0.8rem;}
+    }
 @include x-large{
     .main-contents-wrap{padding:30px;}
     .ad-list{
@@ -119,6 +121,8 @@ body{background:#f7f7f7;}
         .type{margin:0;}
     }
 }
-@include small{
-    
+@include small{    
+    .section.position-relative {
+        .btn-wrap{right: unset; left: 0;}
+    }
 }

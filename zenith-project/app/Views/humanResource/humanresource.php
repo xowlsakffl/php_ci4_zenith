@@ -17,7 +17,7 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap dayOff-contanier">
     <div class="title-area">
         <h2 class="page-title">시간차 관리</h2>
         <button type="button" class="btn btn-dark ms-3" data-bs-toggle="modal" data-bs-target="#totalModal">전체조회</button>

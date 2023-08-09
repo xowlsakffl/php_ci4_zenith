@@ -12,7 +12,7 @@
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="background-color: #000; color: #fff; border: 1px solid pink;">
         <tbody>
             <tr>
-                <td style="line-height: 24px; font-size: 16px; border-radius: 6px; width: 100%; height: 20px; margin: 0; background-color: #0d6efd; text-align="center">
+                <td style="line-height: 24px; font-size: 16px; border-radius: 6px; width: 100%; height: 20px; margin: 0; background-color: #0d6efd; text-align:center;">
                     <a href="<?= url_to('verify-magic-link') ?>?token=<?= $token ?>" style=""><?= lang('Auth.login') ?></a>
                 </td>
             </tr>

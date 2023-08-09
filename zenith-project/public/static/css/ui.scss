@@ -4,14 +4,15 @@
         'zenith/_sub',
         'zenith/_table',
         'zenith/_modal',
-        
-        "exam/_index.scss",//main 페이지
-        "exam/_userManage.scss",//회원관리       
-        "exam/_account.scss",//my page
-        "exam/_pagenation.scss",//통합 db관리 
-        "exam/_navBar.scss",//nav bar.php         
-        "exam/_animaction.scss", //animation
-        "exam/practice/_agree.scss", //동의하기
+        "zenith/_animaction.scss", //animation
+
+        //각 page 별
+        "zenith/_index.scss",//main 페이지      
+        "zenith/_integrationDB.scss",//통합 db관리 
+        "zenith/_userManage.scss",//회원관리       
+        "zenith/_account.scss",//login, join,my page
+        "zenith/_navBar.scss",//nav bar.php   
+        "zenith/_agree.scss", //동의하기
         "exam/_etc.scss";//기타 통합(사이트 맵)
 
     

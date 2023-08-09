@@ -20,7 +20,7 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap eventmanage-container">
     <div class="title-area">
         <h2 class="page-title">전환 관리</h2>
     </div>
