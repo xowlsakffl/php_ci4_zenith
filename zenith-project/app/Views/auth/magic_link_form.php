@@ -53,5 +53,13 @@
             clearInterval(timer); 
         }              
     },150); 
+
+     //회원정보 입력시 아이콘 색상 변화
+    let icon_blue = '#4477CE';
+
+    $('.form-control').bind('keyup',function(){
+        $(this).prev().css('color',icon_blue);
+        $(this).css('color',icon_blue);
+    });
 </script>
 <?= $this->endSection() ?>

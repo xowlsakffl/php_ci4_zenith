@@ -545,7 +545,7 @@ body {
 .sub-contents-wrap {
   flex: 1;
   height: 100vh;
-  overflow: auto; /*padding:80px 4.4271vw;*/ /*padding: 40px 1.4583vw 50px;*/
+  overflow: auto;
   padding: 40px 2.9908vw 50px;
   transition: all 0.3s;
 }
@@ -658,6 +658,16 @@ body {
   border: 1px solid #929292;
   border-radius: 25px;
   background: url("/img/search.svg") no-repeat 24px center;
+}
+.search-wrap .search .input input[type=text]:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
+  caret-color: red;
+}
+.search-wrap .search .input input[type=text]:focus::placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  transition: text-indent 0.3s;
 }
 .search-wrap .search .input .btn-primary {
   width: 115px;
@@ -890,6 +900,30 @@ body {
   background-color: #fff;
 }
 
+.form-control:focus, .form-select:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
+  caret-color: red;
+}
+.form-control:focus::placeholder, .form-select:focus::placeholder {
+  color: red;
+  text-indent: 0.5rem;
+  transition: text-indent 0.3s;
+}
+
+.account-container input.form-control:focus {
+  box-shadow: 0 0 0 0.25rem #C0DBEA;
+  caret-color: #7286D3;
+  color: #7286D3;
+}
+.account-container input.form-control:focus::placeholder {
+  color: #7286D3;
+}
+
+input:-internal-autofill-selected {
+  color: #7286D3;
+}
+
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
     padding: 30px;
@@ -1077,7 +1111,7 @@ div.dataTables_processing > div:last-child > div {
   width: 80%;
 }
 .table td .btn-budget button:hover {
-  color: red;
+  color: var(--bs-blue);
 }
 
 .table-default {
@@ -1246,7 +1280,7 @@ div.dataTables_processing > div:last-child > div {
   border-bottom: 0;
 }
 .modal .modal-header .modal-title {
-  font-size: 1.625rem;
+  font-size: 1.425rem;
   border-bottom: 2px solid #ce1922;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1519,6 +1553,12 @@ div.dataTables_processing > div:last-child > div {
   }
   .company-contaniner .modal .table-modal:not(form[name=adv-show-form] .table-modal) {
     min-width: unset;
+  }
+}
+@media screen and (max-width: 500px) {
+  .sorting button {
+    font-size: 0.8rem;
+    padding: 0 0.5rem;
   }
 }
 @keyframes moreBtn {

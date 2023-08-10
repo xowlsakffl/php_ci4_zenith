@@ -3,9 +3,8 @@
     &.up{transform: translateY(0); visibility:visible;}
 }
 
-.sub-contents-wrap{flex:1; height:100vh; overflow:auto; /*padding:80px 4.4271vw;*/ /*padding: 40px 1.4583vw 50px;*/ padding:40px 2.9908vw 50px; transition:all 0.3s;
-    // > div{@include effect;}
-}
+.sub-contents-wrap{flex:1; height:100vh; overflow:auto; padding:40px 2.9908vw 50px; transition:all 0.3s;}
+
 .title-area{display:flex; align-items:center; margin:0 0 20px;
     .page-title{font-size:1.750rem; @include bold;}
     .title-disc{margin:0 0 0 15px;}
@@ -39,7 +38,11 @@
             button{width:28px; color:$color-primary;}
         }
         .input{flex:1; display:flex;
-            input[type="text"]{flex:1; width:100%; height:50px; box-sizing:border-box; margin:0 10px 0 0; padding:0 15px 0 45px; border:1px solid #929292; border-radius:25px; @include bg('search.svg', 24px, center);}
+            input[type="text"]{flex:1; width:100%; height:50px; box-sizing:border-box; margin:0 10px 0 0; padding:0 15px 0 45px; border:1px solid #929292; border-radius:25px; @include bg('search.svg', 24px, center);
+                &:focus{border-color:transparent; box-shadow: 0 0 0 0.25rem #df172b45; caret-color:$red;
+                    &::placeholder{color:$red; text-indent:0.75rem; transition:text-indent 0.3s;}
+                }
+            }
             .btn-primary{width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:$color-primary;}
             .btn-special{width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:var(--bs-blue);}
         }
@@ -126,11 +129,22 @@
     }
 }
 
-#adv-show-table #p_name #search-results{
-    position: absolute;
-    background-color: #fff;
+#adv-show-table #p_name #search-results{position: absolute; background-color: #fff;}
+
+.form-control,.form-select{
+    &:focus{border-color:transparent; box-shadow: 0 0 0 0.25rem #df172b45; caret-color:$red;
+        &::placeholder{color:$red; text-indent:0.5rem; transition: text-indent 0.3s;}
+    }    
+}
+.account-container{
+    input.form-control{$blue:#C0DBEA; $strong-blue:#7286D3; 
+        &:focus{box-shadow: 0 0 0 0.25rem $blue; caret-color:$strong-blue; color:$strong-blue;
+            &::placeholder{color:$strong-blue;}
+        }
+    }
 }
 
+input:-internal-autofill-selected {color: #7286D3;}
 @include x-large{
     .sub-contents-wrap{padding:30px;}
     .title-area{flex-wrap:wrap;
@@ -146,6 +160,7 @@
     }
     .half + .half{margin-top:40px;}
 }
+
 @include large{
     .client-list{
         .row{flex-wrap:wrap; max-height:250px;

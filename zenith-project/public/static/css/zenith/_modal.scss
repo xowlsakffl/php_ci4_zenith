@@ -10,7 +10,7 @@
         .modal-dialog{transform:none;}
     }
     .modal-header{border-bottom:0;
-        .modal-title{font-size:1.625rem; border-bottom:2px solid $color-primary; overflow:hidden; text-overflow:ellipsis;
+        .modal-title{font-size:1.425rem; border-bottom:2px solid $color-primary; overflow:hidden; text-overflow:ellipsis;
             .title{
                 &::before{content:"-"; padding:0 5px;}
             }
@@ -140,4 +140,8 @@
 }
 @include small{
     
+}
+
+@include mobile-500{
+    .sorting button{font-size:0.8rem; padding:0 0.5rem;}
 }

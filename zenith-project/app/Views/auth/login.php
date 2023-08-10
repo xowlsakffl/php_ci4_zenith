@@ -33,13 +33,13 @@
         <!-- Email -->
         <div class="mb-2 position-relative">
             <i class="bi bi-person-check"></i>
-            <input type="text" class="form-control" name="username" placeholder="<?= lang('Auth.username') ?>" value="<?= old('username') ?>" />
+            <input type="text" class="form-control" name="username" autocomplete="off" placeholder="<?= lang('Auth.username') ?>" value="<?= old('username') ?>"/>
         </div>
 
         <!-- Password -->
         <div class="mb-2 position-relative">
             <i class="bi bi-lock"></i>
-            <input type="password" class="form-control" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" />
+            <input type="password" class="form-control" name="password" inputmode="text" autocomplete="off" placeholder="<?= lang('Auth.password') ?>" />
         </div>
 
         <!-- Remember me -->
@@ -81,5 +81,13 @@
             clearInterval(timer); 
         }              
     },150); 
+
+    //회원정보 입력시 아이콘 색상 변화
+    let icon_blue = '#4477CE';
+
+    $('.form-control').bind('keyup',function(){
+        $(this).prev().css('color',icon_blue);
+        $(this).css('color',icon_blue);
+    });
 </script>
 <?= $this->endSection() ?>
