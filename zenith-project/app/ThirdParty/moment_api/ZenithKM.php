@@ -361,7 +361,7 @@ class ZenithKM
         $data = array('id' => $adGroupId, 'dailyBudgetAmount' => $dailyBudgetAmount);
         $adAccountId = $this->db->getAdAccountIdByAdGroupId($adGroupId);
         if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param, $data, 'PUT');
+        $result = $this->getCall($request, NULL, $data, 'PUT');
         return $result;
     }
 
@@ -372,7 +372,7 @@ class ZenithKM
         $data = array('id' => $adGroupId, 'bidAmount' => $bidAmount);
         $adAccountId = $this->db->getAdAccountIdByAdGroupId($adGroupId);
         if ($adAccountId) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param, $data, 'PUT');
+        $result = $this->getCall($request, NULL, $data, 'PUT');
         if ($result['http_code'] == 200) {
             $this->db->setAdGroupBidAmount($adGroupId, $bidAmount);
             $result = $adGroupId;

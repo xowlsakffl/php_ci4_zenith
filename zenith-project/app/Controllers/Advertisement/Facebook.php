@@ -123,6 +123,6 @@ class Facebook extends Controller
         // if($run != 'y') return false;
         CLI::write("시작.", "light_red");
 
-        $this->zenith->updateCampaigns();
+        $this->zenith->updateAds();
     }
 }

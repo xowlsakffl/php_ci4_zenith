@@ -65,6 +65,16 @@ class GADB
 		return $result;
 	}
 
+	public function getCampaign($id)
+	{
+		if (is_null($id)) return false;
+
+		$sql = "SELECT * FROM aw_campaign WHERE id = {$id}";
+		$result = $this->db_query($sql, true);
+
+		return $result;
+	}
+
 	private function updateCampaign($data = null)
 	{
 		if (is_null($data)) return false;

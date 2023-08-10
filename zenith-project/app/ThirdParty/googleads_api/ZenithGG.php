@@ -70,7 +70,8 @@ use Google\Ads\GoogleAds\V13\Services\AdGroupAdOperation;
 use Google\Ads\GoogleAds\V13\Services\AdGroupOperation;
 use Google\Ads\GoogleAds\V13\Services\AdOperation;
 use Google\Ads\GoogleAds\V13\Services\CampaignOperation;
-
+use Google\Ads\GoogleAds\V13\Resources\CampaignBudget;
+use Google\Ads\GoogleAds\V13\Services\CampaignBudgetOperation;
 
 class ZenithGG
 {
@@ -297,7 +298,7 @@ class ZenithGG
         $data = [
             'resource_name' => ResourceNames::forCampaign($customerId, $campaignId),
         ];
-
+        
         if(isset($param['status'])){
             if($param['status'] == 'ENABLED'){
                 $data['status'] = CampaignStatus::ENABLED;
@@ -305,13 +306,16 @@ class ZenithGG
                 $data['status'] = CampaignStatus::PAUSED;
             }
         }
-
+        
         if(isset($param['name'])){
             $data['name'] = $param['name'];
         }
 
+        if(isset($param['budget'])){
+            $data['campaign_budget'] = $param['budget'];
+        }
+
         $campaign = new Campaign($data);
-      
         $campaignOperation = new CampaignOperation();
         $campaignOperation->setUpdate($campaign);
         $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
@@ -322,7 +326,6 @@ class ZenithGG
             ['responseContentType' => ResponseContentType::MUTABLE_RESOURCE]
             //캠페인 결과값도 반환 //상수 RESOURCE_NAME_ONLY - 리소스 네임만
         );
-
         $updatedCampaign = $response->getResults()[0];
         $campaignInfo = $updatedCampaign->getCampaign();
         if(!empty($campaignInfo)){
@@ -337,6 +340,51 @@ class ZenithGG
             if(isset($data['name'])){
                 $setData['name'] = $campaignInfo->getName();
             }
+
+            if(isset($data['budget'])){
+                $setData['amount'] = $campaignInfo->getCampaignBudget();
+            }
+
+            $this->db->updateCampaignField($setData);
+            return $setData;
+        };
+    }
+
+    public function updateCampaignBudget($customerId = null, $campaignId = null, $param)
+    {
+        $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
+        $account = $account->getRowArray();
+        self::setCustomerId($account['manageCustomer']);
+
+        $campaign = $this->db->getCampaign($campaignId);
+        $campaign = $campaign->getRowArray();
+        
+        $campaignServiceClient = $this->googleAdsClient->getCampaignBudgetServiceClient();
+        $data = [
+            'resource_name' => ResourceNames::forCampaignBudget($customerId, $campaign['budgetId']),
+            'amount_micros' => $param['budget'],
+        ];
+
+        $campaign = new CampaignBudget($data);
+        $campaignOperation = new CampaignBudgetOperation();
+        $campaignOperation->setUpdate($campaign);
+        $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
+        
+        $response = $campaignServiceClient->mutateCampaignBudgets(
+            $customerId,
+            [$campaignOperation],
+            ['responseContentType' => ResponseContentType::MUTABLE_RESOURCE]
+            //캠페인 결과값도 반환 //상수 RESOURCE_NAME_ONLY - 리소스 네임만
+        );
+        
+        $updatedCampaign = $response->getResults()[0];
+        $campaignInfo = $updatedCampaign->getCampaign();
+        
+        if(!empty($campaignInfo)){
+            $setData = [
+                'id' => $campaignInfo->getId(),
+                'amount' => $campaignInfo->getCampaignBudget(),
+            ];
 
             $this->db->updateCampaignField($setData);
             return $setData;

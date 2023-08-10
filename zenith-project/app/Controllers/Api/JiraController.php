@@ -6,17 +6,20 @@ use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use App\Libraries\slack_api\SlackChat;
 use App\Models\Api\UserModel;
+use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\jira_api\ZenithJira;
+use CodeIgniter\CLI\CLI;
 
 class JiraController extends BaseController
 {
     use ResponseTrait;
     
-    private $jira;
+    private $jira, $zenith;
 
     public function __construct()
     {
         $this->jira = new ZenithJira();
+        $this->zenith = new ZenithFB();  
     }
 
     public function getIssueComplete()
@@ -54,5 +57,18 @@ class JiraController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
+    }
+
+    public function updateAll() {
+        CLI::clearScreen();
+        // $run = CLI::prompt("캠페인/광고그룹/광고를 업데이트 합니다.",["y","n"]);
+        // if($run != 'y') return false;
+        CLI::write("캠페인/광고그룹/광고를 업데이트 합니다.", "light_red");
+        $this->zenith->updateAllByAccounts();
+        /*
+        $getAds = $this->zenith->getAds();
+        $updateAdsets = $this->zenith->updateAdsets($getAds);
+        $updateCampaigns = $this->zenith->updateCampaigns($updateAdsets);
+        */
     }
 }

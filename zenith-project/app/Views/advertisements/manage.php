@@ -14,6 +14,7 @@
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
+<script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
@@ -528,7 +529,7 @@ function getList(data = []){
                 "data": "budget", 
                 "width": "8%",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
                 },
             },
@@ -1107,7 +1108,7 @@ $("body").on("click", '.memo-list input[name="is_done"]', function(){
     };
     $.ajax({
         type: "post",
-        url: "<?=base_url()?>advertisements/checkmemo",
+        url: "<?=base_url()?>/advertisements/checkmemo",
         data: data,
         dataType: "json",
         success: function(response){  
@@ -1130,8 +1131,145 @@ $("body").on("click", '.memo-list input[name="is_done"]', function(){
 $("body").on("click", '.btn-budget button', function(){
     $this = $(this);
     $id = $this.closest("tr").data('id');
-    console.log(document.activeElement);
+    $customer = $this.closest("tr").data('customerid');
+    clickBtn = $(document.activeElement).attr('class');
+    budgetTxt = $this.parent('div.btn-budget').siblings('div.budget').children('p');
+    c_budget = budgetTxt.text().replace(/[^0-9]/g, "");
+    if (!c_budget) return;
+    
+    switch (clickBtn) {
+        case "btn-budget-up":
+            typeName = "상향";
+            rate = 1.19;
+            break;
+        case "btn-budget-down":
+            typeName = "하향";
+            rate = 0.81;
+            break;
+    }
+    var budget = Math.round(c_budget * rate);
+    console.log(budget);
+    if (
+        !confirm(
+            "현재 예상을 " +
+                typeName +
+                "조정하여 " +
+                (budget).toLocaleString() +
+                "원으로 수정합니다."
+        )
+    ){
+        return;
+    }
 
+    data = {
+        'id': $id,
+        'customer': $customer,
+        'tab': $('.tab-link.active').val(),
+        'budget': budget
+    };
+    $.ajax({
+        type: "put",
+        url: "<?=base_url()?>/advertisements/set-budget",
+        data: data,
+        dataType: "json",
+        success: function(response){  
+            if(response == true) {
+                $('.budget p[data-editable="true"]').attr("data-editable", "true");
+                budgetTxt.text('\u20A9'+budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
+
+$("body").on("click", '.budget p[data-editable="true"]', function(){  
+    $this = $(this);
+    $id = $this.closest("tr").data('id');
+    $customer = $this.closest("tr").data('customerid');
+    budgetTxt = $this.text();
+    c_budget = budgetTxt.replace(/[^0-9,]/g, "");
+    if (!c_budget) return;
+
+    $('.budget p[data-editable="true"]').attr("data-editable", "false");
+    $input = $('<input type="text" style="width:100%">');
+    $input.val(c_budget);
+    $(this).replaceWith($input);
+    $input.focus();
+    $input.on('keydown blur', function(e) {
+        if (e.type === 'keydown') {
+            $input.number(true);
+            if (e.keyCode == 27) {
+                // ESC Key
+                $('.budget p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_budget, $input);
+            } else if (e.keyCode == 13) {
+                new_budget = $input.val();
+                data = {
+                    'id': $id,
+                    'customer': $customer,
+                    'tab': $('.tab-link.active').val(),
+                    'budget': new_budget
+                };
+
+                if (c_budget.replace(",", "") === new_budget) {
+                    $('.budget p').attr("data-editable", "true");
+                    restoreElement('\u20A9'+c_budget, $input);
+                } else {
+                    $.ajax({
+                        type: "put",
+                        url: "<?=base_url()?>/advertisements/set-budget",
+                        data: data,
+                        dataType: "json",
+                        success: function(response){  
+                            if(response == true) {
+                                $('.budget p').attr("data-editable", "true");
+                                var $new_p = $('<p data-editable="true">');
+                                $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                                $input.replaceWith($new_p);
+                            }
+                        },
+                        error: function(error, status, msg){
+                            alert("상태코드 " + status + "에러메시지" + msg );
+                        }
+                    });
+                }
+            }
+        } else if (e.type === 'blur') {
+            $input.number(true);
+            new_budget = $input.val();
+            data = {
+                'id': $id,
+                'customer': $customer,
+                'tab': $('.tab-link.active').val(),
+                'budget': new_budget
+            };
+
+            if (c_budget.replace(",", "") === new_budget) {
+                $('.budget p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_budget, $input);
+            } else {
+                $.ajax({
+                    type: "put",
+                    url: "<?=base_url()?>/advertisements/set-budget",
+                    data: data,
+                    dataType: "json",
+                    success: function(response){  
+                        if(response == true) {
+                            $('.budget p').attr("data-editable", "true");
+                            var $new_p = $('<p data-editable="true">');
+                            $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                            $input.replaceWith($new_p);
+                        }
+                    },
+                    error: function(error, status, msg){
+                        alert("상태코드 " + status + "에러메시지" + msg );
+                    }
+                });
+            }
+        }
+    });
 });
 
 function debug(msg) {

@@ -82,6 +82,7 @@ use Google\Cloud\Translate\TranslateClient;
 
 use Curl\Curl;
 use DateTime;
+use Exception;
 use FacebookAds\Logger\CurlLogger;
 
 class ZenithFB
@@ -112,8 +113,7 @@ class ZenithFB
 
         try {
             $this->db = new FBDB();
-            if($this->longLivedAccessToken)
-                $this->access_token = $this->longLivedAccessToken;
+            $this->access_token = $this->longLivedAccessToken ?? $this->access_token;
             Api::init($this->app_id, $this->app_secret, $this->access_token, false);
             $this->fb = new Facebook([
                 'app_id' => $this->app_id,
@@ -121,8 +121,7 @@ class ZenithFB
                 'default_access_token' => $this->access_token,
                 'default_graph_version' => 'v17.0'
             ]);
-            if ($bs_id) $this->business_id = $bs_id;
-            else $this->business_id = $this->business_id_list[0];
+            $this->business_id = $bs_id ? $bs_id : $this->business_id_list[0];
         } catch (Exception $ex) {
             echo $ex->getMessage();
             return false;
@@ -159,7 +158,7 @@ class ZenithFB
             $this->access_token
         );
         $edges = $response->getGraphEdge();
-        $results = array();
+        $results = [];
         // echo '<pre>'.print_r($edges,1).'</pre>'; exit;
 
         do {
@@ -173,7 +172,7 @@ class ZenithFB
                 if (isset($account['funding_source_details']) && isset($account['funding_source_details']['display_string'])) {
                     $funding_source = $account['funding_source_details']['display_string'];
                 }
-                array_push($results, array($this->business_id, $account['account_id'], $account['name'], $funding_source, $account['account_status'], $pixel_id));
+                array_push($results, [$this->business_id, $account['account_id'], $account['name'], $funding_source, $account['account_status'], $pixel_id]);
             }
         } while ($edges = $this->fb->next($edges));
 
@@ -181,9 +180,8 @@ class ZenithFB
     }
 
     // 비지니스 설정   
-    public function setBusinessId($bs_id=null) {
-        if(is_null($bs_id)) return;
-        $this->business_id = $bs_id;
+    public function setBusinessId($bs_id = null) {
+        if(!is_null($bs_id)) $this->business_id = $bs_id;
     }
 
     // 광고 계정 설정   
@@ -220,28 +218,28 @@ class ZenithFB
       
     public function getAsyncInsights($all = "false", $date = null, $edate = null)
     {
-        $params = array(
+        $params = [
             'date_preset' => AdsInsightsDatePresetValues::TODAY,
             'level' => AdsInsightsLevelValues::AD,
             'breakdowns' => AdsInsightsBreakdownsValues::HOURLY_STATS_AGGREGATED_BY_AUDIENCE_TIME_ZONE,
-            'filtering' => array(
-                array(
+            'filtering' => [
+                [
                     'field'     => 'ad.impressions',
                     'operator'  => 'GREATER_THAN',
                     'value'     => 0
-                ),
-                array(
+                ],
+                [
                     'field'     => 'ad.spend',
                     'operator'  => 'GREATER_THAN',
                     'value'     => 0
-                ),
-                array(
+                ],
+                [
                     'field'     => 'ad.effective_status',
                     'operator'  => 'IN',
                     'value'     => ['ACTIVE', 'ADSET_PAUSED', 'ARCHIVED', 'CAMPAIGN_PAUSED', 'DELETED', 'DISAPPROVED', 'IN_PROCESS', 'PAUSED', 'PENDING_BILLING_INFO', 'PENDING_REVIEW', 'PREAPPROVED', 'WITH_ISSUES']
-                )
-            ),
-            'fields' => array(
+                ]
+            ],
+            'fields' => [
                 AdsInsightsFields::ACCOUNT_ID,
                 AdsInsightsFields::CAMPAIGN_ID,
                 AdsInsightsFields::CAMPAIGN_NAME,
@@ -255,13 +253,13 @@ class ZenithFB
                 AdsInsightsFields::CLICKS,
                 AdsInsightsFields::INLINE_LINK_CLICKS,
                 AdsInsightsFields::SPEND
-            )
-        );
-        if ($date != null) {
-            if ($edate == null) {
+            ]
+        ];
+        if (!is_null($date)) {
+            if (is_null($edate)) {
                 $edate = $date;
             }
-            $params['time_range'] = array('since' => $date, 'until' => $edate);
+            $params['time_range'] = ['since' => $date, 'until' => $edate];
             unset($params['date_preset']);
         }
         $account_id = $this->db->getAdAccounts(true);
@@ -269,15 +267,15 @@ class ZenithFB
         $total = $account_id->getNumRows();
         $step = 1;
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
-        $return = array();
+        $return = [];
         foreach ($accounts as $row) {
             $result = [];
             $this->setAdAccount($row['ad_account_id']);
-            $async_job = $this->account->getInsightsAsync(array(), $params);
+            $async_job = $this->account->getInsightsAsync([], $params);
             $getSelf = $async_job->getSelf();
             $count = 0;
             $continue = false;
-            while (!$getSelf->isComplete() && $continue == false) {
+            while (!$getSelf->isComplete() && !$continue) {
                 usleep(1);
                 $getSelf = $async_job->getSelf();
                 if ($count > 100 && !$getSelf->isComplete()) {
@@ -298,7 +296,7 @@ class ZenithFB
             // if(count($response['data'])) { echo '<pre>'.print_r($response,1).'</pre>'; exit; }
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
-                $url = @$response['paging']['next'];
+                $url = $response['paging']['next'] ?? '';
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
                     if (isset($data['data'])) $result = array_merge($result, $data['data']);
@@ -346,22 +344,22 @@ class ZenithFB
                 $this->access_token
             );
             $data = $response->getDecodedBody();
-            $results = array();
+            $results = [];
             // print_r($this->fb->next($data)); exit;
             // echo '<pre>'.print_r($data,1).'</pre>'; exit;
             // do {
-                $campaigns = $data['campaigns']['data'];
-                if(!@count($campaigns)) continue;
-                foreach($campaigns as $campaign) {
-                    $adsets = $campaign['adsets']['data'];
-                    if(!@count($adsets)) continue;
-                    foreach($adsets as $adset) {
-                        $ads = $adset['ads']['data'];
-                        if(!@count($ads)) continue;
-                        foreach($ads as $ad) {
-                            $adcreatives = $ad['adcreatives']['data'];
-                            if(!@count($adcreatives)) continue;
-                            for($i=0; $i<count($adcreatives); $i++) $adcreatives[$i]['ad_id'] = $ad['id'];
+                $campaigns = $data['campaigns']['data'] ?? [];
+                foreach ($campaigns as $campaign) {
+                    $adsets = $campaign['adsets']['data'] ?? [];
+                    foreach ($adsets as $adset) {
+                        $ads = $adset['ads']['data'] ?? [];
+                        foreach ($ads as $ad) {
+                            $adcreatives = $ad['adcreatives']['data'] ?? [];
+                            foreach ($adcreatives as &$adcreative) {
+                                $adcreative['ad_id'] = $ad['id'];
+                            }
+                            unset($adcreative);
+
                             $this->updateAdcreatives(null, $adcreatives);
                         }
                         $this->db->updateAds($ads);
@@ -378,38 +376,43 @@ class ZenithFB
     public function updateAdCreatives($data = null, $adcreatives = null)
     {
         if(is_null($adcreatives)) $adcreatives = $this->getAdCreatives($data);
-        $i = 0;
-        foreach ($adcreatives as $data) {
-            $result[$i]['adcreative_id'] = $data['id'];
-            $result[$i]['ad_id'] = $data['ad_id'];
-            // $data['thumbnail_url'] = str_replace('w=64&h=64', 'w=550&h=550', $data['thumbnail_url']); //썸네일 크기
-            $result[$i]['thumbnail_url'] = $data['thumbnail_url'];
-            $result[$i]['object_type'] = $data[AdCreativeFields::OBJECT_TYPE];
-            // echo '<pre>'.print_r($data,1).'</pre>'; ob_flush(); flush(); usleep(1);
-            if (in_array($data[AdCreativeFields::CALL_TO_ACTION_TYPE], ["LEARN_MORE", "APPLY_NOW"])) {
-                $object_story_spec = $data[AdCreativeFields::OBJECT_STORY_SPEC];
-                $video_data = $object_story_spec[AdCreativeObjectStorySpecFields::VIDEO_DATA];
-                $link_data = $object_story_spec[AdCreativeObjectStorySpecFields::LINK_DATA];
-                switch ($result[$i]['object_type']) {
-                    case 'SHARE':
-                    case 'STATUS':
-                        if (is_array($link_data)) { //슬라이드형
-                            $result[$i]['link'] = $link_data['link'];
-                        }
-                        break;
-                    case 'VIDEO':
-                        if (is_array($video_data)) { //비디오
-                            $result[$i]['link'] = $video_data['call_to_action']['value']['link'];
-                        }
-                        break;
-                    default:
 
-                        break;
+        $result = [];
+        foreach ($adcreatives as $data) {
+            $updatedAdCreative = [
+                'adcreative_id' => $data['id'],
+                'ad_id' => $data['ad_id'],
+                'thumbnail_url' => $data['thumbnail_url'] ?? '',
+                'object_type' => $data[AdCreativeFields::OBJECT_TYPE],
+            ];
+
+            // echo '<pre>'.print_r($data,1).'</pre>'; ob_flush(); flush(); usleep(1);
+            if (isset($data[AdCreativeFields::CALL_TO_ACTION_TYPE]) && in_array($data[AdCreativeFields::CALL_TO_ACTION_TYPE], ["LEARN_MORE", "APPLY_NOW"])) {
+                $object_story_spec = $data[AdCreativeFields::OBJECT_STORY_SPEC] ?? [];
+                $video_data = $object_story_spec[AdCreativeObjectStorySpecFields::VIDEO_DATA] ?? [];
+                $link_data = $object_story_spec[AdCreativeObjectStorySpecFields::LINK_DATA] ?? [];
+                if(isset($updatedAdCreative['object_type'])){
+                    switch ($updatedAdCreative['object_type']) {
+                        case 'SHARE':
+                        case 'STATUS':
+                            if (is_array($link_data)) { //슬라이드형
+                                $updatedAdCreative['link'] = $link_data['link'];
+                            }
+                            break;
+                        case 'VIDEO':
+                            if (is_array($video_data)) { //비디오
+                                $updatedAdCreative['link'] = $video_data['call_to_action']['value']['link'];
+                            }
+                            break;
+                        default:
+    
+                            break;
+                    }
                 }
-                if ($result[$i]['link'] == 'https://fb.me/' || $result[$i]['link'] == 'http://fb.me/')
-                    $result[$i]['link'] = '';
+                if (isset($updatedAdCreative['link']) && ($updatedAdCreative['link'] == 'https://fb.me/' || $updatedAdCreative['link'] == 'http://fb.me/'))
+                    $updatedAdCreative['link'] = '';
             }
-            $i++;
+            $result[] = $updatedAdCreative;
         }
         $this->db->updateAdCreatives($result);
         return $result;
@@ -417,12 +420,12 @@ class ZenithFB
       
     public function getAdCreatives($data = null)
     {
-        $result = array();
-        $params = array(
+        $result = [];
+        $params = [
             'thumbnail_width' => 250,
             'thumbnail_height' => 250,
-        );
-        $fields = array(
+        ];
+        $fields = [
             AdCreativeFields::ID,
             AdCreativeFields::BODY,
             AdCreativeFields::OBJECT_TYPE,
@@ -432,7 +435,7 @@ class ZenithFB
             AdCreativeFields::IMAGE_URL,
             AdCreativeFields::CALL_TO_ACTION_TYPE,
             AdCreativeFields::OBJECT_STORY_SPEC
-        );
+        ];
         if ($data == null) {
             $ad_ids = $this->db->getAdsWithAccount();
             foreach ($ad_ids->getResultArray() as $row) {
@@ -445,12 +448,12 @@ class ZenithFB
             $this->setAdId($row['ad_id']);
             $adcrearives = $this->ad->getAdCreatives($fields, $params);
             $response = $adcrearives->getResponse()->getContent();
-            if (!count($response['data'])) {
-                continue;
+
+            if (!empty($response['data'])) {
+                $response['data'][0]['ad_id'] = $row['ad_id'];
+                $result = array_merge($result, $response['data']);
+                // echo '<pre>'.nl2br(print_r($response['data'],1)).'</pre>';
             }
-            $response['data'][0]['ad_id'] = $row['ad_id'];
-            $result = array_merge($result, $response['data']);
-            // echo '<pre>'.nl2br(print_r($response['data'],1)).'</pre>';
         }
         return $result;
     }
@@ -459,8 +462,8 @@ class ZenithFB
       
     public function updateAds($data = null)
     {
-        $params = array(
-            'fields' => array(
+        $params = [
+            'fields' => [
                 AdFields::ID,
                 AdFields::NAME,
                 AdFields::ADSET_ID,
@@ -471,14 +474,13 @@ class ZenithFB
                 AdFields::CREATED_TIME,
                 AdFields::TRACKING_SPECS,
                 AdFields::CONVERSION_SPECS
-            )
-        );
+            ]
+        ];
         if ($data == null) {
             $ad_ids = $this->db->getAds();
             $data = $ad_ids->getResultArray();
         }
-        $result = array();
-        $cnt = 0;
+        $result = [];
         $_ids = [];
         $ids = [];
         foreach ($data as $row) $_ids[] = $row['ad_id'];
@@ -489,7 +491,7 @@ class ZenithFB
             CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $ad_id) {
                 $this->setAdId($ad_id);
-                $ads = $this->ad->getSelf(array(), $params);
+                $ads = $this->ad->getSelf([], $params);
                 $response = $ads->getData();
                 CLI::showProgress($step++, $total);
                 $result[] = [
@@ -513,8 +515,8 @@ class ZenithFB
     // 개별 광고세트 조회 업데이트   
     public function updateAdsets($data = null)
     {
-        $params = array(
-            'fields' => array(
+        $params = [
+            'fields' => [
                 AdSetFields::ID,
                 AdSetFields::NAME,
                 AdSetFields::CAMPAIGN_ID,
@@ -528,16 +530,15 @@ class ZenithFB
                 AdSetFields::DAILY_BUDGET,
                 AdSetFields::LIFETIME_BUDGET,
                 AdSetFields::BUDGET_REMAINING
-            )
-        );
+            ]
+        ];
         if ($data == null) {
             $adset_ids = $this->db->getAdSetsWithAccount();
             foreach ($adset_ids->getResultArray() as $row) {
                 $data[] = $row;
             }
         }
-        $result = array();
-        $cnt = 0;
+        $result = [];
         $_ids = [];
         $ids = [];
         foreach ($data as $row) $_ids[] = $row['adset_id'];
@@ -548,7 +549,7 @@ class ZenithFB
             CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $adset_id) {
                 $this->setAdsetId($adset_id);
-                $adset = $this->adset->getSelf(array(), $params);
+                $adset = $this->adset->getSelf([], $params);
                 $response = $adset->getData();
                 // echo '<pre>'.print_r($response,1).'</pre>'; exit;
                 CLI::showProgress($step++, $total);
@@ -575,8 +576,8 @@ class ZenithFB
     // 개별 캠페인 조회 업데이트
     public function updateCampaigns($data = null)
     {
-        $params = array(
-            'fields' => array(
+        $params = [
+            'fields' => [
                 CampaignFields::ID,
                 CampaignFields::NAME,
                 CampaignFields::ACCOUNT_ID,
@@ -592,16 +593,15 @@ class ZenithFB
                 CampaignFields::START_TIME,
                 CampaignFields::CREATED_TIME,
                 CampaignFields::UPDATED_TIME
-            )
-        );
+            ]
+        ];
         if ($data == null) {
             $campaign_ids = $this->db->getCampaignsWithAccount();
             foreach ($campaign_ids->getResultArray() as $row) {
                 $data[] = $row;
             }
         }
-        $result = array();
-        $cnt = 0;
+        $result = [];
         $_ids = [];
         $ids = [];
         foreach ($data as $row) $_ids[] = $row['campaign_id'];
@@ -612,7 +612,7 @@ class ZenithFB
             CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
             foreach ($ids as $campaign_id) {
                 $this->setCampaignId($campaign_id);
-                $campaign = $this->campaign->getSelf(array(), $params);
+                $campaign = $this->campaign->getSelf([], $params);
                 $response = $campaign->getData();
                 CLI::showProgress($step++, $total);
                 $result[] = [
@@ -641,10 +641,10 @@ class ZenithFB
     // 광고 조회   
     public function getAds()
     {
-        $params = array(
+        $params = [
             // 'time_range' => ['since'=>date('Y-m-d', strtotime('-2 year')), 'until'=>date('Y-m-d')],
             // 'date_preset' => 'today',
-            AdFields::EFFECTIVE_STATUS => array(
+            AdFields::EFFECTIVE_STATUS => [
                 'ACTIVE',
                 // 'ADSET_PAUSED',
                 // 'ARCHIVED',
@@ -657,13 +657,13 @@ class ZenithFB
                 'PENDING_REVIEW',
                 'PREAPPROVED',
                 'WITH_ISSUES'
-            ),
+            ],
             /*
             AdFields::STATUS => array(
                 'ACTIVE',
                 'PAUSED'
             ),*/
-            'fields' => array(
+            'fields' => [
                 AdFields::ID,
                 AdFields::NAME,
                 AdFields::ADSET_ID,
@@ -674,19 +674,19 @@ class ZenithFB
                 AdFields::CREATED_TIME,
                 AdFields::TRACKING_SPECS,
                 AdFields::CONVERSION_SPECS
-            )
-        );
+            ]
+        ];
 
         $ad_accounts = $this->db->getAdAccounts();          // 각 광고 계정별
         $total = $ad_accounts->getNumRows();
         $step = 1;
-        $result = array();
+        $result = [];
         $cnt = 0;
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고 데이터 수신을 시작합니다.", "light_red");
         foreach ($ad_accounts->getResultArray() as $row) {
             // $row['ad_account_id'] = 796319794698742;
             $this->setAdAccount($row['ad_account_id']);
-            $ads = $this->account->getAds(array(), $params);
+            $ads = $this->account->getAds([], $params);
             $response = $ads->getResponse()->getContent();
             CLI::showProgress($step++, $total);
             $result = array_merge($result, $response['data']);
@@ -730,21 +730,21 @@ class ZenithFB
       
     public function getAdLead($from = "-1 day", $to = null)
     {
-        $result = array();
-        $params = array();
+        $result = [];
+        $params = [];
 
         // 시작 날짜
         $from_dt = new DateTime($from);
         $from_dt->format('Y-m-d 00:00:00');
         $from_date = $from_dt->getTimestamp();
 
-        $params['filtering'] = array(
-            array(
+        $params['filtering'] = [
+            [
                 'field'     => 'time_created',
                 'operator'  => 'GREATER_THAN',
                 'value'     => $from_date
-            ),
-        );
+            ],
+        ];
 
         // 끝 날짜
         if ($from != "-1 day" && $to != null) {
@@ -752,14 +752,14 @@ class ZenithFB
             $to_dt->format('Y-m-d H:i:s');
             $to_date = $to_dt->getTimestamp();
 
-            $params['filtering'][1] = array(
+            $params['filtering'][1] = [
                 'field'     => 'time_created',
                 'operator'  => 'LESS_THAN',
                 'value'     => $to_date
-            );
+            ];
         }
 
-        $fields = array(
+        $fields = [
             LeadFields::ID,
             LeadFields::FORM_ID,
             LeadFields::AD_ID,
@@ -772,7 +772,7 @@ class ZenithFB
             LeadFields::FIELD_DATA,
             LeadFields::CREATED_TIME,
             LeadFields::CUSTOM_DISCLAIMER_RESPONSES
-        );
+        ];
         
         $ad_ids = $this->db->getLeadgenAds(); //from DB
         $total = $ad_ids->getNumRows();
@@ -833,9 +833,9 @@ class ZenithFB
         }
 
         $this->setCampaignId($id);
-        $campaign = $this->campaign->updateSelf(array(), array(
+        $campaign = $this->campaign->updateSelf([], [
             Campaign::STATUS_PARAM_NAME => $status,
-        ));
+        ]);
         
         $campaign = $campaign->getData();
         if ($campaign['success'] == 1) {
@@ -856,9 +856,9 @@ class ZenithFB
         }
 
         $this->setAdsetId($id);
-        $adset = $this->adset->updateSelf(array(), array(
+        $adset = $this->adset->updateSelf([], [
             AdSet::STATUS_PARAM_NAME => $status,
-        ));
+        ]);
         $adset = $adset->getData();
         if ($adset['success'] == 1) {
             $this->db->setAdsetStatus($id, $status);
@@ -878,9 +878,9 @@ class ZenithFB
         }
 
         $this->setAdId($id);
-        $ad = $this->ad->updateSelf(array(), array(
+        $ad = $this->ad->updateSelf([], [
             Ad::STATUS_PARAM_NAME => $status,
-        ));
+        ]);
         $ad = $ad->getData();
         if ($ad['success'] == 1) {
             $this->db->setAdStatus($id, $status);
@@ -891,6 +891,62 @@ class ZenithFB
         return null;
     }
 
+    public function updateCampaignBudget($data)
+    {
+        //한개씩 캠페인 일일예산 수정
+        $campaign_id = $data['id'];
+        $budget = $data['budget'];
+        if (!$campaign_id) {
+            return false;
+        }
+        $row = $this->db->getCampaign($campaign_id);
+
+        // 기본 정보 설정
+        $campaignfields = [CampaignFields::DAILY_BUDGET => $budget];
+
+        $campaign = new Campaign($campaign_id);
+        // $campaign->setData($campaignfields);
+        $campaign = $campaign->updateSelf([], $campaignfields);
+        $campaign = $campaign->getData();
+        if ($campaign['success'] == 1) {
+            $this->db->updateCampaignBudget($campaign_id, $budget);
+            return $campaign_id;
+        }
+        return null;
+    }
+
+    public function updateAdSetBudget($data)
+    {
+        //한개씩 일일예산 수정
+        $adset_id = $data['id'];
+        $budget = $data['budget'];
+        if (!$adset_id || $budget < 1000) {
+            return false;
+        }
+        $row = $this->db->getAdSet($adset_id);
+
+        switch ($row['budget_type']) {
+            case 'lifetime':
+                $field = AdSetFields::LIFETIME_BUDGET;
+                break;
+            case 'daily':
+                $field = AdSetFields::DAILY_BUDGET;
+                break;
+        }
+        // 기본 정보 설정
+        $adsetfields = [$field => $budget];
+
+        $adset = new AdSet($adset_id);
+        // $adset->setData($adsetfields);
+        $adset = $adset->updateSelf([], $adsetfields);
+        $adset = $adset->getData();
+        if ($adset['success'] == 1) {
+            $this->db->updateAdSetBudget($adset_id, $budget);
+            return $adset_id;
+        }
+        return null;
+    }
+    
     public function updateName($data)
     {
         if (!trim($data['id']) || !trim($data['type'])) {
@@ -920,7 +976,7 @@ class ZenithFB
         }
         $campaign = new Campaign($data['id']);
         // $campaign->setData($fields);
-        $campaign = $campaign->updateSelf(array(), $data);
+        $campaign = $campaign->updateSelf([], $data);
         $campaign = $campaign->getData();
         if ($campaign['success'] == 1) {
             return $data;
@@ -937,7 +993,7 @@ class ZenithFB
         }
         $adset = new AdSet($data['id']);
         // $adset->setData($fields);
-        $adset = $adset->updateSelf(array(), $data);
+        $adset = $adset->updateSelf([], $data);
         $adset = $adset->getData();
         if ($adset['success'] == 1) {
             
@@ -955,7 +1011,7 @@ class ZenithFB
         }
         $ad = new Ad($data['id']);
         // $ad->setData($fields);
-        $ad = $ad->updateSelf(array(), $data);
+        $ad = $ad->updateSelf([], $data);
         $ad = $ad->getData();
         if ($ad['success'] == 1) {
             return $data;
@@ -964,7 +1020,7 @@ class ZenithFB
     
     private function updateCampaignName($data)
     {
-        $fields = array(CampaignFields::NAME => $data['name']);
+        $fields = [CampaignFields::NAME => $data['name']];
         $apiResult = $this->updateCampaign($fields, $data);
         if ($apiResult) {
             $this->db->updateCampaignName($data);
@@ -975,7 +1031,7 @@ class ZenithFB
 
     private function updateAdsetName($data)
     {
-        $fields = array(AdSetFields::NAME => $data['name']);
+        $fields = [AdSetFields::NAME => $data['name']];
         $apiResult = $this->updateAdset($fields, $data);
         if ($apiResult) {
             $this->db->updateAdsetName($data);
@@ -986,7 +1042,7 @@ class ZenithFB
 
     private function updateAdName($data)
     {
-        $fields = array(AdFields::NAME => $data['name']);
+        $fields = [AdFields::NAME => $data['name']];
         $apiResult = $this->updateAd($fields, $data);
         if ($apiResult) {
             $this->db->updateAdName($data);

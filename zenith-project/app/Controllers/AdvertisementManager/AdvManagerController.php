@@ -29,7 +29,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
@@ -695,6 +695,108 @@ class AdvManagerController extends BaseController
             }else{
                 return $this->fail("잘못된 요청");
             }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function updateBudget()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+            $param = $this->request->getRawInput(); 
+            $sliceId = explode("_", $param['id']);
+            $data = [
+                'media' => $sliceId[0],
+                'id' => $sliceId[1],
+                'customer' => $param['customer'],
+                'tab' => $param['tab'],
+                'budget' => $param['budget'],
+            ];
+
+            switch ($data['tab']) {
+                case 'ads':
+                    return $this->fail("지원하지 않습니다.");
+                    break;
+                case 'adsets':
+                    switch ($data['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
+                            $result = $zenith->updateAdSetBudget($data);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'facebook'
+                                ];
+                            }
+                            break;
+                        case 'kakao':
+                            $data['type'] = 'adgroup';
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setDailyBudgetAmount($data);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'kakao'
+                                ];
+                            }
+                            break;
+                        case 'google':
+                            return $this->fail("지원하지 않습니다.");
+                            break;
+                        default:
+                        return $this->fail("지원하지 않습니다.");
+                    }
+                    break;
+                case 'campaigns':
+                    switch ($data['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
+                            $result = $zenith->updateCampaignBudget($data);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'facebook'
+                                ];
+                            }
+                            break;
+                        case 'kakao':
+                            $data['type'] = 'campaign';
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setDailyBudgetAmount($data);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'kakao'
+                                ];
+                            }
+                            break;
+                        case 'google':
+                            return $this->fail("지원하지 않습니다.");
+                            /* $param = ['budget' => $data['budget']];
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateCampaignBudget($data['customer'], $data['id'], $param);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'kakao'
+                                ];
+                            } */
+                            break;
+                        default:
+                            return $this->fail("지원하지 않습니다.");
+                    }
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
+
+            if(!empty($result) && $result['id'] == $data['id']){
+                $result = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+
         }else{
             return $this->fail("잘못된 요청");
         }

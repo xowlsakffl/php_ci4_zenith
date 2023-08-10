@@ -42,6 +42,32 @@ class FBDB extends Config
         return $result;
     }
 
+    public function getCampaign($campaign_id)
+    {
+        if (!$campaign_id) {
+            return null;
+        }
+
+        $sql = "SELECT * FROM fb_campaign WHERE campaign_id = {$campaign_id}";
+        $result = $this->db_query($sql);
+        $row = $result->getRowArray();
+
+        return $row;
+    }
+
+    public function getAdset($adset_id)
+    {
+        if (!$adset_id) {
+            return null;
+        }
+
+        $sql = "SELECT * FROM fb_adset WHERE adset_id = {$adset_id}";
+        $result = $this->db_query($sql);
+        $row = $result->getRowArray();
+
+        return $row;
+    }
+
     // 광고 목록   
     public function getAds($query = '')
     {
@@ -199,6 +225,7 @@ class FBDB extends Config
     {
         if (is_array($data) && count($data)) {
             foreach ($data as $row) {
+                $link = $row['link'] ?? '';
                 $sql = "INSERT INTO fb_adcreative(
                             adcreative_id,
                             ad_id,
@@ -211,13 +238,13 @@ class FBDB extends Config
                             '{$row['ad_id']}',
                             '{$row['object_type']}',
                             '{$row['thumbnail_url']}',
-                            '{$row['link']}',
+                            '{$link}',
                             NOW()
                         ) ON DUPLICATE KEY UPDATE
                             adcreative_id = '{$row['adcreative_id']}',
                             object_type = '{$row['object_type']}',
                             thumbnail = '{$row['thumbnail_url']}',
-                            link = '{$row['link']}',
+                            link = '{$link}',
                             update_date = NOW();";
                 $this->db_query($sql);
             }
@@ -347,17 +374,27 @@ class FBDB extends Config
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
             $name = $this->db->escape($report['name']);
-            if ($report['lifetime_budget']) {
+            if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
                 $budget = $report['lifetime_budget'];
-            } elseif ($report['daily_budget']) {
+            } elseif (isset($report['daily_budget'])) {
                 $budget_type = 'daily';
                 $budget = $report['daily_budget'];
             } else {
                 $budget_type = NULL;
                 $budget = 'NULL';
             }
-            $lst_sig_edit_ts = $report['learning_stage_info']['last_sig_edit_ts'] ? date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']) : '0000-00-00 00:00:00';
+
+            $lst_sig_edit_ts = '0000-00-00 00:00:00';
+            if(isset($report['learning_stage_info'])){
+                if(isset($report['learning_stage_info']['last_sig_edit_ts'])){
+                    $lst_sig_edit_ts = date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']);
+                }
+            }
+            
+            $lsiConversions = $report['learning_stage_info']['conversions'] ?? '';
+            $lsiStatus = $report['learning_stage_info']['status'] ?? '';
+
             $sql = "INSERT INTO fb_adset (
                         adset_id,
                         adset_name,
@@ -378,8 +415,8 @@ class FBDB extends Config
                         '{$report['effective_status']}',
                         '{$report['status']}',
                         '{$start_time}',
-                        '{$report['learning_stage_info']['conversions']}',
-                        '{$report['learning_stage_info']['status']}',
+                        '{$lsiConversions}',
+                        '{$lsiStatus}',
                         '{$lst_sig_edit_ts}',
                         '{$created_time}',
                         '{$updated_time}',
@@ -392,8 +429,8 @@ class FBDB extends Config
 						effective_status = '{$report['effective_status']}',
 						status = '{$report['status']}',
 						start_time = '{$start_time}',
-						lsi_conversions = '{$report['learning_stage_info']['conversions']}',
-                        lsi_status = '{$report['learning_stage_info']['status']}',
+						lsi_conversions = '{$lsiConversions}',
+                        lsi_status = '{$lsiStatus}',
                         lsi_last_sig_edit_ts = '{$lst_sig_edit_ts}',
                         created_time = '{$created_time}',
 						updated_time = '{$updated_time}',
@@ -442,11 +479,11 @@ class FBDB extends Config
             $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
-            $spend_cap = $report['spend_cap'] ? $report['spend_cap'] : 'NULL';
-            if ($report['lifetime_budget']) {
+            $spend_cap = isset($report['spend_cap']) ? $report['spend_cap'] : 'NULL';
+            if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
                 $budget = $report['lifetime_budget'];
-            } elseif ($report['daily_budget']) {
+            } elseif (isset($report['daily_budget'])) {
                 $budget_type = 'daily';
                 $budget = $report['daily_budget'];
             } else {
@@ -667,6 +704,25 @@ class FBDB extends Config
         $result = $this->db_query($sql);
         if (!$result) return null;
         return $result->getResultArray();
+    }
+
+    public function updateCampaignBudget($campaign_id, $budget)
+    {
+        $sql = "UPDATE fb_campaign set budget = {$budget} where campaign_id = {$campaign_id}";
+        $result = $this->db_query($sql);
+        $sql = "UPDATE fb_adset set budget_type = '', budget = NULL, budget_remaining = NULL where campaign_id = {$campaign_id}";
+        $result = $this->db_query($sql);
+
+        if (!$result) return null;
+        return true;
+    }
+
+    public function updateAdSetBudget($adset_id, $budget)
+    {
+        $sql = "UPDATE fb_adset set budget = {$budget} where adset_id = {$adset_id}";
+        $result = $this->db_query($sql);
+        if (!$result) return null;
+        return true;
     }
 
     public function getAppSubscribe($data)
