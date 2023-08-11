@@ -85,7 +85,7 @@ class FBDB extends Config
         return $result;
     }
       
-    public function getAdSetsWithAccount($selector = array('adset_id', 'campaign_id'), $query = '')
+    public function getAdSetsWithAccount($selector = ['adset_id', 'campaign_id'], $query = '')
     {
         $select = implode(',', $selector);
         $sql = "SELECT {$select} FROM fb_adset_with_account WHERE 1 {$query} ORDER BY update_date DESC";
@@ -111,8 +111,19 @@ class FBDB extends Config
       
     public function updateAdAccounts($list)
     {
-        $this->db->query("UPDATE fb_ad_account SET status = 0, perm = 0 WHERE business_id = '{$list[0][0]}'");
+        if (!$list) {
+            return null;
+        }
+
+        if(!empty($list[0][0])){
+            $this->db->query("UPDATE fb_ad_account SET status = 0, perm = 0 WHERE business_id = '{$list[0][0]}'");
+        }
+        
         foreach ($list as $key => $row) {
+            if (empty($row)) {
+                continue;
+            }
+
             $sql = "INSERT INTO fb_ad_account (business_id, ad_account_id, name, funding_source, status, pixel_id, perm, update_time)
 					VALUES ('{$row[0]}', '{$row[1]}', '{$row[2]}', '{$row[3]}', {$row[4]}, {$row[5]}, 1, NOW())
 					ON DUPLICATE KEY
@@ -225,6 +236,10 @@ class FBDB extends Config
     {
         if (is_array($data) && count($data)) {
             foreach ($data as $row) {
+                if (empty($row)) {
+                    continue;
+                }
+                
                 $link = $row['link'] ?? '';
                 $sql = "INSERT INTO fb_adcreative(
                             adcreative_id,
@@ -631,36 +646,57 @@ class FBDB extends Config
     // 광고 활성/종료 업데이트하는
     public function setCampaignStatus($campaign_id, $status)
     {
+        if (!$campaign_id || !$status) {
+            return null;
+        }
         $sql = "UPDATE fb_campaign SET status = '$status' WHERE campaign_id = '$campaign_id'";
         $result = $this->db_query($sql);
     }
 
     public function setAdsetStatus($adset_id, $status)
     {
+        if (!$adset_id || !$status) {
+            return null;
+        }
         $sql = "UPDATE fb_adset SET status = '$status' WHERE adset_id = '$adset_id'";
         $this->db_query($sql);
     }
 
     public function setAdStatus($ad_id, $status)
     {
+        if (!$ad_id || !$status) {
+            return null;
+        }
         $sql = "UPDATE fb_ad SET status = '$status' WHERE ad_id = '$ad_id'";
         $this->db_query($sql);
     }
     
     public function updateCampaignName($data)
     {
+        if (empty($data)) {
+            return null;
+        }
+
         $sql = "UPDATE fb_campaign SET campaign_name = '{$data['name']}' WHERE campaign_id = {$data['id']}";
         $result = $this->db_query($sql);
     }
 
     public function updateAdsetName($data)
     {
+        if (empty($data)) {
+            return null;
+        }
+
         $sql = "UPDATE fb_adset SET adset_name = '{$data['name']}' WHERE adset_id = {$data['id']}";
         $result = $this->db_query($sql);
     }
 
     public function updateAdName($data)
     {
+        if (empty($data)) {
+            return null;
+        }
+        
         $sql = "UPDATE fb_ad SET ad_name = '{$data['name']}' WHERE ad_id = {$data['id']}";
         $result = $this->db_query($sql);
     }
