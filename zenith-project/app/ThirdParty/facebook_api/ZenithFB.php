@@ -238,10 +238,10 @@ class ZenithFB
 
             $this->db->insertAsyncInsights($result);
             if ($all == "true") {
-                /* $this->updateAds($result);
+                $this->updateAds($result);
                 $this->updateAdCreatives($result);
                 $this->updateAdsets($result);
-                $this->updateCampaigns($result); */
+                $this->updateCampaigns($result);
             }
             $return = array_merge($return, $result);
         }

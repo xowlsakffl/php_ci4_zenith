@@ -171,7 +171,7 @@ class FBDB extends Config
 							inline_link_clicks = {$report['inline_link_clicks']},
 							spend = {$report['spend']},
 							update_date = NOW();";
-                echo $sql.'<br>';
+                // echo $sql.'<br>';
                 $this->db_query($sql);
             }
             // 캠페인 저장
