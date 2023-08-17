@@ -14,7 +14,7 @@ class JiraController extends BaseController
 {
     use ResponseTrait;
     
-    private $jira, $zenith;
+    private $jira;
 
     public function __construct()
     {
@@ -56,12 +56,5 @@ class JiraController extends BaseController
         }else{
             return $this->fail("잘못된 요청");
         }
-    }
-
-    public function test()
-    {
-        $this->zenith = new ZenithFB();  
-        CLI::write("시작", "light_red");
-        $this->zenith->getAsyncInsights("true", date('Y-m-d'), date('Y-m-d'));
     }
 }

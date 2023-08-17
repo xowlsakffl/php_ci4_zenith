@@ -12,6 +12,7 @@ $uri = current_url(true)->getPath();
             <li>
                 <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>통합 DB관리</button></a>
             </li>
+            <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
                 <div class="collapse" id="accounting">
@@ -25,6 +26,7 @@ $uri = current_url(true)->getPath();
             <li>
                 <a href="/humanresource/management" class="<?php if($uri === '/humanresource/management'){ echo "active";}?>"><button><i class="bi bi-person-vcard-fill"></i>인사 관리</button></a>                
             </li>
+            <?php }?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false"><i class="bi bi-calendar-week"></i>이벤트</button>
                 <div class="collapse" id="event">
@@ -43,7 +45,9 @@ $uri = current_url(true)->getPath();
                 <div class="collapse" id="user">
                     <ul class="btn-toggle-nav">
                         <li><a href="/company" class="<?php if($uri === '/company'){ echo "active";}?>">광고주/광고대행사 관리</a></li>
+                        <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
                         <li><a href="/user" class="<?php if($uri === '/user'){ echo "active";}?>">회원 관리</a></li>
+                        <?php }?>
                     </ul>
                 </div>
             </li>

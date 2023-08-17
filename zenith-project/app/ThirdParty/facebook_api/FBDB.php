@@ -44,7 +44,7 @@ class FBDB extends Config
 
     public function getCampaign($campaign_id)
     {
-        if (!$campaign_id) {
+        if (empty($campaign_id)) {
             return null;
         }
 
@@ -57,7 +57,7 @@ class FBDB extends Config
 
     public function getAdset($adset_id)
     {
-        if (!$adset_id) {
+        if (empty($adset_id)) {
             return null;
         }
 
@@ -111,7 +111,7 @@ class FBDB extends Config
       
     public function updateAdAccounts($list)
     {
-        if (!$list) {
+        if (empty($list)) {
             return null;
         }
 
@@ -487,7 +487,7 @@ class FBDB extends Config
     public function updateCampaigns($data)
     {
         foreach ($data as $key => $report) {
-            if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
+            if (empty($report['budget_remaining'])) $report['budget_remaining'] = 'NULL';
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
@@ -646,7 +646,7 @@ class FBDB extends Config
     // 광고 활성/종료 업데이트하는
     public function setCampaignStatus($campaign_id, $status)
     {
-        if (!$campaign_id || !$status) {
+        if (empty($campaign_id) || empty($status)) {
             return null;
         }
         $sql = "UPDATE fb_campaign SET status = '$status' WHERE campaign_id = '$campaign_id'";
@@ -655,7 +655,7 @@ class FBDB extends Config
 
     public function setAdsetStatus($adset_id, $status)
     {
-        if (!$adset_id || !$status) {
+        if (empty($adset_id) || empty($status)) {
             return null;
         }
         $sql = "UPDATE fb_adset SET status = '$status' WHERE adset_id = '$adset_id'";
@@ -664,7 +664,7 @@ class FBDB extends Config
 
     public function setAdStatus($ad_id, $status)
     {
-        if (!$ad_id || !$status) {
+        if (empty($ad_id) || empty($status)) {
             return null;
         }
         $sql = "UPDATE fb_ad SET status = '$status' WHERE ad_id = '$ad_id'";
@@ -704,7 +704,7 @@ class FBDB extends Config
     public function updateInsight($data)
     {
         $row = $data;
-        if(!$row['data']) return;
+        if(empty($row['data'])) return;
         foreach($row['data'] as $v) {
             if ($row['ad_id']) {
                 $sql = "UPDATE `z_facebook`.`fb_ad_insight_history` 
@@ -735,10 +735,10 @@ class FBDB extends Config
 
     public function getDbPrice($data)
     {
-        if (!$data['ad_id'] || !$data['date']) return NULL;
+        if (empty($data['ad_id']) || empty($data['date'])) return NULL;
         $sql = "SELECT ad_id, date, db_price FROM `z_facebook`.`fb_ad_insight_history` WHERE `ad_id` = '{$data['ad_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
         $result = $this->db_query($sql);
-        if (!$result) return null;
+        if (empty($result)) return null;
         return $result->getResultArray();
     }
 
@@ -749,7 +749,7 @@ class FBDB extends Config
         $sql = "UPDATE fb_adset set budget_type = '', budget = NULL, budget_remaining = NULL where campaign_id = {$campaign_id}";
         $result = $this->db_query($sql);
 
-        if (!$result) return null;
+        if (empty($result)) return null;
         return true;
     }
 
@@ -757,13 +757,13 @@ class FBDB extends Config
     {
         $sql = "UPDATE fb_adset set budget = {$budget} where adset_id = {$adset_id}";
         $result = $this->db_query($sql);
-        if (!$result) return null;
+        if (empty($result)) return null;
         return true;
     }
 
     public function getLeads($data)
     {
-        if (!$data['event_seq']) return null;
+        if (empty($data['event_seq'])) return null;
         $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
                 FROM `zenith`.`event_leads`
                 WHERE `reg_timestamp` >= unix_timestamp('{$data['date']}')
@@ -776,7 +776,7 @@ class FBDB extends Config
 
     public function db_query($sql, $error = false)
     {
-        if (!$sql) return false;
+        if (empty($sql)) return false;
         $result = null;
         if (preg_match('#^select.*#i', trim($sql)))
             $this->sltDB = $this->db2;

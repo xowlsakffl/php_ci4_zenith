@@ -83,7 +83,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     // 회원 관리
     $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        //사용자 관리
         $routes->get('user', 'User\UserController::index');
         $routes->get('user/get-users', 'User\UserController::getUsers');
         $routes->get('user/get-user', 'User\UserController::getUser');
@@ -132,7 +131,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 회계 관리
-    $routes->group('accounting', static function($routes){   
+    $routes->group('accounting', ['filter' => 'group:admin,superadmin'], static function($routes){   
         $routes->get('tax', 'Accounting\TaxController::tax');
         $routes->get('taxList', 'Accounting\TaxController::taxList');
         $routes->get('unpaid', 'Accounting\UnpaidController::unpaid');
@@ -141,7 +140,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 인사 관리
-    $routes->group('humanresource', static function($routes){   
+    $routes->group('humanresource', ['filter' => 'group:admin,superadmin'], static function($routes){   
         $routes->get('management', 'HumanResource\HumanResourceController::humanResource');
     });
 
