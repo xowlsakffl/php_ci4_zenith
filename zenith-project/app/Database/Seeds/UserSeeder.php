@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         $data = [
-            array(
+            /* array(
                 "username" => "yskim",
                 "email" => "ryan1219@carelabs.co.kr"
             ),
@@ -42,12 +42,12 @@ class UserSeeder extends Seeder
             array(
                 "username" => "hermesheo",
                 "email" => "min.heo@carelabs.co.kr"
-            ),
+            ), */
             /* array(
                 "username" => "jms",
                 "email" => "jms@carelabs.co.kr"
             ), */
-            array(
+            /* array(
                 "username" => "kumssac",
                 "email" => "kumssac@carelabs.co.kr"
             ),
@@ -58,12 +58,12 @@ class UserSeeder extends Seeder
             array(
                 "username" => "yjj",
                 "email" => "yjj@carelabs.co.kr"
-            ),
+            ), */
             /* array(
                 "username" => "jaybe",
                 "email" => "jaybe@carelabs.co.kr"
             ), */
-            array(
+            /* array(
                 "username" => "dltjwls247",
                 "email" => "seo@carelabs.co.kr"
             ),
@@ -142,12 +142,12 @@ class UserSeeder extends Seeder
             array(
                 "username" => "future",
                 "email" => "future@carelabs.co.kr"
-            ),
+            ), */
             /* array(
                 "username" => "tjwlgml47",
                 "email" => "tjwlgml47@carelabs.co.kr"
             ), */
-            array(
+            /* array(
                 "username" => "azure871129",
                 "email" => "yjm@carelabs.co.kr"
             ),
@@ -166,12 +166,12 @@ class UserSeeder extends Seeder
             array(
                 "username" => "dkstjrals",
                 "email" => "dkstjrals@carelabs.co.kr"
-            ),
+            ), */
             /* array(
                 "username" => "ms1114",
                 "email" => "ms1114@carelabs.co.kr"
             ), */
-            array(
+            /* array(
                 "username" => "khjkhj1202",
                 "email" => "khjkhj1202@carelabs.co.kr"
             ),
@@ -182,6 +182,16 @@ class UserSeeder extends Seeder
             array(
                 "username" => "chanyeong",
                 "email" => "chanyeong@carelabs.co.kr"
+            ), */
+            array(
+                "username" => "pjh8778",
+                "nickname" => "박종호",
+                "email" => "pjh8778@carelabs.co.kr",
+            ),
+            array(
+                "username" => "sungjin",
+                "nickname" => "박성진",
+                "email" => "sunshine_psj@carelabs.co.kr"
             ),
         ];
 
@@ -191,8 +201,6 @@ class UserSeeder extends Seeder
             $userModel = model(UserModel::class);
             $user = new User();
             $user->fill($data[$i]);
-            $user->status = 1;
-            $user->status_message = '활성';
             $userModel->save($user);
             $user = $userModel->findById($userModel->getInsertID());
 

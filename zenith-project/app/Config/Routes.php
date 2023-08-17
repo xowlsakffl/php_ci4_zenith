@@ -60,9 +60,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 
     $routes->get('board/list', 'BoardController::index');
 
-    // 회원 관리
-    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
-        //광고주, 광고대행사 관리
+    //광고주, 광고대행사 관리
+    $routes->group('', ['filter' => 'group:admin,superadmin,user', 'permission:admin.access,admin.settings,agency.access'], static function($routes){
         $routes->get('company', 'Company\CompanyController::index');
         $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
         $routes->get('company/get-company', 'Company\CompanyController::getCompany');
@@ -80,7 +79,10 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('company/get-company-adaccounts', 'Company\CompanyController::getCompanyAdAccounts');
         $routes->put('company/set-adaccounts', 'Company\CompanyController::setCompanyAdAccount');
         $routes->delete('company/except-company-adaccount', 'Company\CompanyController::exceptCompanyAdAccount');
+    });
 
+    // 회원 관리
+    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
         //사용자 관리
         $routes->get('user', 'User\UserController::index');
         $routes->get('user/get-users', 'User\UserController::getUsers');

@@ -314,6 +314,7 @@ function setData() {
 function getCompanyList(){
     dataTable = $('#deviceTable').DataTable({
         "autoWidth": true,
+        "order": [[5, 'desc']],
         "columnDefs": [
             { targets: [0], orderable: false},
         ],
@@ -769,6 +770,10 @@ function getAdAccounts(){
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
+});
+
+$('#adv-create').on('hidden.bs.modal', function(e) { //modal Reset
+    $('form[name="adv-create-form"]')[0].reset();
 });
 
 $('#adv-show').on('show.bs.modal', function(e) {

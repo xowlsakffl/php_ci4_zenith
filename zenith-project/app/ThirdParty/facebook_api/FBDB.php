@@ -136,10 +136,10 @@ class FBDB extends Config
     public function insertAsyncInsights($data)
     {
         foreach ($data as $key => $report) {
-            if (!$report['impressions']) $report['impressions'] = 0;
-            if (!$report['clicks']) $report['clicks'] = 0;
-            if (!$report['inline_link_clicks']) $report['inline_link_clicks'] = 0;
-            if (!$report['spend']) $report['spend'] = 0;
+            if (empty($report['impressions'])) $report['impressions'] = 0;
+            if (empty($report['clicks'])) $report['clicks'] = 0;
+            if (empty($report['inline_link_clicks'])) $report['inline_link_clicks'] = 0;
+            if (empty($report['spend'])) $report['spend'] = 0;
             if ($report['date_start'] == $report['date_stop']) {
                 $hour = ($report['date_start'] == date('Y-m-d'))?date('H'):'23';
                 if($report['hourly_stats_aggregated_by_audience_time_zone'])
@@ -171,7 +171,7 @@ class FBDB extends Config
 							inline_link_clicks = {$report['inline_link_clicks']},
 							spend = {$report['spend']},
 							update_date = NOW();";
-                // echo $sql.'<br>';
+                echo $sql.'<br>';
                 $this->db_query($sql);
             }
             // 캠페인 저장
@@ -761,7 +761,7 @@ class FBDB extends Config
         return true;
     }
 
-    public function getAppSubscribe($data)
+    public function getLeads($data)
     {
         if (!$data['event_seq']) return null;
         $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count

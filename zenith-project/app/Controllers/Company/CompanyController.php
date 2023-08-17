@@ -61,11 +61,16 @@ class CompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
-                $agency = $this->company->getAgencyByName($param['p_name']); 
                 $validation = \Config\Services::validation();
-                if(empty($agency)) {
-                    return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);
+                if(!empty($param['p_name'])){
+                    $agency = $this->company->getAgencyByName($param['p_name']); 
+                    if(empty($agency)) {
+                        return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);
+                    }
+                }else{
+                    $agency = '';
                 }
+                
                 $validation->setRules($this->company->validationRules, $this->company->validationMessages);
                 if (!$validation->run($param)) {
                     $errors = $validation->getErrors();
@@ -88,10 +93,14 @@ class CompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put') {
             $param = $this->request->getRawInput();
             if (!empty($param)) {
-                $agency = $this->company->getAgencyByName($param['p_name']); 
                 $validation = \Config\Services::validation();
-                if(empty($agency)) {
-                    return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);
+                if(!empty($param['p_name'])){
+                    $agency = $this->company->getAgencyByName($param['p_name']); 
+                    if(empty($agency)) {
+                        return $this->failValidationErrors(["p_name" => "존재하지 않는 대행사입니다."]);
+                    }
+                }else{
+                    $agency = '';
                 }
                 $validation->setRules($this->company->validationRules, $this->company->validationMessages);
                 if (!$validation->run($param)) {

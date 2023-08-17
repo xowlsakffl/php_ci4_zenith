@@ -11,19 +11,26 @@ class CompanySeeder extends Seeder
     public function run()
     {
         $company = new CompanyModel;
-        $faker = \Faker\Factory::create();
 
-        for ($i = 0; $i < 20; $i++) {
-          $company->save(
-                [
-                    'companyType' =>    $faker->randomElement(['광고주', '광고대행사']),
-                    'companyName' =>    $faker->company(),
-                    'companyTel'  =>    $faker->phoneNumber(),
-                    'created_at'  =>    Time::createFromTimestamp($faker->unixTime()),
-                    'updated_at'  =>    Time::now(),
-                    'deleted_at'  =>    NULL,
-                ]
-            );
+        $faker = \Faker\Factory::create();
+        $db = \Config\Database::connect();
+        $builder = $db->table('event_advertiser');
+        $builder->select('
+			name
+		');
+        $adv = $builder->get()->getResultArray();
+        foreach($adv as $v){
+        $data = [
+            'type' =>    '',
+            'name' =>    $v['name'],
+            'tel'  =>    '',
+            'created_at'  =>    Time::createFromTimestamp($faker->unixTime()),
+            'updated_at'  =>    Time::now(),
+            'deleted_at'  =>    NULL,
+        ];
+
+        $builder = $db->table('companies');
+        $builder->insert($data);
         }
     }
 }

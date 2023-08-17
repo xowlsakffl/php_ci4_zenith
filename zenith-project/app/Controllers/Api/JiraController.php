@@ -62,8 +62,6 @@ class JiraController extends BaseController
     {
         $this->zenith = new ZenithFB();  
         CLI::write("시작", "light_red");
-        $from = '2023-08-11';
-        $to = '2023-08-11';
-        $this->zenith->getAdLead($from, $to);
+        $this->zenith->getAsyncInsights("true", date('Y-m-d'), date('Y-m-d'));
     }
 }

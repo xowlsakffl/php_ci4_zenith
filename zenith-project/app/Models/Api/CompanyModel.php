@@ -7,9 +7,18 @@ use CodeIgniter\Model;
 class CompanyModel extends Model
 {
     protected $zenith, $facebook, $google, $kakao;
-    protected $validationRules      = [
+    protected $allowedFields = [
+        'type',
+        'name',
+        'tel',
+        'status',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+    /* protected $validationRules      = [
         'name' => 'required',
-        'tel' => 'required',
+        //'tel' => 'required',
     ];
     protected $validationMessages   = [
         'name' => [
@@ -20,7 +29,7 @@ class CompanyModel extends Model
         ],
     ];
     protected $skipValidation       = false;
-    protected $cleanValidationRules = true;
+    protected $cleanValidationRules = true; */
 
     public function __construct()
     {
@@ -90,6 +99,7 @@ class CompanyModel extends Model
         $builder->join('companies as parent_c', 'ci.company_parent_id = parent_c.id', 'left');
         $builder->where('c.id', $id);
         $builder->where('c.status !=', 0);
+        $builder->where('c.deleted_at =', null);
         $result = $builder->get()->getRowArray();
 
         return $result;
@@ -124,14 +134,15 @@ class CompanyModel extends Model
 
     public function getAgencyByName($p_name)
     {
+        if(empty($p_name)){
+            return false;
+        }
         $builder = $this->zenith->table('companies');
         $builder->select('id, name');
         $builder->where('type', '광고대행사');
         $builder->where('status !=', 0);
-        if(!empty($p_name)){
-            $builder->where('name', $p_name);
-        }
-
+        $builder->where('name', $p_name);
+    
         $result = $builder->get()->getRowArray();
         return $result;
     }
@@ -158,13 +169,16 @@ class CompanyModel extends Model
         $builder_1->set('tel', $data['tel']);
         $builder_1->set('status', 1);
         $result_1 = $builder_1->insert();
-        $insertId = $this->zenith->insertID();
-        $builder_2 = $this->zenith->table('companies_idx');
-        $newRecord = [
-            'company_id' => $insertId,
-            'company_parent_id' => $agency['id']
-        ];
-        $builder_2->insert($newRecord);
+        if(!empty($agency)){
+            $insertId = $this->zenith->insertID();
+            $builder_2 = $this->zenith->table('companies_idx');
+            $newRecord = [
+                'company_id' => $insertId,
+                'company_parent_id' => $agency['id']
+            ];
+            $builder_2->insert($newRecord);
+        }
+        
         $result = $this->zenith->transComplete();
 
         return $result;
@@ -183,18 +197,19 @@ class CompanyModel extends Model
         $builder_2->where('company_id', $data['id']);
         $result = $builder_2->get()->getResult();
 
-        if (empty($result)) {
-            $newRecord = [
-                'company_id' => $data['id'],
-                'company_parent_id' => $agency['id']
-            ];
-            $result_2 = $builder_2->insert($newRecord);
-        } else {
-            $builder_2->set('company_parent_id', $agency['id']);
-            $builder_2->where('company_id', $data['id']);
-            $result_2 = $builder_2->update();
+        if(!empty($agency)){
+            if (empty($result)) {
+                $newRecord = [
+                    'company_id' => $data['id'],
+                    'company_parent_id' => $agency['id']
+                ];
+                $result_2 = $builder_2->insert($newRecord);
+            } else {
+                $builder_2->set('company_parent_id', $agency['id']);
+                $builder_2->where('company_id', $data['id']);
+                $result_2 = $builder_2->update();
+            }
         }
-
         $result = $this->zenith->transComplete();
 
         return $result;
@@ -204,6 +219,7 @@ class CompanyModel extends Model
     {
         $builder = $this->zenith->table('companies');
         $builder->set('status', 0);
+        $builder->set('deleted_at', date('Y-m-d H:i:s'));
         $builder->where('id', $data['id']);
         $result = $builder->update();
 
