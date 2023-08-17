@@ -3,6 +3,7 @@ namespace App\ThirdParty\facebook_api;
 
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Database\Config;
+use CodeIgniter\Database\RawSql;
 class FBDB extends Config
 {
     private $db, $db2, $zenith;
@@ -133,136 +134,86 @@ class FBDB extends Config
     }
 
       
-    public function insertAsyncInsights($data)
+    public function insertAsyncInsights($lists)
     {
-        foreach ($data as $key => $report) {
-            if (empty($report['impressions'])) $report['impressions'] = 0;
-            if (empty($report['clicks'])) $report['clicks'] = 0;
-            if (empty($report['inline_link_clicks'])) $report['inline_link_clicks'] = 0;
-            if (empty($report['spend'])) $report['spend'] = 0;
-            if ($report['date_start'] == $report['date_stop']) {
-                $hour = ($report['date_start'] == date('Y-m-d'))?date('H'):'23';
-                if($report['hourly_stats_aggregated_by_audience_time_zone'])
-                    $hour = preg_replace('/^([0-9]{2}).+$/', '$1', $report['hourly_stats_aggregated_by_audience_time_zone']);
-                $sql = "INSERT INTO fb_ad_insight_history (
-							ad_id,
-							date,
-                            hour,
-							impressions,
-							clicks,
-							inline_link_clicks,
-							spend,
-							create_date
-						)
-						VALUES (
-							'{$report['ad_id']}',
-							'{$report['date_start']}',
-                            '{$hour}',
-							 {$report['impressions']},
-							 {$report['clicks']},
-							 {$report['inline_link_clicks']},
-							 {$report['spend']},
-							 NOW()
-						)
-						ON DUPLICATE KEY UPDATE
-                            hour = '{$hour}',
-							impressions = {$report['impressions']},
-							clicks = {$report['clicks']},
-							inline_link_clicks = {$report['inline_link_clicks']},
-							spend = {$report['spend']},
-							update_date = NOW();";
-                // echo $sql.'<br>';
-                $this->db_query($sql);
-            }
+        foreach ($lists as $key => $report) {
+            if ($report['date_start'] != $report['date_stop']) continue;
+            $hour = ($report['date_start'] == date('Y-m-d')) ? date('H') : 23;
+            if(isset($report['hourly_stats_aggregated_by_audience_time_zone']))
+                $hour = preg_replace('/^([0-9]{2}).+$/', '$1', $report['hourly_stats_aggregated_by_audience_time_zone']);
+            $data = [
+                'ad_id' => $report['ad_id'],
+                'date' => $report['date_start'],
+                'hour' => $hour,
+                'impressions' => $report['impressions']??0,
+                'clicks' => $report['clicks']??0,
+                'inline_link_clicks' => $report['inline_link_clicks']??0,
+                'spend' => $report['spend']??0,
+            ];
+            $builder = $this->db->table('fb_ad_insight_history');
+            $builder->setData($data);
+            $updateTime = ['update_date' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
+
             // 캠페인 저장
-            $campaign_name = $this->db->escape($report['campaign_name']);
-            // echo $campaign_name; exit;
-            $sql = "INSERT INTO fb_campaign (
-						campaign_id,
-						campaign_name,
-						account_id,
-						create_date
-					) VALUES (
-						'{$report['campaign_id']}',
-						{$campaign_name},
-						'{$report['account_id']}',
-						NOW()
-					) ON DUPLICATE KEY UPDATE
-						campaign_name = {$campaign_name},
-						update_date = NOW();";
-            $this->db_query($sql);
+            $data = [
+                'campaign_id' => $report['campaign_id'],
+                'campaign_name' => $report['campaign_name'],
+                'account_id' => $report['account_id']
+            ];
+            $builder = $this->db->table('fb_campaign');
+            $builder->setData($data);
+            $updateTime = ['update_date' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
             // 광고세트 저장
-            $adset_name = $this->db->escape($report['adset_name']);
-            $sql = "INSERT INTO fb_adset (
-						adset_id,
-						adset_name,
-						campaign_id,
-						create_date
-					) VALUES (
-						'{$report['adset_id']}',
-						{$adset_name},
-						'{$report['campaign_id']}',
-						NOW()
-					) ON DUPLICATE KEY UPDATE
-						adset_name = {$adset_name},
-						update_date = NOW();";
-            $this->db_query($sql);
+            $data = [
+                'adset_id' => $report['adset_id'],
+                'adset_name' => $report['adset_name'],
+                'campaign_id' => $report['campaign_id']
+            ];
+            $builder = $this->db->table('fb_adset');
+            $builder->setData($data);
+            $updateTime = ['update_date' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
             // 광고 저장
-            $ad_name = $this->db->escape($report['ad_name']);
             $use_landing = 0;
             if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $ad_name)) {
                 $use_landing = 1;
             }
-            $sql = "INSERT INTO fb_ad (
-						ad_id,
-						ad_name,
-						adset_id,
-						use_landing,
-						create_date
-					) VALUES (
-						'{$report['ad_id']}',
-						{$ad_name},
-						'{$report['adset_id']}',
-						'{$use_landing}',
-						NOW()
-					) ON DUPLICATE KEY UPDATE
-						ad_name = {$ad_name},
-						update_date = NOW();";
-            $this->db_query($sql);
+            $data = [
+                'ad_id' => $report['ad_id'],
+                'ad_name' => $report['ad_name'],
+                'adset_id' => $report['adset_id'],
+                'use_landing' => $use_landing
+            ];
+            $builder = $this->db->table('fb_ad');
+            $builder->setData($data);
+            $updateTime = ['update_date' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
         }
     }
       
-    public function updateAdCreatives($data)
+    public function updateAdCreatives($lists)
     {
-        if (is_array($data) && count($data)) {
-            foreach ($data as $row) {
-                if (empty($row)) {
-                    continue;
-                }
-                
-                $link = $row['link'] ?? '';
-                $sql = "INSERT INTO fb_adcreative(
-                            adcreative_id,
-                            ad_id,
-                            object_type,
-                            thumbnail,
-                            link,
-                            create_date
-                        ) VALUES(
-                            '{$row['adcreative_id']}',
-                            '{$row['ad_id']}',
-                            '{$row['object_type']}',
-                            '{$row['thumbnail_url']}',
-                            '{$link}',
-                            NOW()
-                        ) ON DUPLICATE KEY UPDATE
-                            adcreative_id = '{$row['adcreative_id']}',
-                            object_type = '{$row['object_type']}',
-                            thumbnail = '{$row['thumbnail_url']}',
-                            link = '{$link}',
-                            update_date = NOW();";
-                $this->db_query($sql);
-            }
+        if (!is_array($lists) && !count($lists)) return;
+        foreach ($lists as $row) {
+            if (empty($row)) continue;
+            $data = [
+                'adcreative_id' => $row['adcreative_id'],
+                'ad_id' => $row['ad_id'],
+                'object_type' => $row['object_type']??null,
+                'thumbnail' => $row['thumbnail_url']??null,
+                'link' => $row['link']??null
+            ];
+            $builder = $this->db->table('fb_adcreative');
+            $builder->setData($data);
+            $updateTime = ['update_date' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
         }
     }
       

@@ -217,6 +217,7 @@ class ZenithFB
             while (!$getSelf->isComplete() && !$continue) {
                 $getSelf = $async_job->getSelf();
                 if ($count > 100 && !$getSelf->isComplete()) {
+                    ob_flush(); flush(); sleep(1);
                     $continue = true;
                 }
                 $count++;
@@ -278,25 +279,24 @@ class ZenithFB
             );
             $data = $response->getDecodedBody();
             $results = [];
-                $campaigns = $data['campaigns']['data'] ?? [];
-                foreach ($campaigns as $campaign) {
-                    $adsets = $campaign['adsets']['data'] ?? [];
-                    foreach ($adsets as $adset) {
-                        $ads = $adset['ads']['data'] ?? [];
-                        foreach ($ads as $ad) {
-                            $adcreatives = $ad['adcreatives']['data'] ?? [];
-                            foreach ($adcreatives as &$adcreative) {
-                                $adcreative['ad_id'] = $ad['id'];
-                            }
-                            unset($adcreative);
-
-                            $this->updateAdcreatives(null, $adcreatives);
+            $campaigns = $data['campaigns']['data'] ?? [];
+            foreach ($campaigns as $campaign) {
+                $adsets = $campaign['adsets']['data'] ?? [];
+                foreach ($adsets as $adset) {
+                    $ads = $adset['ads']['data'] ?? [];
+                    foreach ($ads as $ad) {
+                        $adcreatives = $ad['adcreatives']['data'] ?? [];
+                        foreach ($adcreatives as &$adcreative) {
+                            $adcreative['ad_id'] = $ad['id'];
                         }
-                        $this->db->updateAds($ads);
+                        unset($adcreative);
+                        $this->updateAdcreatives(null, $adcreatives);
                     }
-                    $this->db->updateAdsets($adsets);
+                    $this->db->updateAds($ads);
                 }
-                $this->db->updateCampaigns($campaigns);
+                $this->db->updateAdsets($adsets);
+            }
+            $this->db->updateCampaigns($campaigns);
         }
     }
       
@@ -312,7 +312,6 @@ class ZenithFB
                 'thumbnail_url' => $data['thumbnail_url'] ?? '',
                 'object_type' => $data[AdCreativeFields::OBJECT_TYPE],
             ];
-
             if (isset($data[AdCreativeFields::CALL_TO_ACTION_TYPE]) && in_array($data[AdCreativeFields::CALL_TO_ACTION_TYPE], ["LEARN_MORE", "APPLY_NOW"])) {
                 $object_story_spec = $data[AdCreativeFields::OBJECT_STORY_SPEC] ?? [];
                 $video_data = $object_story_spec[AdCreativeObjectStorySpecFields::VIDEO_DATA] ?? [];
@@ -321,17 +320,16 @@ class ZenithFB
                     switch ($updatedAdCreative['object_type']) {
                         case 'SHARE':
                         case 'STATUS':
-                            if (is_array($link_data)) { //슬라이드형
+                            if (is_array($link_data) && isset($link_data['link'])) { //슬라이드형
                                 $updatedAdCreative['link'] = $link_data['link'];
                             }
                             break;
                         case 'VIDEO':
-                            if (is_array($video_data)) { //비디오
+                            if (is_array($video_data) && isset($video_data['call_to_action']) && isset($video_data['call_to_action']['value'])) { //비디오
                                 $updatedAdCreative['link'] = $video_data['call_to_action']['value']['link'];
                             }
                             break;
                         default:
-    
                             break;
                     }
                 }
@@ -1002,6 +1000,7 @@ class ZenithFB
     {
         if (empty($title)) return null;
         preg_match_all('/.+\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
+        if(!isset($matches[9][0])) $matches[9][0] = "";
         switch ($matches[9][0]) {
             case 'fer': $media = '이벤트 랜딩'; break;
             case 'fercpm': $media = '이벤트 랜딩_cpm'; break;
@@ -1090,7 +1089,7 @@ class ZenithFB
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
                     $sales = $margin = 0;
-                    $spend = $sp_data[$row['hour']];
+                    $spend = $sp_data[$row['hour']]??0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
                     $margin = $sales - $spend;
