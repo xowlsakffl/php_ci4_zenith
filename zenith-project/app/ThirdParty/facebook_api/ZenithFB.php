@@ -787,6 +787,7 @@ class ZenithFB
             $this->setAdId($row['ad_id']);
             $leads = $this->ad->getLeads($fields, $params);
             $response = $leads->getResponse()->getContent();
+            dd($response['data']);
             if (!empty($response['data'])) {
                 $result = array_merge($result, $response['data']);
             }
@@ -804,6 +805,7 @@ class ZenithFB
                 }
             }
         }
+
         $this->db->insertAdLeads($result);
         return $result;
     }
@@ -841,7 +843,7 @@ class ZenithFB
         return null;
     }
     
-    function setAdsetStatus($id, $status)
+    public function setAdsetStatus($id, $status)
     {
         $statusValue = $status == 'ACTIVE' ? AdSet::STATUS_ACTIVE : AdSet::STATUS_PAUSED;
 
@@ -859,7 +861,7 @@ class ZenithFB
         return null;
     }
 
-    function setAdStatus($id, $status)
+    public function setAdStatus($id, $status)
     {
         $statusValue = $status == 'ACTIVE' ? Ad::STATUS_ACTIVE : Ad::STATUS_PAUSED;
 
@@ -1023,7 +1025,7 @@ class ZenithFB
         return null;
     }
     
-    private function updateCampaignName(array $data)
+    public function updateCampaignName(array $data)
     {
         if(empty($data['name'])){
             return null;
@@ -1039,7 +1041,7 @@ class ZenithFB
         return null;
     }
 
-    private function updateAdsetName(array $data)
+    public function updateAdsetName(array $data)
     {
         if(empty($data['name'])){
             return null;
@@ -1054,7 +1056,7 @@ class ZenithFB
         return null;
     }
 
-    private function updateAdName(array $data)
+    public function updateAdName(array $data)
     {
         if(empty($data['name'])){
             return null;

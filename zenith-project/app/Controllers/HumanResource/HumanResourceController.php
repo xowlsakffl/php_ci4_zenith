@@ -42,9 +42,15 @@ class HumanResourceController extends BaseController
     public function updateUsersByDouzone() {
         $douzone = new Douzone();
         $list = $douzone->getMemberList();
+        $total = count($list);
+        if(!$total) return null;
+        $i = 1;
         foreach($list as $row) {
-            $this->hr->updateUserByEmail($row);
+            $result = $this->hr->updateUserByEmail($row);
+            if($result) $i++;
         }
+        if($result == $i) return true;
+        return false;
     }
 
     public function getTodayDayOff() {

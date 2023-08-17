@@ -63,6 +63,7 @@ class KakaoMoment extends BaseController
     }
 
     //전체 소재 보고서 BASIC 업데이트
+    /*
     public function updateReportByAdgroup($date = null)
     { 
         CLI::clearScreen();
@@ -72,7 +73,7 @@ class KakaoMoment extends BaseController
         $this->chainsaw->updateCreativesReportBasic($date);
         CLI::write("소재 보고서 업데이트 완료", "yellow");
     }
-
+    */
     public function updateReportByHour($date = null)
     { 
         CLI::clearScreen();
@@ -106,7 +107,7 @@ class KakaoMoment extends BaseController
     { 
         CLI::clearScreen();
         CLI::write("app_subscribe 데이터 업데이트를 진행합니다.", "light_red");
-        $this->chainsaw->moveToAppsubscribe();
+        $this->chainsaw->moveToLeads();
         CLI::write("app_subscribe 데이터 업데이트 완료", "yellow");
     }
 

@@ -116,13 +116,4 @@ class Facebook extends Controller
 
         $this->zenith->updateAds();
     }
-
-    public function test() {
-        CLI::clearScreen();
-        // $run = CLI::prompt("광고를 업데이트 합니다.",["y","n"]);
-        // if($run != 'y') return false;
-        CLI::write("시작.", "light_red");
-
-        $this->zenith->updateAds();
-    }
 }

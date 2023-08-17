@@ -563,13 +563,13 @@ class ZenithKM
                                 continue;
                                 //echo "{$adgroup['ad_account_id']} - 소재({$row['id']}) : 삭제" . PHP_EOL;
                             }
-                            $data[$adgroup['id']][$i]['type'] = $row['type'];
+                            $data[$adgroup['id']][$i]['type'] = $row['type']??"";
                             //landingUrl 필드 삭제 변경으로 인한 패치
-                            if (trim($data[$adgroup['id']][$i]['pcLandingUrl']))
+                            if (isset($creative['pcLandingUrl']))
                                 $data[$adgroup['id']][$i]['landingUrl'] = $data[$adgroup['id']][$i]['pcLandingUrl'];
-                            if (trim($data[$adgroup['id']][$i]['mobileLandingUrl']))
+                            if (isset($creative['mobileLandingUrl']))
                                 $data[$adgroup['id']][$i]['landingUrl'] = $data[$adgroup['id']][$i]['mobileLandingUrl'];
-                            if (trim($data[$adgroup['id']][$i]['rspvLandingUrl']))
+                            if (isset($creative['rspvLandingUrl']))
                                 $data[$adgroup['id']][$i]['landingUrl'] = $data[$adgroup['id']][$i]['rspvLandingUrl'];
                             if(!isset($row['bidAmount']))
                                 $data[$adgroup['id']][$i]['bidAmount'] = null;
@@ -583,7 +583,7 @@ class ZenithKM
                                 $data[$adgroup['id']][$i]['frequencyCapType'] = null;
                             if(!isset($row['reviewStatus']))
                                 $data[$adgroup['id']][$i]['reviewStatus'] = null;
-                            if(!$data[$adgroup['id']][$i]['landingUrl'])
+                            if(!isset($data[$adgroup['id']][$i]['landingUrl']))
                                 $data[$adgroup['id']][$i]['landingUrl'] = null;
                             $i++;
                         } else if ($row['config'] == 'DEL') {
@@ -643,6 +643,7 @@ class ZenithKM
         if(!$this->ad_account_id) $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
         if(isset($adAccountId)) $this->ad_account_id = $adAccountId;
         $result = $this->getCall($request, $param);
+        ob_flush();flush();sleep(5);
         return $result;
     }
 
@@ -654,15 +655,15 @@ class ZenithKM
     }
 
      
-    public function moveToAppsubscribe()
-    { //잠재고객 > app_subscribe 테이블로 이동
+    public function moveToLeads()
+    { //잠재고객 > event_leads 테이블로 이동
         $ads = $this->db->getBizFormUserResponse();
         $total = $ads->getNumRows();
         $step = 1;
         if (!$total) {
             return null;
         }
-        CLI::write("[".date("Y-m-d H:i:s")."]"."app_subscribe 데이터 업데이트를 시작합니다.", "light_red");
+        CLI::write("[".date("Y-m-d H:i:s")."]"."event_leads 데이터 업데이트를 시작합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
             CLI::showProgress($step++, $total); 
             $landing = $this->landingGroup($row);
@@ -681,41 +682,40 @@ class ZenithKM
             //추가질문
             $questions = [];
             $add = [];
+            $addr = $add1 = $add2 = $add3 = $add4 = $add5 = null;
             $responses = json_decode($row['responses'], 1);
             $acnt = 1;
             foreach ($responses as $response) {
                 $qs = $this->db->getBizformQuestion($row['bizFormId'], $response['bizformItemId']);
-                if (!key_exists($qs['id'], $questions))
+                if(is_null($qs)) continue;
+                if(!key_exists($qs['id'], $questions))
                     $questions[$qs['id']] = $qs['title'];
                 $add[] = ${'add' . $acnt} = $questions[$response['bizformItemId']] . '::' . $response['response'];
                 $acnt++;
             }
             $result = [];
             if ($landing['media']) {
-                $result['group_id'] = $landing['app_id'];
-                $result['event_id'] = $landing['event_id'];
-                $result['site'] = $landing['site'];
-                $result['full_name'] = $this->db->real_escape_string($row['nickname']);
-                $result['email'] = $this->db->real_escape_string($row['email']);
-                $result['gender'] = $this->db->real_escape_string($row['gender']);
-                $result['age'] = $this->db->real_escape_string($row['age']);
-                $result['phone'] = $this->db->real_escape_string($phone);
-                $result['add1'] = $this->db->real_escape_string($add1);
-                $result['add2'] = $this->db->real_escape_string($add2);
-                $result['add3'] = $this->db->real_escape_string($add3);
-                $result['add4'] = $this->db->real_escape_string($add4);
-                $result['add5'] = $this->db->real_escape_string($add5);
-                $result['add6'] = $this->db->real_escape_string($add6);
-                $result['addr'] = $this->db->real_escape_string($addr);
-                $result['reg_date'] = $row['submitAt'];
-                $result['ad_id'] = $row['id'];
+                $result['event_seq'] = $landing['event_seq'];
+                $result['site'] = $landing['site']??null;
+                $result['name'] = $row['nickname'];
+                $result['email'] = $row['email']??'';
+                $result['gender'] = $row['gender']??null;
+                $result['age'] = $row['age']??null;
+                $result['phone'] = $phone;
+                $result['add1'] = $add1;
+                $result['add2'] = $add2;
+                $result['add3'] = $add3;
+                $result['add4'] = $add4;
+                $result['add5'] = $add5;
+                $result['addr'] = $addr;
+                $result['reg_timestamp'] = strtotime($row['submitAt']);
+                $result['lead_id'] = $row['id']??null;
                 $result['encUserId'] = $row['encUserId'];
                 $result['bizFormId'] = $row['bizFormId'];
             }
-            // echo '<pre>' . print_r($row, 1) . '</pre>';
 
             if (is_array($result) && count($result)) {
-                $this->db->insertToSubscribe($result);
+                $this->db->insertToLeads($result);
             }
 
             // return $result;
@@ -735,14 +735,13 @@ class ZenithKM
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 광고그룹의 소재 보고서 수신을 시작합니다.", "light_red");
         $result = [];
         foreach ($adgroups->getResultArray() as $adgroup) {
-            // if(!in_array($adgroup['id'], ['1365907','1365923'])) {$cnt++; continue;}
+            $new_ids = [];
             if (!$this->ad_account_id)
                 $this->ad_account_id = $adgroup['ad_account_id'];
             if ($adgroup['id']) {
                 if ($this->ad_account_id == $adgroup['ad_account_id'])
                     $ids[] = $adgroup['id'];
                 else {
-                    $new_ids = [];
                     $new_ids[] = $adgroup['id'];
                 }
             }
@@ -754,7 +753,6 @@ class ZenithKM
                 // echo '<h3>'.$adgroup_ids.'</h3>';
                 $data = [];
                 $report = $this->getAdGroupReport($adgroup_ids, 'CREATIVE', $datePreset, $dimension, $metrics);
-                // echo '<pre>'.print_r($report,1).'</pre>';
                 if ($report['message'] == 'Success' && count($report['data']) > 0) {
                     $i = 0;
                     foreach ($report['data'] as $row) {
@@ -785,29 +783,18 @@ class ZenithKM
         $creatives = $this->db->getCreatives(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
         $cnt = 1;
         $step = 1;
-        $ids = [];
-        $this->ad_account_id = '';
         $total = $creatives->getNumRows();
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 소재 보고서 수신을 시작합니다.", "light_red");
         $result = [];
-        foreach ($creatives->getResultArray() as $creative) {
-            // if(!in_array($adgroup['id'], ['1365907','1365923'])) {$cnt++; continue;}
-            if (!$this->ad_account_id)
-                $this->ad_account_id = $creative['ad_account_id'];
-            if ($creative['id']) {
-                if ($this->ad_account_id == $creative['ad_account_id'])
-                    $ids[] = $creative['id'];
-                else {
-                    $new_ids = [];
-                    $new_ids[] = $creative['id'];
-                }
-            }
+        $_tmp = [];
+        $data = [];
+        foreach($creatives->getResultArray() as $creative) $_tmp[$creative['ad_account_id']][] = $creative['id'];
+        foreach($_tmp as $account_id => $row) $lists[$account_id] = array_chunk($row, 100);
+        foreach($lists as $account_id => $list) {
+            $this->ad_account_id = $account_id;
             CLI::showProgress($step++, $total);
-            // echo '<h1>'.date('[H:i:s] ').$this->ad_account_id.','.$adgroup['ad_account_id'].'</h1>';
-            // echo '<h2>'.$cnt.'</h2>';
-            if (count($ids) == 100 || $this->ad_account_id != $creative['ad_account_id'] || $creatives->getNumRows() == $cnt) {
+            foreach($list as $ids) {
                 $creative_ids = implode(",", $ids);
-                // echo '<h3>'.$adgroup_ids.'</h3>';
                 $data = [];
                 $report = $this->getCreativeReport($creative_ids, $datePreset, $dimension, $metrics);
                 if (isset($report['message']) && $report['message'] == 'Success' && isset($report['data'])) {
@@ -822,15 +809,10 @@ class ZenithKM
                         }
                     }
                 }
-                if(isset($new_ids)) $ids = $new_ids;
-                $this->ad_account_id = $creative['ad_account_id'];
-                ob_flush();
-                flush();
-                sleep(5);
-                $this->db->updateCreativesReportBasic($data);
-                $result = array_merge($result, $data);
             }
-            $cnt++;
+            $this->ad_account_id = $creative['ad_account_id'];
+            $this->db->updateCreativesReportBasic($data);
+            $result = array_merge($result, $data);
         }
         
         return $result;
@@ -898,21 +880,21 @@ class ZenithKM
         foreach ($creatives->getResultArray() as $row) {
             $data = [];
             CLI::showProgress($cnt++, $total); 
-            $report = $this->getCreativeReport($row['id'], $row['date']);
+            $this->ad_account_id = $row['ad_account_id'];
+            if($row['date'] == date('Y-m-d')) $row['date'] = 'TODAY';
+            $report = $this->getCreativeReport($row['id'], $row['date'], 'HOUR');
             if ($report['message'] == 'Success' && count($report['data']) > 0) {
                 // echo date('[H:i:s]') . " {$row['id']}/{$row['date']} 수신" . PHP_EOL;
                 foreach ($report['data'] as $v) {
                     if (count($v['metrics'])) {
                         $data[$v['dimensions']['creative_id']][$i] = $v['metrics'];
+                        $data[$v['dimensions']['creative_id']][$i]['hour'] = preg_replace('/^([0-9]{2}).+$/', '$1', $v['dimensions']['hour']);
                         $data[$v['dimensions']['creative_id']][$i]['cost'] = $v['metrics']['cost'];
                         $data[$v['dimensions']['creative_id']][$i]['date'] = $v['start'];
                         $i++;
                     }
                 }
             }
-            ob_flush();
-            flush();
-            sleep(5);
             $this->db->updateCreativesReportBasic($data);
             $result = array_merge($result, $data);
         }
@@ -924,7 +906,7 @@ class ZenithKM
     {
         if (!$data['name']) return null;
         preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $data['name'], $matches);
-        if (preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
+        if (isset($data['landingUrl']) && preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
             $urls = parse_url($data['landingUrl']);
             parse_str($urls['query'], $urls['qs']);
             $path = explode('/', $urls['path']);
@@ -955,7 +937,7 @@ class ZenithKM
             $result['site']         = $site;
             $result['db_price']     = $matches[7][0];
             $result['period_ad']    = $matches[13][0];
-            $result['url']          = $data['landingUrl'];
+            $result['url']          = $data['landingUrl']??null;
             return $result;
         }
         return null;
@@ -1342,6 +1324,7 @@ class ZenithKM
                 return $result;
                 break;
             default:
+                d($info);
                 $this->error($info['http_code']);
                 break;
         }
@@ -1360,11 +1343,7 @@ class ZenithKM
 
     protected function apiError($data)
     {
-        echo "<h1>{$data['msg']} (code: {$data['code']})</h1>";
-        if (isset($data['extras']['detailMsg']))
-            echo "<p>{$data['extras']['detailMsg']} - {$data['extras']['detailCode']}</p>";
-        if (isset($data['extras']['message']))
-            echo "<p>{$data['extras']['message']} - {$data['extras']['status']}</p>";
+        dd($data);
         // exit;
     }
 

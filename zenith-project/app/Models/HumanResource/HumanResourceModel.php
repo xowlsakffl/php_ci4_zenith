@@ -49,7 +49,9 @@ class HumanResourceModel extends Model
         $builder = $this->zenith->table('users_department');
         $builder->setData($data)->upsert();
         $builder = $this->zenith->table('users');
-        $builder->set('nickname', $name)->where('id', $usr['id'])->update();
+        $result = $builder->set('nickname', $name)->where('id', $usr['id'])->update();
+
+        return $result;
     }
 
     public function getHourTicketUse() {

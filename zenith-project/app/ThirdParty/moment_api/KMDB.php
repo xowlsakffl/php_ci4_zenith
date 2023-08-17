@@ -1,6 +1,7 @@
 <?php
 namespace App\ThirdParty\moment_api;
 
+use CodeIgniter\Database\RawSql;
 class KMDB
 {
     private $db, $db2, $zenith;
@@ -130,12 +131,25 @@ class KMDB
      
     public function updateCampaign($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
-        $sql = "INSERT INTO mm_campaign (ad_account_id, id, name, type, goal, config, objectiveType, objectiveDetailType, objectiveValue, dailyBudgetAmount, statusDescription, trackId, create_time)
-                VALUES ({$row['adAccountId']}, {$row['id']}, {$row['name']}, '{$row['campaignTypeGoal']['campaignType']}', '{$row['campaignTypeGoal']['goal']}', {$row['config']}, '" . @$row['objective']['type'] . "', '" . @$row['objective']['detailType'] . "', '" . @$row['objective']['value'] . "', {$row['dailyBudgetAmount']}, {$row['statusDescription']}, {$row['trackId']}, NOW())
-                ON DUPLICATE KEY
-                UPDATE name={$row['name']}, type='{$row['campaignTypeGoal']['campaignType']}', goal='{$row['campaignTypeGoal']['goal']}', config={$row['config']}, objectiveType='" . @$row['objective']['type'] . "', objectiveDetailType='" . @$row['objective']['detailType'] . "', objectiveValue='" . @$row['objective']['value'] . "', dailyBudgetAmount={$row['dailyBudgetAmount']}, statusDescription={$row['statusDescription']}, trackId={$row['trackId']}, update_time=NOW();";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
+        $data = [
+            'ad_account_id' => $row['adAccountId'],
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'type' => $row['campaignTypeGoal']['campaignType']??null,
+            'goal' => $row['campaignTypeGoal']['goal']??null,
+            'config' => $row['config'], 
+            'objectiveType' => $row['objective']['type']??null,
+            'objectiveDetailType' => $row['objective']['detailType']??null,
+            'objectiveValue' => $row['objective']['value']??null,
+            'dailyBudgetAmount' => $row['dailyBudgetAmount'],
+            'statusDescription' => $row['statusDescription'], 
+            'trackId' => $row['trackId'],
+        ];
+        $builder = $this->db->table('mm_campaign');
+        $builder->setData($data);
+        $updateTime = ['update_time' => new RawSql('NOW()')];
+        $builder->updateFields($updateTime, true);
+        $result = $builder->upsert();
         return $result;
     }
 
@@ -208,14 +222,36 @@ class KMDB
      
     public function updateAdGroup($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
-        $sql = "INSERT INTO mm_adgroup (campaign_id, id, name, type, config, allAvailableDeviceType, allAvailablePlacement, pricingType, pacing, adult, bidStrategy, totalBudget, dailyBudgetAmount, bidAmount, useMaxAutoBidAmount, autoMaxBidAmount, isDailyBudgetAmountOver, creativeOptimization, isValidPeriod, deviceTypes, placements, statusDescription, create_time)
-                VALUES(
-                {$row['campaign_id']}, {$row['id']}, {$row['name']}, {$row['type']}, {$row['config']}, {$row['allAvailableDeviceType']}, {$row['allAvailablePlacement']}, {$row['pricingType']}, {$row['pacing']}, {$row['adult']}, {$row['bidStrategy']}, {$row['totalBudget']}, {$row['dailyBudgetAmount']}, {$row['bidAmount']}, {$row['useMaxAutoBidAmount']}, {$row['autoMaxBidAmount']}, {$row['isDailyBudgetAmountOver']}, {$row['creativeOptimization']}, {$row['isValidPeriod']}, '" . @implode(',', $row['deviceTypes']) . "', '" . @implode(',', $row['placements']) . "', {$row['statusDescription']}, NOW()) 
-                ON DUPLICATE KEY 
-                UPDATE campaign_id = {$row['campaign_id']}, name = {$row['name']}, type = {$row['type']}, config = {$row['config']}, allAvailableDeviceType = {$row['allAvailableDeviceType']}, allAvailablePlacement = {$row['allAvailablePlacement']}, pricingType = {$row['pricingType']}, pacing = {$row['pacing']}, adult = {$row['adult']}, bidStrategy = {$row['bidStrategy']}, totalBudget = {$row['totalBudget']}, dailyBudgetAmount = {$row['dailyBudgetAmount']}, bidAmount = {$row['bidAmount']}, useMaxAutoBidAmount = {$row['useMaxAutoBidAmount']}, autoMaxBidAmount = {$row['autoMaxBidAmount']}, isDailyBudgetAmountOver = {$row['isDailyBudgetAmountOver']}, creativeOptimization = {$row['creativeOptimization']}, isValidPeriod = {$row['isValidPeriod']}, deviceTypes = '" . @implode(',', $row['deviceTypes']) . "', placements = '" . @implode(',', $row['placements']) . "', statusDescription = {$row['statusDescription']}, update_time=NOW();";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        // echo "<p>{$sql}</p>";
+        $data = [
+            'campaign_id' => $row['campaign_id'],
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'type' => $row['type'],
+            'config' => $row['config'],
+            'allAvailableDeviceType' => $row['allAvailableDeviceType'],
+            'allAvailablePlacement' => $row['allAvailablePlacement'],
+            'pricingType' => $row['pricingType'],
+            'pacing' => $row['pacing'],
+            'adult' => $row['adult'],
+            'bidStrategy' => $row['bidStrategy'],
+            'totalBudget' => $row['totalBudget'],
+            'dailyBudgetAmount' => $row['dailyBudgetAmount'],
+            'bidAmount' => $row['bidAmount'],
+            'useMaxAutoBidAmount' => $row['useMaxAutoBidAmount'],
+            'autoMaxBidAmount' => $row['autoMaxBidAmount'],
+            'isDailyBudgetAmountOver' => $row['isDailyBudgetAmountOver'],
+            'creativeOptimization' => $row['creativeOptimization'],
+            'isValidPeriod' => $row['isValidPeriod'],
+            'deviceTypes' => implode(',', $row['deviceTypes']??[]),
+            'placements' => implode(',', $row['placements']??[]),
+            'statusDescription' => $row['statusDescription']
+        ];
+        $builder = $this->db->table('mm_adgroup');
+        $builder->setData($data);
+        $updateTime = ['update_time' => new RawSql('NOW()')];
+        $builder->updateFields($updateTime, true);
+        $result = $builder->upsert();
+        
         return $result;
     }
      
@@ -334,7 +370,7 @@ class KMDB
                         ON B.campaign_id = C.id
                     LEFT JOIN mm_ad_account AS D
                         ON C.ad_account_id = D.id
-                WHERE A.id = {$id}";
+                WHERE (A.id = {$id} OR A.creativeId = {$id})";
         $result = $this->db_query($sql);
         $row = $result->getRowArray();
         $ad_account_id = $row['ad_account_id'];
@@ -344,16 +380,32 @@ class KMDB
      
     public function updateCreative($row)
     {
-        foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
-        $bizFormQuery = "";
-        if(isset($row['landingInfo']['bizFormId']))
-            $bizFormQuery = ", bizFormId = '" . @$row['landingInfo']['bizFormId'] . "'";
-        $sql = "INSERT INTO mm_creative (adgroup_id, id, creativeId, name, altText, type, landingType, hasExpandable, bizFormId, format, bidAmount, landingUrl, frequencyCap, frequencyCapType, config, imageUrl, reviewStatus, creativeStatus, statusDescription, create_time)
-                VALUES ({$row['adgroup_id']}, {$row['id']}, {$row['creativeId']}, {$row['name']}, {$row['altText']}, {$row['type']}, '" . @$row['landingInfo']['landingType'] . "', {$row['hasExpandable']}, '" . @$row['landingInfo']['bizFormId'] . "', {$row['format']}, {$row['bidAmount']}, {$row['landingUrl']}, {$row['frequencyCap']}, {$row['frequencyCapType']}, {$row['config']}, '" . @$row['image']['url'] . "', {$row['reviewStatus']}, {$row['creativeStatus']}, {$row['statusDescription']}, NOW())
-                ON DUPLICATE KEY
-                UPDATE adgroup_id = {$row['adgroup_id']}, creativeId = {$row['creativeId']}, name = {$row['name']}, altText = {$row['altText']}, type = {$row['type']}, landingType = '" . @$row['landingInfo']['landingType'] . "', hasExpandable = {$row['hasExpandable']}{$bizFormQuery}, format = {$row['format']}, bidAmount = {$row['bidAmount']}, landingUrl = {$row['landingUrl']}, frequencyCap = {$row['frequencyCap']}, frequencyCapType = {$row['frequencyCapType']}, config = {$row['config']}, imageUrl = '" . @$row['image']['url'] . "', reviewStatus = {$row['reviewStatus']}, creativeStatus = {$row['creativeStatus']}, statusDescription = {$row['statusDescription']}, update_time = NOW();";
-        $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
-        // echo "<p>{$sql}</p>";
+        $data = [
+            'adgroup_id' => $row['adgroup_id'],
+            'id' => $row['id'],
+            'creativeId' => $row['creativeId'],
+            'name' => $row['name'],
+            'altText' => $row['altText'],
+            'type' => $row['type'],
+            'landingType' => $row['landingInfo']['landingType']??null,
+            'hasExpandable' => $row['hasExpandable'],
+            'bizFormId' => $row['landingInfo']['bizFormId']??null,
+            'format' => $row['format'],
+            'bidAmount' => $row['bidAmount'],
+            'landingUrl' => $row['landingUrl'],
+            'frequencyCap' => $row['frequencyCap'],
+            'frequencyCapType' => $row['frequencyCapType'],
+            'config' => $row['config'],
+            'imageUrl' => $row['image']['url']??null,
+            'reviewStatus' => $row['reviewStatus'],
+            'creativeStatus' => $row['creativeStatus'],
+            'statusDescription' => $row['statusDescription'],
+        ];
+        $builder = $this->db->table('mm_creative');
+        $builder->setData($data);
+        $updateTime = ['update_time' => new RawSql('NOW()')];
+        $builder->updateFields($updateTime, true);
+        $result = $builder->upsert();
         return $result;
     }
      
@@ -401,7 +453,7 @@ class KMDB
             foreach ($data as $adgroup_id => $adgroup) {
                 foreach ($adgroup as $row) {
                     $row['adgroup_id'] = $adgroup_id;
-                    if ($row['id']) $this->updateCreative($row);
+                    if (isset($row['id'])) $this->updateCreative($row);
                 }
             }
         }
@@ -422,7 +474,7 @@ class KMDB
      
     public function getCreativeReportBasic($query = "")
     {
-        $sql = "SELECT B.id AS adgroup_id, report.id, report.date, report.imp, report.imp, report.click, report.cost, creative.name, creative.landingUrl
+        $sql = "SELECT D.id AS ad_account_id, B.id AS adgroup_id, creative.creativeId AS creative_id, report.id, report.date, report.imp, report.imp, report.click, report.cost, creative.name, creative.landingUrl
                     FROM mm_creative_report_basic AS report
                         LEFT JOIN mm_creative AS creative
                             ON report.id = creative.id
@@ -440,6 +492,22 @@ class KMDB
      
     public function updateCreativeReportBasic($row)
     {
+        if((!isset($row['hour']) || !isset($row['date'])) || (!$row['hour'] || !$row['date'])) return null;
+        $data = [
+            'id' => $row['creative_id'],
+            'date' => $row['date'],
+            'hour' => $row['hour'],
+            'imp' => $row['imp'],
+            'click' => $row['click'],
+            'ctr' => $row['ctr'],
+            'cost' => $row['cost'],
+        ];
+        $builder = $this->db->table('mm_creative_report_basic');
+        $builder->setData($data);
+        $updateTime = ['update_time' => new RawSql('NOW()')];
+        $builder->updateFields($updateTime, true);
+        $result = $builder->upsert();
+        /*
         foreach ($row as $k => $v) $row[$k] = !is_array($v) ? $this->db->escape($v) : $v;
         if($row['imp'] == 0 && $row['click'] == 0 && $row['cost'] == 0 && $row['ctr'] == 0) return;
         $sql = "INSERT INTO mm_creative_report_basic (id, date, hour, imp, click, ctr, cost, create_time)
@@ -448,6 +516,7 @@ class KMDB
                 UPDATE date={$row['date']}, imp={$row['imp']}, click={$row['click']}, ctr={$row['ctr']}, cost={$row['cost']}, update_time=NOW();";
         // echo $sql.'<br>';
         $result = $this->db_query($sql) or die($sql . ' : ' . $this->db->error);
+        */
         return $result;
     }
      
@@ -524,18 +593,37 @@ class KMDB
         return $result->getResultArray();
     }
      
-    public function insertToSubscribe($row)
+    public function insertToLeads($row)
     {
-        $sql = "INSERT INTO app_subscribe(group_id, event_seq, site, name, email, gender, age, phone, add1, add2, add3, add4, add5, add6, addr, reg_date, deleted, fb_ad_lead_id, enc_status)
-                VALUES('{$row['group_id']}', '{$row['event_id']}', '{$row['site']}', '{$row['full_name']}', '{$row['email']}', '{$row['gender']}', '{$row['age']}', ENC_DATA('{$row['phone']}'), '{$row['add1']}', '{$row['add2']}', '{$row['add3']}', '{$row['add4']}', '{$row['add5']}', '{$row['add6']}', '{$row['addr']}', '{$row['reg_date']}', 0, '{$row['ad_id']}', 1)
-                ON DUPLICATE KEY
-                UPDATE group_id='{$row['group_id']}', event_seq='{$row['event_id']}', site='{$row['site']}', name='{$row['full_name']}', email='{$row['email']}', gender='{$row['gender']}', age='{$row['age']}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', add6='{$row['add6']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', fb_ad_lead_id='{$row['ad_id']}'";
-        $result = $this->zenith->query($sql, true);
+        $data = [
+            'event_seq' => $row['event_seq'],
+            'site' => $row['site'],
+            'name' => $row['name'],
+            'phone' => new RawSql("enc_data('{$row['phone']}')"),
+            'gender' => $row['gender'],
+            'age' => $row['age'],
+            'addr' => $row['addr'],
+            'email' => $row['email'],
+            'agree' => 'Y',
+            'add1' => $row['add1'],
+            'add2' => $row['add2'],
+            'add3' => $row['add3'],
+            'add4' => $row['add4'],
+            'add5' => $row['add5'],
+            'is_encryption' => 1,
+            'lead_id' => $row['lead_id'],
+            'reg_date' => date('Y-m-d H:i:s', $row['reg_timestamp']),
+            'reg_timestamp' => $row['reg_timestamp']
+        ];
+        $builder = $this->zenith->table('event_leads');
+        $builder->set($data);
+        $result = $builder->insert();
+        // dd($builder->getCompiledInsert());
         if ($result) {
-            $sql = "update mm_bizform_user_response set send_time=now() where encUserId='{$row['encUserId']}' and bizFormId='{$row['bizFormId']}'";
-            $result = $this->db_query($sql);
-        } else {
-            echo $this->zenith->error;
+            $builder = $this->db->table('mm_bizform_user_response');
+            $builder->set('send_time', new RawSql('NOW()'));
+            $builder->where(['encUserId'=>$row['encUserId'], 'bizFormId'=>$row['bizFormId']]);
+            $builder->update();
         }
     }
      
@@ -543,8 +631,9 @@ class KMDB
     {
         $sql = "SELECT bizform_id, id, title FROM mm_bizform_items WHERE bizform_id = '{$bizformId}' AND id = '{$itemId}'";
         $result = $this->db_query($sql);
-        if (!$result->getNumRow()) return null;
-        return $result->getResultArray();
+        if (!$result->getNumRows()) return null;
+        $data = $result->getRowArray();
+        return $data;
     }
      
     public function getBizformUserResponse()
@@ -595,36 +684,76 @@ class KMDB
         }
     }
      
-    public function updateBizFormItems($bizformId, $data)
+    public function updateBizFormItems($bizformId, $lists)
     {
-        if(@count($data) <= 0) return;
-        foreach ($data as $row) {
+        if(@count($lists) <= 0) return;
+        foreach ($lists as $row) {
             if(!$row['id']) continue;
+            $data = [
+                'id' => $row['id'],
+                'bizform_id' => $bizformId,
+                'ordinal' => $row['ordinal'],
+                'title' => $row['title'],
+                'contents' => $row['contents'],
+                'required' => $row['required'],
+                'type' => $row['type'],
+                'replyType' => $row['replyType'],
+                'layoutType' => $row['layoutType'],
+                'multiple' => $row['multiple'],
+                'multipleLimitMin' => $row['multipleLimitMin'],
+                'multipleLimitMax' => $row['multipleLimitMax'],
+                'stepGroupId' => $row['stepGroupId'],
+                'stepOrder' => $row['stepOrder'],
+                'step' => $row['step'],
+                'bizformOptions' => $row['bizformOptions']
+            ];
+            $builder = $this->db->table('mm_bizform_items');
+            $builder->setData($data);
+            $updateTime = ['update_time' => new RawSql('NOW()')];
+            $builder->updateFields($updateTime, true);
+            $builder->upsert();
+            /*
             $sql = "INSERT INTO mm_bizform_items(`id`, `bizform_id`, `ordinal`, `title`, `contents`, `required`, `type`, `replyType`, `layoutType`, `multiple`, `multipleLimitMin`, `multipleLimitMax`, `stepGroupId`, `stepOrder`, `step`, `bizformOptions`, `create_time`)
             VALUES('{$row['id']}', '{$bizformId}', '{$row['ordinal']}', '{$row['title']}', '{$row['contents']}', '{$row['required']}', '{$row['type']}', '{$row['replyType']}', '{$row['layoutType']}', '{$row['multiple']}', '{$row['multipleLimitMin']}', '{$row['multipleLimitMax']}', '{$row['stepGroupId']}', '{$row['stepOrder']}', '{$row['step']}', '{$row['bizformOptions']}', NOW())
             ON DUPLICATE KEY
             UPDATE `id` = '{$row['id']}', `bizform_id` = '{$bizformId}', `ordinal` = '{$row['ordinal']}', `title` = '{$row['title']}', `contents` = '{$row['contents']}', `required` = '{$row['required']}', `type` = '{$row['type']}', `replyType` = '{$row['replyType']}', `layoutType` = '{$row['layoutType']}', `multiple` = '{$row['multiple']}', `multipleLimitMin` = '{$row['multipleLimitMin']}', `multipleLimitMax` = '{$row['multipleLimitMax']}', `stepGroupId` = '{$row['stepGroupId']}', `stepOrder` = '{$row['stepOrder']}', `step` = '{$row['step']}', `bizformOptions` = '{$row['bizformOptions']}', `update_time` = NOW()";
             $this->db_query($sql, true);
+            */
         }
     }
      
-    public function updateBizFormUserResponse($creative_id, $bizformId, $data)
+    public function updateBizFormUserResponse($creative_id, $bizformId, $list=[])
     {
-        if ($data) {
-            foreach ($data as $row) {
-                foreach ($row as $k => $v) $row[$k] = @$this->db->escape($v);
-                if(!$row['seq']) continue;
-                $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
-                    VALUES({$bizformId}, {$creative_id}, {$row['seq']}, {$row['encUserId']}, {$row['applyOrUpdate']}, {$row['submitAt']}, {$row['nickname']}, {$row['email']}, {$row['phoneNumber']}, {$row['response']}, NOW())
-                    ON DUPLICATE KEY UPDATE 
-                    `update_time`= IF(seq<>VALUES(seq) OR applyOrUpdate<>VALUES(applyOrUpdate) OR submitAt<>VALUES(submitAt) OR nickname<>VALUES(nickname) OR email<>VALUES(email) OR phoneNumber<>VALUES(phoneNumber) OR responses<>VALUES(responses), NOW(), NULL),
-                    `seq`={$row['seq']},`applyOrUpdate`={$row['applyOrUpdate']},`submitAt`={$row['submitAt']},`nickname`={$row['nickname']},`email`={$row['email']},`phoneNumber`={$row['phoneNumber']},`responses`={$row['response']}";
-                /*
-                $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
-                    VALUES({$bizformId}, {$creative_id}, {$row['seq']}, {$row['encUserId']}, {$row['applyOrUpdate']}, {$row['submitAt']}, {$row['nickname']}, {$row['email']}, {$row['phoneNumber']}, {$row['response']}, NOW())";
-                */
-                $this->db_query($sql, true);
-            }
+        foreach ($list as $row) {
+            $data = [
+                'bizFormId' => $bizformId,
+                'creative_id' => $creative_id,
+                'seq' => $row['seq'],
+                'encUserId' => $row['encUserId'],
+                'applyOrUpdate' => $row['applyOrUpdate'],
+                'submitAt' => $row['submitAt'],
+                'nickname' => $row['nickname'],
+                'email' => $row['email'],
+                'phoneNumber' => $row['phoneNumber'],
+                'responses' => $row['response']
+            ];
+            $builder = $this->db->table('mm_bizform_user_response');
+            $builder->setData($data);
+            $updateTime = ['update_time' => new RawSql('IF(seq<>VALUES(seq) OR applyOrUpdate<>VALUES(applyOrUpdate) OR submitAt<>VALUES(submitAt) OR nickname<>VALUES(nickname) OR email<>VALUES(email) OR phoneNumber<>VALUES(phoneNumber) OR responses<>VALUES(responses), NOW(), NULL)')];
+            $builder->updateFields($updateTime, true);
+            $result = $builder->upsert();
+            
+            /*
+            foreach ($row as $k => $v) $row[$k] = @$this->db->escape($v);
+            if(!$row['seq']) continue;
+            $sql = "INSERT INTO mm_bizform_user_response(`bizFormId`, `creative_id`, `seq`, `encUserId`, `applyOrUpdate`, `submitAt`, `nickname`, `email`, `phoneNumber`, `responses`, `create_time`)
+                VALUES({$bizformId}, {$creative_id}, {$row['seq']}, {$row['encUserId']}, {$row['applyOrUpdate']}, {$row['submitAt']}, {$row['nickname']}, {$row['email']}, {$row['phoneNumber']}, {$row['response']}, NOW())
+                ON DUPLICATE KEY UPDATE 
+                `update_time`= IF(seq<>VALUES(seq) OR applyOrUpdate<>VALUES(applyOrUpdate) OR submitAt<>VALUES(submitAt) OR nickname<>VALUES(nickname) OR email<>VALUES(email) OR phoneNumber<>VALUES(phoneNumber) OR responses<>VALUES(responses), NOW(), NULL),
+                `seq`={$row['seq']},`applyOrUpdate`={$row['applyOrUpdate']},`submitAt`={$row['submitAt']},`nickname`={$row['nickname']},`email`={$row['email']},`phoneNumber`={$row['phoneNumber']},`responses`={$row['response']}";
+            
+            $this->db_query($sql, true);
+            */
         }
     }
 

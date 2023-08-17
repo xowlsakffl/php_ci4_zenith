@@ -25,7 +25,9 @@ class ChainsawKMBF
             // CLI::showProgress($step++, $total); 
             if (!$row['bizFormId'] || !$row['bizFormApiKey']) continue;
             $info = $this->getBizformInfo($row['bizFormId'], $row['bizFormApiKey']);
-            $count = @count($info['userResponse']['data']['content']);
+            $count = 0;
+            if(isset($info['userResponse']['data']['content']))
+                $count = @count($info['userResponse']['data']['content']);
             echo "{$row['bizFormId']} - {$count}건 업데이트" . PHP_EOL;
             // echo '<pre>' . print_r($info, 1) . '</pre>';
             $this->db->updateBizform($info['bizform']);
