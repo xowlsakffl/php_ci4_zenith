@@ -1869,7 +1869,7 @@ div.dataTables_processing > div:last-child > div {
   cursor: pointer;
 }
 .db-manage-contaniner .detail.minWd .col:hover, .db-manage-contaniner .detail.minWd .col.active {
-  color: red;
+  color: blue;
 }
 .db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;

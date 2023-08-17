@@ -83,7 +83,7 @@
 
     .detail.minWd{flex-wrap: wrap; min-width:1000px;  
         .col{padding: 0; flex: 1 0 auto; cursor:pointer;
-            &:hover, &.active{color:$red;}
+            &:hover, &.active{color:blue;}
             dt{font-size: 1rem;}
             &:hover,&.active{
                 dd{font-weight:900;}
