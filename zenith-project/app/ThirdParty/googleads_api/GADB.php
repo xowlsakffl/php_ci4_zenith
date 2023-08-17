@@ -2,6 +2,7 @@
 namespace App\ThirdParty\googleads_api;
 
 use CodeIgniter\CLI\CLI;
+use CodeIgniter\Database\RawSql;
 
 class GADB
 {
@@ -13,7 +14,6 @@ class GADB
         $this->db = \Config\Database::connect('google');
         $this->db2 = \Config\Database::connect('ro_google');
         $this->zenith = \Config\Database::connect();
-        //      $this->db_query("SET FOREIGN_KEY_CHECKS = 0;");
     }
 
 	public function __call(string $method, array $data)
@@ -38,8 +38,29 @@ class GADB
 		}
 		if(!isset($data['customerId'])) return;
 		$data['Name'] = isset($data['Name']) ? $this->db->escape($data['Name']) : "";
-		$sql = "INSERT INTO aw_ad_account (customerId, manageCustomer, name, status, canManageClients, currencyCode, dateTimeZone, testAccount, is_hidden, create_time)
-                VALUES ({$data['customerId']}, {$data['manageCustomer']}, {$data['name']}, {$data['status']}, {$data['canManageClients']}, {$data['currencyCode']}, {$data['dateTimeZone']}, {$data['testAccount']}, {$data['is_hidden']}, NOW()) ON DUPLICATE KEY
+		$sql = "INSERT INTO aw_ad_account (
+					customerId, 
+					manageCustomer, 
+					name, 
+					status, 
+					canManageClients, 
+					currencyCode, 
+					dateTimeZone, 
+					testAccount, 
+					is_hidden, 
+					create_time)
+                VALUES (
+					{$data['customerId']}, 
+					{$data['manageCustomer']}, 
+					{$data['name']}, 
+					{$data['status']}, 
+					{$data['canManageClients']}, 
+					{$data['currencyCode']}, 
+					{$data['dateTimeZone']}, 
+					{$data['testAccount']}, 
+					{$data['is_hidden']}, 
+					NOW()
+				) ON DUPLICATE KEY
                 UPDATE customerId = {$data['customerId']}, manageCustomer = {$data['manageCustomer']}, is_update = {$is_update}, name = {$data['name']}, status = {$data['status']},  canManageClients = {$data['canManageClients']}, currencyCode = {$data['currencyCode']}, dateTimeZone = {$data['dateTimeZone']}, testAccount = {$data['testAccount']}, is_hidden = {$data['is_hidden']}, update_time=NOW();";
 		//echo $sql .'<br>';
 		$result = $this->db_query($sql, true);
@@ -164,8 +185,8 @@ class GADB
 					{$data['cpcBidSource']}, 
 					{$data['cpmBidAmount']}, 
 					{$data['cpmBidSource']}, 
-					{$data['cpaBidAmount']}, 
-					{$data['cpaBidSource']}, NOW())
+					0, 
+					'', NOW())
 				ON DUPLICATE KEY UPDATE
 					name = {$data['name']},
 					status = {$data['status']},
@@ -175,8 +196,8 @@ class GADB
 					cpcBidSource = {$data['cpcBidSource']},
 					cpmBidAmount = {$data['cpmBidAmount']},
 					cpmBidSource = {$data['cpmBidSource']},
-					cpaBidAmount = {$data['cpaBidAmount']},
-					cpaBidSource = {$data['cpaBidSource']},
+					cpaBidAmount = 0,
+					cpaBidSource = '',
 					update_time = NOW()";
 		//echo $sql .'<br>'; exit;
 		$result = $this->db_query($sql, true);
@@ -296,32 +317,26 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "INSERT INTO aw_asset(
-					id, name, type, video_id, url, create_time
-				)
-				VALUES(
-					{$data['id']}, 
-					{$data['name']}, 
-					{$data['type']}, 
-					{$data['video_id']}, 
-					{$data['url']}, 
-					NOW()
-				)
-				ON DUPLICATE KEY UPDATE 
-					name = {$data['name']},
-					type = {$data['type']},
-					video_id = {$data['video_id']},
-					url = {$data['url']},
-					update_time = NOW()";
-		//echo $sql .'<br>'; exit;
-		$result = $this->db_query($sql, true);
+		if(empty($data['video_id'])){
+			$data['video_id'] = '';
+		}
+
+		if(empty($data['url'])){
+			$data['url'] = '';
+		}
+
+		$builder = $this->db->table('aw_asset');
+        $builder->setData($data);
+		$updateTime = ['update_time' => new RawSql('NOW()')];
+        $builder->updateFields($updateTime, true);
+		$result = $builder->upsert();
 
 		return $result;
 	}
 
 	public function getDbCount($ad_id, $date)
 	{
-		if (!$ad_id || !$date) return NULL;
+		if (empty($ad_id) || empty($date)) return NULL;
 		$sql = "SELECT * FROM aw_db_count WHERE ad_id = '{$ad_id}' AND date = '{$date}'";
 		$result = $this->db_query($sql);
 		if (!$result) return null;
@@ -330,10 +345,10 @@ class GADB
 
 	public function getAppSubscribeCount($data, $date)
 	{
-		if (!$data['db_prefix']) return 0;
+		if (empty($data['db_prefix'])) return 0;
 		$sql = "SELECT * FROM app_subscribe WHERE group_id = '{$data['app_id']}' AND status = 1 AND site = '{$data['site']}' AND DATE_FORMAT(reg_date, '%Y-%m-%d') = '{$date}' AND deleted = 0";
 		$res = $this->zenith->query($sql);
-		$num_rows = $res->num_rows;
+		$num_rows = $res->getNumRows();
 		return $num_rows;
 	}
 
@@ -353,16 +368,16 @@ class GADB
 
 	public function getDbPrice($data)
     {
-        if (!$data['ad_id'] || !$data['date']) return NULL;
+        if (empty($data['ad_id']) || empty($data['date'])) return NULL;
         $sql = "SELECT ad_id, date, db_price FROM `z_adwords`.`aw_ad_report_history` WHERE `ad_id` = '{$data['ad_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
         $result = $this->db_query($sql);
         if (!$result) return null;
         return $result->getResultArray();
     }
 
-    public function getAppSubscribe($data)
+    public function getLeads($data)
     {
-        if (!$data['event_seq']) return null;
+        if (empty($data['event_seq'])) return null;
         $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
                 FROM `zenith`.`event_leads`
                 WHERE `reg_timestamp` >= unix_timestamp('{$data['date']}')

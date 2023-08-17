@@ -13,33 +13,16 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use App\ThirdParty\googleads_api\GADB;
 use CodeIgniter\CLI\CLI;
-use GetOpt\GetOpt;
 use Google\Ads\GoogleAds\Util\FieldMasks;
 use Google\Ads\GoogleAds\Util\V13\ResourceNames;
-use App\ThirdParty\googleads_api\lib\Utils\ArgumentNames;
-use App\ThirdParty\googleads_api\lib\Utils\ArgumentParser;
 use App\ThirdParty\googleads_api\lib\Utils\Helper;
 use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClient;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClientBuilder;
-use Google\Ads\GoogleAds\Lib\V13\GoogleAdsException;
-use Google\Ads\GoogleAds\Lib\V13\GoogleAdsServerStreamDecorator;
-use Google\Ads\GoogleAds\V13\Errors\GoogleAdsError;
 use Google\Ads\GoogleAds\V13\Resources\CustomerClient;
-use Google\Ads\GoogleAds\V13\Resources\BiddingStrategy;
-use Google\Ads\GoogleAds\V13\Resources\ChangeEvent;
-use Google\Ads\GoogleAds\V13\Services\CampaignService;
-use Google\Ads\GoogleAds\V13\Services\AdGroupAdService;
 use Google\Ads\GoogleAds\V13\Services\CustomerServiceClient;
 use Google\Ads\GoogleAds\V13\Services\GoogleAdsRow;
-use Google\Ads\GoogleAds\V13\Services\FrequencyCap;
-use Google\ApiCore\ApiException;
-use Google\Ads\GoogleAds\V13\Common\AdTextAsset;
-use Google\Ads\GoogleAds\V13\Common\AdImageAsset;
-use Google\Ads\GoogleAds\V13\Common\AdVideoAsset;
-use Google\Ads\GoogleAds\V13\Enums\AccountBudgetStatusEnum\AccountBudgetStatus;
 use Google\Ads\GoogleAds\V13\Enums\SpendingLimitTypeEnum\SpendingLimitType;
-use Google\Ads\GoogleAds\V13\Enums\TimeTypeEnum\TimeType;
 use Google\Ads\GoogleAds\V13\Enums\CampaignStatusEnum\CampaignStatus;
 use Google\Ads\GoogleAds\V13\Enums\CampaignServingStatusEnum\CampaignServingStatus;
 use Google\Ads\GoogleAds\V13\Enums\AdGroupStatusEnum\AdGroupStatus;
@@ -50,17 +33,13 @@ use Google\Ads\GoogleAds\V13\Enums\AdServingOptimizationStatusEnum\AdServingOpti
 use Google\Ads\GoogleAds\V13\Enums\AdGroupAdStatusEnum\AdGroupAdStatus;
 use Google\Ads\GoogleAds\V13\Enums\PolicyReviewStatusEnum\PolicyReviewStatus;
 use Google\Ads\GoogleAds\V13\Enums\PolicyApprovalStatusEnum\PolicyApprovalStatus;
-use Google\Ads\GoogleAds\V13\Enums\ServedAssetFieldTypeEnum\ServedAssetFieldType;
 use Google\Ads\GoogleAds\V13\Enums\AdTypeEnum\AdType;
-use Google\Ads\GoogleAds\V13\Enums\BiddingStrategyTypeEnum\BiddingStrategyType;
 use Google\Ads\GoogleAds\V13\Enums\BudgetStatusEnum\BudgetStatus;
 use Google\Ads\GoogleAds\V13\Enums\BudgetDeliveryMethodEnum\BudgetDeliveryMethod;
 use Google\Ads\GoogleAds\V13\Enums\CustomerStatusEnum\CustomerStatus;
 use Google\Ads\GoogleAds\V13\Enums\MimeTypeEnum\MimeType;
-use Google\Ads\GoogleAds\V13\Enums\ChangeEventResourceTypeEnum\ChangeEventResourceType;
-use Google\Ads\GoogleAds\V13\Enums\ChangeClientTypeEnum\ChangeClientType;
 use Google\Ads\GoogleAds\V13\Enums\AssetTypeEnum\AssetType;
-use Google\Ads\GoogleAds\V13\Enums\ResourceChangeOperationEnum\ResourceChangeOperation;
+use Google\Ads\GoogleAds\V13\Enums\BiddingStrategyTypeEnum\BiddingStrategyType;
 use Google\Ads\GoogleAds\V13\Enums\ResponseContentTypeEnum\ResponseContentType;
 use Google\Ads\GoogleAds\V13\Resources\Ad;
 use Google\Ads\GoogleAds\V13\Resources\AdGroup;
@@ -75,8 +54,6 @@ use Google\Ads\GoogleAds\V13\Services\CampaignBudgetOperation;
 
 class ZenithGG
 {
-    private $session;
-    private $clientCustomerId;
     private $manageCustomerId = "4013365335"; //4013365335
     private $db;
     private static $rootCustomerClients = ['5980790227', '4324269025', '2409346509', '4946840644', '4943963823', '7933651274', '5045171745', '4486211678', '8135785284', '2667057443', '4560872762'];
@@ -123,6 +100,17 @@ class ZenithGG
                 $customerIdsToChildAccounts,
                 0
             );
+            $data = [
+                'customerId' => $data['customerId'],
+                'manageCustomer' => $data['manageCustomer'],
+                'name' => $data['name'],
+                'status' => $data['status'],
+                'canManageClients' => $data['canManageClients'],
+                'currencyCode' => $data['currencyCode'],
+                'dateTimeZone' => $data['dateTimeZone'],
+                'testAccount' => $data['testAccount'],
+                'is_hidden' => $data['is_hidden'],
+            ];
             $this->db->updateAccount($data);
         }
     }
@@ -263,9 +251,22 @@ class ZenithGG
             $budget = $googleAdsRow->getCampaignBudget();
             $advertisingChannelType = ($c->getAdvertisingChannelType() <= 11) ? AdvertisingChannelType::name($c->getAdvertisingChannelType()) : $c->getAdvertisingChannelType();
             $data = [
-                'customerId' => $googleAdsRow->getCustomer()->getId(), 'id' => $c->getId(), 'name' => $c->getName(), 'status' => CampaignStatus::name($c->getStatus()), 'servingStatus' => CampaignServingStatus::name($c->getServingStatus()), 'startDate' => $c->getStartDate(), 'endDate' => $c->getEndDate(), 'advertisingChannelType' => $advertisingChannelType, 'advertisingChannelSubType' => AdvertisingChannelSubType::name($c->getAdvertisingChannelSubType()), 'adServingOptimizationStatus' => AdServingOptimizationStatus::name($c->getAdServingOptimizationStatus()), 'baseCampaign' => $c->getBaseCampaign()
-                //,'frequencyCaps' => $c->getFrequencyCaps()
-                , 'budgetId' => $budget->getId(), 'budgetName' => $budget->getName(), 'budgetReferenceCount' => $budget->getReferenceCount(), 'budgetStatus' => BudgetStatus::name($budget->getStatus()), 'budgetAmount' => ($budget->getAmountMicros() / 1000000), 'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod())
+                'customerId' => $googleAdsRow->getCustomer()->getId(), 
+                'id' => $c->getId(), 
+                'name' => $c->getName(), 
+                'status' => CampaignStatus::name($c->getStatus()), 'servingStatus' => CampaignServingStatus::name($c->getServingStatus()), 
+                'startDate' => $c->getStartDate(), 
+                'endDate' => $c->getEndDate(), 
+                'advertisingChannelType' => $advertisingChannelType, 
+                'advertisingChannelSubType' => AdvertisingChannelSubType::name($c->getAdvertisingChannelSubType()), 
+                'adServingOptimizationStatus' => AdServingOptimizationStatus::name($c->getAdServingOptimizationStatus()), 
+                'baseCampaign' => $c->getBaseCampaign(), 
+                'budgetId' => $budget->getId(), 
+                'budgetName' => $budget->getName(), 
+                'budgetReferenceCount' => $budget->getReferenceCount(), 
+                'budgetStatus' => BudgetStatus::name($budget->getStatus()), 
+                'budgetAmount' => ($budget->getAmountMicros() / 1000000), 
+                'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod())
                 //,'targetCpa' => $c->getTargetCpa()
             ];
             //echo '<pre>'.print_r($data,1).'</pre>';
@@ -274,19 +275,6 @@ class ZenithGG
         }
         return $result;
     }
-
-    /* public function getCampaignStatus($loginCustomerId = null, $customerId = null)
-    {
-        self::setCustomerId($loginCustomerId);
-        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
-        $query = 'SELECT customer.id, campaign.id, campaign.name, campaign.status FROM campaign ORDER BY campaign.id';
-        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
-        $result = [];
-        foreach ($stream->iterateAllElements() as $googleAdsRow) {
-            $c = $googleAdsRow->getCampaign();
-            var_dump($c->getName().$c->getStatus());
-        }
-    } */
 
     public function updateCampaign($customerId = null, $campaignId = null, $param)
     {
@@ -309,10 +297,6 @@ class ZenithGG
         
         if(isset($param['name'])){
             $data['name'] = $param['name'];
-        }
-
-        if(isset($param['budget'])){
-            $data['campaign_budget'] = $param['budget'];
         }
 
         $campaign = new Campaign($data);
@@ -339,10 +323,6 @@ class ZenithGG
 
             if(isset($data['name'])){
                 $setData['name'] = $campaignInfo->getName();
-            }
-
-            if(isset($data['budget'])){
-                $setData['amount'] = $campaignInfo->getCampaignBudget();
             }
 
             $this->db->updateCampaignField($setData);
@@ -419,29 +399,28 @@ class ZenithGG
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $g = $googleAdsRow->getAdGroup();
             $c = $googleAdsRow->getCampaign();
-            //$bid = BiddingStrategy $googleAdsRow->getBiddingStrategy();
+            $bid = $googleAdsRow->getBiddingStrategy();
+
             $data = [
                 'campaignId' => $c->getId(), 
                 'id' => $g->getId(), 
                 'name' => $g->getName(), 
                 'status' => AdGroupStatus::name($g->getStatus()), 
                 'adGroupType' => AdGroupType::name($g->getType()),
-                //,'biddingStrategyType' => BiddingStrategyType::name($c->getBiddingStrategy())
-                'biddingStrategyType' => $c->getCampaignBiddingStrategy(), 
-                'cpcBidAmount' => $g->getCpcBidMicros(),
-                //,'cpcBidSource' => $bid->getEffectiveCpcBidSource()
-                'cpmBidAmount' => $g->getCpmBidMicros(),
-                //,'cpmBidSource' => $bid->getEffectiveCpmBidSource()
-                // ,'cpaBidAmount' => $g->getCpaBidAmount()
-                // ,'cpaBidSource' => $g->getCpaBidSource()
+                'biddingStrategyType' => $c->getCampaignBiddingStrategy() ?? '', 
+                'cpcBidAmount' => $g->getCpcBidMicros() ?? 0,
+                'cpcBidSource' => '',
+                'cpmBidAmount' => $g->getCpmBidMicros() ?? 0,
+                'cpmBidSource' => '',
+                //'cpaBidAmount' => $g->getEffectiveTargetCpaMicros() ?? 0,
+                //'cpaBidSource' => $g->getEffectiveTargetCpaSource() ?? ''
             ];
 
-            $data['biddingStrategyType'] = $data['biddingStrategyType'] ? $data['biddingStrategyType'] : '';
-            $data['cpcBidSource'] = $data['cpcBidSource'] ? $data['cpcBidSource'] : '';
-            $data['cpmBidSource'] = $data['cpmBidSource'] ? $data['cpmBidSource'] : '';
-            $data['cpaBidAmount'] = $data['cpaBidAmount'] ? $data['cpaBidAmount'] : '';
-            $data['cpaBidSource'] = $data['cpaBidSource'] ? $data['cpaBidSource'] : '';
-            
+            if(!empty($bid)){
+                $data['cpcBidSource'] = $bid->getEffectiveCpcBidSource() ?? '';
+                $data['cpmBidSource'] = $bid->getEffectiveCpmBidSource() ?? '';
+            }
+
             if ($this->db->updateAdGroup($data))
                 $result[] = $data;
         }
@@ -554,7 +533,6 @@ class ZenithGG
                 //print_r($url);
                 //echo '<br>';
             }
-            //var_dump(PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus())); exit
             
             $status = AdGroupAdStatus::name($d->getStatus());    
             $reviewStatus = PolicyReviewStatus::name($d->getPolicySummary()->getReviewStatus());
@@ -578,7 +556,6 @@ class ZenithGG
                 'impressions' => $metric->getImpressions(), 
                 'cost' => round($metric->getCostMicros() / 1000000)
             ];
-
 
             //echo '<pre>'.print_r($data,1).'</pre>';
             if ($this->db->updateAd($data))
@@ -697,37 +674,41 @@ class ZenithGG
 
         // Iterates over all rows in all pages and prints the requested field values for the image
         // asset in each row.
+        $result = [];
         foreach ($response->iterateAllElements() as $googleAdsRow) {
             $asset = $googleAdsRow->getAsset();
             $type = AssetType::name($asset->getType());
             $data = [
-                'id' => $asset->getId(), 'name' => $asset->getName(), 'type' => $type
+                'id' => $asset->getId(), 
+                'name' => $asset->getName() ?? '', 
+                'type' => $type ?? ''
             ];
             $tData = [];
             if ($type == 'IMAGE') {
                 $tData = [
-                    'url' => $asset->getImageAsset()->getFullSize()->getUrl()
+                    'url' => $asset->getImageAsset()->getFullSize()->getUrl() ?? ''
                 ];
             } else if ($type == 'YOUTUBE_VIDEO') {
-                if (method_exists($asset->getYoutubeVideoAsset(), 'getYoutubeVideoId')) {
-                    $tData = [
-                        'video_id' => $asset->getYoutubeVideoAsset()->getYoutubeVideoId(), 'name' => $asset->getYoutubeVideoAsset()->getYoutubeVideoTitle(), 'url' => 'http://i4.ytimg.com/vi/' . $asset->getYoutubeVideoAsset()->getYoutubeVideoId() . '/mqdefault.jpg'
-                    ];
+                if(!empty($asset->getYoutubeVideoAsset())){
+                    if (method_exists($asset->getYoutubeVideoAsset(), 'getYoutubeVideoId')) {
+                        $tData = [
+                            'video_id' => $asset->getYoutubeVideoAsset()->getYoutubeVideoId() ?? '', 
+                            'name' => $asset->getYoutubeVideoAsset()->getYoutubeVideoTitle() ?? '', 
+                            'url' => 'http://i4.ytimg.com/vi/' . $asset->getYoutubeVideoAsset()->getYoutubeVideoId() . '/mqdefault.jpg' ?? ''
+                        ];
+                    }
                 }
             } else if ($type == 'TEXT') {
                 $tData = [
-                    'name' => $asset->getTextAsset()->getText()
+                    'name' => $asset->getTextAsset()->getText() ?? ''
                 ];
             }
             $data = array_merge($data, $tData);
 
-            $data['name'] = $data['name'] ? $data['name'] : '';
-            $data['type'] = $data['type'] ? $data['type'] : '';
-            $data['video_id'] = $data['video_id'] ? $data['video_id'] : '';
-            $data['url'] = $data['url'] ? $data['url'] : '';
-
-            if ($this->db->updateAsset($data))
+            if($this->db->updateAsset($data)){
                 $result[] = $data;
+            };
+            
         }
         return $result;
     }
@@ -735,9 +716,6 @@ class ZenithGG
     public function getAll($date = null)
     {
         $this->getAccounts();
-        ob_flush();
-        flush();
-        usleep(1);
         $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
         $step = 1;
         $total = $accounts->getNumRows();
@@ -745,7 +723,7 @@ class ZenithGG
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
             $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
-            //$assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
+            $assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
             $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
             
@@ -753,14 +731,8 @@ class ZenithGG
                 $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
             }
-            ob_flush();
-            flush();
-            usleep(1);
         }
     }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
       
     public function landingGroup($title)
     {
@@ -828,8 +800,8 @@ class ZenithGG
             $landing = $this->landingGroup($title);
             $data = [];
             $data = [
-                 'date' => $date
-                ,'ad_id' => $row['ad_id']
+                 'date' => $date,
+                 'ad_id' => $row['ad_id']
             ];
             $data = @array_merge($data, $landing);
             if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
@@ -840,7 +812,7 @@ class ZenithGG
             if(count($error)) foreach($error as $err) CLI::write("{$err}", "light_purple");
             if(is_null($landing)) continue;
             $dp = $this->db->getDbPrice($data);
-            $leads = $this->db->getAppSubscribe($data);
+            $leads = $this->db->getLeads($data);
             $cpm = false;
             if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
             if(!is_null($leads)) {

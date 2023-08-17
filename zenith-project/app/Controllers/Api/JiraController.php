@@ -6,7 +6,8 @@ use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use App\Libraries\slack_api\SlackChat;
 use App\Models\Api\UserModel;
-use App\ThirdParty\facebook_api\ZenithFB;
+
+use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\jira_api\ZenithJira;
 use CodeIgniter\CLI\CLI;
 

@@ -16,7 +16,7 @@ class CompanyModel extends Model
         'updated_at',
         'deleted_at',
     ];
-    /* protected $validationRules      = [
+    protected $validationRules      = [
         'name' => 'required',
         //'tel' => 'required',
     ];
@@ -29,7 +29,7 @@ class CompanyModel extends Model
         ],
     ];
     protected $skipValidation       = false;
-    protected $cleanValidationRules = true; */
+    protected $cleanValidationRules = true;
 
     public function __construct()
     {

@@ -70,7 +70,7 @@ class CompanyController extends \CodeIgniter\Controller
                 }else{
                     $agency = '';
                 }
-                
+
                 $validation->setRules($this->company->validationRules, $this->company->validationMessages);
                 if (!$validation->run($param)) {
                     $errors = $validation->getErrors();
