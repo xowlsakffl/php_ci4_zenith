@@ -313,7 +313,7 @@ class GADB
 		return $result;
 	}
 
-	private function updateAsset($data)
+	public function updateAsset($data)
 	{
 		if (is_null($data)) return false;
 
@@ -324,13 +324,13 @@ class GADB
 		if(empty($data['url'])){
 			$data['url'] = '';
 		}
-
+		
+		
 		$builder = $this->db->table('aw_asset');
-        $builder->setData($data);
+        $builder->set($data);
 		$updateTime = ['update_time' => new RawSql('NOW()')];
         $builder->updateFields($updateTime, true);
 		$result = $builder->upsert();
-
 		return $result;
 	}
 
@@ -368,11 +368,16 @@ class GADB
 
 	public function getDbPrice($data)
     {
-        if (empty($data['ad_id']) || empty($data['date'])) return NULL;
+        if (empty($data['ad_id']) || empty($data['date'])){
+			return NULL;
+		}
+
         $sql = "SELECT ad_id, date, db_price FROM `z_adwords`.`aw_ad_report_history` WHERE `ad_id` = '{$data['ad_id']}' AND `date` = '{$data['date']}' GROUP BY date ORDER BY hour DESC LIMIT 1;";
         $result = $this->db_query($sql);
-        if (!$result) return null;
-        return $result->getResultArray();
+		$result = $result->getResultArray();
+
+        if (empty($result)){return null;}
+        return $result;
     }
 
     public function getLeads($data)

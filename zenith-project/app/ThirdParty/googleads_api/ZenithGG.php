@@ -399,7 +399,7 @@ class ZenithGG
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $g = $googleAdsRow->getAdGroup();
             $c = $googleAdsRow->getCampaign();
-            $bid = $googleAdsRow->getBiddingStrategy();
+            //$bid = $googleAdsRow->getBiddingStrategy();
 
             $data = [
                 'campaignId' => $c->getId(), 
@@ -415,16 +415,15 @@ class ZenithGG
                 //'cpaBidAmount' => $g->getEffectiveTargetCpaMicros() ?? 0,
                 //'cpaBidSource' => $g->getEffectiveTargetCpaSource() ?? ''
             ];
-
-            if(!empty($bid)){
+            
+            /* if(!empty($bid)){
                 $data['cpcBidSource'] = $bid->getEffectiveCpcBidSource() ?? '';
                 $data['cpmBidSource'] = $bid->getEffectiveCpmBidSource() ?? '';
-            }
+            } */
 
             if ($this->db->updateAdGroup($data))
                 $result[] = $data;
         }
-        //echo '<pre>'.print_r($data,1).'</pre>';
         return $result;
     }
 
@@ -680,8 +679,8 @@ class ZenithGG
             $type = AssetType::name($asset->getType());
             $data = [
                 'id' => $asset->getId(), 
-                'name' => $asset->getName() ?? '', 
-                'type' => $type ?? ''
+                'name' => $asset->getName(), 
+                'type' => $type
             ];
             $tData = [];
             if ($type == 'IMAGE') {
@@ -704,11 +703,10 @@ class ZenithGG
                 ];
             }
             $data = array_merge($data, $tData);
-
-            if($this->db->updateAsset($data)){
+            $dbResult = $this->db->updateAsset($data);
+            if(!empty($dbResult)){
                 $result[] = $data;
-            };
-            
+            }
         }
         return $result;
     }
@@ -736,7 +734,7 @@ class ZenithGG
       
     public function landingGroup($title)
     {
-        if (!$title) return null;
+        if (empty($title)) return null;
         preg_match_all('/^.*?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
         if (!$matches[9][0]) {    // site underscore exception
             preg_match_all('/\#([0-9]+)?(\_([0-9]+))?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches_re);
@@ -747,7 +745,7 @@ class ZenithGG
             // $matches[12][0] = $matches_re[14][0];
         }
         // echo '<pre>' . print_r($matches_re, 1) . '</pre>';
-        if (!$matches[1][0]) { // Event SEQ를 추출할 수 없다면, $title 변수에 캠페인명이 넘어왔다고 보고 다른 로직으로 $matches 대입
+        if (empty($matches[1][0])) { // Event SEQ를 추출할 수 없다면, $title 변수에 캠페인명이 넘어왔다고 보고 다른 로직으로 $matches 대입
             preg_match_all('/^([^>]+)?>([^|]+)(>[^|]+)||((http|https):\/\/[^\"\'\s()]+)$/', $title, $mc);
             $code = explode('>', $mc[2][0]);
             $matches[1][0] = trim($code[0]);
@@ -786,41 +784,59 @@ class ZenithGG
         $step = 1;
         $ads = $this->db->getAdLeads($date);
         $total = $ads->getNumRows();
-        if (!$total) {
+        if (empty($total)) {
             return null;
         }
         $i = 0;
-        $result = [];
+        $result = [];  
         CLI::write("[".date("Y-m-d H:i:s")."]"."유효DB 개수 수신을 시작합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
             $error = [];
             CLI::showProgress($step++, $total);
             $title = (trim($row['code']) ? $row['code'] : (strpos($row['ad_name'], '#') !== false ? $row['ad_name'] : $row['campaign_name'] . '||' . $row['finalUrl']));
-            // echo date('[H:i:s]') . "광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}";
+
+            CLI::write("[".date('[H:i:s]') ."] 광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}");
+
+            $landing = [];
             $landing = $this->landingGroup($title);
             $data = [];
             $data = [
                  'date' => $date,
                  'ad_id' => $row['ad_id']
             ];
-            $data = @array_merge($data, $landing);
+            $data = array_merge($data, $landing);
             if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
-                if (!$landing['event_seq']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 이벤트번호 미입력' . PHP_EOL;
-                if (!$landing['db_price']) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
+                if (!$landing['event_seq']){
+                    $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 이벤트번호 미입력' . PHP_EOL;
+                }
+                if (!$landing['db_price']){
+                    $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
+                }
             }
-            if(is_null($landing) && preg_match('/&[a-z]+/', $row['ad_name'])) $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
-            if(count($error)) foreach($error as $err) CLI::write("{$err}", "light_purple");
-            if(is_null($landing)) continue;
+            if(is_null($landing) && preg_match('/&[a-z]+/', $row['ad_name'])){
+                $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
+            }
+            if(!empty($error)){
+                foreach($error as $err){
+                    CLI::write("{$err}", "light_purple");
+                }
+            }
+            if(is_null($landing)){
+                continue;
+            }
             $dp = $this->db->getDbPrice($data);
             $leads = $this->db->getLeads($data);
             $cpm = false;
-            if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
+            if(is_null($leads) && $data['media'] === 'cpm'){
+                $cpm = true;
+            }
             if(!is_null($leads)) {
-                if(!$leads->getNumRows() && !$cpm) continue;
+                if(!$leads->getNumRows() && !$cpm){continue;}
             }
             $db_price = $data['db_price'];
-            if(isset($dp['db_price']) && $data['date'] != date('Y-m-d'))
+            if(isset($dp['db_price']) && $data['date'] != date('Y-m-d')){
                 $db_price = $data['db_price'] = $dp['db_price'];
+            }
             /* 
             *수익, 매출액 계산
             !xxxcpm - 유효db n / 수익,매출0
@@ -832,13 +848,17 @@ class ZenithGG
             if(!$data['event_seq'] && $data['media']) {
                 foreach($sp_data as $hour => $spend) {
                     $margin = 0;
-                    if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
+                    if($data['period_ad']){
+                        $margin = $spend * ('0.' . $data['period_ad']);
+                    }
                     $data['data'][] = ['hour' => $hour,'spend' => $spend,'count' => "",'sales' => "",'margin' => $margin];
                 }
             }
             $initZero = false;
-            if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
+            //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
+            if(preg_match('/cpm/i', $data['media'])){
                 $initZero = true;
+            }
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
                     $sales = $margin = 0;
@@ -859,8 +879,9 @@ class ZenithGG
                     $result = array_merge($result, $data);
                 }
             }
-            if(isset($data['ad_id']))
+            if(isset($data['ad_id'])){
                 $this->db->updateReport($data);
+            }
         }
         return $result;
     }
