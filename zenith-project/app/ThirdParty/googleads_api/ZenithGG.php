@@ -720,15 +720,15 @@ class ZenithGG
         CLI::write("[".date("Y-m-d H:i:s")."]"."계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
-            $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
+            //$this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             $assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
-            $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
+            //$campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
             
-            if (count($campaigns)) {
+            /* if (count($campaigns)) {
                 $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
-            }
+            } */
         }
     }
       

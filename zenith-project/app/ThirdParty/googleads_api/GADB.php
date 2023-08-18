@@ -324,10 +324,17 @@ class GADB
 		if(empty($data['url'])){
 			$data['url'] = '';
 		}
-		
+
+		$data = [
+			'id' => $this->db->escape($data['id']),
+			'name' => $this->db->escape($data['name'] ?? ''),
+			'type' => $this->db->escape($data['type'] ?? ''),
+			'video_id' => $this->db->escape($data['video_id'] ?? ''),
+			'url' => $this->db->escape($data['url'] ?? ''),
+		];	
 		
 		$builder = $this->db->table('aw_asset');
-        $builder->set($data);
+        $builder->setData($data, false);
 		$updateTime = ['update_time' => new RawSql('NOW()')];
         $builder->updateFields($updateTime, true);
 		$result = $builder->upsert();
