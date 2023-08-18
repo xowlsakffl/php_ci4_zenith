@@ -40,7 +40,7 @@
 <div class="sub-contents-wrap company-contaniner">
     <div class="title-area">
         <h2 class="page-title">광고주/광고대행사 관리</h2>
-        <p class="title-disc">내가 더 멀리 보았다면 이는 거인들의 어깨 위에 올라 서있었기 때문이다.</p>
+        <!-- <p class="title-disc">내가 더 멀리 보았다면 이는 거인들의 어깨 위에 올라 서있었기 때문이다.</p> -->
     </div>
 
     <div class="search-wrap">

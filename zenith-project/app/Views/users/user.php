@@ -39,7 +39,7 @@
 <div class="sub-contents-wrap db-manage-contaniner">
     <div class="title-area">
         <h2 class="page-title">회원 관리</h2>
-        <p class="title-disc">혼자서는 작은 한 방울이지만 함께 모이면 바다를 이룬다.</p>
+        <!-- <p class="title-disc">혼자서는 작은 한 방울이지만 함께 모이면 바다를 이룬다.</p> -->
     </div>
 
     <div class="search-wrap">

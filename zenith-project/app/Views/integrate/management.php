@@ -28,7 +28,7 @@
 <div class="sub-contents-wrap db-manage-contaniner">
     <div class="title-area">
         <h2 class="page-title">통합 DB 관리</h2>
-        <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p>
+        <!-- <p class="title-disc">안하는 사람은 끝까지 할 수 없지만, 못하는 사람은 언젠가는 해 낼 수도 있다.</p> -->
     </div>
 
     <div class="search-wrap">

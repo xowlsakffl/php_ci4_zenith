@@ -20,7 +20,7 @@ CHAIN 열혈광고 - 회계 관리 / 세금계산서 요청
 <div class="sub-contents-wrap">
     <div class="title-area">
         <h2 class="page-title">세금계산서 요청</h2>
-        <p class="title-disc">세금계산서 발행을 경영지원실에 요청하세요~ 나연님, 서진님 고생이 많으십니다.</p>
+        <!-- <p class="title-disc">세금계산서 발행을 경영지원실에 요청하세요~ 나연님, 서진님 고생이 많으십니다.</p> -->
     </div>
 
     <div class="search-wrap">
