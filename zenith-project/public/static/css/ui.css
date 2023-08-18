@@ -819,7 +819,12 @@ body {
   font-size: 0.5rem;
 }
 .client-list .row .col:hover {
-  box-shadow: inset 20px 70px 0px #000;
+  box-shadow: inset 20px 70px 0px #43cf74;
+  color: #13662f;
+}
+.client-list .row .col:hover button {
+  border-left-color: transparent;
+  border-right-color: transparent;
 }
 .client-list.biz .row .col {
   width: 160px;

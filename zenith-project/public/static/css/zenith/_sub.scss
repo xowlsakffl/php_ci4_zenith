@@ -89,7 +89,9 @@
                 .progress-bar{height:3px; background:#ffa500;}
                 .txt{position:absolute; right:3px; bottom:3px; font-size:0.5rem;}
             }
-            &:hover{box-shadow:inset 20px 70px 0px #000;}
+            &:hover{box-shadow:inset 20px 70px 0px #43cf74; color:#13662f;
+                button{border-left-color: transparent; border-right-color: transparent;}
+            }
         }
     }
     &.biz{

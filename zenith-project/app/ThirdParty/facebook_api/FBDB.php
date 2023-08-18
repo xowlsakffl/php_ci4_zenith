@@ -180,7 +180,7 @@ class FBDB extends Config
             $result = $builder->upsert();
             // 광고 저장
             $use_landing = 0;
-            if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $ad_name)) {
+            if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $report['ad_name'])) {
                 $use_landing = 1;
             }
             $data = [
