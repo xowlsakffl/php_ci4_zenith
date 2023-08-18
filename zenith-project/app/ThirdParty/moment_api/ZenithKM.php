@@ -913,7 +913,7 @@ class ZenithKM
             $event_id = array_pop($path);
             $site = @$urls['qs']['site'];
         } else {
-            $event_id = $matches[2][0];
+            $event_id = @$matches[2][0];
             $site = @$matches[4][0];
         }
         if(@$urls['qs']['site'] != @$matches[4][0]) //제목 site값 우선
@@ -965,7 +965,7 @@ class ZenithKM
                  'date' => $date
                 ,'creative_id' => $row['id']
             ];
-            $data = @array_merge($data, $landing);
+            $data = @array_merge($data, (array)$landing);
             if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
                 if (!$landing['event_seq']) $error[] = $row['name'] . '(' . $row['id'] . '): 이벤트번호 미입력' . PHP_EOL;
                 if (!$landing['db_price']) $error[] = $row['name'] . '(' . $row['id'] . '): DB단가 미입력' . PHP_EOL;
