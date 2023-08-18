@@ -720,42 +720,42 @@ class ZenithGG
         CLI::write("[".date("Y-m-d H:i:s")."]"."계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             CLI::showProgress($step++, $total);
-            //$this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
+            $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             $assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
-            //$campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
+            $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
             
-            /* if (count($campaigns)) {
+            if (count($campaigns)) {
                 $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
-            } */
+            }
         }
     }
       
     public function landingGroup($title)
     {
-        if (empty($title)) return null;
+        if (empty($title)) return [];
         preg_match_all('/^.*?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
-        if (!$matches[9][0]) {    // site underscore exception
+        if (empty($matches[9][0])) {    // site underscore exception
             preg_match_all('/\#([0-9]+)?(\_([0-9]+))?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches_re);
-            $matches[9][0] = $matches_re[11][0];
-            $matches[3][0] = $matches[3][0] . $matches_re[4][0];
-            $matches[6][0] = $matches_re[8][0];
-            $matches[12][0] = $matches_re[14][0];
+            $matches[9][0] = $matches_re[11][0] ?? '';
+            $matches[3][0] = ($matches[3][0] ?? '') . ($matches_re[4][0] ?? '');
+            $matches[6][0] = $matches_re[8][0] ?? '';
+            $matches[12][0] = $matches_re[14][0] ?? '';
             // $matches[12][0] = $matches_re[14][0];
         }
         // echo '<pre>' . print_r($matches_re, 1) . '</pre>';
         if (empty($matches[1][0])) { // Event SEQ를 추출할 수 없다면, $title 변수에 캠페인명이 넘어왔다고 보고 다른 로직으로 $matches 대입
             preg_match_all('/^([^>]+)?>([^|]+)(>[^|]+)||((http|https):\/\/[^\"\'\s()]+)$/', $title, $mc);
-            $code = explode('>', $mc[2][0]);
-            $matches[1][0] = trim($code[0]);
-            $matches[6][0] = trim($code[1]);
-            $matches[9][0] = trim($code[2]);
-            $matches[12][0] = trim(str_replace('^', '', $code[3]));
+            $code = explode('>', $mc[2][0] ?? '');
+            $matches[1][0] = trim($code[0] ?? '');
+            $matches[6][0] = trim($code[1] ?? '');
+            $matches[9][0] = trim($code[2] ?? '');
+            $matches[12][0] = trim(str_replace('^', '', $code[3] ?? ''));
             $url = $mc[4][4];
             $qs = parse_url($url, PHP_URL_QUERY);
             parse_str($qs, $params);
-            $matches[3][0] = trim($params['site']);
+            $matches[3][0] = trim($params['site'] ?? '');
         }
         switch ($matches[9][0]) {
             case 'ger': $media = '이벤트 랜딩'; break;
@@ -764,6 +764,7 @@ class ZenithGG
             default: $media = ''; break;
         }
         $result = array('name' => '', 'media' => '', 'event_seq' => '', 'site' => '', 'db_price' => 0, 'period_ad' => '');
+
         if ($media) {
             $result['name']         = $title;
             $result['media']        = $media;
@@ -773,7 +774,7 @@ class ZenithGG
             $result['period_ad']    = $matches[12][0];
             return $result;
         }
-        return null;
+        return [];
     }
       
     public function getAdsUseLanding($date = null)
@@ -793,7 +794,16 @@ class ZenithGG
         foreach ($ads->getResultArray() as $row) {
             $error = [];
             CLI::showProgress($step++, $total);
-            $title = (trim($row['code']) ? $row['code'] : (strpos($row['ad_name'], '#') !== false ? $row['ad_name'] : $row['campaign_name'] . '||' . $row['finalUrl']));
+
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            } elseif (!empty($row['ad_name']) && strpos($row['ad_name'], '#') !== false) {
+                $title = $row['ad_name'];
+            } elseif (!empty($row['campaign_name']) && !empty($row['finalUrl'])) {
+                $title = $row['campaign_name'] . '||' . $row['finalUrl'];
+            } else {
+                $title = '';
+            }
 
             CLI::write("[".date('[H:i:s]') ."] 광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}");
 
@@ -804,8 +814,10 @@ class ZenithGG
                  'date' => $date,
                  'ad_id' => $row['ad_id']
             ];
+            
             $data = array_merge($data, $landing);
-            if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
+ 
+            if (!empty($landing) && !preg_match('/cpm/', $landing['media'])) {
                 if (!$landing['event_seq']){
                     $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 이벤트번호 미입력' . PHP_EOL;
                 }
@@ -813,7 +825,7 @@ class ZenithGG
                     $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): DB단가 미입력' . PHP_EOL;
                 }
             }
-            if(is_null($landing) && preg_match('/&[a-z]+/', $row['ad_name'])){
+            if(empty($landing) && isset($row['ad_name']) && preg_match('/&[a-z]+/', $row['ad_name'])){
                 $error[] = $row['ad_name'] . '(' . $row['ad_id'] . '): 인식 오류' . PHP_EOL;
             }
             if(!empty($error)){
@@ -821,19 +833,19 @@ class ZenithGG
                     CLI::write("{$err}", "light_purple");
                 }
             }
-            if(is_null($landing)){
+            if(empty($landing)){
                 continue;
             }
             $dp = $this->db->getDbPrice($data);
             $leads = $this->db->getLeads($data);
             $cpm = false;
-            if(is_null($leads) && $data['media'] === 'cpm'){
+            if(is_null($leads) && isset($data['media']) && $data['media'] === 'cpm'){
                 $cpm = true;
             }
             if(!is_null($leads)) {
                 if(!$leads->getNumRows() && !$cpm){continue;}
             }
-            $db_price = $data['db_price'];
+            $db_price = $data['db_price'] ?? 0;
             if(isset($dp['db_price']) && $data['date'] != date('Y-m-d')){
                 $db_price = $data['db_price'] = $dp['db_price'];
             }
@@ -845,7 +857,7 @@ class ZenithGG
             */
             $sp_data = json_decode($row['spend_data'],1);
             $period_margin = [];
-            if(!$data['event_seq'] && $data['media']) {
+            if(!isset($data['event_seq']) && isset($data['media'])) {
                 foreach($sp_data as $hour => $spend) {
                     $margin = 0;
                     if($data['period_ad']){
@@ -856,16 +868,19 @@ class ZenithGG
             }
             $initZero = false;
             //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
-            if(preg_match('/cpm/i', $data['media'])){
-                $initZero = true;
+            if(isset($data['media'])){
+                if(preg_match('/cpm/i', $data['media'])){
+                    $initZero = true;
+                }
             }
+            
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
                     $sales = $margin = 0;
-                    $spend = $sp_data[$row['hour']];
+                    $spend = $sp_data[$row['hour']] ?? 0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
-                    $margin = $sales - $spend;
+                    $margin = $sales - (int)$spend;
                     if($initZero) $margin = $sales = 0;
                     if($data['media'] === 'cpm') $db_count = 0;
                     if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
@@ -879,6 +894,7 @@ class ZenithGG
                     $result = array_merge($result, $data);
                 }
             }
+
             if(isset($data['ad_id'])){
                 $this->db->updateReport($data);
             }

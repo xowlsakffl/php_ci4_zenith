@@ -402,15 +402,22 @@ class GADB
 
 	public function updateReport($data)
     {
-        $row = $data;
-        foreach($row['data'] as $v) {
-            if ($row['ad_id']) {
-                $sql = "UPDATE `z_adwords`.`aw_ad_report_history` 
-                SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_time` = NOW()
-                WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
-                $this->db_query($sql, true);
-            }
-        }
+		if(!empty($data)){
+			$row = $data;
+		}else{
+			return false;
+		}
+        
+		if(isset($row['data'])){
+			foreach($row['data'] as $v) {
+				if ($row['ad_id']) {
+					$sql = "UPDATE `z_adwords`.`aw_ad_report_history` 
+					SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_time` = NOW()
+					WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
+					$this->db_query($sql, true);
+				}
+			}
+		}
     }
 
 	public function db_query($sql, $error = false)
