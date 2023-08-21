@@ -2236,6 +2236,10 @@ div.dataTables_processing > div:last-child > div {
   float: right;
 }
 
+.user-nav p {
+  display: none;
+}
+
 .nav-wrap .nav button {
   display: block;
   padding: 0 0 0 33px;
