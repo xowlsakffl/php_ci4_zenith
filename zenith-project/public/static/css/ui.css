@@ -1673,6 +1673,26 @@ div.dataTables_processing > div:last-child > div {
     background: #ce1922;
   }
 }
+.sub-contents-wrap .media-advertiser .filter_media_btn .media_account_icon {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -2px;
+}
+.sub-contents-wrap .media-advertiser .filter_media_btn .media_account_name {
+  padding-left: 0.5rem;
+}
+.sub-contents-wrap .media-advertiser .filter_media_btn .facebook {
+  background: url(/img/ico_facebook.png);
+  background-size: cover;
+}
+.sub-contents-wrap .media-advertiser .filter_media_btn .google {
+  background: url(/img/ico_google.png);
+  background-size: cover;
+}
+.sub-contents-wrap .media-advertiser .filter_media_btn .kakao {
+  background: url(/img/ico_kakao.png);
+  background-size: cover;
+}
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }

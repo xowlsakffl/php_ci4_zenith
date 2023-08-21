@@ -45,7 +45,7 @@ class AdvManagerController extends BaseController
                 $arg['searchData']['type'] = 'campaigns';
                 $arg['searchData']['media'] = 'facebook';
             }
-            //$arg['searchData']['sdate'] = '2023-06-07';//date('Y-m-d')
+
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
@@ -89,6 +89,7 @@ class AdvManagerController extends BaseController
                 return $this->respond($result['data']);
             }
             $result['accounts'] = $this->getAccounts($arg);
+            $result['media_accounts'] = $this->getMediaAccounts($arg);
             $result['report'] = $this->getReport($arg);
             return $this->respond($result);
         }else{
@@ -102,6 +103,12 @@ class AdvManagerController extends BaseController
         $accounts = $this->admanager->getAccounts($arg);
         //$accounts = $this->setAccountData($accounts);
         $result = array_merge($result, $accounts); 
+        return $result;
+    }
+
+    private function getMediaAccounts($arg)
+    { 
+        $result = $this->admanager->getMediaAccounts($arg);
         return $result;
     }
 

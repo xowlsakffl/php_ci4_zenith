@@ -44,6 +44,34 @@ class AdvGoogleManagerModel extends Model
 		return $builder;
 	}
 
+	public function getMediaAccounts($data)
+	{
+		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
+        $builder->select('
+			"google" AS media,
+			E.name AS media_account_name,
+			E.customerId AS media_account_id
+		');
+		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+        $builder->where('D.status !=', 'NODATA');
+
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
+        }
+
+		if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+		
+		return $builder;
+	}
+
     public function getCampaigns($data)
     {
 		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
@@ -82,6 +110,10 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['account'])){
+			$builder->whereIn('E.customerId', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -136,6 +168,10 @@ class AdvGoogleManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
+		if(!empty($data['account'])){
+			$builder->whereIn('E.customerId', explode("|",$data['account']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('C.name', $data['stx']);
@@ -186,6 +222,10 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['account'])){
+			$builder->whereIn('E.customerId', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -367,6 +407,10 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['account'])){
+			$builder->whereIn('E.customerId', explode("|",$data['account']));
         }
 		
         $builder->groupBy('A.date');

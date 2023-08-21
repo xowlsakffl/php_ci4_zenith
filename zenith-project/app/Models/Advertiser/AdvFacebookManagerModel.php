@@ -29,6 +29,33 @@ class AdvFacebookManagerModel extends Model
         return $builder;
 	}
 
+	public function getMediaAccounts($data)
+	{
+		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+        $builder->select('
+			"facebook" AS media,
+			E.name AS media_account_name,
+			E.ad_account_id AS media_account_id
+		');
+		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
+        }
+
+		if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        return $builder;
+	}
+
     public function getCampaigns($data)
     {
         $builder = $this->db->table('z_facebook.fb_ad_insight_history A');
@@ -66,6 +93,10 @@ class AdvFacebookManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['account'])){
+			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -119,6 +150,10 @@ class AdvFacebookManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
+		if(!empty($data['account'])){
+			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('C.adset_name', $data['stx']);
@@ -168,6 +203,10 @@ class AdvFacebookManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['account'])){
+			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -234,6 +273,10 @@ class AdvFacebookManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
+		if(!empty($data['account'])){
+			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
+        }
+		
         $builder->groupBy('A.date');
         return $builder;
 	}

@@ -20,6 +20,11 @@ class AdvManagerModel extends Model
         return $this->getQueryResults($data, 'getAccounts');
     }
 
+    public function getMediaAccounts($data)
+    {
+        return $this->getQueryResults($data, 'getMediaAccounts');
+    }
+
     public function getCampaigns($data)
     {
         return $this->getQueryResults($data, 'getCampaigns');
@@ -121,6 +126,11 @@ class AdvManagerModel extends Model
             if($type == 'getAccounts'){   
                 $resultQuery->groupBy('adv.company_id');
                 $resultQuery->orderBy('adv.company_name', 'asc');
+            }
+
+            if($type == 'getMediaAccounts'){   
+                $resultQuery->groupBy('adv.media_account_id');
+                $resultQuery->orderBy('adv.media_account_name', 'asc');
             }
             
             /* if($type == 'getCampaigns' || $type == 'getAdsets' || $type == 'getAds'){   

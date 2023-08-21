@@ -128,6 +128,12 @@
         </div>
     </div>
 
+    <div class="section client-list media-advertiser">
+        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체별 광고주</h3>
+        <div class="row" id="media-advertiser-list">
+        </div>
+    </div>
+
     <div class="tab-wrap">
         <ul class="nav nav-tabs" id="tab-list" role="tablist">
             <li class="nav-item" role="presentation">
@@ -368,6 +374,10 @@ function setSearchData() {
         data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
     }
 
+    if(data.searchData.account){
+        data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
+    }
+
     if(data.searchData.check){
         data.searchData.check.map(function(txt){ $(`.check input[value="${txt}"]`).prop('checked', true); });
     }
@@ -427,6 +437,7 @@ function getList(data = []){
                     'type': $('.tab-link.active').val(),
                     'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
+                    'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
                 };
 
@@ -610,8 +621,9 @@ function getList(data = []){
     }).on('xhr.dt', function( e, settings, data, xhr ) {
         if(data){
             setReport(data.report);
-            setAccount(data.accounts)
-            setTotal(data)
+            setAccount(data.accounts);
+            setMediaAccount(data.media_accounts)
+            setTotal(data);
             setDate();
             setSearchData();
         }
@@ -715,6 +727,32 @@ function setAccount(data) {
 
     $row.find('.filter_btn').filter(function() {
         return existingIds.includes($(this).val());
+    }).parent().parent().remove();
+
+    $row.append(html);
+}
+
+function setMediaAccount(data) {
+    var $row = $('.media-advertiser .row');
+
+    var mediaExistingIds = [];
+    $row.find('.filter_media_btn').each(function() {
+        mediaExistingIds.push($(this).val());
+    });
+
+    var html = '';
+    $.each(data, function(idx, v) {
+        var media_account_id = v.media_account_id.toString();
+
+        if (mediaExistingIds.includes(media_account_id)) {
+            mediaExistingIds = mediaExistingIds.filter(id => id !== media_account_id);
+        } else {
+            html += '<div class="col"><div class="inner"><button type="button" value="' + media_account_id + '" id="media_account_btn" class="filter_media_btn"><div class="media_account_txt d-flex align-items-center"><span class="media_account_icon '+v.media+'"></span><span class="media_account_name">' + v.media_account_name + '</span></div></button></div></div>';
+        }
+    });
+
+    $row.find('.filter_media_btn').filter(function() {
+        return mediaExistingIds.includes($(this).val());
     }).parent().parent().remove();
 
     $row.append(html);
@@ -837,7 +875,7 @@ $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     dataTable.state.save();
 });
 
-$('body').on('click', '#media_btn, #company_btn', function() {
+$('body').on('click', '#media_btn, #company_btn, #media_account_btn', function() {
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
     dataTable.state.save();

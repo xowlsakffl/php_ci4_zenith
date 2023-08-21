@@ -29,6 +29,33 @@ class AdvKakaoManagerModel extends Model
         return $builder;
 	}
 
+    public function getMediaAccounts($data)
+	{
+        $builder = $this->db->table('z_moment.mm_creative_report_basic A');
+        $builder->select('
+            "kakao" AS media,
+			E.name AS media_account_name,
+			E.id AS media_account_id
+        ');
+        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
+		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		$builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+		$builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $builder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
+		$builder->join('zenith.companies G', 'F.company_id = G.id');
+
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(A.date) >=', $data['sdate']);
+            $builder->where('DATE(A.date) <=', $data['edate']);
+        }
+
+        if(!empty($data['company'])){
+			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+        
+        return $builder;
+	}
+
     public function getCampaigns($data)
 	{
 		$builder = $this->db->table('z_moment.mm_creative_report_basic A');
@@ -63,6 +90,10 @@ class AdvKakaoManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['account'])){
+			$builder->whereIn('E.id', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -112,6 +143,10 @@ class AdvKakaoManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
+        if(!empty($data['account'])){
+			$builder->whereIn('E.id', explode("|",$data['account']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('C.name', $data['stx']);
@@ -157,6 +192,10 @@ class AdvKakaoManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['account'])){
+			$builder->whereIn('E.id', explode("|",$data['account']));
         }
 
         if(!empty($data['stx'])){
@@ -218,6 +257,10 @@ class AdvKakaoManagerModel extends Model
 
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+        if(!empty($data['account'])){
+			$builder->whereIn('E.id', explode("|",$data['account']));
         }
 
         $builder->groupBy('A.date');
