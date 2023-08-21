@@ -1859,23 +1859,18 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.delete:hover {
   box-shadow: inset 0 -3em 0 0 red;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label {
-  display: block;
-  margin: 5px auto;
-  cursor: pointer;
-}
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label i {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box i {
   display: inline-block;
   width: 28px;
   height: 28px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .facebook {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .facebook {
   background: url("/img/ico_facebook.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .kakao {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .kakao {
   background: url("/img/ico_kakao.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .google {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .google {
   background: url("/img/ico_google.png") no-repeat center 0;
 }
 
