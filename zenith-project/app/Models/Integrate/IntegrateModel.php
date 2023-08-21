@@ -95,11 +95,10 @@ class IntegrateModel extends Model
             $builder->whereIn('el.status', $status);
         }
 
-        // limit 적용하지 않은 쿼리
-        $builderNoLimit = clone $builder;
-
         // limit 적용한 쿼리
         $builder->groupBy(['el.seq','lm.leads_seq'], true);
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
         $orderBy = [];
         if(!empty($data['order'])) {
             foreach($data['order'] as $row) {
