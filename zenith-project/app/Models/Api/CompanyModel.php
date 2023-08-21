@@ -95,7 +95,6 @@ class CompanyModel extends Model
         $builder->join('companies as parent_c', 'ci.company_parent_id = parent_c.id', 'left');
         $builder->where('c.id', $id);
         $builder->where('c.status !=', 0);
-        $builder->where('c.deleted_at =', null);
         $result = $builder->get()->getRowArray();
 
         return $result;
@@ -212,11 +211,15 @@ class CompanyModel extends Model
 
     public function deleteCompany($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('companies');
-        $builder->set('status', 0);
-        $builder->set('deleted_at', date('Y-m-d H:i:s'));
         $builder->where('id', $data['id']);
-        $result = $builder->update();
+        $builder->delete();
+
+        $builder = $this->zenith->table('company_adaccounts');
+        $builder->where('company_id', $data['id']);
+        $builder->delete();
+        $result = $this->zenith->transComplete();
 
         return $result;
     }
