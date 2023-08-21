@@ -151,8 +151,8 @@ function setSearchData() { //state 에 저장된 내역으로 필터 active 세�
     data.searchData.status.split('|').map(function(txt){
         $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
     });
-    $('#sdate').val(data.searchData.sdate);
-    $('#edate').val(data.searchData.edate);
+    //$('#sdate').val(data.searchData.sdate);
+    //$('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
     if(typeof dataTable != 'undefined') dataTable.state.save();
@@ -508,7 +508,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
 }
 
 function setDate(){
-    $('#sdate, #edate').val(today);
+    //$('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷

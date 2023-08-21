@@ -69,8 +69,8 @@
                         <col style="width:5%;">
                         <col style="width:15%;">
                         <col style="width:15%;">
-                        <col style="width:30%;">
-                        <col style="width:25%;">
+                        <col style="width:35%;">
+                        <col style="width:20%;">
                         <col style="width:10%;">
                 </colgroup>
                 <thead class="table-dark">
@@ -79,7 +79,7 @@
                         <th scope="col">소속대행사</th>
                         <th scope="col">타입</th>
                         <th scope="col">이름</th>
-                        <th scope="col">전화번호</th>
+                        <th scope="col">작성자</th>
                         <th scope="col">생성일</th>
                     </tr>
                 </thead>
@@ -101,8 +101,8 @@
                             <form name="adv-show-form">
                                 <table class="table table-bordered table-modal" id="adv-show-table">
                                     <colgroup>
-                                        <col style="width:15%;">
                                         <col style="width:12%;">
+                                        <col style="width:15%;">
                                         <col style="width:20%;">
                                         <col style="width:20%;">
                                         <col style="width:16%;">
@@ -110,29 +110,29 @@
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th scope="col">소속대행사</th>
                                             <th scope="col">타입</th>
+                                            <th scope="col">소속대행사</th>
                                             <th scope="col">광고주명</th>
-                                            <th scope="col">전화번호</th>
+                                            <th scope="col">작성자</th>
                                             <th scope="col">생성일</th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr>                                       
+                                            <td id="type">
+                                                <span></span>
+                                            </td>
                                             <td id="p_name">
                                                 <input type="hidden" name="id">
                                                 <input type="hidden" name="p_id">
                                                 <input type="text" name="p_name"  class="form-control" id="show-p_name" autocomplete="off">
                                             </td>
-                                            <td id="type">
-                                                <span></span>
-                                            </td>
                                             <td id="name">
                                                 <input type="text" name="name" class="form-control">
                                             </td>
-                                            <td id="tel">
-                                                <input type="text" name="tel" class="form-control">
+                                            <td id="nickname">
+                                                <span></span>
                                             </td>
                                             <td id="created_at">
                                                 <span></span>
@@ -245,35 +245,30 @@
                             <form name="adv-create-form">
                                 <table class="table table-bordered table-modal" id="adv-create-table">
                                     <colgroup>
-                                        <col style="width:20%;">
-                                        <col style="width:20%;">
                                         <col style="width:30%;">
                                         <col style="width:30%;">
+                                        <col style="width:40%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
-                                            <th scope="col">소속대행사</th>
                                             <th scope="col">타입</th>
+                                            <th scope="col">소속대행사</th>
                                             <th scope="col">광고주명</th>
-                                            <th scope="col">전화번호</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td id="p_name">
-                                                <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
-                                            </td>
                                             <td id="type">
                                                 <select name="type" id="" class="form-select">
                                                     <option value="광고대행사">광고대행사</option>
                                                     <option value="광고주">광고주</option>
                                                 </select>
                                             </td>
+                                            <td id="p_name">
+                                                <input type="text" name="p_name"  class="form-control" id="create-p_name" autocomplete="off">
+                                            </td>
                                             <td id="name">
                                                 <input type="text" name="name" class="form-control">
-                                            </td>
-                                            <td id="tel">
-                                                <input type="text" name="tel" class="form-control">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -342,7 +337,7 @@ function getCompanyList(){
             { "data": "p_name"},
             { "data": "type"},
             { "data": "name" },
-            { "data": "tel" },
+            { "data": "nickname" },
             { 
                 "data": "created_at",
                 "render": function(data){
@@ -550,7 +545,7 @@ function setCompanyShow(data) {
     $('#adv-show-table #p_name input[type="text"]').val(data.p_name);
     $('#adv-show-table #type span').text(data.type);
     $('#adv-show-table #name input').val(data.name);
-    $('#adv-show-table #tel input').val(data.tel);
+    $('#adv-show-table #nickname span').text(data.nickname);
     $('#adv-show-table #created_at span').text(data.created_at.substr(0, 10));
     $('#adv-show-table #btns #delete_btn').val(data.id);
     $('#belong-user-table #username input[name="company_id"]').val(data.id);

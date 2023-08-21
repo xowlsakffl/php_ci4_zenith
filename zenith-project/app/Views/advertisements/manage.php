@@ -148,7 +148,7 @@
         </ul>
         <div class="tab-content">
             <div class="btn-wrap">
-                <button type="button" class="btn btn-outline-danger">수동 업데이트</button>
+                <button type="button" class="btn btn-outline-danger" id="update_btn">수동 업데이트</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
             </div>
@@ -868,6 +868,24 @@ function handleInput(tab, id, tmp_name, inputElement) {
     }
 }
 
+function setManualUpdate(data){
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>/advertisements/set-adv",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            if (data.response == true) {
+                
+            }
+        },
+        error: function(error, status, msg) {
+            alert("상태코드 " + status + "에러메시지" + msg);
+        }
+    });
+}
+
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');
@@ -888,6 +906,15 @@ $('body').on('click', '.tab-link', function() {
     debug('필터링 탭 클릭');
     dataTable.state.save();
     dataTable.draw();
+});
+
+$('body').on('click', '#update_btn', function() {
+    data = tableParam.searchData;
+    if(!data.length){
+        alert("업데이트 할 항목을 선택해주세요.");
+		return;
+    }
+    setManualUpdate(data);
 });
 
 $('form[name="search-form"]').bind('submit', function() {

@@ -10,7 +10,7 @@ class CompanyModel extends Model
     protected $allowedFields = [
         'type',
         'name',
-        'tel',
+        'nickname',
         'status',
         'created_at',
         'updated_at',
@@ -18,14 +18,10 @@ class CompanyModel extends Model
     ];
     protected $validationRules      = [
         'name' => 'required',
-        //'tel' => 'required',
     ];
     protected $validationMessages   = [
         'name' => [
             'required' => '이름은 필수 입력사항입니다.',
-        ],
-        'tel' => [
-            'required' => '전화번호는 필수 입력사항입니다.',
         ],
     ];
     protected $skipValidation       = false;
@@ -56,7 +52,7 @@ class CompanyModel extends Model
             $builder->groupStart();
             $builder->like('c.type', $srch['stx']);
             $builder->orLike('c.name', $srch['stx']);
-            $builder->orLike('c.tel', $srch['stx']);
+            $builder->orLike('c.nickname', $srch['stx']);
             $builder->orLike('parent_c.name', $srch['stx']);
             $builder->groupEnd();
         }
@@ -166,7 +162,7 @@ class CompanyModel extends Model
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('type', $data['type']);
         $builder_1->set('name', $data['name']);
-        $builder_1->set('tel', $data['tel']);
+        $builder_1->set('nickname', auth()->user()->nickname);
         $builder_1->set('status', 1);
         $result_1 = $builder_1->insert();
         if(!empty($agency)){
@@ -189,7 +185,6 @@ class CompanyModel extends Model
         $this->zenith->transStart();
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('name', $data['name']);
-        $builder_1->set('tel', $data['tel']);
         $builder_1->where('id', $data['id']);
         $builder_1->update();
 

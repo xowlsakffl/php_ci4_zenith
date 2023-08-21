@@ -809,6 +809,45 @@ class AdvManagerController extends BaseController
         }
     }
 
+    public function updateAdv()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
+
+            foreach ($data['check'] as $id) {
+                $sliceId = explode("_", $id);
+                $media = $sliceId[0];
+                $advId = $sliceId[1];
+
+                switch ($media) {
+                    case 'facebook':
+                        $zenith = new ZenithFB();
+                        //$result = $zenith->setAdStatus($data['id'], $status);
+                        break;
+                    case 'kakao':
+                        $zenith = new ZenithKM();
+                        //$result = $zenith->setCreativeOnOff($data['id'], $data['status']);
+                        break;
+                    case 'google':
+                        $zenith = new ZenithGG();
+                        //$result = $zenith->updateAdGroupAd($data['customerId'], null, $data['id'], $param);
+                        break;
+                    default:
+                        return $this->fail("지원하지 않는 매체입니다.");
+                }
+            }
+
+            if(!empty($result)){
+                $result['response'] = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function getMemo()
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
