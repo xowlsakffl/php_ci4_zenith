@@ -473,7 +473,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         button.css({
             'white-space': 'nowrap',
             'overflow-x': 'auto',
-            'font-size': '100%'
+            'font-size': '85%'
         });
         var i = 0;
         var btn_width = Math.round(button.width());

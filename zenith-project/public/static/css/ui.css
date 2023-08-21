@@ -751,7 +751,7 @@ body {
 }
 .client-list .row .col {
   flex: 0 0 auto;
-  width: 16.6666666667%;
+  width: 14.2857142857%;
   margin: 0 0 8px;
 }
 .client-list .row .col .inner {
@@ -777,6 +777,7 @@ body {
   border-radius: 5px;
   background: #fff;
   overflow-y: hidden;
+  font-size: 85%;
 }
 .client-list .row .col button.active {
   color: #ce1922;

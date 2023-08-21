@@ -1010,13 +1010,15 @@ class ZenithFB
             default: $media = '';break;
         }
         if ($media) {
+            $period_ad = isset($matches[12][0]) && $matches[12][0] ? $matches[12][0] : 0;
             $result = [
                 'name' => $matches[0][0] ?? ''
                 ,'media' => $media
+                ,'media_code' => $matches[9][0]??''
                 ,'event_seq' => $matches[1][0] ?? ''
                 ,'site' => $matches[3][0] ?? ''
-                ,'db_price' => $matches[6][0] ?? ''
-                ,'period_ad' => $matches[12][0] ?? ''
+                ,'db_price' => $matches[6][0] ?? 0
+                ,'period_ad' => $period_ad
             ];
             return $result;
         }
@@ -1063,9 +1065,6 @@ class ZenithFB
             $leads = $this->db->getLeads($data);
             $cpm = false;
             if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
-            if(!is_null($leads)) {
-                if(!$leads->getNumRows() && !$cpm) continue;
-            }
             $db_price = $data['db_price'];
             if(isset($dp['db_price']) && $data['date'] != date('Y-m-d'))
                 $db_price = $data['db_price'] = $dp['db_price'];
@@ -1086,28 +1085,42 @@ class ZenithFB
             $initZero = false;
             if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
                 $initZero = true;
+            $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
-                    $sales = $margin = 0;
-                    $spend = $sp_data[$row['hour']]??0;
+                    // if($data['ad_id'] == 23853888597370162) dd($row);
+                    $sales = 0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
-                    $margin = $sales - $spend;
-                    if($initZero) $margin = $sales = 0;
-                    if($data['media'] === 'cpm') $db_count = 0;
-                    if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
-                    $data['data'][] = [
-                        'hour' => $row['hour']
-                        ,'spend' => $spend
-                        ,'count' => $db_count
-                        ,'sales' => $sales
-                        ,'margin' => $margin
+                    if($initZero) $sales = 0;
+                    if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                    $lead[$row['hour']] = [
+                        'sales' => $sales
+                        ,'db_count' => $db_count
                     ];
-                    $result = array_merge($result, $data);
                 }
             }
-            if(isset($data['ad_id']))
-                $this->db->updateInsight($data);
+            for($i=0; $i<=23; $i++) { //DB수량이 없어도 지출금액이 갱신되어야하기 때문에 0~23시까지 모두 저장
+                // if($data['ad_id'] == 23853888597370162) dd($lead);
+                $hour = $i;
+                $spend = $sp_data[$i]??0;
+                $count = $lead[$i]['db_count']??0;
+                $sales = $lead[$i]['sales']??0;
+                $margin = $sales - $spend;
+                if($initZero) $margin = $sales = 0;
+                if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
+                $data['data'][] = [
+                    'hour' => $hour
+                    ,'spend' => $spend
+                    ,'count' => $count
+                    ,'sales' => $sales
+                    ,'margin' => $margin
+                ];
+                $result = array_merge($result, $data);
+            }
+            // if($data['ad_id'] == 23852707712760746) dd($data);
+            if(isset($data['ad_id'])) $this->db->updateInsight($data);
         }
         return $result;
     }
