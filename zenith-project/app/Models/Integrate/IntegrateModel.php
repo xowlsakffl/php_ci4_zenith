@@ -134,9 +134,6 @@ class IntegrateModel extends Model
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->where('el.is_deleted', 0);
-        $builder->where('adv.name !=', '');
-        $builder->where('med.media !=', '');
-        $builder->where('info.description !=', '');
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
         
@@ -168,7 +165,7 @@ class IntegrateModel extends Model
 
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
-        }
+        }  
 
         $result = [
             'filteredResult' => $builder->get()->getResultArray(),
