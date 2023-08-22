@@ -3,6 +3,7 @@ namespace App\Controllers\Advertisement;
 use App\Controllers\BaseController;
 use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\moment_api\ZenithKM;
+use App\ThirdParty\googleads_api\ZenithGG;
 
 class ApiController extends BaseController
 {
@@ -27,6 +28,10 @@ class ApiController extends BaseController
     }
     protected function moment(...$params) {
         $this->chainsaw = new ZenithKM();
+        $this->fb_func(...$params);
+    }
+    protected function google(...$params) {
+        $this->chainsaw = new ZenithGG();
         $this->fb_func(...$params);
     }
 

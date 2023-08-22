@@ -258,25 +258,11 @@ class GADB
 		//echo $sql .'<br>'; exit;
 		if ($result = $this->db_query($sql, true)) {
 			if ($data['impressions']) {
-				$sql = "INSERT INTO aw_ad_report(ad_id, impressions, clicks, cost, create_time)
-							VALUES(
-								{$data['id']}, 
-								{$data['impressions']}, 
-								{$data['clicks']}, 
-								{$data['cost']}, 
-								NOW()
-							)
-							ON DUPLICATE KEY UPDATE
-								impressions = {$data['impressions']},
-								clicks = {$data['clicks']},
-								cost = {$data['cost']},
-								update_time = NOW()";
-				$this->db_query($sql, true);
 				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
 							VALUES(
 								{$data['id']}, 
 								{$data['date']}, 
-								IF(DATE(NOW()) = {$data['date']}, HOUR(NOW()), 23),
+								0,
 								{$data['impressions']}, 
 								{$data['clicks']}, 
 								{$data['cost']},

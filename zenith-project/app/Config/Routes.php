@@ -202,6 +202,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
 $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
+$routes->get('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 $routes->cli('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 
 //잠재고객 가져오기
