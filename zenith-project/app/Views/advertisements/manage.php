@@ -560,7 +560,7 @@ function getList(data = []){
                 "data": "margin",
                 "width": "8%",
                 "render": function (data, type, row) {
-                    if(data < 0){
+                    if(parseInt(data) < 0){
                         margin = '\u20A9'+data; 
                         return '<span style="color:red">'+margin+'</span>';
                     }else{
@@ -599,7 +599,13 @@ function getList(data = []){
                     return '\u20A9'+data;
                 },
             }, //클릭당단가 (1회 클릭당 비용)
-            { "data": "ctr", "width": "5%"}, //클릭율 (노출 대비 클릭한 비율)
+            { 
+                "data": "ctr", 
+                "width": "5%",
+                "render": function (data, type, row) {
+                    return data+'\u0025';
+                },
+            }, //클릭율 (노출 대비 클릭한 비율)
             { 
                 "data": "cvr", 
                 "width": "5%",
@@ -632,10 +638,13 @@ function setTotal(res){
     if(!res.total){
         return false;
     }else{
-        if(res.total.margin < 0){
+        var margin = res.total.margin.replace(/,/g, '');
+        var margin = Number(margin);
+
+        if(margin < 0){
             $('#total-margin').css('color', 'red');
         }
-        
+
         if(res.total.avg_margin_ratio < 20 && res.total.avg_margin_ratio != 0){
             $('#avg_margin_ratio').css('color', 'red');
         }
@@ -651,7 +660,7 @@ function setTotal(res){
         $('#total-impressions').text(res.total.impressions);
         $('#total-click').text(res.total.click);
         $('#avg-cpc').text('\u20A9'+res.total.avg_cpc);
-        $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100);
+        $('#avg-ctr').text(Math.round(res.total.avg_ctr * 100) / 100 +'\u0025');
         $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
     };
 }

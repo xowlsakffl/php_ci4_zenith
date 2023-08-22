@@ -29,7 +29,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
@@ -82,6 +82,7 @@ class AdvManagerController extends BaseController
                 $value['sales'] = number_format($value['sales']);
                 $value['unique_total'] = number_format($value['unique_total']);
                 $value['margin'] = number_format($value['margin']);
+                $value['margin_ratio'] = number_format($value['margin_ratio']);
                 $value['cpa'] = number_format($value['cpa']);
                 $value['cpc'] = number_format($value['cpc']);
             }
@@ -335,7 +336,6 @@ class AdvManagerController extends BaseController
 			$row['status'] = $this->setStatus($row['status']);
 			
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률
-
 
 			$row['cpc'] = Calc::cpc($row['spend'], $row['click']);	// 클릭당단가 (1회 클릭당 비용)
 			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
