@@ -360,7 +360,7 @@ let loadData = false;
 getList();
 function setSearchData() {
     var data = tableParam;
-    console.log(data.searchData);
+
     if(typeof data.searchData == 'undefined') return;
 
     $('#media_btn, #business_btn, #company_btn').removeClass('active');
@@ -1222,7 +1222,7 @@ $("body").on("click", '.btn-budget button', function(){
             break;
     }
     var budget = Math.round(c_budget * rate);
-    console.log(budget);
+    
     if (
         !confirm(
             "현재 예상을 " +
