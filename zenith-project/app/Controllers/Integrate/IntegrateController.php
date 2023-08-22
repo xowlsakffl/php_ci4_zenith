@@ -251,7 +251,10 @@ class IntegrateController extends BaseController
                 if (!isset($data['advertiser'][$row['advertiser']])) {
                     $data['advertiser'][$row['advertiser']][$type] = 0;
                 }
-                $data['advertiser'][$row['advertiser']][$type]++;
+
+                if($row['status'] == 1){
+                    $data['advertiser'][$row['advertiser']][$type]++;
+                }
             }
 
             //매체 기준
@@ -259,7 +262,10 @@ class IntegrateController extends BaseController
                 if (!isset($data['media'][$row['media']])) {
                     $data['media'][$row['media']][$type] = 0;
                 }
-                $data['media'][$row['media']][$type]++;
+
+                if($row['status'] == 1){
+                    $data['media'][$row['media']][$type]++;
+                }
             }
 
             //이벤트 기준
@@ -267,7 +273,10 @@ class IntegrateController extends BaseController
                 if (!isset($data['event'][$row['event']])) {
                     $data['event'][$row['event']][$type] = 0;
                 }
-                $data['event'][$row['event']][$type]++;
+
+                if($row['status'] == 1){
+                    $data['event'][$row['event']][$type]++;
+                }
             }
         }
 

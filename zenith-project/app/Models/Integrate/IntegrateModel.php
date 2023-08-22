@@ -126,6 +126,7 @@ class IntegrateModel extends Model
         $builder = $this->zenith->table('event_leads as el');
         $builder->select("
         el.seq,
+        el.status,
         adv.name as advertiser,
         med.media as media,
         info.description as event
@@ -134,7 +135,6 @@ class IntegrateModel extends Model
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->where('el.is_deleted', 0);
-        //$builder->where('el.status', 1);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
         
