@@ -95,11 +95,10 @@ class IntegrateModel extends Model
             $builder->whereIn('el.status', $status);
         }
 
-        // limit 적용하지 않은 쿼리
-        $builderNoLimit = clone $builder;
-
         // limit 적용한 쿼리
         $builder->groupBy(['el.seq','lm.leads_seq'], true);
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
         $orderBy = [];
         if(!empty($data['order'])) {
             foreach($data['order'] as $row) {
@@ -135,9 +134,7 @@ class IntegrateModel extends Model
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->where('el.is_deleted', 0);
-        $builder->where('adv.name !=', '');
-        $builder->where('med.media !=', '');
-        $builder->where('info.description !=', '');
+        //$builder->where('el.status', 1);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
         
@@ -169,7 +166,7 @@ class IntegrateModel extends Model
 
         if(!empty($data['event'])){
             $builder->whereIn('info.description', explode("|",$data['event']));
-        }
+        }  
 
         $result = [
             'filteredResult' => $builder->get()->getResultArray(),

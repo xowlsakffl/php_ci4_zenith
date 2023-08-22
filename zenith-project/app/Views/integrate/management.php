@@ -151,8 +151,8 @@ function setSearchData() { //state 에 저장된 내역으로 필터 active 세�
     data.searchData.status.split('|').map(function(txt){
         $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
     });
-    $('#sdate').val(data.searchData.sdate);
-    $('#edate').val(data.searchData.edate);
+    //$('#sdate').val(data.searchData.sdate);
+    //$('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
     if(typeof dataTable != 'undefined') dataTable.state.save();
@@ -296,9 +296,14 @@ function getList(data = []) { //리스트 세팅
         ],
         "rowCallback": function(row, data, index) {
             var api = this.api();
-            var startIndex = api.page() * api.page.len();
-            var seq = startIndex + index + 1;
-            $('td:eq(0)', row).html(seq);
+            var totalRecords = api.page.info().recordsTotal;
+            var pageSize = api.page.len();
+            var currentPage = api.page();
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            
+            var seqNumber = totalRecords - (currentPage * pageSize) - index; // 계산된 순번 (내림차순)
+            
+            $('td:eq(0)', row).html(seqNumber);
         },
         "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
@@ -468,7 +473,7 @@ function fontAutoResize() { //.client-list button 항목 가변폰트 적용
         button.css({
             'white-space': 'nowrap',
             'overflow-x': 'auto',
-            'font-size': '100%'
+            'font-size': '85%'
         });
         var i = 0;
         var btn_width = Math.round(button.width());
@@ -508,7 +513,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
 }
 
 function setDate(){
-    $('#sdate, #edate').val(today);
+    //$('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷

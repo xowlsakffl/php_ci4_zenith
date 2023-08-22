@@ -148,7 +148,7 @@
         </ul>
         <div class="tab-content">
             <div class="btn-wrap">
-                <button type="button" class="btn btn-outline-danger">수동 업데이트</button>
+                <button type="button" class="btn btn-outline-danger" id="update_btn">수동 업데이트</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
             </div>
@@ -162,7 +162,8 @@
                     <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">매체명</th>
+                                <th scope="col">체크</th>
+                                <th scope="col">매체</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -181,6 +182,7 @@
                         </thead>
                         <thead>
                             <tr id="total">
+                                <td></td>
                                 <td></td>
                                 <td id="total-count"></td>
                                 <td></td>
@@ -500,29 +502,24 @@ function getList(data = []){
         ],
         "columns": [
             { 
-                "data": "media", 
-                "width": "6%",
+                "data": null, 
+                "width": "5%",
                 "render": function (data, type, row) {
-                    switch (row.media) {
-                        case 'facebook':
-                            media = '<i class="facebook"></i>';
-                            break;
-                        case 'google':
-                            media = '<i class="google"></i>';
-                            break;
-                        case 'kakao':
-                            media = '<i class="kakao"></i>';
-                            break;
-                        default:
-                            break;
-                    }
-                    media = '<div class="check"><input type="checkbox" name="check01" value="'+row.media+"_"+row.id+'" id="label_'+row.id+'"><label for="label_'+row.id+'">'+media+'</label></div>';
+                    media = '<div class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></div>';
+                    return media;
+                },
+            },
+            { 
+                "data": "media", 
+                "width": "5%",
+                "render": function (data, type, row) {
+                    media = '<div class="media_box"><i class="'+row.media+'"></i></div>';
                     return media;
                 },
             },
             { 
                 "data": "name", 
-                "width": "10%",
+                "width": "15%",
                 "render": function (data, type, row) {
                     name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     return name;
@@ -530,7 +527,7 @@ function getList(data = []){
             },
             { 
                 "data": "status", 
-                "width": "7%",
+                "width": "10%",
                 "render": function (data, type, row) {
                     status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide"></span><span class="material-symbols-outlined">fact_check</span></button>';
                     return status;
@@ -538,7 +535,7 @@ function getList(data = []){
             },
             { 
                 "data": "budget", 
-                "width": "8%",
+                "width": "10%",
                 "render": function (data, type, row) {
                     budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
@@ -868,6 +865,24 @@ function handleInput(tab, id, tmp_name, inputElement) {
     }
 }
 
+function setManualUpdate(data){
+    $.ajax({
+        type: "post",
+        url: "<?=base_url()?>/advertisements/set-adv",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            if (data.response == true) {
+                
+            }
+        },
+        error: function(error, status, msg) {
+            alert("상태코드 " + status + "에러메시지" + msg);
+        }
+    });
+}
+
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');
@@ -888,6 +903,18 @@ $('body').on('click', '.tab-link', function() {
     debug('필터링 탭 클릭');
     dataTable.state.save();
     dataTable.draw();
+});
+
+$('body').on('click', '#update_btn', function() {
+    data = {
+        'ids' : tableParam.searchData.check,
+        'type' : tableParam.searchData.type
+    }
+    if(!data.ids.length){
+        alert("업데이트 할 항목을 선택해주세요.");
+		return;
+    }
+    setManualUpdate(data);
 });
 
 $('form[name="search-form"]').bind('submit', function() {

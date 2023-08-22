@@ -187,26 +187,62 @@ body {
   background: #f7f7f7;
 }
 
+.sub-contents-wrap {
+  margin-left: 40px;
+}
+
 .left-side {
-  display: flex;
-  flex-direction: column;
-  width: 240px;
+  position: fixed;
+  width: 40px;
   height: 100vh;
-  box-sizing: border-box;
-  padding: 42px 0;
-  border-radius: 0 0 40px 0;
+  overflow: hidden;
+  padding: 20px 0;
+  border-radius: 0;
+  transition: all 0.2s;
+  z-index: 99;
   background: #2d2e34;
+}
+.left-side .logo {
+  margin: 0 0 20px 45px;
+}
+.left-side.open {
+  width: 240px;
 }
 .left-side .btn-menu {
   display: none;
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  text-indent: -9999px;
+  border-top: 2px solid #fff;
 }
-.left-side .logo {
-  margin: 0 auto 40px;
+.left-side .btn-menu:before {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  content: "";
+  background: #fff;
+}
+.left-side .btn-menu:after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  content: "";
+  background: #fff;
 }
 
 .nav-wrap {
   flex: 1;
   overflow: auto;
+  width: 240px;
 }
 .nav-wrap::-webkit-scrollbar {
   width: 6px;
@@ -223,7 +259,7 @@ body {
   transition: all 0.2s;
 }
 .nav-wrap .nav > li:not(:last-child) {
-  margin: 0 0 30px;
+  margin: 0 0 10px;
 }
 .nav-wrap .nav > li:has(div):after {
   position: absolute;
@@ -305,6 +341,7 @@ body {
   justify-content: space-between;
   margin: 0 38px;
   padding: 20px 0 0;
+  width: 156px;
 }
 .util-nav a {
   font-size: 0.813rem;
@@ -751,7 +788,7 @@ body {
 }
 .client-list .row .col {
   flex: 0 0 auto;
-  width: 16.6666666667%;
+  width: 14.2857142857%;
   margin: 0 0 8px;
 }
 .client-list .row .col .inner {
@@ -777,6 +814,7 @@ body {
   border-radius: 5px;
   background: #fff;
   overflow-y: hidden;
+  font-size: 85%;
 }
 .client-list .row .col button.active {
   color: #ce1922;
@@ -972,6 +1010,7 @@ input:-internal-autofill-selected {
 @media screen and (max-width: 1024px) {
   .sub-contents-wrap {
     padding: 30px 30px 30px 70px;
+    margin-left: 0;
   }
   .search-wrap {
     margin: 0 0 20px;
@@ -1859,23 +1898,18 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.delete:hover {
   box-shadow: inset 0 -3em 0 0 red;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label {
-  display: block;
-  margin: 5px auto;
-  cursor: pointer;
-}
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label i {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box i {
   display: inline-block;
   width: 28px;
   height: 28px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .facebook {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .facebook {
   background: url("/img/ico_facebook.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .kakao {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .kakao {
   background: url("/img/ico_kakao.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .check > label .google {
+.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .google {
   background: url("/img/ico_google.png") no-repeat center 0;
 }
 
@@ -2241,6 +2275,10 @@ div.dataTables_processing > div:last-child > div {
   float: right;
 }
 
+.user-nav p {
+  display: none;
+}
+
 .nav-wrap .nav button {
   display: block;
   padding: 0 0 0 33px;
@@ -2256,6 +2294,29 @@ div.dataTables_processing > div:last-child > div {
 .nav-wrap .nav a.active button > i.bi {
   border-bottom: 2px solid #e58489;
   animation: updown 1.5s infinite linear alternate;
+}
+
+.left-side.open .btn-menu {
+  border: none;
+}
+.left-side.open .btn-menu:active {
+  transform: rotate(360deg);
+  transition: 0.4s;
+}
+.left-side.open .btn-menu:before {
+  height: 100%;
+  left: 50%;
+  width: 2px;
+  top: 0;
+  transform: rotate(45deg);
+  transition: all 0.3s;
+}
+.left-side.open .btn-menu:after {
+  height: 100%;
+  left: 50%;
+  width: 2px;
+  transform: rotate(-45deg);
+  transition: all 0.3s;
 }
 
 .modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {

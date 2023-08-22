@@ -10,7 +10,7 @@ class CompanyModel extends Model
     protected $allowedFields = [
         'type',
         'name',
-        'tel',
+        'nickname',
         'status',
         'created_at',
         'updated_at',
@@ -18,14 +18,10 @@ class CompanyModel extends Model
     ];
     protected $validationRules      = [
         'name' => 'required',
-        //'tel' => 'required',
     ];
     protected $validationMessages   = [
         'name' => [
             'required' => '이름은 필수 입력사항입니다.',
-        ],
-        'tel' => [
-            'required' => '전화번호는 필수 입력사항입니다.',
         ],
     ];
     protected $skipValidation       = false;
@@ -56,7 +52,7 @@ class CompanyModel extends Model
             $builder->groupStart();
             $builder->like('c.type', $srch['stx']);
             $builder->orLike('c.name', $srch['stx']);
-            $builder->orLike('c.tel', $srch['stx']);
+            $builder->orLike('c.nickname', $srch['stx']);
             $builder->orLike('parent_c.name', $srch['stx']);
             $builder->groupEnd();
         }
@@ -99,7 +95,6 @@ class CompanyModel extends Model
         $builder->join('companies as parent_c', 'ci.company_parent_id = parent_c.id', 'left');
         $builder->where('c.id', $id);
         $builder->where('c.status !=', 0);
-        $builder->where('c.deleted_at =', null);
         $result = $builder->get()->getRowArray();
 
         return $result;
@@ -166,7 +161,7 @@ class CompanyModel extends Model
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('type', $data['type']);
         $builder_1->set('name', $data['name']);
-        $builder_1->set('tel', $data['tel']);
+        $builder_1->set('nickname', auth()->user()->nickname);
         $builder_1->set('status', 1);
         $result_1 = $builder_1->insert();
         if(!empty($agency)){
@@ -189,7 +184,6 @@ class CompanyModel extends Model
         $this->zenith->transStart();
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('name', $data['name']);
-        $builder_1->set('tel', $data['tel']);
         $builder_1->where('id', $data['id']);
         $builder_1->update();
 
@@ -217,11 +211,15 @@ class CompanyModel extends Model
 
     public function deleteCompany($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('companies');
-        $builder->set('status', 0);
-        $builder->set('deleted_at', date('Y-m-d H:i:s'));
         $builder->where('id', $data['id']);
-        $result = $builder->update();
+        $builder->delete();
+
+        $builder = $this->zenith->table('company_adaccounts');
+        $builder->where('company_id', $data['id']);
+        $builder->delete();
+        $result = $this->zenith->transComplete();
 
         return $result;
     }

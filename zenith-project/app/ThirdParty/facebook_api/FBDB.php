@@ -658,10 +658,31 @@ class FBDB extends Config
         if(empty($row['data'])) return;
         foreach($row['data'] as $v) {
             if ($row['ad_id']) {
+                $data = [
+                    'ad_id' => $row['ad_id'],
+                    'date' => $row['date'],
+                    'hour' => $v['hour'],
+                    'media' => $row['media'],
+                    'period' => $row['period_ad'],
+                    'event_seq' => $row['event_seq'],
+                    'site' => $row['site'],
+                    'db_price' => $row['db_price'],
+                    'db_count' => $v['count'],
+                    'margin' => $v['margin'],
+                    'sales' => $v['sales'],
+                ];
+                $builder = $this->db->table('fb_ad_insight_history');
+                $builder->setData($data);
+                $updateTime = ['update_date' => new RawSql('NOW()')];
+                $builder->updateFields($updateTime, true);
+                // d($builder->getCompiledUpsert());
+                $builder->upsert();
+                /*
                 $sql = "UPDATE `z_facebook`.`fb_ad_insight_history` 
                 SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_date` = NOW()
                 WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
                 $this->db_query($sql, true);
+                */
             }
         }
     }

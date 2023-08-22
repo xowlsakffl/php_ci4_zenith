@@ -68,7 +68,7 @@ class AdLeadModel extends Model
         $sql = "INSERT INTO event_leads(event_seq, site, name, phone, add1, add2, add3, add4, add5, reg_date, is_deleted, lead_id, status)
                 VALUES('{$row['event_seq']}', '{$row['site']}', {$row['name']}, ENC_DATA('{$row['phone']}'), '{$row['add1']}', '{$row['add2']}', '{$row['add3']}', '{$row['add4']}', '{$row['add5']}', '{$row['reg_date']}', 0, '{$row['id']}', 1)
                 ON DUPLICATE KEY
-                UPDATE event_seq='{$row['event_seq']}', site='{$row['site']}', name={$row['name']}, phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', reg_date='{$row['reg_date']}', lead_id='{$row['id']}'";
+                UPDATE event_seq='{$row['event_seq']}', site='{$row['site']}', name={$row['name']}, phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', reg_date='{$row['reg_date']}', lead_id='{$row['id']}', status=1";
         $result = $this->zenith->query($sql);
         if ($result) {
             $sql = "UPDATE mm_bizform_user_response SET send_time=now() WHERE encUserId='{$row['encUserId']}' AND bizFormId='{$row['bizFormId']}'";

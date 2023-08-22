@@ -931,12 +931,13 @@ class ZenithKM
         }
 
         if ($media) {
+            $period_ad = isset($matches[13][0]) && $matches[13][0] ? $matches[13][0] : 0;
             $result['name']         = $matches[0][0];
             $result['media']        = $media;
             $result['event_seq']    = $event_id;
             $result['site']         = $site;
             $result['db_price']     = $matches[7][0];
-            $result['period_ad']    = $matches[13][0];
+            $result['period_ad']    = $period_ad;
             $result['url']          = $data['landingUrl']??null;
             return $result;
         }
@@ -977,9 +978,6 @@ class ZenithKM
             $leads = $this->db->getAppSubscribe($data);
             $cpm = false;
             if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
-            if(!is_null($leads)) {
-                if(!$leads->getNumRows() && !$cpm) continue;
-            }
             $db_price = $data['db_price'];
             if(isset($dp['db_price']) && $data['date'] != date('Y-m-d'))
                 $db_price = $data['db_price'] = $dp['db_price'];
@@ -1001,24 +999,39 @@ class ZenithKM
             $initZero = false;
             if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
                 $initZero = true;
+            $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
-                    $sales = $margin = 0;
-                    $spend = $sp_data[$row['hour']];
+                    // if($data['ad_id'] == 23853888597370162) dd($row);
+                    $sales = 0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
-                    $margin = $sales - $spend;
-                    if($initZero) $margin = $sales = 0;
-                    if($data['media'] === 'cpm') $db_count = 0;
-                    if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
-                    $data['data'][] = [
-                        'hour' => $row['hour']
-                        ,'count' => $db_count
-                        ,'sales' => $sales
-                        ,'margin' => $margin
+                    if($initZero) $sales = 0;
+                    if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                    $lead[$row['hour']] = [
+                        'sales' => $sales
+                        ,'db_count' => $db_count
                     ];
-                    $result = array_merge($result, $data);
                 }
+            }
+            for($i=0; $i<=23; $i++) { //DB수량이 없어도 지출금액이 갱신되어야하기 때문에 0~23시까지 모두 저장
+                // if($data['ad_id'] == 23853888597370162) dd($lead);
+                $hour = $i;
+                $spend = $sp_data[$i]??0;
+                $count = $lead[$i]['db_count']??0;
+                $sales = $lead[$i]['sales']??0;
+                $margin = $sales - $spend;
+                if($initZero) $margin = $sales = 0;
+                if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
+                $data['data'][] = [
+                    'hour' => $hour
+                    ,'spend' => $spend
+                    ,'count' => $count
+                    ,'sales' => $sales
+                    ,'margin' => $margin
+                ];
+                $result = array_merge($result, $data);
             }
             if(isset($data['creative_id']))
                 $this->db->updateReport($data);
