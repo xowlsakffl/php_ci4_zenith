@@ -505,7 +505,7 @@ function getList(data = []){
                 "data": null, 
                 "width": "5%",
                 "render": function (data, type, row) {
-                    media = '<div class="check"><input type="checkbox" class="form-control" name="check01" value="'+row.media+"_"+row.id+'"></div>';
+                    media = '<div class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></div>';
                     return media;
                 },
             },
