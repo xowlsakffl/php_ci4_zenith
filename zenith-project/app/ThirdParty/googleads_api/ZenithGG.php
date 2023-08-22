@@ -874,7 +874,6 @@ class ZenithGG
             $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
-                    // if($data['ad_id'] == 23853888597370162) dd($row);
                     $sales = 0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
@@ -886,8 +885,8 @@ class ZenithGG
                     ];
                 }
             }
+            $_spend = $_count = $_sales = $_margin = 0;
             for($i=0; $i<=23; $i++) { //DB수량이 없어도 지출금액이 갱신되어야하기 때문에 0~23시까지 모두 저장
-                // if($data['ad_id'] == 23853888597370162) dd($lead);
                 $hour = $i;
                 $spend = $sp_data[$i]??0;
                 $count = $lead[$i]['db_count']??0;
@@ -896,16 +895,19 @@ class ZenithGG
                 if($initZero) $margin = $sales = 0;
                 if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
                 if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
-                $data['data'][] = [
-                    'hour' => $hour
-                    ,'spend' => $spend
-                    ,'count' => $count
-                    ,'sales' => $sales
-                    ,'margin' => $margin
-                ];
-                $result = array_merge($result, $data);
+                $_spend += $spend;
+                $_count += $count;
+                $_sales += $sales;
+                $_margin += $margin;
             }
-            // if($data['ad_id'] == 669569207452) dd($data);
+            $data['data'][] = [
+                'hour' => 0
+                ,'spend' => $_spend
+                ,'count' => $_count
+                ,'sales' => $_sales
+                ,'margin' => $_margin
+            ];
+            $result = array_merge($result, $data);
             if(isset($data['ad_id'])){
                 $this->db->updateReport($data);
             }
