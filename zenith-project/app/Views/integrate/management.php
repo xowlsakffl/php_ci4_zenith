@@ -151,6 +151,7 @@ function setSearchData() { //state 에 저장된 내역으로 필터 active 세�
     data.searchData.status.split('|').map(function(txt){
         $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
     });
+    
     //$('#sdate').val(data.searchData.sdate);
     //$('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
@@ -216,6 +217,8 @@ function getList(data = []) { //리스트 세팅
             debug('state 로드')
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
+            tableParam.searchData.sdate = today;
+            tableParam.searchData.edate = today;
             setSearchData();
             debug(tableParam.searchData);
         },
@@ -566,7 +569,7 @@ $('body').on('click', '#advertiser-list button, #media-list button, #event-list 
 });
 
 $('form[name="search-form"]').bind('submit', function() {
-    debug('검색 전송')
+    debug('검색 전송');
     dataTable.state.save();
     dataTable.draw();
     return false;
@@ -621,7 +624,7 @@ $('#deviceTable')
         setStatus(this);
     });
 function debug(msg) {
-    // console.log(msg);
+    //console.log(msg);
 }
 </script>
 <?=$this->endSection();?>

@@ -352,8 +352,6 @@ let loadData = false;
     $('#media_btn[value="facebook"]').addClass('active');
 
     tableParam.searchData = {
-        'sdate': $('#sdate').val(),
-        'edate': $('#edate').val(),
         'type': $('.tab-link.active').val(),
         'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
     };
@@ -386,8 +384,8 @@ function setSearchData() {
 
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
-    $('#sdate').val(data.searchData.sdate);
-    $('#edate').val(data.searchData.edate);
+    //$('#sdate').val(data.searchData.sdate);
+    //$('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
     if(typeof dataTable != 'undefined') dataTable.state.save();
@@ -451,6 +449,8 @@ function getList(data = []){
             debug('state 로드')
             //$(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
+            tableParam.searchData.sdate = today;
+            tableParam.searchData.edate = today;
             setSearchData();
             debug(tableParam.searchData);
         },
@@ -756,7 +756,7 @@ function setMediaAccount(data) {
 }
 
 function setDate(){
-    $('#sdate, #edate').val(today);
+    //$('#sdate, #edate').val(today);
     $('#sdate, #edate').daterangepicker({
         locale: {
                 "format": 'YYYY-MM-DD',     // 일시 노출 포맷
@@ -1338,7 +1338,7 @@ $("body").on("click", '.budget p[data-editable="true"]', function(){
 });
 
 function debug(msg) {
-    console.log(msg);
+    //console.log(msg);
 }
 </script>
 <?=$this->endSection();?>
