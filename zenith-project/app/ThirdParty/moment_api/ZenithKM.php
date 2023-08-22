@@ -999,6 +999,7 @@ class ZenithKM
             $initZero = false;
             if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
                 $initZero = true;
+            $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
                     // if($data['ad_id'] == 23853888597370162) dd($row);

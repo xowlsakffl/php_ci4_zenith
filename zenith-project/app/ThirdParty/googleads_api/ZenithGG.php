@@ -871,7 +871,7 @@ class ZenithGG
                     $initZero = true;
                 }
             }
-            
+            $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
                     // if($data['ad_id'] == 23853888597370162) dd($row);
@@ -905,7 +905,7 @@ class ZenithGG
                 ];
                 $result = array_merge($result, $data);
             }
-
+            // if($data['ad_id'] == 669569207452) dd($data);
             if(isset($data['ad_id'])){
                 $this->db->updateReport($data);
             }
