@@ -187,13 +187,8 @@ body {
   background: #f7f7f7;
 }
 
-.sub-contents-wrap {
-  margin-left: 40px;
-}
-
 .left-side {
-  position: fixed;
-  width: 40px;
+  width: 240px;
   height: 100vh;
   overflow: hidden;
   padding: 20px 0;
@@ -205,8 +200,8 @@ body {
 .left-side .logo {
   margin: 0 0 20px 45px;
 }
-.left-side.open {
-  width: 240px;
+.left-side.hide {
+  width: 40px;
 }
 .left-side .btn-menu {
   display: none;
@@ -523,7 +518,7 @@ body {
   .left-side .logo {
     margin: 0 0 20px 45px;
   }
-  .left-side.open {
+  .left-side.hide {
     width: 240px;
   }
   .left-side .btn-menu {
@@ -1010,7 +1005,6 @@ input:-internal-autofill-selected {
 @media screen and (max-width: 1024px) {
   .sub-contents-wrap {
     padding: 30px 30px 30px 70px;
-    margin-left: 0;
   }
   .search-wrap {
     margin: 0 0 20px;
@@ -2296,14 +2290,14 @@ div.dataTables_processing > div:last-child > div {
   animation: updown 1.5s infinite linear alternate;
 }
 
-.left-side.open .btn-menu {
+.left-side .btn-menu {
   border: none;
 }
-.left-side.open .btn-menu:active {
+.left-side .btn-menu:active {
   transform: rotate(360deg);
   transition: 0.4s;
 }
-.left-side.open .btn-menu:before {
+.left-side .btn-menu:before {
   height: 100%;
   left: 50%;
   width: 2px;
@@ -2311,12 +2305,48 @@ div.dataTables_processing > div:last-child > div {
   transform: rotate(45deg);
   transition: all 0.3s;
 }
-.left-side.open .btn-menu:after {
+.left-side .btn-menu:after {
   height: 100%;
   left: 50%;
   width: 2px;
   transform: rotate(-45deg);
   transition: all 0.3s;
+}
+.left-side.hide .btn-menu {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  text-indent: -9999px;
+  border-top: 2px solid #fff;
+  transform: none;
+  transition: none;
+}
+.left-side.hide .btn-menu:before {
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  content: "";
+  background: #fff;
+  transform: none;
+  transition: none;
+}
+.left-side.hide .btn-menu:after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  content: "";
+  background: #fff;
+  transform: none;
+  transition: none;
 }
 
 .modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {

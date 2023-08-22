@@ -173,7 +173,7 @@ input:-internal-autofill-selected {color: #7286D3;}
     }
 }
 @include medium{
-    .sub-contents-wrap{padding:30px 30px 30px 70px; margin-left:0;}
+    .sub-contents-wrap{padding:30px 30px 30px 70px;}
     .search-wrap{margin:0 0 20px;
         .search{flex-wrap:wrap; padding:20px;
             .term{flex:0 0 auto; width:100%; height:40px;}

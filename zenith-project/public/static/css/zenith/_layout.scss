@@ -38,10 +38,9 @@ body{background:#f7f7f7;}
 //     a{font-size:0.813rem; color:#aaa;}
 // }
 
-.sub-contents-wrap{margin-left: 40px;}
-.left-side{position: fixed; width:40px; height:100vh; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s; z-index:99; background:$color-dark;
+.left-side{width:240px; height:100vh; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s; z-index:99; background:$color-dark;
     .logo{margin:0 0 20px 45px;}
-    &.open{width:240px;}
+    &.hide{width:40px;}
     .btn-menu{display:none; position:absolute; top:20px; left:10px; display:block; width:20px; height:20px; overflow:hidden; text-indent:-9999px; border-top:2px solid #fff;
         &:before{position:absolute; top:7px; left:0; width:100%; height:2px; content:''; background:#fff;}
         &:after{position:absolute; bottom:0; left:0; width:100%; height:2px; content:''; background:#fff;}
@@ -150,7 +149,7 @@ body{background:#f7f7f7;}
     .main-contents-wrap{padding:30px 30px 30px 70px;}
     .left-side{position:fixed; z-index:1; width:40px; height:100%; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s; z-index:99;
         .logo{margin:0 0 20px 45px;}
-        &.open{width:240px;}
+        &.hide{width:240px;}
         .btn-menu{position:absolute; top:20px; left:10px; display:block; width:20px; height:20px; overflow:hidden; text-indent:-9999px; border-top:2px solid #fff;
             &:before{position:absolute; top:7px; left:0; width:100%; height:2px; content:''; background:#fff;}
             &:after{position:absolute; bottom:0; left:0; width:100%; height:2px; content:''; background:#fff;}

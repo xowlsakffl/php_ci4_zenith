@@ -1,9 +1,18 @@
 $(function(){
+    //원본
+    // $('.left-side .btn-menu').on('click', function(){
+    //     $('.left-side').toggleClass('open');
+    //     $('.left-side .nav > li > button').attr('aria-expanded', false);
+    //     $('.left-side .nav .collapse').removeClass('show');
+    // });
+
     $('.left-side .btn-menu').on('click', function(){
-        $('.left-side').toggleClass('open');
+        $('.left-side').toggleClass('hide');
         $('.left-side .nav > li > button').attr('aria-expanded', false);
         $('.left-side .nav .collapse').removeClass('show');
     });
+
+
     $('.toggle').on('click', function(){
         $(this).toggleClass('folded');
     });
