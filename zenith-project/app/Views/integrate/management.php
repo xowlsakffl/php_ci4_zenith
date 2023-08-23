@@ -271,7 +271,7 @@ function getList(data = []) { //리스트 세팅
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
                 }
             },
-            { "data": "advertiser","width": "80px",
+            { "data": "advertiser","width": "100px",
                 "render": function(data) {
                     return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
                 } 

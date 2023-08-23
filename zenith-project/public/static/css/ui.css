@@ -1848,6 +1848,7 @@ div.dataTables_processing > div:last-child > div {
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName p {
   margin-bottom: 0.5rem;
+  text-align: left;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName button {
   position: absolute !important;
@@ -2042,7 +2043,6 @@ div.dataTables_processing > div:last-child > div {
 
 .client-list span {
   display: inline-block;
-  padding-left: 1rem;
 }
 
 .none {

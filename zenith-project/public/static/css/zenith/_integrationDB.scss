@@ -86,6 +86,7 @@
             tfoot tr{
                 th,td{text-align: center;}
             }         
+            //여기
             textarea.consultation{padding:0px; width:100%; border:none; background:transparent;}
             select.data-del{padding:3px; border-radius:4px; font-size:98%; letter-spacing:-1px;}
             button.save{background-color:#009dff; color:#fff;  margin-top:0.25rem; padding:0.4rem 1rem; border-radius:4px;}
@@ -100,7 +101,7 @@
                 .google{@include bg('ico_google.png', center, 0);} 
             }
             .mediaName{
-                p{margin-bottom:0.5rem;}
+                p{margin-bottom:0.5rem; text-align: left;}
                 button{position: absolute !important; bottom: 0; right: 0;
                     i{font-size: 1.25rem;}
                 }

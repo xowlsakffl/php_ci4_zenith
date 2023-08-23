@@ -155,28 +155,28 @@ class ZenithFB
     }
 
     // 인사이트 비동기 호출
-    public function getAsyncInsights($all = "false", $date = null, $edate = null)
+    public function getAsyncInsights($all = "false", $date = null, $edate = null, $account_id = null)
     {
         $params = [
             'date_preset' => AdsInsightsDatePresetValues::TODAY,
             'level' => AdsInsightsLevelValues::AD,
             'breakdowns' => AdsInsightsBreakdownsValues::HOURLY_STATS_AGGREGATED_BY_AUDIENCE_TIME_ZONE,
             'filtering' => [
-                [
-                    'field'     => 'ad.impressions',
-                    'operator'  => 'GREATER_THAN',
-                    'value'     => 0
-                ],
-                [
-                    'field'     => 'ad.spend',
-                    'operator'  => 'GREATER_THAN',
-                    'value'     => 0
-                ],
-                [
-                    'field'     => 'ad.effective_status',
-                    'operator'  => 'IN',
-                    'value'     => ['ACTIVE', 'ADSET_PAUSED', 'ARCHIVED', 'CAMPAIGN_PAUSED', 'DELETED', 'DISAPPROVED', 'IN_PROCESS', 'PAUSED', 'PENDING_BILLING_INFO', 'PENDING_REVIEW', 'PREAPPROVED', 'WITH_ISSUES']
-                ]
+                // [
+                //     'field'     => 'ad.impressions',
+                //     'operator'  => 'GREATER_THAN',
+                //     'value'     => 0
+                // ],
+                // [
+                //     'field'     => 'ad.spend',
+                //     'operator'  => 'GREATER_THAN',
+                //     'value'     => 0
+                // ],
+                // [
+                //     'field'     => 'ad.effective_status',
+                //     'operator'  => 'IN',
+                //     'value'     => ['ACTIVE', 'ADSET_PAUSED', 'ARCHIVED', 'CAMPAIGN_PAUSED', 'DELETED', 'DISAPPROVED', 'IN_PROCESS', 'PAUSED', 'PENDING_BILLING_INFO', 'PENDING_REVIEW', 'PREAPPROVED', 'WITH_ISSUES']
+                // ]
             ],
             'fields' => [
                 AdsInsightsFields::ACCOUNT_ID,
@@ -201,9 +201,14 @@ class ZenithFB
             $params['time_range'] = ['since' => $date, 'until' => $edate];
             unset($params['date_preset']);
         }
-        $account_id = $this->db->getAdAccounts(true);
-        $accounts = $account_id->getResultArray();
-        $total = $account_id->getNumRows();
+        if(!is_null($account_id)) {
+            $accounts[]['ad_account_id'] = $account_id;
+            $total = 1;
+        } else {
+            $account_id = $this->db->getAdAccounts(true);
+            $accounts = $account_id->getResultArray();
+            $total = $account_id->getNumRows();
+        }
         $step = 1;
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 계정에 대한 광고인사이트 수신을 시작합니다.", "light_red");
         $return = [];
@@ -223,7 +228,7 @@ class ZenithFB
                 $count++;
             }
             CLI::showProgress($step++, $total);
-            if ($continue) continue;
+            // if ($continue) continue;
             $insights = $getSelf->getInsights();
             $getResponse = $insights->getResponse();
             $response = $getResponse->getContent();
@@ -232,8 +237,8 @@ class ZenithFB
                 $url = $response['paging']['next'] ?? '';
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
-                    if (isset($data['data'])) $result = array_merge($result, $data['data']);
-                    $url = isset($data['paging']['next']) ?? null;
+                    if (!is_null($data) && isset($data['data'])) $result = array_merge($result, $data['data']);
+                    $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 }
             }
 
@@ -621,7 +626,7 @@ class ZenithFB
                         $result = array_merge($result, $data['data']);
                     }
 
-                    $url = isset($data['paging']['next']) ?? null;
+                    $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 }
             }
             // echo '<pre>'.print_r($result,1).'</pre>'; exit;
@@ -723,7 +728,7 @@ class ZenithFB
                         $result = array_merge($result, $data['data']);
                     }
 
-                    $url = isset($data['paging']['next']) ?? null;
+                    $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 }
             }
         }
