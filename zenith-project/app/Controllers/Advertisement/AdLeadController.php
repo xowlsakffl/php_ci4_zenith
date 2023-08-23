@@ -90,7 +90,7 @@ class AdLeadController extends BaseController
                 $result['encUserId'] = $row['encUserId'];
                 $result['bizFormId'] = $row['bizFormId'];        
                 
-                if (is_array($result)) {
+                if (is_array($result) && count($result)) {
                     $this->adlead->insertEventLeadKakao($result);
                 }
             }

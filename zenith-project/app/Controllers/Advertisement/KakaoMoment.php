@@ -90,7 +90,7 @@ class KakaoMoment extends BaseController
         $this->chainsaw->updateAdGroups();
         $this->chainsaw->updateCreatives();
         $this->chainsaw->updateBizform();
-        $this->chainsaw->moveToLeads();
+        //$this->chainsaw->moveToLeads();
     }
     
 
