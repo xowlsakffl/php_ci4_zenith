@@ -261,19 +261,19 @@ function getList(data = []) { //리스트 세팅
             { targets: [6], className: 'nowrap'}
         ],
         "columns": [
-            { "data": null },
-            { "data": "seq" , "width": "30px"},
+            { "data": null , "width": "30px"},
+            { "data": "seq" , "width": "40px"},
             { "data": "info_seq", "width": "45px",
                 "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
                 }
             },
-            { "data": "advertiser","width": "55px",
+            { "data": "advertiser","width": "70px",
                 "render": function(data) {
                     return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
                 } 
             },
-            { "data": "media" , "width" : "40px",
+            { "data": "media" , "width" : "42px",
                 "render": function(data) {
                     return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
                 } 
@@ -287,7 +287,7 @@ function getList(data = []) { //리스트 세팅
             { "data": "dec_phone", "width": "90px" },
             { "data": "age", "width": "27px" },
             { "data": "gender", "width": "27px" },
-            { "data": "add", "width": "65px"},
+            { "data": "add" },
             { "data": "site", "width": "45px" },
             { "data": "reg_date", "width": "70px" },
             { "data": "memo_cnt", "width": "30px", "className": "memo",
