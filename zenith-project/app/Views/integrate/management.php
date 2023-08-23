@@ -261,15 +261,23 @@ function getList(data = []) { //리스트 세팅
             { targets: [6], className: 'nowrap'}
         ],
         "columns": [
-            { "data": null, "width": "40px" },
+            { "data": null, "width": "35px" },
             { "data": "seq" },
             { "data": "info_seq", "width": "40px",
                 "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
                 }
             },
-            { "data": "advertiser" },
-            { "data": "media" },
+            { "data": "advertiser","width": "50px",
+                "render": function(data) {
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                } 
+            },
+            { "data": "media" , "width" : "40px",
+                "render": function(data) {
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                } 
+            },
             { "data": "tab_name" },
             { "data": "name", "width": "50px",
                 "render": function(data) {

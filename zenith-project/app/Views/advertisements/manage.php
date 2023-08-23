@@ -162,7 +162,7 @@
                     <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col">체크</th>
+                                <th scope="col"></th>
                                 <th scope="col">매체</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
@@ -414,7 +414,7 @@ function getList(data = []){
     dataTable = $('#adv-table').DataTable({
         "dom": '<Bfr<t>ip>',
         "autoWidth": false,
-        "order": [[1,'desc']],
+        "order": [[2,'asc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -497,21 +497,20 @@ function getList(data = []){
         },
         "columnDefs": [
             { targets: [0], orderable: false},
-            { targets: [2], orderable: false},
             { targets: '_all', visible: true },
         ],
         "columns": [
             { 
                 "data": null, 
-                "width": "5%",
+                "width": "2%",
                 "render": function (data, type, row) {
-                    media = '<div class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></div>';
+                    media = '<label class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></label>';
                     return media;
                 },
             },
             { 
                 "data": "media", 
-                "width": "5%",
+                "width": "4%",
                 "render": function (data, type, row) {
                     media = '<div class="media_box"><i class="'+row.media+'"></i></div>';
                     return media;
@@ -519,7 +518,7 @@ function getList(data = []){
             },
             { 
                 "data": "name", 
-                "width": "15%",
+                "width": "20%",
                 "render": function (data, type, row) {
                     name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     return name;
@@ -527,7 +526,7 @@ function getList(data = []){
             },
             { 
                 "data": "status", 
-                "width": "10%",
+                "width": "6%",
                 "render": function (data, type, row) {
                     status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide"></span><span class="material-symbols-outlined">fact_check</span></button>';
                     return status;

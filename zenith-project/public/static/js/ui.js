@@ -6,11 +6,46 @@ $(function(){
     //     $('.left-side .nav .collapse').removeClass('show');
     // });
 
+    let sel = 'open';
+    let result = null;
     $('.left-side .btn-menu').on('click', function(){
-        $('.left-side').toggleClass('hide');
         $('.left-side .nav > li > button').attr('aria-expanded', false);
         $('.left-side .nav .collapse').removeClass('show');
+
+        menu_class();
+        $('.left-side').toggleClass('hide');
     });
+
+    $('.left-side .nav li button').on('click', function(){
+        let width = window.innerWidth;
+        let open = $('.left-side');     
+
+        if(localStorage.btn == 'hide'){
+            $('.left-side').addClass('hide');  
+        }
+    }); 
+   
+    $(function(){
+        console.log(localStorage.btn,result);
+        if(result == 'hide'){
+            $('.left-side').addClass('hide');  
+        }
+        if($('.left-side').addClass('hide')){
+            localStorage.btn =+ 'hide'; 
+        }
+    });
+
+    function menu_class(){
+        localStorage.setItem("btn", sel);
+        if( $('.left-side').hasClass('hide')){
+            sel = 'hide';
+        }
+        else{
+            sel = 'open';
+        }
+        result = localStorage.getItem("btn");
+        console.log(localStorage.btn,result);
+    }
 
 
     $('.toggle').on('click', function(){
