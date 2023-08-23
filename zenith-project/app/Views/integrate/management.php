@@ -167,10 +167,14 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         "contentType": "application/json",
         "dataType": "json",
         "success": function (result) {
-            console.log(result);
             $.each(result, function(i,row) {
                 // arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
-                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, row.name, row.dec_phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
+
+                var regex = /<i[^>]*>([^<]+)<\/i>/g;
+                var phone = row.dec_phone.replace(regex, '$1');
+                var name = row.name.replace(regex, '$1');
+
+                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
             });
         },
         "async": false
@@ -249,31 +253,30 @@ function getList(data = []) { //리스트 세팅
                         extend: 'pdfHtml5',
                         orientation: 'landscape',
                         pageSize: 'LEGAL'
-                    } )
+                    } ),
                 ]
             },
-            
         ],
         "columnDefs": [
             { targets: [0], orderable: false},
             { targets: [1], visible: false},
             { targets: '_all', visible: true },
-            { targets: [6], className: 'nowrap'}
+            { targets: [6], className: ''}
         ],
         "columns": [
-            { "data": null, "width": "35px" },
-            { "data": "seq" },
-            { "data": "info_seq", "width": "40px",
+            { "data": null , "width": "35px"},
+            { "data": "seq" , "width": "40px"},
+            { "data": "info_seq", "width": "45px",
                 "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
                 }
             },
-            { "data": "advertiser","width": "50px",
+            { "data": "advertiser","width": "80px",
                 "render": function(data) {
                     return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
                 } 
             },
-            { "data": "media" , "width" : "40px",
+            { "data": "media" , "width" : "42px",
                 "render": function(data) {
                     return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
                 } 
@@ -285,10 +288,10 @@ function getList(data = []) { //리스트 세팅
                 } 
             },
             { "data": "dec_phone", "width": "90px" },
-            { "data": "age", "width": "30px" },
-            { "data": "gender", "width": "30px" },
+            { "data": "age", "width": "27px" },
+            { "data": "gender", "width": "27px" },
             { "data": "add" },
-            { "data": "site", "width": "50px" },
+            { "data": "site", "width": "45px" },
             { "data": "reg_date", "width": "70px" },
             { "data": "memo_cnt", "width": "30px", "className": "memo",
               "render" : function(data) { // data-bs-toggle="modal"

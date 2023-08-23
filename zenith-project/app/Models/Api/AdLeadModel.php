@@ -2,6 +2,7 @@
 
 namespace App\Models\Api;
 
+use CodeIgniter\Database\RawSql;
 use CodeIgniter\Model;
 
 class AdLeadModel extends Model
@@ -24,7 +25,7 @@ class AdLeadModel extends Model
                 WHERE ur.send_time IS NULL
                 ORDER BY ur.create_time ASC";
 
-        $result = $this->kakao->query($sql)->getResultArray();
+        $result = $this->kakao->query($sql);
         
         return $result;
     }
@@ -64,16 +65,37 @@ class AdLeadModel extends Model
 
     public function insertEventLeadKakao($row)
     {
-        $row['name'] = $this->kakao->escape($row['name']);
-        $sql = "INSERT INTO event_leads(event_seq, site, name, phone, add1, add2, add3, add4, add5, reg_date, status, is_deleted, lead_id)
-                VALUES('{$row['event_seq']}', '{$row['site']}', {$row['name']}, ENC_DATA('{$row['phone']}'), '{$row['add1']}', '{$row['add2']}', '{$row['add3']}', '{$row['add4']}', '{$row['add5']}', '{$row['reg_date']}', 1, 0, '{$row['id']}')
-                ON DUPLICATE KEY
-                UPDATE event_seq='{$row['event_seq']}', site='{$row['site']}', name={$row['name']}, phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', status = 1, reg_date='{$row['reg_date']}', lead_id='{$row['id']}'";
-        
-        $result = $this->zenith->query($sql);
+
+        $data = [
+            'event_seq' => $row['event_seq'],
+            'site' => $row['site'],
+            'name' => $row['name'],
+            'phone' => new RawSql("enc_data('{$row['phone']}')"),
+            'gender' => $row['gender'],
+            'age' => $row['age'],
+            'addr' => $row['addr'],
+            'email' => $row['email'],
+            'agree' => 'Y',
+            'add1' => $row['add1'],
+            'add2' => $row['add2'],
+            'add3' => $row['add3'],
+            'add4' => $row['add4'],
+            'add5' => $row['add5'],
+            'status' => 1,
+            'is_encryption' => 1,
+            'lead_id' => $row['lead_id'],
+            'reg_date' => date('Y-m-d H:i:s', $row['reg_timestamp']),
+            'reg_timestamp' => $row['reg_timestamp']
+        ];
+        $builder = $this->zenith->table('event_leads');
+        $builder->set($data);
+        $result = $builder->insert();
+
         if ($result) {
-            $sql = "UPDATE mm_bizform_user_response SET send_time=now() WHERE encUserId='{$row['encUserId']}' AND bizFormId='{$row['bizFormId']}'";
-            $result = $this->kakao->query($sql);
+            $builder = $this->db->table('mm_bizform_user_response');
+            $builder->set('send_time', new RawSql('NOW()'));
+            $builder->where(['encUserId'=>$row['encUserId'], 'bizFormId'=>$row['bizFormId']]);
+            $builder->update();
         }
     }
 

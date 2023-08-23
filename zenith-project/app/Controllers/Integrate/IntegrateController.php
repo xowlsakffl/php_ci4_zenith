@@ -47,6 +47,7 @@ class IntegrateController extends BaseController
                 if(!$this->is_pravate_perm) {
                     if(!preg_match('/test|테스트/i', $d['name']) && $d['status'] != 7) {
                         $d['dec_phone'] = substr($d['dec_phone'],0,3).'<i class="masking">&#9618;&#9618;</i>'.substr($d['dec_phone'],-4);
+                        $d['dec_phone'] = html_entity_decode($d['dec_phone']);
                         $name = trim($d['name']);
                         $d['name'] = '';
                         for($ii=0; $ii<mb_strlen($name); $ii++) {
@@ -54,6 +55,7 @@ class IntegrateController extends BaseController
                                 continue;
                             else 
                                 $d['name'] .= (($ii>0&&$ii<mb_strlen($name)-1)||$ii==1)?'<i class="masking">&#9618;</i>':mb_substr($name, $ii, 1);
+                                $d['name'] = html_entity_decode($d['name']);
                         }
                     }
                 }

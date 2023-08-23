@@ -736,11 +736,12 @@ function setAccount(data) {
 
     $row.append(html);
 
+    //정렬
     var buttons = $row.find('.filter_btn');
     buttons.sort(function(a, b) {
-        var textA = $(a).find('.account_name').text();
-        var textB = $(b).find('.account_name').text();
-        return textA.localeCompare(textB, 'ko-KR', { sensitivity: 'base' });
+        var textA = $(a).find('.account_name').text().toUpperCase();
+        var textB = $(b).find('.account_name').text().toUpperCase();
+        return textA.localeCompare(textB, 'en', { sensitivity: 'base' });
     });
 
     $.each(buttons, function(_, button) {
@@ -773,16 +774,18 @@ function setMediaAccount(data) {
 
     $row.append(html);
 
-    /* var buttons = $row.find('.filter_media_btn');
+    //정렬
+    var buttons = $row.find('.filter_media_btn');
     buttons.sort(function(a, b) {
-        var textA = $(a).find('.media_account_name').text();
-        var textB = $(b).find('.media_account_name').text();
-        return textA.localeCompare(textB, 'ko-KR', { sensitivity: 'base' });
+        var textA = $(a).find('.media_account_name').text().toUpperCase();
+        var textB = $(b).find('.media_account_name').text().toUpperCase();
+        
+        return textA.localeCompare(textB, 'en', { sensitivity: 'base' });
     });
 
     $.each(buttons, function(_, button) {
         $row.append(button.parentNode.parentNode);
-    }); */
+    });
 }
 
 function setDate(){

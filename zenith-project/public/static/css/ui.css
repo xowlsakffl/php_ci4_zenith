@@ -2255,10 +2255,6 @@ div.dataTables_processing > div:last-child > div {
 .left-side .btn-menu {
   border: none;
 }
-.left-side .btn-menu:active {
-  transform: rotate(360deg);
-  transition: 0.4s;
-}
 .left-side .btn-menu:before {
   height: 100%;
   left: 50%;
@@ -2274,13 +2270,16 @@ div.dataTables_processing > div:last-child > div {
   transform: rotate(-45deg);
   transition: all 0.3s;
 }
+.left-side .btn-menu:active:before, .left-side .btn-menu:active:after {
+  background: #e58489;
+}
 .left-side.hide .btn-menu {
   display: none;
   position: absolute;
   top: 20px;
-  left: 10px;
+  left: 8px;
   display: block;
-  width: 20px;
+  width: 24px;
   height: 20px;
   overflow: hidden;
   text-indent: -9999px;
@@ -2309,6 +2308,9 @@ div.dataTables_processing > div:last-child > div {
   background: #fff;
   transform: none;
   transition: none;
+}
+.left-side.hide .btn-menu:active:before, .left-side.hide .btn-menu:active:after {
+  background: blue;
 }
 
 .modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {
