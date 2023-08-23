@@ -165,6 +165,7 @@
                                                 <input type="hidden" name="company_id">
                                                 <input type="hidden" name="ad_account_id">
                                                 <input type="text" name="ad_account_name"  class="form-control" id="show-adaccount" autocomplete="off">
+                                                <input type="text" style="display:none">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -206,6 +207,7 @@
                                                 <input type="hidden" name="company_id">
                                                 <input type="hidden" name="user_id">
                                                 <input type="text" name="username"  class="form-control" id="show-user-name" autocomplete="off">
+                                                <input type="text" style="display:none">
                                             </td>
                                         </tr>
                                     </tbody>
