@@ -53,7 +53,24 @@
             </table>
             <!-- END CENTERED WHITE CONTAINER -->
 
-            <!-- ... (Rest of the code) ... -->
+            <!-- START FOOTER -->
+            <div class="footer" style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="content-block">
+                            <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;"><?= lang('Auth.emailInfo') ?></span>
+                            <br> <?= lang('Auth.emailIpAddress') ?> <?= esc($ipAddress) ?>.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-block powered-by" style="color: #999999; font-size: 12px; text-align: center;">
+                        <?= lang('Auth.emailDevice') ?> <?= esc($userAgent) ?>.<br>
+                        <?= lang('Auth.emailDate') ?> <?= esc($date) ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!-- END FOOTER -->
 
           </div>
         </td>
@@ -61,4 +78,5 @@
       </tr>
     </table>
 </body>
+
 </html>
