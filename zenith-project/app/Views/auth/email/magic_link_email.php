@@ -15,12 +15,12 @@
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body" style="background-color: #f6f6f6; width: 100%;">
       <tr>
         <td>&nbsp;</td>
-        <td class="container" style="display: block; margin: 0 auto !important; max-width: 580px; padding: 10px; width: 580px;">
+        <td class="container" style="display: block; margin: 0 auto !important; max-width: 580px; padding: 10px; width: 580px;text-align:center">
 
           <div class="content" style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;">
 
             <!-- START CENTERED WHITE CONTAINER -->
-            <table role="presentation" class="main" style="background: #ffffff; border-radius: 3px; width: 100%;">
+            <table role="presentation" class="main" style="background: #ffffff; border-radius: 3px; width: 100%;margin-bottom:20px">
 
               <!-- START MAIN CONTENT AREA -->
               <tr>
@@ -37,7 +37,7 @@
                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                   <tbody>
                                     <tr>
-                                      <td> <a href="<?= url_to('verify-magic-link') ?>?token=<?= $token ?>" target="_blank" style="background-color: #ffffff; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; color: #3498db; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize;">비밀번호 재설정</a></td>
+                                      <td> <a href="<?= url_to('verify-magic-link') ?>?token=<?= $token ?>" target="_blank" style="background-color: #ce1922; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; color: #ffffff; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize;">비밀번호 재설정</a></td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -51,26 +51,22 @@
                 </td>
               </tr>
             </table>
-            <!-- END CENTERED WHITE CONTAINER -->
 
-            <!-- START FOOTER -->
-            <div class="footer" style="clear: both; margin-top: 10px; text-align: center; width: 100%;">
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td class="content-block">
-                            <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;"><?= lang('Auth.emailInfo') ?></span>
-                            <br> <?= lang('Auth.emailIpAddress') ?> <?= esc($ipAddress) ?>.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content-block powered-by" style="color: #999999; font-size: 12px; text-align: center;">
-                        <?= lang('Auth.emailDevice') ?> <?= esc($userAgent) ?>.<br>
-                        <?= lang('Auth.emailDate') ?> <?= esc($date) ?>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <!-- END FOOTER -->
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="content-block">
+                        <span class="apple-link" style="color: #999999; font-size: 12px; text-align: center;"><?= lang('Auth.emailInfo') ?></span>
+                        <br> <?= lang('Auth.emailIpAddress') ?> <?= esc($ipAddress) ?>.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="content-block powered-by" style="color: #999999; font-size: 12px; text-align: center;">
+                    <?= lang('Auth.emailDevice') ?> <?= esc($userAgent) ?>.<br>
+                    <?= lang('Auth.emailDate') ?> <?= esc($date) ?>
+                    </td>
+                </tr>
+            </table>
+            <!-- END CENTERED WHITE CONTAINER -->
 
           </div>
         </td>
