@@ -17,7 +17,7 @@
         <td>&nbsp;</td>
         <td class="container" style="display: block; margin: 0 auto !important; max-width: 580px; padding: 10px; width: 580px;">
 
-          <div class="content" style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;background:#ffffff">
+          <div class="content" style="box-sizing: border-box; display: block; margin: 0 auto; max-width: 580px; padding: 10px;background:#ffffff;text-align:center">
 
             <!-- START CENTERED WHITE CONTAINER -->
             <table role="presentation" class="main" style="border-radius: 3px; width: 100%;margin-bottom:20px">
@@ -28,8 +28,8 @@
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="width: 100%;">
                     <tr>
                       <td>
-                        <h3 style="color: #000000; font-family: sans-serif; font-weight: 400; line-height: 1.4; margin: 0; margin-bottom: 20px; font-size: 35px; text-align: center; text-transform: capitalize;">비밀번호 재설정 링크</h3>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">아래 버튼을 클릭하여 접속 후 비밀번호를 변경해주시기 바랍니다.</p>
+                        <h3 style="color: #000000; font-family: sans-serif; font-weight: 400; line-height: 1.4; margin: 0; margin-bottom: 20px; font-size: 23px; text-align: center; text-transform: capitalize;">비밀번호 재설정 링크</h3>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">아래 버튼을 클릭하여 접속 후<br>비밀번호를 변경해주시기 바랍니다.</p>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="box-sizing: border-box; width: 100%;">
                           <tbody>
                             <tr>
