@@ -727,7 +727,7 @@ function setAccount(data) {
         if (existingIds.includes(companyId)) {
             existingIds = existingIds.filter(id => id !== companyId);
         } else {
-            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn">' + v.company_name + '</button></div></div>';
+            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn"><span class="account_name">' + v.company_name + '</span></button></div></div>';
         }
     });
 
@@ -736,6 +736,17 @@ function setAccount(data) {
     }).parent().parent().remove();
 
     $row.append(html);
+
+    var buttons = $row.find('.filter_btn');
+    buttons.sort(function(a, b) {
+        var textA = $(a).find('.account_name').text();
+        var textB = $(b).find('.account_name').text();
+        return textA.localeCompare(textB, 'ko-KR', { sensitivity: 'base' });
+    });
+
+    $.each(buttons, function(_, button) {
+        $row.append(button.parentNode.parentNode);
+    });
 }
 
 function setMediaAccount(data) {
@@ -762,6 +773,17 @@ function setMediaAccount(data) {
     }).parent().parent().remove();
 
     $row.append(html);
+
+    /* var buttons = $row.find('.filter_media_btn');
+    buttons.sort(function(a, b) {
+        var textA = $(a).find('.media_account_name').text();
+        var textB = $(b).find('.media_account_name').text();
+        return textA.localeCompare(textB, 'ko-KR', { sensitivity: 'base' });
+    });
+
+    $.each(buttons, function(_, button) {
+        $row.append(button.parentNode.parentNode);
+    }); */
 }
 
 function setDate(){
