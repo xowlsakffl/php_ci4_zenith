@@ -29,7 +29,7 @@
                     <tr>
                       <td>
                         <h3 style="color: #000000; font-family: sans-serif; font-weight: 400; line-height: 1.4; margin: 0; margin-bottom: 20px; font-size: 23px; text-align: center; text-transform: capitalize;">비밀번호 재설정 링크</h3>
-                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">아래 버튼을 클릭하여 접속 후<br>비밀번호를 변경해주시기 바랍니다.</p>
+                        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">아래 버튼을 클릭하여 접속 후 비밀번호를 변경해주시기 바랍니다.</p>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="box-sizing: border-box; width: 100%;">
                           <tbody>
                             <tr>
