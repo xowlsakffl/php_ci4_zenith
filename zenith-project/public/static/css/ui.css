@@ -1650,6 +1650,7 @@ div.dataTables_processing > div:last-child > div {
 }
 .sub-contents-wrap .media-advertiser .filter_media_btn .media_account_name {
   padding-left: 0.5rem;
+  width: 87%;
 }
 .sub-contents-wrap .media-advertiser .filter_media_btn .facebook {
   background: url(/img/ico_facebook.png);
