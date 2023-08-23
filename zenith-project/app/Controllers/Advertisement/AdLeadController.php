@@ -35,12 +35,12 @@ class AdLeadController extends BaseController
     {
         $moment_ads = $this->adlead->getBizFormUserResponse();
         $step = 1;
-        $total = count($moment_ads);
+        $total = $moment_ads->getNumRows();
         if(!$total){
             return null;
         }
         CLI::write("카카오 모먼트 잠재고객 업데이트를 시작합니다.", "yellow");
-        foreach($moment_ads as $row){  
+        foreach($moment_ads->getResultArray() as $row){  
             CLI::showProgress($step++, $total);
             $landing = $this->kakao->landingGroup($row);
             if(is_null($landing)) {
@@ -62,37 +62,39 @@ class AdLeadController extends BaseController
             $responses = json_decode($row['responses'], 1);
             $acnt = 1;
 
-            $add1 = '';
-            $add2 = '';
-            $add3 = '';
-            $add4 = '';
-            $add5 = '';
+            $addr = $add1 = $add2 = $add3 = $add4 = $add5 = null;
             foreach ($responses as $response) {
                 $qs = $this->adlead->getBizformQuestion($row['bizFormId'], $response['bizformItemId']);
+                if(is_null($qs)) continue;
                 if (!key_exists($qs['id'], $questions))
                     $questions[$qs['id']] = $qs['title'];
                 $add[] = ${'add' . $acnt} = $questions[$response['bizformItemId']] . '::' . $response['response'];
                 $acnt++;
             }
+
             $result = [];
             if ($landing['event_seq']) {
                 $result['event_seq'] = $landing['event_seq'];
-                $result['site'] = $landing['site'];
-                $result['name'] = addslashes($row['nickname']);
+                $result['site'] = $landing['site']??null;
+                $result['name'] = $row['nickname'];
+                $result['email'] = $row['email']??'';
+                $result['gender'] = $row['gender']??null;
+                $result['age'] = $row['age']??null;
                 $result['phone'] = $phone;
-                $result['add1'] = addslashes($add1);
-                $result['add2'] = addslashes($add2);
-                $result['add3'] = addslashes($add3);
-                $result['add4'] = addslashes($add4);
-                $result['add5'] = addslashes($add5);
-                $result['reg_date'] = $row['create_time'];
-                $result['id'] = $row['seq'];   
+                $result['add1'] = $add1;
+                $result['add2'] = $add2;
+                $result['add3'] = $add3;
+                $result['add4'] = $add4;
+                $result['add5'] = $add5;
+                $result['addr'] = $addr;
+                $result['reg_timestamp'] = strtotime($row['submitAt']);
+                $result['lead_id'] = $row['id']??null;
                 $result['encUserId'] = $row['encUserId'];
-                $result['bizFormId'] = $row['bizFormId'];        
-                
-                if (is_array($result) && count($result)) {
-                    $this->adlead->insertEventLeadKakao($result);
-                }
+                $result['bizFormId'] = $row['bizFormId'];
+            }
+
+            if (is_array($result) && count($result)) {
+                $this->adlead->insertEventLeadKakao($result);
             }
         }
     }
