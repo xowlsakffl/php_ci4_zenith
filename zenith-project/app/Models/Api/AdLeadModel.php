@@ -92,7 +92,7 @@ class AdLeadModel extends Model
         $result = $builder->insert();
 
         if ($result) {
-            $builder = $this->db->table('mm_bizform_user_response');
+            $builder = $this->kakao->table('mm_bizform_user_response');
             $builder->set('send_time', new RawSql('NOW()'));
             $builder->where(['encUserId'=>$row['encUserId'], 'bizFormId'=>$row['bizFormId']]);
             $builder->update();
