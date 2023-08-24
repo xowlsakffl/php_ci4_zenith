@@ -573,11 +573,12 @@ class FBDB extends Config
                                 break;
                         }
                         if (preg_match("/[a-z\_]+/i", $field['name']) && !preg_match("/[가-힣]+/i", $field['name'])) {
-                            $$field['name'] = trim(addslashes($field['values'][0]));
+                            $val = "";
+                            if(isset($field['values']) && isset($field['values'][0])) $val = trim(addslashes($field['values'][0]));
                             // @$this->db->query("ALTER TABLE `fb_ad_lead` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
                             // @$this->db->query("ALTER TABLE `fb_ad_lead_delete` ADD `{$field['name']}` VARCHAR(50) NULL DEFAULT NULL AFTER `gender`;");
-                            if (trim($$field['name'])) {
-                                $values .= ", {$field['name']} = '{$$field['name']}'";
+                            if (trim($val)) {
+                                $values .= ", {$field['name']} = '{$val}'";
                             }
                         } else {
                             array_push($custom_fields, $field);

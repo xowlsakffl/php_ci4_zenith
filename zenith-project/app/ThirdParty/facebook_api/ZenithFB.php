@@ -234,7 +234,7 @@ class ZenithFB
             $response = $getResponse->getContent();
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
-                $url = $response['paging']['next'] ?? '';
+                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
                     if (!is_null($data) && isset($data['data'])) $result = array_merge($result, $data['data']);
@@ -618,7 +618,7 @@ class ZenithFB
             CLI::showProgress($step++, $total);
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
-                $url = $response['paging']['next'] ?? '';
+                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
 
@@ -719,7 +719,7 @@ class ZenithFB
                 $result = array_merge($result, $response['data']);
             }
             if (isset($response['paging'])) {
-                $url = $response['paging']['next'] ?? '';
+                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
 
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
