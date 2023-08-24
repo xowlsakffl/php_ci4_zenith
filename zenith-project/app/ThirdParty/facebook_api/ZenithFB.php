@@ -708,7 +708,7 @@ class ZenithFB
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
             CLI::showProgress($step++, $total);
             // $this->grid($row); continue;
-            if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || strtotime($row['update_date']) <= strtotime('-1 month')) { //소재가 1개월 이상 업데이트 되지 않았으면 잠재고객을 받지 않음
+            if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || $row['status'] != 'ACTIVE' || strtotime($row['update_date']) <= strtotime('-1 month')) { //소재가 1개월 이상 업데이트 되지 않았으면 잠재고객을 받지 않음
                 continue;
             }
             // echo '<pre>'.print_r($row,1).'</pre>';
