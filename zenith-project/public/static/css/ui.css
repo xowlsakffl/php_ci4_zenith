@@ -1643,6 +1643,24 @@ div.dataTables_processing > div:last-child > div {
     background: #ce1922;
   }
 }
+.sub-contents-wrap .reset-btn-wrap {
+  margin: 20px 0;
+}
+.sub-contents-wrap .reset-btn-wrap .reset-btn-box {
+  text-align: right;
+}
+.sub-contents-wrap .reset-btn-wrap .reset-btn-box button {
+  width: 92px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 80%;
+  color: #fff;
+  border-radius: 7px;
+  background: #ce1922;
+}
+.sub-contents-wrap .custom-margin-box-1 {
+  margin-top: 20px;
+}
 .sub-contents-wrap .media-advertiser .filter_media_btn .media_account_icon {
   width: 16px;
   height: 16px;
@@ -1886,6 +1904,7 @@ div.dataTables_processing > div:last-child > div {
 .db-manage-contaniner .search-wrap {
   border-radius: 10px;
   overflow: auto;
+  margin-bottom: 25px;
 }
 .db-manage-contaniner .detail.minWd {
   flex-wrap: wrap;

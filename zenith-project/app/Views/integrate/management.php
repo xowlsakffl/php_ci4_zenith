@@ -46,7 +46,12 @@
             </div>
         </form>
     </div>
-    <div class="section client-list">
+    <div class="section reset-btn-wrap">
+        <div class="reset-btn-box">
+            <button type="button" class="reset-btn">필터 초기화</button>
+        </div>
+    </div>
+    <div class="section client-list custom-margin-box-1">
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 광고주
         </h3>
@@ -273,18 +278,18 @@ function getList(data = []) { //리스트 세팅
             },
             { "data": "advertiser","width": "100px",
                 "render": function(data) {
-                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+(data ? data : '')+'</span>';
                 } 
             },
             { "data": "media" , "width" : "42px",
                 "render": function(data) {
-                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+(data ? data : '')+'</span>';
                 } 
             },
             { "data": "tab_name" },
             { "data": "name", "width": "50px",
                 "render": function(data) {
-                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+data+'</span>';
+                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+(data ? data : '')+'</span>';
                 } 
             },
             { "data": "dec_phone", "width": "90px" },
@@ -593,6 +598,14 @@ $('.statusCount').on('click', 'dl', function(e) {
     dataTable.draw();
 });
 
+$('body').on('click', '.reset-btn', function() {
+    $('#sdate, #edate').val(today);
+    $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
+    $('#stx').val('');
+    dataTable.state.clear();
+    dataTable.state.save();
+    dataTable.order([12, 'desc']).draw();
+});
 // 인정기준 변경처리
 function setStatus(t) {
     var oldvalue = $(t).attr('data-oldvalue');

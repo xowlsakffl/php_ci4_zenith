@@ -6,6 +6,24 @@
 }
 
 .sub-contents-wrap{
+    .reset-btn-wrap{
+        margin: 20px 0;
+        .reset-btn-box{
+            text-align: right;
+            button{
+                width: 92px;
+                height: 36px;
+                font-weight: 700;
+                font-size: 80%;
+                color: #fff;
+                border-radius: 7px;
+                background: #ce1922;
+            }
+        }
+    }
+    .custom-margin-box-1 {
+        margin-top:20px
+    }
     .media-advertiser{
         .filter_media_btn .media_account_icon{
             width: 16px;
@@ -130,7 +148,7 @@
 }
 
 .db-manage-contaniner{
-    .search-wrap{border-radius: 10px; overflow:auto;}          
+    .search-wrap{border-radius: 10px; overflow:auto;margin-bottom: 25px;}          
 
     .detail.minWd{flex-wrap: wrap; min-width:1000px;  
         .col{padding: 0; flex: 1 0 auto; cursor:pointer;
