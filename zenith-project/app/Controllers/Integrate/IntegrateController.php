@@ -28,7 +28,7 @@ class IntegrateController extends BaseController
 
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             if(!isset($arg['searchData'])) {
                 $arg['searchData'] = [
