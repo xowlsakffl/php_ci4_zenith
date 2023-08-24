@@ -42,7 +42,12 @@ class AdLeadController extends BaseController
         CLI::write("카카오 모먼트 잠재고객 업데이트를 시작합니다.", "yellow");
         foreach($moment_ads->getResultArray() as $row){  
             CLI::showProgress($step++, $total);
-            $landing = $this->kakao->landingGroup($row);
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            }else{
+                $title = $row['name'];
+            }
+            $landing = $this->kakao->landingGroup($title, $row['landingUrl'] ?? '');
             if(is_null($landing)) {
                 CLI::print('비즈폼 매칭 오류 발생 : ' . $row . '');
                 continue;
@@ -115,7 +120,7 @@ class AdLeadController extends BaseController
             }else{
                 $title = $row['ad_name'];
             }
-            $landing = $this->facebook->landingGroup($row['ad_name']);
+            $landing = $this->facebook->landingGroup($title);
             //이름
             $full_name = $row['full_name'];
             if (!$full_name || $full_name == null) {

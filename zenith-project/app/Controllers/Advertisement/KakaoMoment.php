@@ -103,13 +103,13 @@ class KakaoMoment extends BaseController
     }
 
     //app_subscribe 데이터 업데이트
-    public function moveToAppsubscribe()
+    /* public function moveToAppsubscribe()
     { 
         CLI::clearScreen();
         CLI::write("app_subscribe 데이터 업데이트를 진행합니다.", "light_red");
         $this->chainsaw->moveToLeads();
         CLI::write("app_subscribe 데이터 업데이트 완료", "yellow");
-    }
+    } */
 
     //유효DB 개수 업데이트
     public function updateDB($sdate = null, $edate = null) {
