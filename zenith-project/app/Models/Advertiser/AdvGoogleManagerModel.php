@@ -193,6 +193,7 @@ class AdvGoogleManagerModel extends Model
 		"google" AS media,
 		B.id AS id, 
 		B.name AS name, 
+		B.code AS code,
 		B.status AS status, 
 		0 AS budget, 
 		SUM(A.impressions) AS impressions, 
@@ -439,4 +440,18 @@ class AdvGoogleManagerModel extends Model
 
         return $result;
 	} */
+
+	public function updateCode($data) {
+		$result = [];
+        $builder = $this->db->table('z_adwords.aw_ad');  
+		$builder->set('code', $data['code']);
+		$builder->where('id', $data['id']);
+		$queryResult = $builder->update();
+
+		if($queryResult){
+			$result['code'] = $data['code'] ?? '';
+		}
+
+		return $result;
+	}
 }

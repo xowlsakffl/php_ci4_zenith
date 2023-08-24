@@ -175,6 +175,7 @@ class AdvFacebookManagerModel extends Model
 			"facebook" AS media, 
 			B.ad_id AS id, 
 			B.ad_name AS name, 
+			B.code AS code,
 			B.status AS status, 
 			0 AS budget, 
 			SUM(A.impressions) AS impressions, 
@@ -301,5 +302,17 @@ class AdvFacebookManagerModel extends Model
         return $result;
 	} */
 
-	
+	public function updateCode($data) {
+		$result = [];
+        $builder = $this->db->table('z_facebook.fb_ad');  
+		$builder->set('code', $data['code']);
+		$builder->where('ad_id', $data['id']);
+		$queryResult = $builder->update();
+
+		if($queryResult){
+			$result['code'] = $data['code'] ?? '';
+		}
+
+		return $result;
+	}
 }

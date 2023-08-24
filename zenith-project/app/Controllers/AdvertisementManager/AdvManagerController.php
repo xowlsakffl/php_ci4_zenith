@@ -4,6 +4,9 @@ namespace App\Controllers\AdvertisementManager;
 
 use App\Controllers\BaseController;
 use App\Libraries\Calc;
+use App\Models\Advertiser\AdvFacebookManagerModel;
+use App\Models\Advertiser\AdvGoogleManagerModel;
+use App\Models\Advertiser\AdvKakaoManagerModel;
 use App\Models\Advertiser\AdvManagerModel;
 use CodeIgniter\API\ResponseTrait;
 use App\ThirdParty\facebook_api\ZenithFB;
@@ -21,6 +24,7 @@ class AdvManagerController extends BaseController
         $this->admanager = model(AdvManagerModel::class);
         $this->facebook = model(AdvFacebookManagerModel::class);
         $this->google = model(AdvGoogleManagerModel::class);
+        $this->kakao = model(AdvKakaoManagerModel::class);
     }
     
     public function index()
@@ -838,6 +842,47 @@ class AdvManagerController extends BaseController
             }
 
             if(!empty($result)){
+                $result['response'] = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function updateCode()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
+
+            $sliceId = explode("_", $data['id']);
+            $media = $sliceId[0];
+            $adId = $sliceId[1];
+
+            if($data['tab'] == 'ads'){
+                $data = [
+                    'code' => $data['code'] ?? '',
+                    'id' => $adId
+                ];
+
+                switch ($media) {
+                    case 'facebook':
+                        $result = $this->facebook->updateCode($data);
+                        break;
+                    case 'kakao':
+                        $result = $this->kakao->updateCode($data);
+                        break;
+                    case 'google':
+                        $result = $this->google->updateCode($data);
+                        break;
+                    default:
+                        return $this->fail("지원하지 않는 매체입니다.");
+                }
+            }
+
+            if(isset($result['code'])){
                 $result['response'] = true;
                 return $this->respond($result);
             }else{

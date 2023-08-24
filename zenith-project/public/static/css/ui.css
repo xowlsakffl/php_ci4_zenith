@@ -1847,6 +1847,18 @@ div.dataTables_processing > div:last-child > div {
 .sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .google {
   background: url("/img/ico_google.png") no-repeat center 0;
 }
+.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn {
+  padding: 0;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn .bi-c-circle {
+  font-size: 1.15rem;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn .bi-c-circle:hover {
+  cursor: pointer;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox span {
+  margin-left: 5px;
+}
 .sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName p {
   margin-bottom: 0.5rem;
   text-align: left;

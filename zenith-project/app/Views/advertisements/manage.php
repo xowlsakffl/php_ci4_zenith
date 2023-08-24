@@ -520,7 +520,13 @@ function getList(data = []){
                 "data": "name", 
                 "width": "20%",
                 "render": function (data, type, row) {
-                    name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                    if(tableParam.searchData.type == 'ads'){
+                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-c-circle"></i></button><span style="font-size:80%"><p data-editable="true">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                    }else{
+                        name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                    }
+
+                    
                     return name;
                 },
             },
@@ -528,7 +534,7 @@ function getList(data = []){
                 "data": "status", 
                 "width": "6%",
                 "render": function (data, type, row) {
-                    status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select><button class="btn-history"><span class="hide"></span><span class="material-symbols-outlined">fact_check</span></button>';
+                    status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select>';
                     return status;
                 },
             },
@@ -1368,6 +1374,75 @@ $("body").on("click", '.budget p[data-editable="true"]', function(){
             }
         }
     });
+});
+
+function sendCode(data, inputElement) {
+    $.ajax({
+        type: "put",
+        url: "<?=base_url()?>/advertisements/set-code",
+        data: data,
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data) {
+            console.log(data);
+            if (data.response == true) {
+                var $new_p = $('<p data-editable="true">');
+                $new_p.text(data.code);
+                inputElement.replaceWith($new_p);
+            }
+        },
+        error: function(error, status, msg) {
+            alert("상태코드 " + status + "에러메시지" + msg);
+        }
+    });
+}
+
+$("body").on("click", '.codeBtn', function(){
+    tab = $('.tab-link.active').val();
+    id = $(this).closest("tr").data("id");
+    $('.codeBox p[data-editable="true"]').attr("data-editable", "false");
+    var code = $(this).siblings('span').find('p').text();
+    var $input = $('<input type="text" style="width:100%;">');
+    $input.val(code);
+    $(this).siblings('span').find('p').replaceWith($input);
+    $input.focus();
+    
+    $input.on('keydown blur', function(e) {
+        if (e.type === 'keydown') {
+            if (e.keyCode == 27) {
+                // ESC Key
+                restoreElement(code, $input);
+            } else if (e.keyCode == 13) {
+                var new_code = $input.val();
+                var data = {
+                    'code': new_code,
+                    'tab': tab,
+                    'id': id,
+                };
+
+                if (code === new_code) {
+                    restoreElement(code, $input);
+                } else {
+                    sendCode(data, $input)
+                }
+            }
+        } else if (e.type === 'blur') {
+            var new_code = $input.val();
+            var data = {
+                'code': new_code,
+                'tab': tab,
+                'id': id,
+            };
+
+            if (code === new_code) {
+                restoreElement(code, $input);
+            } else {
+                sendCode(data, $input)
+            }
+        }
+    });
+
+    $('.codeBox p[data-editable="false"]').attr("data-editable", "true");
 });
 
 function debug(msg) {

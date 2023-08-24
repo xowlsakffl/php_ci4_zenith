@@ -101,6 +101,21 @@
                 .kakao{@include bg('ico_kakao.png', center, 0);}
                 .google{@include bg('ico_google.png', center, 0);} 
             }
+            .codeBox{
+                .codeBtn{
+                    padding:0;
+                    .bi-c-circle{
+                    
+                        font-size: 1.15rem;
+                        &:hover{cursor: pointer;}
+                    }
+                }
+                span{
+                    margin-left: 5px;
+                }
+            }
+            
+            
             .mediaName{
                 p{margin-bottom:0.5rem; text-align: left;}
                 button{position: absolute !important; bottom: 0; right: 0;

@@ -168,6 +168,7 @@ class AdvKakaoManagerModel extends Model
         "kakao" AS media, 
         B.id AS id, 
         B.name AS name, 
+        B.code AS code,
         B.config AS status, 
         0 AS budget, 
         SUM(A.imp) AS impressions, 
@@ -288,4 +289,18 @@ class AdvKakaoManagerModel extends Model
 
         return $result;
 	} */
+
+    public function updateCode($data) {
+		$result = [];
+        $builder = $this->db->table('z_moment.mm_creative');  
+		$builder->set('code', $data['code']);
+		$builder->where('id', $data['id']);
+		$queryResult = $builder->update();
+        
+		if($queryResult){
+			$result['code'] = $data['code'] ?? '';
+		}
+
+		return $result;
+	}
 }
