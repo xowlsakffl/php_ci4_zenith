@@ -110,6 +110,11 @@ class AdLeadController extends BaseController
         CLI::write("페이스북 잠재고객 업데이트를 시작합니다.", "yellow");
         foreach($facebook_ads as $row){  
             CLI::showProgress($step++, $total);
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            }else{
+                $title = $row['ad_name'];
+            }
             $landing = $this->facebook->landingGroup($row['ad_name']);
             //이름
             $full_name = $row['full_name'];

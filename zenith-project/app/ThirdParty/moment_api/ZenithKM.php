@@ -655,7 +655,7 @@ class ZenithKM
     }
 
      
-    public function moveToLeads()
+    /* public function moveToLeads()
     { //잠재고객 > event_leads 테이블로 이동
         $ads = $this->db->getBizFormUserResponse();
         $total = $ads->getNumRows();
@@ -666,7 +666,12 @@ class ZenithKM
         CLI::write("[".date("Y-m-d H:i:s")."]"."event_leads 데이터 업데이트를 시작합니다.", "light_red");
         foreach ($ads->getResultArray() as $row) {
             CLI::showProgress($step++, $total); 
-            $landing = $this->landingGroup($row);
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            }else{
+                $title = $row['name'];
+            }
+            $landing = $this->landingGroup($title, $row['landingUrl'] ?? '');
             if(is_null($landing)) {
                 echo '비즈폼 매칭 오류 발생 : <pre>' . print_r($row, 1) . '</pre>';
                 continue;
@@ -720,7 +725,7 @@ class ZenithKM
 
             // return $result;
         }
-    }
+    } */
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
      
@@ -902,22 +907,22 @@ class ZenithKM
         return $result;
     }
 
-    public function landingGroup($data)
+    public function landingGroup($title, $landingUrl = '')
     {
-        if (!$data['name']) return null;
-        preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $data['name'], $matches);
-        if (isset($data['landingUrl']) && preg_match("/hotblood\.co\.kr/i", $data['landingUrl'])) {
-            $urls = parse_url($data['landingUrl']);
+        if (empty($title)) return [];
+        preg_match_all('/(.+)?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
+        if (!empty($landingUrl) && preg_match("/hotblood\.co\.kr/i", $landingUrl)) {
+            $urls = parse_url($landingUrl);
             parse_str($urls['query'], $urls['qs']);
             $path = explode('/', $urls['path']);
             $event_id = array_pop($path);
-            $site = @$urls['qs']['site'];
+            $site = $urls['qs']['site'] ?? '';
         } else {
-            $event_id = @$matches[2][0];
-            $site = @$matches[4][0];
+            $event_id = $matches[2][0] ?? '';
+            $site = $matches[4][0] ?? '';
         }
         if(@$urls['qs']['site'] != @$matches[4][0]) //제목 site값 우선
-            $site = @$matches[4][0];
+            $site = $matches[4][0];
         $media = '';
         if (isset($matches[10][0]) && $matches[10][0]) {
             switch ($matches[10][0]) {
@@ -938,10 +943,10 @@ class ZenithKM
             $result['site']         = $site;
             $result['db_price']     = $matches[7][0];
             $result['period_ad']    = $period_ad;
-            $result['url']          = $data['landingUrl']??null;
+            $result['url']          = $landingUrl??null;
             return $result;
         }
-        return null;
+        return [];
     }
      
     public function getCreativesUseLanding($date = null)
@@ -960,27 +965,48 @@ class ZenithKM
         foreach ($creatives->getResultArray() as $row) {
             $error = [];
             CLI::showProgress($step++, $total);
-            $landing = $this->landingGroup($row);
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            }else{
+                $title = $row['name'];
+            }
+            $landing = $this->landingGroup($title, $row['landingUrl'] ?? '');
             $data = [];
             $data = [
                  'date' => $date
                 ,'creative_id' => $row['id']
             ];
-            $data = @array_merge($data, (array)$landing);
-            if (!is_null($landing) && !preg_match('/cpm/', $landing['media'])) {
-                if (!$landing['event_seq']) $error[] = $row['name'] . '(' . $row['id'] . '): 이벤트번호 미입력' . PHP_EOL;
-                if (!$landing['db_price']) $error[] = $row['name'] . '(' . $row['id'] . '): DB단가 미입력' . PHP_EOL;
+            $data = array_merge($data, $landing);
+            
+            if (!empty($landing) && !preg_match('/cpm/', $landing['media'])) {
+                if (!$landing['event_seq']){
+                    $error[] = $row['name'] . '(' . $row['id'] . '): 이벤트번호 미입력' . PHP_EOL;
+                }
+                if (!$landing['db_price']){
+                    $error[] = $row['name'] . '(' . $row['id'] . '): DB단가 미입력' . PHP_EOL;
+                }
             }
-            if(is_null($landing) && preg_match('/&[a-z]+/', $row['name'])) $error[] = $row['name'] . '(' . $row['id'] . '): 인식 오류' . PHP_EOL;
-            if(count($error)) foreach($error as $err) CLI::write("{$err}", "light_purple");
-            if(is_null($landing)) continue;
+            if(empty($landing) && isset($row['ad_name']) && preg_match('/&[a-z]+/', $row['name'])){
+                $error[] = $row['name'] . '(' . $row['id'] . '): 인식 오류' . PHP_EOL;
+            }
+
+            if(!empty($error)){
+                foreach($error as $err) CLI::write("{$err}", "light_purple");
+            }
+
+            if(empty($landing)){
+                continue;
+            }
             $dp = $this->db->getDbPrice($data);
-            $leads = $this->db->getAppSubscribe($data);
+            $leads = $this->db->getLeads($data);
             $cpm = false;
-            if(is_null($leads) && $data['media'] === 'cpm') $cpm = true;
-            $db_price = $data['db_price'];
-            if(isset($dp['db_price']) && $data['date'] != date('Y-m-d'))
+            if(is_null($leads) && isset($data['media']) && $data['media'] === 'cpm'){
+                $cpm = true;
+            }
+            $db_price = $data['db_price'] ?? 0;
+            if(isset($dp['db_price']) && $data['date'] != date('Y-m-d')){
                 $db_price = $data['db_price'] = $dp['db_price'];
+            }
             /* 
             *수익, 매출액 계산
             !xxxcpm - 유효db n / 수익,매출0
@@ -989,16 +1015,22 @@ class ZenithKM
             */
             $sp_data = json_decode($row['cost_data'],1);
             $period_margin = [];
-            if(!$data['event_seq'] && $data['media']) {
+            if(!isset($data['event_seq']) && isset($data['media'])) {
                 foreach($sp_data as $hour => $spend) {
                     $margin = 0;
-                    if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
+                    if($data['period_ad']){
+                        $margin = $spend * ('0.' . $data['period_ad']);
+                    }
                     $data['data'][] = ['hour' => $hour,'spend' => $spend,'count' => "",'sales' => "",'margin' => $margin];
                 }
             }
             $initZero = false;
-            if(preg_match('/cpm/i', $data['media'])) //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
-                $initZero = true;
+            //cpm (fhrm, fhspcpm, jhrcpm) 계산을 무효화
+            if(isset($data['media'])){
+                if(preg_match('/cpm/i', $data['media'])){
+                    $initZero = true;
+                } 
+            }
             $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {

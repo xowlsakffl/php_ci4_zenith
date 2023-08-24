@@ -689,7 +689,7 @@ class FBDB extends Config
 
     public function getAdLeads($date)
     {
-        $sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.spend),'}') AS spend_data, ad.ad_name, adset.adset_name, campaign.campaign_name
+        $sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.spend),'}') AS spend_data, ad.code, ad.ad_name, adset.adset_name, campaign.campaign_name
                 FROM `z_facebook`.`fb_ad_insight_history` AS his
                     LEFT JOIN `z_facebook`.fb_ad AS ad
                         ON his.ad_id = ad.ad_id

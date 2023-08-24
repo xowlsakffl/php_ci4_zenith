@@ -532,7 +532,7 @@ class KMDB
         }
     }
      
-    public function getAppSubscribe($data)
+    public function getLeads($data)
     {
         if (!$data['event_seq']) return null;
         $sql = "SELECT event_seq, site, date(from_unixtime(reg_timestamp)) AS date, HOUR(from_unixtime(reg_timestamp)) AS hour, count(event_seq) AS db_count
@@ -659,7 +659,7 @@ class KMDB
      
     public function getBizformUserResponse()
     {
-        $sql = "SELECT ur.*, mc.name, mc.id
+        $sql = "SELECT ur.*, mc.code, mc.name, mc.id
                 FROM mm_creative AS mc
                 JOIN mm_bizform_user_response AS ur ON mc.id = ur.creative_id
                 WHERE ur.send_time IS NULL

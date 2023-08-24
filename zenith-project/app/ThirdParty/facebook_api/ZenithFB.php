@@ -1044,7 +1044,12 @@ class ZenithFB
         foreach($ads->getResultArray() as $row) {
             $error = [];
             CLI::showProgress($step++, $total);
-            $landing = $this->landingGroup($row['ad_name']); //소재와 이벤트 매칭
+            if (!empty($row['code'])) {
+                $title = trim($row['code']);
+            }else{
+                $title = $row['ad_name'];
+            }
+            $landing = $this->landingGroup($title); //소재와 이벤트 매칭
             $data = [];
             $data = [
                  'date' => $date
@@ -1064,7 +1069,7 @@ class ZenithFB
                 foreach($error as $err) CLI::write("{$err}", "light_purple");
             }
 
-            if(is_null($landing)) continue;
+            if(empty($landing)) continue;
 
             $dp = $this->db->getDbPrice($data);
             $leads = $this->db->getLeads($data);
