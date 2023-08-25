@@ -825,16 +825,14 @@ class AdvManagerController extends BaseController
 
                 switch ($media) {
                     case 'facebook':
-                        $zenith = new ZenithFB();
-                        //$result = $zenith->setAdStatus($data['id'], $status);
+                        
+                        
                         break;
                     case 'kakao':
-                        $zenith = new ZenithKM();
-                        //$result = $zenith->setCreativeOnOff($data['id'], $data['status']);
+                        
                         break;
                     case 'google':
-                        $zenith = new ZenithGG();
-                        //$result = $zenith->updateAdGroupAd($data['customerId'], null, $data['id'], $param);
+                        
                         break;
                     default:
                         return $this->fail("지원하지 않는 매체입니다.");

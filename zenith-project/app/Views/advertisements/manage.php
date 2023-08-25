@@ -957,7 +957,7 @@ $('body').on('click', '#update_btn', function() {
         alert("업데이트 할 항목을 선택해주세요.");
 		return;
     }
-    setManualUpdate(data);
+    //setManualUpdate(data);
 });
 
 $('form[name="search-form"]').bind('submit', function() {
