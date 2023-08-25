@@ -1643,6 +1643,10 @@ div.dataTables_processing > div:last-child > div {
     background: #ce1922;
   }
 }
+.adv-manager .search-wrap {
+  margin-bottom: 25px;
+}
+
 .sub-contents-wrap .reset-btn-wrap {
   margin: 20px 0;
 }

@@ -51,7 +51,7 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap adv-manager">
     <div class="title-area">
         <h2 class="page-title">통합 광고 관리</h2>
         <p class="title-disc">광고주별 매체의 기본적인 광고 합성/종료/수정의 기능을 제공하고 있으며, 추가적으로 CHAIN에서 개발한 스마트하게 광고를 최적화 시켜주는 기능도 함께 이용할 수 있습니다.</p>
@@ -77,8 +77,12 @@
             </div> 
         </div>
     </div>
-
-    <div class="section client-list media">
+    <div class="section reset-btn-wrap">
+        <div class="reset-btn-box">
+            <button type="button" class="reset-btn">필터 초기화</button>
+        </div>
+    </div>
+    <div class="section client-list media custom-margin-box-1">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
         <div class="row">
             <div class="col">
@@ -1443,6 +1447,17 @@ $("body").on("click", '.codeBtn', function(){
     });
 
     $('.codeBox p[data-editable="false"]').attr("data-editable", "true");
+});
+
+$('body').on('click', '.reset-btn', function() {
+    $('#sdate, #edate').val(today);
+    $('#media_btn, #business_btn, #company_btn, .tab-link, .media_account_btn').removeClass('active');
+    $('.tab-link[value="campaigns"]').addClass('active');
+    $('#media_btn[value="facebook"]').addClass('active');
+    $('#stx').val('');
+    dataTable.state.clear();
+    dataTable.state.save();
+    dataTable.order([2, 'asc']).draw();
 });
 
 function debug(msg) {
