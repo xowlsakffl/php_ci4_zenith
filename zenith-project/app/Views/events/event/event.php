@@ -610,7 +610,8 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "12%",
                 "render": function(data, type, row) {
-                    return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
+                    adv_name = '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
+                    return adv_name;
                 }
             },
             { "data": "media_name", "width": "8%"},
@@ -878,7 +879,10 @@ function setEvent(data){
         }
     }
     $('input[name="title"]').val(data.title);
-    $('input[name="keyword"]').val(data.keywords);
+    console.log(data.keywords);
+    $.each(data.keywords, function(index, tag) {
+        $('input[name="keyword"]').tagit('createTag', tag); // 태그 추가
+    });
     $('input[name="subtitle"]').val(data.subtitle);
     $('input[name="object"]').val(data.object);
     $('input[name="object_items"]').val(data.object_items);
@@ -926,9 +930,9 @@ $('#add_custom').click(function() {
 });
 
 var keywords = [];
-$('input[name="keyword"]').tagit({
-    availableTags: keywords
-}).data("ui-tagit").tagInput.addClass("tagit-input");
+    $('input[name="keyword"]').tagit({
+        availableTags: keywords
+    }).data("ui-tagit").tagInput.addClass("tagit-input");
 
 $('#regiModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);

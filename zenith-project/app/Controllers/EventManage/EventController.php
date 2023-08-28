@@ -111,8 +111,8 @@ class EventController extends BaseController
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
             $data['advertiser'] = $arg['advertiser'];
+            $data['keyword'] = $arg['keyword'];
             $data['ei_datetime'] = date('Y-m-d H:i:s');
-
             $validation = \Config\Services::validation();
             $validationRules      = [
                 'advertiser' => 'required',
@@ -144,6 +144,7 @@ class EventController extends BaseController
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
+            $data['keyword'] = $arg['keyword'];
             $data['ei_updatetime'] = date('Y-m-d H:i:s');
 
             $validation = \Config\Services::validation();
@@ -214,6 +215,7 @@ class EventController extends BaseController
         if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $seq = $this->request->getGet('seq');
             $result = $this->event->getEvent($seq);
+            $result['keywords'] = explode(',', $result['keywords']);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

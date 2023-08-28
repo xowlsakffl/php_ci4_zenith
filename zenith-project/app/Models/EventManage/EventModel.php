@@ -130,19 +130,30 @@ class EventModel extends Model
 
     public function createEvent($data)
     {
+        $keyword = $data['keyword'];
+        unset($data['keyword']);
         $builder = $this->db->table('event_information');
         $builder->insert($data);
-
-        return true;
+        $result = $builder->getWhere(['seq' => $this->db->insertID()])->getRowArray();
+        if(!empty($result)){
+            $this->syncKeyword($keyword, $result['seq']);
+            
+            return true;
+        }
     }
 
     public function updateEvent($data, $seq)
     {
+        $keyword = $data['keyword'];
+        unset($data['keyword']);
         $builder = $this->db->table('event_information');
         $builder->where('seq', $seq);
-        $builder->update($data);
-
-        return true;
+        $result = $builder->update($data);
+        if(!empty($result)){
+            $this->syncKeyword($keyword, $seq);
+            
+            return true;
+        }
     }
 
     public function copyEvent($seq)
@@ -155,17 +166,19 @@ class EventModel extends Model
         $data['username'] = auth()->user()->username;
         $data['ei_datetime'] = date('Y-m-d H:i:s');
 
-        $this->db->table('event_information')->insert($data);
+        $result = $this->db->table('event_information')->insert($data);
 
-        return true;
+        return $result;
     }
 
     public function getEvent($seq)
     {
         $builder = $this->db->table('event_information AS info');
-        $builder->select('info.*, adv.name AS advertiser_name, med.media AS media_name');
+        $builder->select('info.*, adv.name AS advertiser_name, med.media AS media_name, GROUP_CONCAT(ek.keyword) AS keywords');
         $builder->join('event_advertiser AS adv', 'info.advertiser = adv.seq', 'left');
         $builder->join('event_media AS med', 'info.media = med.seq', 'left');
+        $builder->join('event_keyword_idx AS ki', 'info.seq = ki.ei_seq', 'left');
+        $builder->join('event_keyword AS ek', 'ki.ek_seq = ek.seq', 'left');
         $builder->where('info.seq', $seq);
         
         $result = $builder->get()->getRowArray();
@@ -176,7 +189,39 @@ class EventModel extends Model
     {
         $builder = $this->db->table('event_information');
         $builder->where('seq', $seq);
-        $builder->delete();
+        $result = $builder->delete();
+
+        return $result;
+    }
+
+    public function syncKeyword($keywords, $seq)
+    {
+        $builder_3 = $this->db->table('event_keyword_idx');
+        $builder_3->where('ei_seq', $seq);
+        $builder_3->delete();
+
+        if(!empty($keywords)){
+            $keywords = explode(',', $keywords);
+            foreach ($keywords as $keyword) {
+                $builder_1 = $this->db->table('event_keyword');
+                $builder_1->select('seq, keyword');
+                $builder_1->where('keyword', $keyword);
+                $existRow = $builder_1->get()->getRowArray();
+    
+                if(empty($existRow)){
+                    $builder_2 = $this->db->table('event_keyword');
+                    $builder_2->set('keyword', $keyword);
+                    $builder_2->insert();
+                    $existRow = $builder_2->getWhere(['seq' => $this->db->insertID()])->getRowArray();
+                }
+    
+                $builder_4 = $this->db->table('event_keyword_idx');
+                $builder_4->set('ei_seq', $seq);
+                $builder_4->set('ek_seq', $existRow['seq']);
+                $builder_4->insert();
+                
+            }
+        }
 
         return true;
     }
