@@ -69,6 +69,18 @@ class Facebook extends Controller
         CLI::write("데이터 수신이 완료되었습니다.", "yellow");
     }
 
+    public function adLeadByAd($ad_id = null, $from = null, $to = null) {
+        CLI::clearScreen();
+        if($ad_id == null)
+            $ad_id = CLI::prompt("잠재고객 업데이트 할 광고ID를 입력해주세요.");
+        if($from == null)
+            $from = CLI::prompt("잠재고객 업데이트 할 시작날짜를 입력해주세요.", date('Y-m-d'));
+        if($to == null)
+            $to = CLI::prompt("잠재고객 업데이트 할 종료날짜를 입력해주세요.", $from);
+        $result = $this->zenith->adLeadByAd($ad_id, $from, $to);
+        dd($result);
+    }
+
     public function getAdLead($from = null, $to = null) {
         CLI::clearScreen();
         if($from == null)

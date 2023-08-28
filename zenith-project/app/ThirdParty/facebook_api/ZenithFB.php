@@ -653,8 +653,72 @@ class ZenithFB
         return $data;
     }
 
+    public function adLeadByAd($ad_id, $from = "-1 day", $to = null) {
+        $result = [];
+        $params = [];
+        // 시작 날짜
+        $from_dt = new DateTime($from);
+        $from_dt->format('Y-m-d 00:00:00');
+        $from_date = $from_dt->getTimestamp();
+
+        $params['filtering'] = [
+            [
+                'field'     => 'time_created',
+                'operator'  => 'GREATER_THAN',
+                'value'     => $from_date
+            ],
+        ];
+
+        // 끝 날짜
+        if ($from !== "-1 day" && $to !== null) {
+            $to_dt = new DateTime($to." 23:59:59");
+            $to_dt->format('Y-m-d H:i:s');
+            $to_date = $to_dt->getTimestamp();
+
+            $params['filtering'][1] = [
+                'field'     => 'time_created',
+                'operator'  => 'LESS_THAN',
+                'value'     => $to_date
+            ];
+        }
+
+        $fields = [
+            LeadFields::ID,
+            LeadFields::FORM_ID,
+            LeadFields::AD_ID,
+            LeadFields::AD_NAME,
+            LeadFields::ADSET_ID,
+            LeadFields::ADSET_NAME,
+            LeadFields::CAMPAIGN_ID,
+            LeadFields::CAMPAIGN_NAME,
+            LeadFields::IS_ORGANIC,
+            LeadFields::FIELD_DATA,
+            LeadFields::CREATED_TIME,
+            LeadFields::CUSTOM_DISCLAIMER_RESPONSES
+        ];
+        $this->setAdId($ad_id);
+        $leads = $this->ad->getLeads($fields, $params);
+        $response = $leads->getResponse()->getContent();
+        $lead_data = [];
+        if (!empty($response['data'])) {
+            $lead_data = array_merge($lead_data, $response['data']);
+            $result = array_merge($result, $response['data']);
+        }
+        if (isset($response['paging'])) {
+            $url = isset($response['paging']['next']) ? $response['paging']['next'] : false;
+            while ($url) {
+                $data = $this->getFBRequest_CURL($url);
+                if (isset($data['data'])) {
+                    $lead_data = array_merge($lead_data, $response['data']);
+                    $result = array_merge($result, $data['data']);
+                }
+                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
+            }
+        }
+        return $result;
+    }
+
     // 각 AdID별 폼 목록
-      
     public function getAdLead($from = "-1 day", $to = null)
     {
         $result = [];
@@ -715,25 +779,26 @@ class ZenithFB
             $this->setAdId($row['ad_id']);
             $leads = $this->ad->getLeads($fields, $params);
             $response = $leads->getResponse()->getContent();
+            $lead_data = [];
             if (!empty($response['data'])) {
+                $lead_data = array_merge($lead_data, $response['data']);
                 $result = array_merge($result, $response['data']);
             }
             if (isset($response['paging'])) {
                 $url = isset($response['paging']['next']) ? $response['paging']['next'] : false;
-
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
-
                     if (isset($data['data'])) {
+                        $lead_data = array_merge($lead_data, $response['data']);
                         $result = array_merge($result, $data['data']);
                     }
-
                     $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
                 }
             }
+            if(count($lead_data))
+                $this->db->insertAdLeads($lead_data);
         }
 
-        $this->db->insertAdLeads($result);
         return $result;
     }
 
