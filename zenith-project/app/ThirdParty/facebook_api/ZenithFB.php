@@ -234,7 +234,7 @@ class ZenithFB
             $response = $getResponse->getContent();
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
-                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
+                $url = isset($response['paging']['next']) ? $response['paging']['next'] : false;
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
                     if (!is_null($data) && isset($data['data'])) $result = array_merge($result, $data['data']);
@@ -618,7 +618,7 @@ class ZenithFB
             CLI::showProgress($step++, $total);
             $result = array_merge($result, $response['data']);
             if (isset($response['paging'])) {
-                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
+                $url = isset($response['paging']['next']) ? $response['paging']['next'] : false;
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);
 
@@ -708,7 +708,7 @@ class ZenithFB
         foreach ($ad_ids->getResultArray() as $row) { //while $row['page_id']
             CLI::showProgress($step++, $total);
             // $this->grid($row); continue;
-            if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || $row['status'] != 'ACTIVE' || strtotime($row['update_date']) <= strtotime('-1 month')) { //소재가 1개월 이상 업데이트 되지 않았으면 잠재고객을 받지 않음
+            if ($row['leadgen_id'] == null || $row['leadgen_id'] == '' || strtotime($row['update_date']) <= strtotime('-1 month')) { //소재가 1개월 이상 업데이트 되지 않았으면 잠재고객을 받지 않음
                 continue;
             }
             // echo '<pre>'.print_r($row,1).'</pre>';
@@ -719,7 +719,7 @@ class ZenithFB
                 $result = array_merge($result, $response['data']);
             }
             if (isset($response['paging'])) {
-                $url = isset($data['paging']['next']) ? $data['paging']['next'] : false;
+                $url = isset($response['paging']['next']) ? $response['paging']['next'] : false;
 
                 while ($url) {
                     $data = $this->getFBRequest_CURL($url);

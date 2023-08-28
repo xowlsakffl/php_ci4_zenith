@@ -588,7 +588,7 @@ class FBDB extends Config
                     $field_data = addslashes(var_export($custom_fields, true));     // 배열 그대로 저장하는데 조금 이상하다...이상해씨
                     $values .= ", field_data = '{$field_data}'";
                     $sql = $insert . $values . ", created_time = DATE_ADD('{$created_time}', INTERVAL 9 HOUR) ON DUPLICATE KEY UPDATE {$values}, update_date = NOW();";
-                    $result = $this->db_query($sql);
+                    $result = $this->db_query($sql, true);
                 }
             }
             $this->db_query('COMMIT');

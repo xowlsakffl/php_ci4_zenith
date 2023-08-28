@@ -41,7 +41,7 @@ class Facebook extends Controller
             }
             $hour = date("G"); //24-hour format of an hour without leading zeros
             if($date == $today && ($hour >= 0 && $hour <= 7)) {
-                CLI::write("당일 0시~7시는 자동업데이트를 사용할 수 없습니다.", "light_purple");
+                CLI::write("당일 0시~8시는 자동업데이트를 사용할 수 없습니다.", "light_purple");
                 exit;
             }
         }
