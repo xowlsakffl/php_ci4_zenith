@@ -22,6 +22,16 @@ class JiraController extends BaseController
         $this->jira = new ZenithJira(); 
     }
 
+    public function getProjects()
+    {
+        $result = $this->jira->getProjects();
+    }
+
+    public function getIssues()
+    {
+        $result = $this->jira->getIssues();
+    }
+
     public function getIssueComplete()
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
@@ -58,4 +68,20 @@ class JiraController extends BaseController
             return $this->fail("잘못된 요청");
         }
     }
+
+
+
+
+    /* public function getAuthorizationCode()
+    {
+        $result = $this->jira->getAuthorizationCode();
+        return redirect()->to($result);
+    }
+
+    public function oauth()
+    {
+        $code = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1MjM1ZmIyNC1kMTIwLTQ0ZTAtOTIxNC0yYTY3YTZlYzljYTIiLCJzdWIiOiI2M2Q5YmYyMzgyZWVlZTc4YTRjZGU5NTUiLCJuYmYiOjE2OTMxODU1NzksImlzcyI6ImF1dGguYXRsYXNzaWFuLmNvbSIsImlhdCI6MTY5MzE4NTU3OSwiZXhwIjoxNjkzMTg1ODc5LCJhdWQiOiJYQ21BRUZNRkFPMzFqVXJkVEZScGl4MmhGMEkwWkJ4eSIsImNsaWVudF9hdXRoX3R5cGUiOiJQT1NUIiwiaHR0cHM6Ly9pZC5hdGxhc3NpYW4uY29tL3ZlcmlmaWVkIjp0cnVlLCJodHRwczovL2lkLmF0bGFzc2lhbi5jb20vdWp0IjoiNTIzNWZiMjQtZDEyMC00NGUwLTkyMTQtMmE2N2E2ZWM5Y2EyIiwic2NvcGUiOlsicmVhZDpqaXJhLXdvcmsiXSwiaHR0cHM6Ly9pZC5hdGxhc3NpYW4uY29tL2F0bF90b2tlbl90eXBlIjoiQVVUSF9DT0RFIiwiaHR0cHM6Ly9pZC5hdGxhc3NpYW4uY29tL2hhc1JlZGlyZWN0VXJpIjp0cnVlLCJodHRwczovL2lkLmF0bGFzc2lhbi5jb20vc2Vzc2lvbl9pZCI6IjRhZjU3ZTk1LTZmNjAtNDg1My1iODYwLTViZDU4Y2Y3ODBhMSIsImh0dHBzOi8vaWQuYXRsYXNzaWFuLmNvbS9wcm9jZXNzUmVnaW9uIjoidXMtZWFzdC0xIn0.3TjwBJl1l5i1YoM1vQO-eVsL2ERlXlLLGiX5hQCU5wI';
+        $result = $this->jira->getAccessToken($code);
+        dd($result);
+    } */
 }
