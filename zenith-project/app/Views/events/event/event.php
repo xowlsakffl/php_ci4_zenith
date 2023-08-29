@@ -489,6 +489,9 @@
                                             <option value="4">동일 랜딩 내의 IP 중복 여부</option>
 											<option value="5">동일 광고주 내의 IP 중복 여부</option>
 											<option value="6">동일 광고주와 매체 내의 IP 중복 여부</option>
+                                            <option value="7">동일 랜딩 내의 연락처 중복 여부</option>
+											<option value="8">동일 광고주 내의 연락처 중복 여부</option>
+											<option value="9">동일 광고주와 매체 내의 연락처 중복 여부</option>
                                         </select>
                                     </td>
                                 </tr>

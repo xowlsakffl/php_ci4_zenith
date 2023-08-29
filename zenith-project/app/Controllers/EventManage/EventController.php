@@ -141,7 +141,7 @@ class EventController extends BaseController
 
     public function updateEvent()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
             $data['keyword'] = $arg['keyword'];
