@@ -2,7 +2,7 @@
 $uri = current_url(true)->getPath();
 ?>
 <div class="left-side">
-    <a href="javascript:void(0);" class="btn-click"><button type="button" class="btn-menu">메뉴보기</button></a>
+    <button type="button" class="btn-menu">메뉴보기</button>
     <h1 class="logo"><a href="/"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
     <div class="nav-wrap">
         <ul class="nav flex-column">

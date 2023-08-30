@@ -148,7 +148,7 @@
 
 input:-internal-autofill-selected {color: #7286D3;}
 @include x-large{
-    .sub-contents-wrap{padding:30px;}
+    .sub-contents-wrap{padding:30px 30px 30px 70px;}
     .title-area{flex-wrap:wrap;
         .title-disc{width:100%; margin:10px 0 0;}
     }

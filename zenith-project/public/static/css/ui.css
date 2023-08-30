@@ -188,56 +188,25 @@ body {
 }
 
 .left-side {
+  display: flex;
+  flex-direction: column;
   width: 240px;
   height: 100vh;
-  overflow: hidden;
-  padding: 20px 0;
-  border-radius: 0;
-  transition: all 0.2s;
-  z-index: 99;
+  box-sizing: border-box;
+  padding: 42px 0;
+  border-radius: 0 0 40px 0;
   background: #2d2e34;
-}
-.left-side .logo {
-  margin: 0 0 20px 45px;
-}
-.left-side.hide {
-  width: 40px;
 }
 .left-side .btn-menu {
   display: none;
-  position: absolute;
-  top: 20px;
-  left: 10px;
-  display: block;
-  width: 20px;
-  height: 20px;
-  overflow: hidden;
-  text-indent: -9999px;
-  border-top: 2px solid #fff;
 }
-.left-side .btn-menu:before {
-  position: absolute;
-  top: 7px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  content: "";
-  background: #fff;
-}
-.left-side .btn-menu:after {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  content: "";
-  background: #fff;
+.left-side .logo {
+  margin: 0 auto 40px;
 }
 
 .nav-wrap {
   flex: 1;
   overflow: auto;
-  width: 240px;
 }
 .nav-wrap::-webkit-scrollbar {
   width: 6px;
@@ -254,7 +223,7 @@ body {
   transition: all 0.2s;
 }
 .nav-wrap .nav > li:not(:last-child) {
-  margin: 0 0 10px;
+  margin: 0 0 30px;
 }
 .nav-wrap .nav > li:has(div):after {
   position: absolute;
@@ -336,7 +305,6 @@ body {
   justify-content: space-between;
   margin: 0 38px;
   padding: 20px 0 0;
-  width: 156px;
 }
 .util-nav a {
   font-size: 0.813rem;
@@ -501,8 +469,68 @@ body {
   .wrap {
     min-width: 580px;
   }
-  .sub-contents-wrap {
+  .main-contents-wrap {
     padding: 30px 30px 30px 70px;
+  }
+  .left-side {
+    position: fixed;
+    z-index: 1;
+    width: 40px;
+    height: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+    border-radius: 0;
+    transition: all 0.2s;
+    z-index: 99;
+  }
+  .left-side .logo {
+    margin: 0 0 20px 45px;
+  }
+  .left-side.open {
+    width: 240px;
+  }
+  .left-side .btn-menu {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    text-indent: -9999px;
+    border-top: 2px solid #fff;
+  }
+  .left-side .btn-menu:before {
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    content: "";
+    background: #fff;
+  }
+  .left-side .btn-menu:after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    content: "";
+    background: #fff;
+  }
+  .nav-wrap {
+    width: 240px;
+  }
+  .nav-wrap .nav > li:not(:last-child) {
+    margin: 0 0 10px;
+  }
+  .nav-wrap .nav button {
+    display: block;
+    padding: 0 0 0 33px;
+    color: #fff;
+  }
+  .util-nav {
+    width: 156px;
   }
   .ad-list .type {
     margin: 0;
@@ -903,7 +931,7 @@ input:-internal-autofill-selected {
 
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
-    padding: 30px;
+    padding: 30px 30px 30px 70px;
   }
   .title-area {
     flex-wrap: wrap;
@@ -1898,6 +1926,11 @@ div.dataTables_processing > div:last-child > div {
   background-position: right 0.25rem center;
   padding: 0.375rem 0.25rem 0.375rem 0.35rem;
   background-size: 10px 10px;
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88%;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable button.btn-history {
   position: absolute;
@@ -2288,10 +2321,14 @@ div.dataTables_processing > div:last-child > div {
   animation: updown 1.5s infinite linear alternate;
 }
 
-.left-side .btn-menu {
+.left-side.hide .btn-menu {
   border: none;
 }
-.left-side .btn-menu:before {
+.left-side.hide .btn-menu:active {
+  transform: rotate(360deg);
+  transition: 0.4s;
+}
+.left-side.hide .btn-menu:before {
   height: 100%;
   left: 50%;
   width: 2px;
@@ -2299,54 +2336,12 @@ div.dataTables_processing > div:last-child > div {
   transform: rotate(45deg);
   transition: all 0.3s;
 }
-.left-side .btn-menu:after {
+.left-side.hide .btn-menu:after {
   height: 100%;
   left: 50%;
   width: 2px;
   transform: rotate(-45deg);
   transition: all 0.3s;
-}
-.left-side .btn-menu:active:before, .left-side .btn-menu:active:after {
-  background: #e58489;
-}
-.left-side.hide .btn-menu {
-  display: none;
-  position: absolute;
-  top: 20px;
-  left: 8px;
-  display: block;
-  width: 24px;
-  height: 20px;
-  overflow: hidden;
-  text-indent: -9999px;
-  border-top: 2px solid #fff;
-  transform: none;
-  transition: none;
-}
-.left-side.hide .btn-menu:before {
-  position: absolute;
-  top: 7px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  content: "";
-  background: #fff;
-  transform: none;
-  transition: none;
-}
-.left-side.hide .btn-menu:after {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  content: "";
-  background: #fff;
-  transform: none;
-  transition: none;
-}
-.left-side.hide .btn-menu:active:before, .left-side.hide .btn-menu:active:after {
-  background: blue;
 }
 
 .modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {
