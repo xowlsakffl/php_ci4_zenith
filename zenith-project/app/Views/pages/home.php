@@ -68,7 +68,7 @@
                     </dl>
                 </div>
             </div>
-            <a href="/advertisements/facebook" class="btn-more btn-primary"><span>더보기</span></a>
+            <a href="/advertisements" class="btn-more btn-primary"><span>더보기</span></a>
         </div>
         <div class="row">
             <div class="type" id="kakaoReport">
@@ -118,7 +118,7 @@
                     </dl>
                 </div>
             </div>
-            <a href="/advertisements/kakao" class="btn-more"><span>더보기</span></a>
+            <a href="/advertisements" class="btn-more"><span>더보기</span></a>
         </div>
         <div class="row">
             <div class="type" id="googleReport">
@@ -168,7 +168,7 @@
                     </dl>
                 </div>
             </div>
-            <a href="/advertisements/google" class="btn-more btn-primary"><span>더보기</span></a>
+            <a href="/advertisements" class="btn-more btn-primary"><span>더보기</span></a>
         </div>
     </div>
 </div>
