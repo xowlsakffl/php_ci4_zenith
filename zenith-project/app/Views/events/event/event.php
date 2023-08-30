@@ -218,11 +218,11 @@
                                 </tr>
                                 <tr>
                                     <th scope="row" class="text-end">이벤트 구분</th>
-                                    <td><input type="text" name="description" class="form-control" placeholder="이벤트구분을 입력하세요." ></td>
+                                    <td><input type="text" name="description" class="form-control" placeholder="이벤트구분을 입력하세요." autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="text-end">DB 단가</th>
-                                    <td><input type="text" name="db_price" class="form-control" placeholder="DB 단가를 입력하세요." ></td>
+                                    <td><input type="text" name="db_price" class="form-control" placeholder="DB 단가를 입력하세요." autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="text-end">랜딩 사용여부</th>
@@ -266,7 +266,7 @@
                                             </div>
                                         </div>
                                         <div class="mb-2" id="bizform">
-                                            <input type="text" name="creative_id" value="" class="form-control" style="float:left;width:49%;margin-right:2%" placeholder="소재번호를 입력하세요." title="소재 번호">
+                                            <input type="text" name="creative_id" value="" class="form-control" style="float:left;width:49%;margin-right:2%" placeholder="소재번호를 입력하세요." title="소재 번호" autocomplete="off">
                                             <input type="text" name="bizform_apikey" value=""  class="form-control" style="float:left;width:49%" placeholder="비즈폼 API KEY를 입력하세요." title="소재 번호">
                                         </div>
                                     </td>
@@ -308,7 +308,7 @@
                                                     <option value="branch">지점</option>
                                                     <option value="sms_number">문자 발송번호</option>
                                                 </select>
-                                                <input type="text" class="form-control" id="custom_val">
+                                                <input type="text" class="form-control" id="custom_val" autocomplete="off">
                                             </div>
                                         </div>
                                         <button type="button" class="btn btn-primary btn-sm float-end" id="add_custom">추가</button>
@@ -327,19 +327,19 @@
                                 </tr>
                                 <tr class="leadHide">
                                     <th scope="row" class="text-end">설명</th>
-                                    <td><input type="text" name="subtitle" class="form-control" placeholder="이벤트를 구체적으로 설명해주세요. (약 40자내외, 최대 100자이내)"></td>
+                                    <td><input type="text" name="subtitle" class="form-control" placeholder="이벤트를 구체적으로 설명해주세요. (약 40자내외, 최대 100자이내)" autocomplete="off"></td>
                                 </tr>
                                 <tr class="leadHide">
                                     <th scope="row" class="text-end">수집목적</th>
-                                    <td><input type="text" name="object" class="form-control" placeholder="ex) 라식,라섹"></td>
+                                    <td><input type="text" name="object" class="form-control" placeholder="ex) 라식,라섹" autocomplete="off"></td>
                                 </tr>
                                 <tr class="leadHide">
                                     <th scope="row" class="text-end">수집항목</th>
-                                    <td><input type="text" name="object_items" placeholder="ex) 이름,나이,전화번호" class="form-control"></td>
+                                    <td><input type="text" name="object_items" placeholder="ex) 이름,나이,전화번호" class="form-control" autocomplete="off"></td>
                                 </tr>
                                 <tr class="leadHide">
                                     <th scope="row" class="text-end">페이스북 Pixel ID</th>
-                                    <td><input type="text" class="form-control" name="pixel_id" placeholder="페이스북 픽셀을 사용하는 경우 체인쏘우에 등록된 픽셀ID를 입력해 주세요."></td>
+                                    <td><input type="text" class="form-control" name="pixel_id" placeholder="페이스북 픽셀을 사용하는 경우 체인쏘우에 등록된 픽셀ID를 입력해 주세요." autocomplete="off"></td>
                                 </tr>
                                 <tr class="leadHide">
                                     <th scope="row" class="text-end">View Script</th>
@@ -384,9 +384,9 @@
                                     <th scope="row" class="text-end">나이</th>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <input type="text" name="check_age_min" class="form-control">
+                                            <input type="text" name="check_age_min" class="form-control" autocomplete="off">
                                             <span class="m-2">~</span>
-                                            <input type="text" name="check_age_max" class="form-control">
+                                            <input type="text" name="check_age_max" class="form-control" autocomplete="off">
                                         </div>
                                     </td>
                                 </tr>
@@ -613,7 +613,7 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "12%",
                 "render": function(data, type, row) {
-                    adv_name = '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
+                    adv_name = '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+data+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button>';
                     return adv_name;
                 }
             },
@@ -656,9 +656,9 @@ function getList(){
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
         },
-        "initComplete": function(settings, json) {
+        "drawCallback": function( settings ) {
             fileCheck();
-        }
+        },
     });
 }
 
@@ -928,7 +928,7 @@ $('input[name="interlock"]').bind('change', function() {
 });
 
 $('#add_custom').click(function() {
-    const custom_row = '<div class="d-flex mb-2 custom_row"><select name="custom_key" class="custom form-select me-2" aria-label="선택"><option selected disabled>개별설정 안함</option><option value="branch">지점</option><option value="sms_number">문자 발송번호</option></select><input type="text" class="form-control" id="custom_val"></div>';
+    const custom_row = '<div class="d-flex mb-2 custom_row"><select name="custom_key" class="custom form-select me-2" aria-label="선택"><option selected disabled>개별설정 안함</option><option value="branch">지점</option><option value="sms_number">문자 발송번호</option></select><input type="text" class="form-control" id="custom_val" autocomplete="off"></div>';
     $('.custom-row-wrap').last().append(custom_row);
 });
 
