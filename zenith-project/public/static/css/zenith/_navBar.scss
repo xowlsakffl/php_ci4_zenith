@@ -1,31 +1,3 @@
-.nav-wrap {
-    .nav {
-        button{display:block; padding:0 0 0 33px; color:#fff;
-            > i.bi {transition:0.2s;}
-            &:hover {
-                > i.bi::before{animation:sidebarShake 0.5s infinite linear alternate; color:#929292;}
-            } 
-        } 
-        
-        a.active{
-            button {
-                > i.bi{border-bottom:2px solid #e58489; animation:updown 1.5s infinite linear alternate;} 
-            }
-        }
-    }
-}
-
-.left-side{ 
-    &.hide{
-        .btn-menu{border:none;
-            &:active{transform: rotate(360deg); transition:0.4s;}
-            &:before{height:100%; left:50%; width:2px; top:0; transform: rotate(45deg); transition:all .3s;}
-            &:after{height:100%; left:50%; width:2px; transform: rotate(-45deg); transition:all .3s;}
-        }
-        
-    }
-}  
-
 .modal{ //팝업 닫기 버튼 애니메이션 > .close.scss
     .modal-header {
         .modal-title:not(#disbursementModalLabel,#taxModalLabel){animation:letterSpacing 0.7s linear alternate;
@@ -37,16 +9,16 @@
     }
 }
 
-@include medium{
-    .left-side{ 
-        &.open{
-            .btn-menu{border:none;
-                &:active{transform: rotate(360deg); transition:0.4s;}
-                &:before{height:100%; left:50%; width:2px; top:0; transform: rotate(45deg); transition:all .3s;}
-                &:after{height:100%; left:50%; width:2px; transform: rotate(-45deg); transition:all .3s;}
-            }
+// @include medium{
+//     .left-side{ 
+//         &.hide{
+//             .btn-menu{border:none;
+//                 &:active{transform: rotate(360deg); transition:0.4s;}
+//                 &:before{height:100%; left:50%; width:2px; top:0; transform: rotate(45deg); transition:all .3s;}
+//                 &:after{height:100%; left:50%; width:2px; transform: rotate(-45deg); transition:all .3s;}
+//             }
             
-        }
-    }   
-}
+//         }
+//     }   
+// }
 

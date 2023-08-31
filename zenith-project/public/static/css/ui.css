@@ -196,17 +196,76 @@ body {
   padding: 42px 0;
   border-radius: 0 0 40px 0;
   background: #2d2e34;
+  overflow: hidden;
+  transition: all 0.2s;
 }
 .left-side .btn-menu {
-  display: none;
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  display: block;
+  border: none;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  text-indent: -9999px;
+  transition: all 0.2s;
+}
+.left-side .btn-menu:before {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  height: 100%;
+  width: 2px;
+  content: "";
+  background: #fff;
+  transform: rotate(45deg);
+}
+.left-side .btn-menu:after {
+  position: absolute;
+  left: 50%;
+  height: 100%;
+  width: 2px;
+  content: "";
+  background: #fff;
+  transform: rotate(-45deg);
 }
 .left-side .logo {
   margin: 0 auto 40px;
+  transition: transform 0.7s;
+}
+.left-side.hide {
+  width: 40px;
+}
+.left-side.hide .logo {
+  transform: translateX(100%);
+}
+.left-side.hide .btn-menu {
+  border-top: 2px solid #fff;
+}
+.left-side.hide .btn-menu:active {
+  transform: rotate(360deg);
+  transition: all 0.4s;
+}
+.left-side.hide .btn-menu:before {
+  width: 100%;
+  left: 0%;
+  height: 2px;
+  top: 7px;
+  transform: rotate(0deg);
+}
+.left-side.hide .btn-menu:after {
+  width: 100%;
+  left: 0%;
+  height: 2px;
+  bottom: 0;
+  transform: rotate(0deg);
 }
 
 .nav-wrap {
   flex: 1;
   overflow: auto;
+  width: 240px;
 }
 .nav-wrap::-webkit-scrollbar {
   width: 6px;
@@ -271,6 +330,11 @@ body {
   margin: 5px 10px 0 -35px;
   font-size: 150%;
   vertical-align: middle;
+  transition: 0.2s;
+}
+.nav-wrap .nav button:hover > i.bi::before {
+  animation: sidebarShake 0.5s infinite linear alternate;
+  color: #929292;
 }
 .nav-wrap .nav .btn-toggle-nav {
   padding: 18px 0 0;
@@ -298,6 +362,14 @@ body {
   content: "";
   border-radius: 50%;
   background: #ce1922;
+}
+.nav-wrap .nav a.active button > i.bi {
+  border-bottom: 2px solid #e58489;
+  animation: updown 1.5s infinite linear alternate;
+}
+
+.user-nav {
+  width: 240px;
 }
 
 .util-nav {
@@ -474,52 +546,71 @@ body {
   }
   .left-side {
     position: fixed;
-    z-index: 1;
     width: 40px;
     height: 100%;
-    overflow: hidden;
     padding: 20px 0;
     border-radius: 0;
-    transition: all 0.2s;
     z-index: 99;
   }
   .left-side .logo {
-    margin: 0 0 20px 45px;
+    transform: translateX(100%);
+  }
+  .left-side .btn-menu {
+    top: 20px;
+    border-top: 2px solid #fff;
+  }
+  .left-side .btn-menu:before {
+    width: 100%;
+    left: 0%;
+    height: 2px;
+    top: 7px;
+    transform: rotate(0deg);
+  }
+  .left-side .btn-menu:after {
+    width: 100%;
+    left: 0%;
+    height: 2px;
+    bottom: 0;
+    transform: rotate(0deg);
   }
   .left-side.open {
     width: 240px;
   }
-  .left-side .btn-menu {
+  .left-side.open .logo {
+    transform: translateX(0%);
+  }
+  .left-side.open .btn-menu {
     position: absolute;
-    top: 20px;
     left: 10px;
     display: block;
+    border: none;
     width: 20px;
     height: 20px;
     overflow: hidden;
     text-indent: -9999px;
-    border-top: 2px solid #fff;
   }
-  .left-side .btn-menu:before {
+  .left-side.open .btn-menu:active {
+    transform: rotate(360deg);
+    transition: 0.4s;
+  }
+  .left-side.open .btn-menu:before {
     position: absolute;
-    top: 7px;
-    left: 0;
-    width: 100%;
-    height: 2px;
+    top: 0px;
+    left: 50%;
+    height: 100%;
+    width: 2px;
     content: "";
     background: #fff;
+    transform: rotate(-45deg);
   }
-  .left-side .btn-menu:after {
+  .left-side.open .btn-menu:after {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
+    left: 50%;
+    height: 100%;
+    width: 2px;
     content: "";
     background: #fff;
-  }
-  .nav-wrap {
-    width: 240px;
+    transform: rotate(45deg);
   }
   .nav-wrap .nav > li:not(:last-child) {
     margin: 0 0 10px;
@@ -2304,46 +2395,6 @@ div.dataTables_processing > div:last-child > div {
   display: none;
 }
 
-.nav-wrap .nav button {
-  display: block;
-  padding: 0 0 0 33px;
-  color: #fff;
-}
-.nav-wrap .nav button > i.bi {
-  transition: 0.2s;
-}
-.nav-wrap .nav button:hover > i.bi::before {
-  animation: sidebarShake 0.5s infinite linear alternate;
-  color: #929292;
-}
-.nav-wrap .nav a.active button > i.bi {
-  border-bottom: 2px solid #e58489;
-  animation: updown 1.5s infinite linear alternate;
-}
-
-.left-side.hide .btn-menu {
-  border: none;
-}
-.left-side.hide .btn-menu:active {
-  transform: rotate(360deg);
-  transition: 0.4s;
-}
-.left-side.hide .btn-menu:before {
-  height: 100%;
-  left: 50%;
-  width: 2px;
-  top: 0;
-  transform: rotate(45deg);
-  transition: all 0.3s;
-}
-.left-side.hide .btn-menu:after {
-  height: 100%;
-  left: 50%;
-  width: 2px;
-  transform: rotate(-45deg);
-  transition: all 0.3s;
-}
-
 .modal .modal-header .modal-title:not(#disbursementModalLabel, #taxModalLabel) {
   animation: letterSpacing 0.7s linear alternate;
 }
@@ -2358,30 +2409,6 @@ div.dataTables_processing > div:last-child > div {
   transform: rotate(360deg);
 }
 
-@media screen and (max-width: 1024px) {
-  .left-side.open .btn-menu {
-    border: none;
-  }
-  .left-side.open .btn-menu:active {
-    transform: rotate(360deg);
-    transition: 0.4s;
-  }
-  .left-side.open .btn-menu:before {
-    height: 100%;
-    left: 50%;
-    width: 2px;
-    top: 0;
-    transform: rotate(45deg);
-    transition: all 0.3s;
-  }
-  .left-side.open .btn-menu:after {
-    height: 100%;
-    left: 50%;
-    width: 2px;
-    transform: rotate(-45deg);
-    transition: all 0.3s;
-  }
-}
 .agree-container {
   margin: 0 auto;
 }
