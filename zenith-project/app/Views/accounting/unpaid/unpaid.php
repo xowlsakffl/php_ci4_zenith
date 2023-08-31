@@ -19,7 +19,7 @@ CHAIN 열혈광고 - 회계 관리 / 미수금 관리
 <?=$this->section('content');?>
 <div class="sub-contents-wrap">
     <div class="title-area">
-        <h2 class="page-title">미수금 관리t</h2>
+        <h2 class="page-title">미수금 관리</h2>
     </div>
     <div class="row mt-5">
         <div class="col half">
