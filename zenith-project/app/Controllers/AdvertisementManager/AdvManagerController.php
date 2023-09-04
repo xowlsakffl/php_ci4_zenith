@@ -713,7 +713,7 @@ class AdvManagerController extends BaseController
 
     public function updateBudget()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $param = $this->request->getRawInput(); 
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -782,16 +782,15 @@ class AdvManagerController extends BaseController
                             }
                             break;
                         case 'google':
-                            return $this->fail("지원하지 않습니다.");
-                            /* $param = ['budget' => $data['budget']];
+                            $param = ['budget' => $data['budget']];
                             $zenith = new ZenithGG();
                             $result = $zenith->updateCampaignBudget($data['customer'], $data['id'], $param);
                             if(!empty($result)){
                                 $result = [
                                     'id' => $result,
-                                    'media' => 'kakao'
+                                    'media' => 'google'
                                 ];
-                            } */
+                            }
                             break;
                         default:
                             return $this->fail("지원하지 않습니다.");

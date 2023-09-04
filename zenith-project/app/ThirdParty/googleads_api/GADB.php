@@ -141,7 +141,7 @@ class GADB
 		return $result;
 	}
 
-	private function updateCampaignField($data = null)
+	public function updateCampaignField($data = null)
 	{
 		if (is_null($data)) return false;
 
@@ -152,6 +152,9 @@ class GADB
 		if (isset($data['status'])) {
 			$sql .= isset($data['name']) ? "," : "";
 			$sql .= " status = {$data['status']}";
+		}
+		if (isset($data['amount'])) {
+			$sql .= " amount = {$data['amount']}";
 		}
 		$sql .= " WHERE id = {$data['id']}";
 

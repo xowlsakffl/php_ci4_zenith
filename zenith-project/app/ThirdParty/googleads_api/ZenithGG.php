@@ -340,15 +340,17 @@ class ZenithGG
         $campaign = $campaign->getRowArray();
         
         $campaignServiceClient = $this->googleAdsClient->getCampaignBudgetServiceClient();
+
+        $param['budget'] *= 1000000; 
         $data = [
             'resource_name' => ResourceNames::forCampaignBudget($customerId, $campaign['budgetId']),
-            'amount_micros' => $param['budget'],
+            'amount_micros' => intval($param['budget']),
         ];
 
-        $campaign = new CampaignBudget($data);
+        $campaignBudget = new CampaignBudget($data);
         $campaignOperation = new CampaignBudgetOperation();
-        $campaignOperation->setUpdate($campaign);
-        $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaign));
+        $campaignOperation->setUpdate($campaignBudget);
+        $campaignOperation->setUpdateMask(FieldMasks::allSetFieldsOf($campaignBudget));
         
         $response = $campaignServiceClient->mutateCampaignBudgets(
             $customerId,
@@ -358,16 +360,16 @@ class ZenithGG
         );
         
         $updatedCampaign = $response->getResults()[0];
-        $campaignInfo = $updatedCampaign->getCampaign();
-        
-        if(!empty($campaignInfo)){
+        $amount = $updatedCampaign->getCampaignBudget()->getAmountMicros();
+        $amount = $amount / 1000000;
+        if(!empty($updatedCampaign)){
             $setData = [
-                'id' => $campaignInfo->getId(),
-                'amount' => $campaignInfo->getCampaignBudget(),
+                'id' => $campaign['id'],
+                'amount' => $amount,
             ];
 
             $this->db->updateCampaignField($setData);
-            return $setData;
+            return $setData['id'];
         };
     }
 
