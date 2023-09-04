@@ -145,20 +145,23 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "UPDATE aw_campaign SET";
+		$builder = $this->db->table('aw_campaign');
+
+		$updateData = [];
+
 		if (isset($data['name'])) {
-			$sql .= " name = {$data['name']}";
+			$updateData['name'] = $data['name'];
 		}
 		if (isset($data['status'])) {
-			$sql .= isset($data['name']) ? "," : "";
-			$sql .= " status = {$data['status']}";
+			$updateData['status'] = $data['status'];
 		}
 		if (isset($data['amount'])) {
-			$sql .= " amount = {$data['amount']}";
+			$updateData['amount'] = $data['amount'];
 		}
-		$sql .= " WHERE id = {$data['id']}";
 
-		$result = $this->db_query($sql, true);
+		$builder->set($updateData);
+		$builder->where('id', $data['id']);
+		$result = $builder->update();
 
 		return $result;
 	}
