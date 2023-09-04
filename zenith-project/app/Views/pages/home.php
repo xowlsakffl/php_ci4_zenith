@@ -8,7 +8,6 @@
 <!--헤더-->
 <?=$this->section('header');?>
 <script>
-    console.log('header')
 </script>
 <?=$this->endSection();?>
 
@@ -18,6 +17,26 @@
 
 <!--컨텐츠영역-->
 <?=$this->section('content');?>
+<?php if($password_check){?>
+<!--비밀번호 변경 팝업-->
+<div class="modal fade show" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordChangeModalLabel"> 비밀번호 변경 알림</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>ㅋ</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">2주 후에 알림</button>
+                <button type="button" class="btn btn-primary">비밀번호 변경</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php };?>
 <div class="main-contents-wrap">
     <div class="ad-list text-center">
         <div class="row">
