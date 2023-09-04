@@ -910,6 +910,7 @@ class ZenithFB
         }
         $row = $this->db->getAdSet($adset_id);
 
+        $field = '';
         switch ($row['budget_type']) {
             case 'lifetime':
                 $field = AdSetFields::LIFETIME_BUDGET;
