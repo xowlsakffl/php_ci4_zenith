@@ -105,9 +105,10 @@ class BlackListModel extends Model
     public function updateBlackList($data)
     {
         $builder = $this->db->table('event_blacklist');
+        $builder->set('reg_date', date('Y-m-d H:i:s'));
         $builder->where('seq', $data['seq']);
         unset($data['seq']);
-        $result = $builder->replace($data);
+        $result = $builder->update($data);
 
         return $result;
     }
