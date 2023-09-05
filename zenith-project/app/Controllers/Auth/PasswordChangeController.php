@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
+use App\Controllers\User\UserController;
 use App\Models\Api\UserModel;
 use CodeIgniter\Shield\Authentication\Passwords;
 
@@ -53,6 +54,9 @@ class PasswordChangeController extends BaseController
         $result = $this->userModel->save($this->user);
         if($result == true){
             $this->user->undoForcePasswordReset();
+
+            $userController = new UserController;
+            $userController->setPasswordChangedAt(true);
             session()->removeTempdata('magicLogin');
         }
 

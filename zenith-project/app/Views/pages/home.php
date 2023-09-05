@@ -27,11 +27,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>ㅋ</p>
+                <p>
+                    회원님의 개인정보를 안전하게 보호하고, 개인정보 도용으로 인한 피해를 예방하기 위해
+                    90일 이상 비밀번호를 변경하지 않은 경우 비밀번호 변경을 권장하고 있습니다.
+                </p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">2주 후에 알림</button>
-                <button type="button" class="btn btn-primary">비밀번호 변경</button>
+                <button type="button" class="btn btn-secondary" id="password_extension_btn">2주 후에 알림</button>
+                <button type="button" class="btn btn-danger"><a href="/mypage">비밀번호 변경</a></button>
             </div>
         </div>
     </div>
@@ -285,6 +288,27 @@ function getGoogleReport(args){
         }
     });
 }
+
+$(document).ready(function () {
+    $('#passwordChangeModal').modal('show');
+
+    $('body').on('click', '#password_extension_btn', function() {
+        $.ajax({
+            type: "GET",
+            url: "<?=base_url()?>/password-changed-at",
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                if(data == true){
+                    $('#passwordChangeModal').modal('hide');
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
+    });
+});
 </script>
 <?=$this->endSection();?>
 

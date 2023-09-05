@@ -16,17 +16,6 @@ class PageController extends BaseController
         }
 
         $data['title'] = ucfirst($page);
-        $data['password_check'] = false;
-        if($page = 'home'){
-            $password_check = auth()->user()->getEmailIdentity()->password_changed_at;
-            if(empty($password_check)){
-                $data['password_check'] = true;
-            }else{
-                if(strtotime($password_check) < strtotime('-2 weeks')){
-                    $data['password_check'] = true;
-                }
-            }
-        }
 
         return view('pages/'.$page, $data);
     }

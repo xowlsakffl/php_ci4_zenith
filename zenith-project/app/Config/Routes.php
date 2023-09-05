@@ -48,7 +48,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->get('pages/(:any)', 'PageController::view/$1');
     $routes->get('mypage', 'User\UserController::myPage');
     $routes->post('mypage/update', 'User\UserController::myPageUpdate');
-
+    $routes->get('password-changed-at', 'User\UserController::setPasswordChangedAt');
     // 게시판
     $routes->group('boards', static function($routes){     
         $routes->get('', 'Api\ApiBoardController::get');

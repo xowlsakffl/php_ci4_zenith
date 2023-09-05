@@ -2,6 +2,7 @@
 namespace App\Controllers\User;
 
 use App\Models\Api\CompanyModel;
+use App\Models\Api\IdentityModel;
 use CodeIgniter\API\ResponseTrait;
 use App\Models\Api\UserModel;
 use CodeIgniter\Shield\Authentication\Passwords;
@@ -66,7 +67,8 @@ class UserController extends \CodeIgniter\Controller
         }
         $cuser = auth()->user();
         $cuser->fill($data);
-        $result = $this->user->save($cuser);
+        $this->user->save($cuser);
+        $this->setPasswordChangedAt(true);
         return redirect()->back()->with('message', '비밀번호가 변경되었습니다.');
     }
 
@@ -209,6 +211,26 @@ class UserController extends \CodeIgniter\Controller
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function setPasswordChangedAt($type = false)
+    {
+        $user = $this->logginedUser;
+
+        if(isset($type)){
+            $date = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s") . "+90 days"));
+        }else{
+            $date = date("Y-m-d H:i:s");
+        }
+
+        $identityModel = model(IdentityModel::class);
+        $result = $identityModel->setPasswordChangedAt($user->id, $date);
+        
+        if ($this->request->isAJAX()){
+            return $this->respond($result);
+        }else{
+            return $result;
         }
     }
 

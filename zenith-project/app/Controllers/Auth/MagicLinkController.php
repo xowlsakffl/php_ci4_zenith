@@ -3,6 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\BaseController;
+use App\Controllers\User\UserController;
 use CodeIgniter\Shield\Controllers\MagicLinkController as ShieldMagicLinkController;
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\RedirectResponse;
