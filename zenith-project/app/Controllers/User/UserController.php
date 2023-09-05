@@ -214,6 +214,17 @@ class UserController extends \CodeIgniter\Controller
         }
     }
 
+    public function setPasswordChangedAtAjax()
+    {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
+            $result = $this->setPasswordChangedAt(false);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function setPasswordChangedAt($type = false)
     {
         $user = $this->logginedUser;
