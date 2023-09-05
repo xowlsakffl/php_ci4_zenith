@@ -35,7 +35,7 @@ class BlackListController extends BaseController
                     $list[$i]['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
                 }
                 
-                if((!$list[$i]['term'] && $list[$i]['forever']) || !empty($list[$i]['phone'])){
+                if((empty($list[$i]['term']) && $list[$i]['forever'] == 1)){
                     $list[$i]['term'] = '영구차단';
                 }
                 
@@ -58,9 +58,9 @@ class BlackListController extends BaseController
 
     public function getBlackList()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $seq = $this->request->getGet('seq');
-            $sliceSeq = explode("_", $seq);
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $data = $this->request->getGet();
+            $sliceSeq = explode("_", $data['seq']);
             if($sliceSeq[0] == 'ip'){
                 $result = $this->blacklist->getBlacklist($sliceSeq[1]);
                 $result['type'] = 'ip';
@@ -68,14 +68,14 @@ class BlackListController extends BaseController
                 $result = $this->blacklist->getBlacklistPhone($sliceSeq[1]);
                 $result['type'] = 'phone';
             }
-            
+
             if(!empty($result['term'])){
                 $originTime = $result['term'];
                 $dateTime = new DateTime($originTime);
                 $result['term'] = $dateTime->format('Y년 m월 d일 H시 i분까지');
             }
             
-            if((empty($result['term']) && !empty($result['forever'])) || !empty($result['phone'])){
+            if((empty($result['term']) && $result['forever'] == 1)){
                 $result['term'] = '영구차단';
             }
             
@@ -94,8 +94,29 @@ class BlackListController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $arg = $this->request->getRawInput();
+            
+            //유효성 검사 start
+            $validation = \Config\Services::validation();
+            $validationRules = [
+                $arg['type'] == 'ip' ? 'ip' : 'phone' => 'required',
+                'term' => 'required',
+            ];
+            $validationMessages = [
+                $arg['type'] == 'ip' ? 'ip' : 'phone' => [
+                    'required' => $arg['type'] == 'ip' ? '아이피는 필수 입력 사항입니다.' : '전화번호는 필수 입력 사항입니다.',
+                ],
+                'term' => [
+                    'required' => '차단 기간을 선택해주세요.',
+                ],
+            ];
+            $validation->setRules($validationRules, $validationMessages);
+            if (!$validation->run($arg)) {
+                $errors = $validation->getErrors();
+                return $this->failValidationErrors($errors);
+            }
+            //유효성 검사 end
+
             $data = [
-                'ip' => $arg['ip'],
                 'username' => auth()->user()->username,
 				'term' => $arg['term'],
             ];
@@ -123,43 +144,33 @@ class BlackListController extends BaseController
                 default:
                     return false;
             }
-            $checkRow = $this->blacklist->getBlackListByIp($data['ip']);
 
-            if($checkRow){
-                if(($checkRow['term'] > $data['term'] && !isset($data['forever'])) || $checkRow['forever']){
-                    if($checkRow['forever']){
-                        $message = '영구차단';
-                    }else{
-                        $message = $checkRow['term'].'까지';
-                    }
-
-                    return $this->failValidationErrors(['term'=>'이미 존재하는 ip입니다. '.$message]);
-                }else{
-                    $result = $this->blacklist->updateBlackList($data);
-                    return $this->respond($result);
-                }           
-            };
-
-            $validation = \Config\Services::validation();
-            $validationRules      = [
-                'ip' => 'required',
-                'term' => 'required',
-            ];
-            $validationMessages   = [
-                'ip' => [
-                    'required' => '아이피는 필수 입력 사항입니다.',
-                ],
-                'term' => [
-                    'required' => '차단 기간을 선택해주세요.',
-                ],
-            ];
-            $validation->setRules($validationRules, $validationMessages);
-            if (!$validation->run($data)) {
-                $errors = $validation->getErrors();
-                return $this->failValidationErrors($errors);
+            if ($arg['type'] == 'ip') {
+                $data['ip'] = $arg['ip'];
+                $checkRow = $this->blacklist->getBlackListByIp($data['ip']);
+            } else {
+                $data['phone'] = $arg['phone'];
+                $checkRow = $this->blacklist->getBlackListByPhone($data['phone']);
             }
-    
-            $result = $this->blacklist->createBlackList($data);
+            
+            if ($checkRow) {
+                if (($checkRow['term'] > $data['term'] && !isset($data['forever'])) || $checkRow['forever']) {
+                    if ($checkRow['forever']) {
+                        $message = '영구차단';
+                    } else {
+                        $message = $checkRow['term'] . '까지';
+                    }
+            
+                    return $this->failValidationErrors(['term' => '이미 존재하는 ' . ($arg['type'] == 'ip' ? 'IP' : '전화번호') . '입니다. ' . $message]);
+                } else {
+                    $data['seq'] = $checkRow['seq'];
+                    $result = ($arg['type'] == 'ip') ? $this->blacklist->updateBlackList($data) : $this->blacklist->updateBlackListPhone($data);
+                    return $this->respond($result);
+                }
+            }
+            
+            $result = ($arg['type'] == 'ip') ? $this->blacklist->createBlackList($data) : $this->blacklist->createBlackListPhone($data);
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -169,8 +180,8 @@ class BlackListController extends BaseController
     public function deleteBlackList()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete'){
-            $seq = $this->request->getRawInput();
-            $sliceSeq = explode("_", $seq['seq']);
+            $data = $this->request->getRawInput();
+            $sliceSeq = explode("_", $data['seq']);
             
             if($sliceSeq[0] == 'ip'){
                 $result = $this->blacklist->deleteBlackList($sliceSeq[1]);
@@ -178,40 +189,6 @@ class BlackListController extends BaseController
                 $result = $this->blacklist->deleteBlackListPhone($sliceSeq[1]);
             }
 
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        }
-    }
-
-    public function createBlackListPhone()
-    {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
-            $arg = $this->request->getRawInput();
-            $data = [
-                'phone' => $arg['phone'],
-                'reg_date' => date('Y-m-d H:i:s')
-            ];
-            $checkRow = $this->blacklist->getBlackListByPhone($data['phone']);
-            if($checkRow){
-                return $this->failValidationErrors(['term'=>'이미 존재하는 전화번호입니다.']);
-            }
-            $validation = \Config\Services::validation();
-            $validationRules      = [
-                'phone' => 'required',
-            ];
-            $validationMessages   = [
-                'phone' => [
-                    'required' => '전화번호는 필수 입력 사항입니다.',
-                ],
-            ];
-            $validation->setRules($validationRules, $validationMessages);
-            if (!$validation->run($data)) {
-                $errors = $validation->getErrors();
-                return $this->failValidationErrors($errors);
-            }
-    
-            $result = $this->blacklist->createBlackListPhone($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

@@ -13,7 +13,7 @@ class BlackListModel extends Model
         $ipBuilder->select('CONCAT("ip_", seq) as seq, ip, "" AS phone, forever, username, term, reg_date');
 
         $phoneBuilder = $this->db->table('event_phone_blacklist');
-        $phoneBuilder->select('CONCAT("phone_", seq) as seq, "" AS ip, phone, 0 AS forever, "" AS username, "" AS term, reg_date');
+        $phoneBuilder->select('CONCAT("phone_", seq) as seq, "" AS ip, phone, forever, username, term, reg_date');
         $ipBuilder->unionAll($phoneBuilder);
 
         $resultQuery = $this->db->newQuery()->fromSubquery($ipBuilder, 'black');
@@ -89,42 +89,54 @@ class BlackListModel extends Model
     public function createBlackList($data)
     {
         $builder = $this->db->table('event_blacklist');
-        $builder->insert($data);
+        $result = $builder->insert($data);
 
-        return true;
+        return $result;
     }
 
     public function createBlackListPhone($data)
     {
         $builder = $this->db->table('event_phone_blacklist');
-        $builder->insert($data);
+        $result = $builder->insert($data);
 
-        return true;
+        return $result;
     }
 
     public function updateBlackList($data)
     {
         $builder = $this->db->table('event_blacklist');
-        $builder->where('ip', $data['ip']);
-        $builder->replace($data);
+        $builder->where('seq', $data['seq']);
+        unset($data['seq']);
+        $result = $builder->replace($data);
 
-        return true;
+        return $result;
+    }
+
+    public function updateBlackListPhone($data)
+    {
+        $builder = $this->db->table('event_phone_blacklist');
+        $builder->set('reg_date', date('Y-m-d H:i:s'));
+        $builder->where('seq', $data['seq']);
+        unset($data['seq']);
+        $result = $builder->update($data);
+
+        return $result;
     }
 
     public function deleteBlackList($seq)
     {
         $builder = $this->db->table('event_blacklist');
         $builder->where('seq', $seq);
-        $builder->delete();
+        $result = $builder->delete();
 
-        return true;
+        return $result;
     }
 
     public function deleteBlackListPhone($seq)
     {
         $builder = $this->db->table('event_phone_blacklist');
         $builder->where('seq', $seq);
-        $builder->delete();
-        return true;
+        $result = $builder->delete();
+        return $result;
     }
 }

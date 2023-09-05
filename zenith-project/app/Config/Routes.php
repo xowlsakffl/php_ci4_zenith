@@ -189,7 +189,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('list', 'EventManage\BlackListController::getList');
             $routes->get('view', 'EventManage\BlackListController::getBlackList');
             $routes->post('create', 'EventManage\BlackListController::createBlackList');
-            $routes->post('create-phone', 'EventManage\BlackListController::createBlackListPhone');
             $routes->delete('delete', 'EventManage\BlackListController::deleteBlackList');
         });
 

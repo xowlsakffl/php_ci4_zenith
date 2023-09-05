@@ -254,28 +254,6 @@ function getList(){
     });
 }
 
-function createBlackPhone(data){
-    $.ajax({
-        url : "<?=base_url()?>/eventmanage/blacklist/create-phone", 
-        type : "POST", 
-        dataType: "JSON", 
-        data : data, 
-        contentType: 'application/json; charset=utf-8',
-        success : function(data){
-            if(data == true){
-                dataTable.draw();
-                alert("생성되었습니다.");
-                $('#blackCreateModal').modal('hide');
-            }
-        }
-        ,error : function(error){
-            var errorMessages = error.responseJSON.messages;
-            var firstErrorMessage = Object.values(errorMessages)[0];
-            alert(firstErrorMessage);
-        }
-    });
-}
-
 function createBlack(data){
     $.ajax({
         url : "<?=base_url()?>/eventmanage/blacklist/create", 
@@ -346,13 +324,12 @@ function setType(){
     $('.type').show();
     if(type === 'phone'){
         $('.phone').show();
-        $('.ip, .term').hide();
+        $('.ip').hide();
         $('.ip input[name="ip"]').val('');
-        $('.term input[name="term"]').val('');
     }else{
         $('.phone').hide();
+        $('.ip').show();
         $('.phone input[name="phone"]').val('');
-        $('.ip, .term').show();
     }
 }
 
@@ -367,10 +344,13 @@ $('#blackShowModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     var $tr = $btn.closest('tr');
     var seq = $tr.attr('id');
+    data = {
+        'seq':seq
+    };
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/eventmanage/blacklist/view",
-        data: {'seq':seq},
+        data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
@@ -392,19 +372,18 @@ $('form[name="search-form"]').bind('submit', function() {
 
 $('form[name="black-create-form"]').bind('submit', function(e) {
     type = $('input[name="type"]:checked').val();
-    if(type === 'phone'){
-        var data = {
-            'phone': $('form[name="black-create-form"] input[name="phone"]').val(),
-        };
-        createBlackPhone(data);
-    }else{
-        var data = {
-            'ip': $('form[name="black-create-form"] input[name="ip"]').val(),
-            'term': $('form[name="black-create-form"] select[name="term"]').val(),
-        };
-        createBlack(data);
+    var data = {
+        'type': type,
+        'term': $('form[name="black-create-form"] select[name="term"]').val(),
+    };
+
+    if (type === 'phone') {
+        data.phone = $('form[name="black-create-form"] input[name="phone"]').val();
+    } else {
+        data.ip = $('form[name="black-create-form"] input[name="ip"]').val();
     }
-    
+
+    createBlack(data);
     return false;
 });
 
