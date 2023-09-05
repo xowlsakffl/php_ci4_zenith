@@ -229,7 +229,7 @@ class UserController extends \CodeIgniter\Controller
     {
         $user = $this->logginedUser;
 
-        if(isset($type)){
+        if($type === true){
             $date = date("Y-m-d H:i:s", strtotime(date("Y-m-d H:i:s") . "+90 days"));
         }else{
             $date = date("Y-m-d H:i:s");
