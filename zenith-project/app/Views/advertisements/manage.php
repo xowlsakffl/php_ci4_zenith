@@ -910,7 +910,7 @@ function handleInput(tab, id, tmp_name, inputElement) {
 
 function setManualUpdate(data){
     $.ajax({
-        type: "post",
+        type: "put",
         url: "<?=base_url()?>/advertisements/set-adv",
         data: data,
         dataType: "json",
@@ -948,6 +948,7 @@ $('body').on('click', '.tab-link', function() {
     dataTable.draw();
 });
 
+/*체크 항목 수동 업데이트*/
 $('body').on('click', '#update_btn', function() {
     data = {
         'ids' : tableParam.searchData.check,
