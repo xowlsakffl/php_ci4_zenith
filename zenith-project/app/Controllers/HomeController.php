@@ -14,7 +14,7 @@ class HomeController extends BaseController
         if(empty($password_check)){
             $data['password_check'] = true;
         }else{
-            if(strtotime($password_check) < strtotime('-2 weeks')){
+            if(strtotime($password_check) < strtotime('-90 days')){
                 $data['password_check'] = true;
             }
         }
