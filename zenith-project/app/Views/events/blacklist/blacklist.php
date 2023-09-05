@@ -137,40 +137,43 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-left-header" id="modalShowTable">
-                        <colgroup>
-                            <col style="width:30%;">
-                            <col style="width:70%;">
-                        </colgroup>
-                        <tbody>
-                            <tr class="type_show">
-                                <th scope="row" class="text-end">분류</th>
-                                <td></td>
-                            </tr>
-                            <tr class="phone_show">
-                                <th scope="row" class="text-end">전화번호</th>
-                                <td></td>
-                            </tr>
-                            <tr class="ip_show">
-                                <th scope="row" class="text-end">아이피</th>
-                                <td></td>
-                            </tr>
-                            <tr class="username_show">
-                                <th scope="row" class="text-end">등록자</th>
-                                <td></td>
-                            </tr>
-                            <tr class="term_show">
-                                <th scope="row" class="text-end">차단 기간</th>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>                    
-                </div>
+                <form name="black-delete-form" id="black-delete-form">
+                    <input type="hidden" name="seq" value="">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-left-header" id="modalShowTable">
+                            <colgroup>
+                                <col style="width:30%;">
+                                <col style="width:70%;">
+                            </colgroup>
+                            <tbody>
+                                <tr class="type_show">
+                                    <th scope="row" class="text-end">분류</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="phone_show">
+                                    <th scope="row" class="text-end">전화번호</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="ip_show">
+                                    <th scope="row" class="text-end">아이피</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="username_show">
+                                    <th scope="row" class="text-end">등록자</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="term_show">
+                                    <th scope="row" class="text-end">차단 기간</th>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>                    
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <div class="delete-btn-wrap">
-                    <button type="button" class="btn btn-outline-secondary" id="deleteActionBtn">삭제</button>
+                    <button type="button" class="btn btn-outline-secondary deleteActionBtn">삭제</button>
                 </div>
             </div>
         </div>
@@ -315,8 +318,7 @@ function setBlack(data){
         
     }
     $('.term_show td').text(data.term);
-    $('#deleteActionBtn').attr('data-seq',data.type+"_"+data.seq);
-    
+    $('#black-delete-form input[name=seq]').val(data.type+"_"+data.seq);
 }
 
 function setType(){
@@ -387,14 +389,15 @@ $('form[name="black-create-form"]').bind('submit', function(e) {
     return false;
 });
 
-$('#deleteActionBtn').bind('click', function(e) {
-    seq = $(this).data('seq'),
+$('body').on('click', '.deleteActionBtn', function() {
+    seq = $('#black-delete-form input[name="seq"]').val();
     deleteBlack(seq);
 });
 
-$('input[name="type"]').bind('change', function() {
+$('body').on('change', 'input[name="type"]', function() {
     setType();
 });
+
 </script>
 <?=$this->endSection();?>
 

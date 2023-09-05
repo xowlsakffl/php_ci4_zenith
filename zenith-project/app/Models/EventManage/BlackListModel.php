@@ -137,6 +137,7 @@ class BlackListModel extends Model
         $builder = $this->db->table('event_phone_blacklist');
         $builder->where('seq', $seq);
         $result = $builder->delete();
+
         return $result;
     }
 }
