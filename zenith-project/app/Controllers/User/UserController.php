@@ -227,11 +227,7 @@ class UserController extends \CodeIgniter\Controller
         $identityModel = model(IdentityModel::class);
         $result = $identityModel->setPasswordChangedAt($user->id, $date);
         
-        if ($this->request->isAJAX()){
-            return $this->respond($result);
-        }else{
-            return $result;
-        }
+        return $result;
     }
 
     protected function checkPermission($logginedUser, $updateId, $postGroups)
