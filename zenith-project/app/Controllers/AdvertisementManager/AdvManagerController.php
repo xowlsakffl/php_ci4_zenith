@@ -423,6 +423,7 @@ class AdvManagerController extends BaseController
         $total['avg_cpc'] = 0;
         $total['avg_cpa'] = 0;
         $total['avg_cvr'] = 0;
+        $total['avg_ctr'] = 0;
         foreach($datas as $data){
             $total['impressions'] +=$data['impressions'];
             $total['click'] +=$data['click'];
@@ -443,8 +444,10 @@ class AdvManagerController extends BaseController
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
-            $total['avg_ctr'] = ($total['click'] / $total['impressions']) * 100;
-
+            if($total['impressions'] > 0){
+                $total['avg_ctr'] = ($total['click'] / $total['impressions']) * 100;
+            }
+            
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
             if($total['unique_total'] > 0){
                 $total['avg_cpa'] = $total['spend'] / $total['unique_total'];
