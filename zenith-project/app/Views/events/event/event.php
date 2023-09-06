@@ -1094,7 +1094,7 @@ $('form[name="event-register-form"]').bind('submit', function(e) {
 $('#impressionView').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     var seq = $btn.closest('tr').attr('id');
-    $('#impressionViewLabel').text(seq+"번 유입수");
+    $('#impressionViewLabel').text(seq+" 유입수");
     getImpressions(seq);
 })
 .on('hidden.bs.modal', function(e) { //modal Reset
