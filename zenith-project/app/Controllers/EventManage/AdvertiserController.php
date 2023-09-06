@@ -39,7 +39,7 @@ class AdvertiserController extends BaseController
                 }
 
                 if($list[$i]['agreement_url']){
-                    $list[$i]['agreement_url'] = 'O';
+                    $list[$i]['agreement_url_exist'] = 'O';
                 }
 
                 $list[$i]['remain_balance'] = ($list[$i]['sum_price'] == ($list[$i]['remain_balance'] * -1)) ? "" : $list[$i]['remain_balance'];

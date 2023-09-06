@@ -679,9 +679,9 @@ function getList(){
                 "width": "4%",
                 "render": function(data, type, row) {
                     if(data == 0 || data == null){
-                        db = (data ? data : 0);
+                        db = 0;
                     }else{
-                        db = '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : 0)+'</button>';
+                        db = '<button id="sumDB" data-description="'+row.description+'">'+data+'</button>';
                     }
                     
                     return db;

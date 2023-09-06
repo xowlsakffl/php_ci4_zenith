@@ -192,6 +192,21 @@
     </div>
 </div>
 <!-- //광고주 등록 -->
+<!-- 이벤트 랜딩보기 -->
+<div class="modal fade" id="agreementModal" tabindex="-1" aria-labelledby="agreementModalLabel"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="agreementModalLabel">개인정보전문</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" id="agreementContent" width="100%" height="700"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //이벤트 랜딩보기 -->
 <?=$this->endSection();?>
 
 <!--스크립트-->
@@ -250,9 +265,9 @@ function getList(){
                 "width": "5%",
                 "render": function(data, type, row) {
                     if(data == 0 || data == null){
-                        total = (data ? data : '');
+                        total = '';
                     }else{
-                        total = '<button id="totalBtn" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                        total = '<button id="totalBtn" data-name="'+row.name+'">'+data+'</button>';
                     }
 
                     return total;
@@ -263,9 +278,9 @@ function getList(){
                 "width": "5%",
                 "render": function(data, type, row) {
                     if(data == 0 || data == null){
-                        sum_db = (data ? data : '');
+                        sum_db = '';
                     }else{
-                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+data+'</button>';
                     }
 
                     return sum_db;
@@ -273,7 +288,19 @@ function getList(){
             },
             { "data": "agent","width": "15%"},
             { "data": "interlock_url","width": "5%"},
-            { "data": "agreement_url","width": "5%"},
+            { 
+                "data": "agreement_url_exist",
+                "width": "5%",
+                "render": function(data, type, row) {
+                    if(!data || data == null){
+                        agreement_url = '';
+                    }else{
+                        agreement_url = '<button type="button" id="agreement_btn" data-bs-toggle="modal" data-bs-target="#agreementModal" data-link="'+row.agreement_url+'">'+data+'</button>';
+                    }
+
+                    return agreement_url;
+                }
+            },
             { "data": "is_stop","width": "5%"},
             { 
                 "data": "ea_datetime", 
@@ -495,6 +522,16 @@ $('body').on('click', '#sumDB', function() {
     updatedStorageValue = JSON.stringify(data);
     window.localStorage.setItem('DataTables_deviceTable_/integrate', updatedStorageValue);
     window.location.href = '/integrate';
+});
+
+$('#agreementModal').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var link = $btn.data('link');
+    var iframeContent = $('#agreementContent');
+    iframeContent.attr('src', link);
+})
+.on('hidden.bs.modal', function(e) { 
+    $('#agreementContent').attr('src', '');
 });
 
 $('body').on('click', '#totalBtn', function() {
