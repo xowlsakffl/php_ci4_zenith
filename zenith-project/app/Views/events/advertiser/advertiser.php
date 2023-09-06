@@ -49,10 +49,10 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">광고주명</th>
-                        <th scope="col">유효DB</th>
                         <th scope="col">매출</th>
                         <th scope="col">남은잔액</th>
                         <th scope="col">랜딩수</th>
+                        <th scope="col">유효DB</th>
                         <th scope="col">사업자명</th>
                         <th scope="col">외부연동</th>
                         <th scope="col">개인정보<br>전문</th>
@@ -243,19 +243,6 @@ function getList(){
                     return '<button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#clientModal">'+data+'</button>';
                 }
             },
-            { 
-                "data": "sum_db", 
-                "width": "5%",
-                "render": function(data, type, row) {
-                    if(data == 0 || data == null){
-                        sum_db = (data ? data : '');
-                    }else{
-                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
-                    }
-
-                    return sum_db;
-                }
-            },
             { "data": "sum_price", "width": "8%"},
             { "data": "remain_balance","width": "8%"},
             { 
@@ -269,6 +256,19 @@ function getList(){
                     }
 
                     return total;
+                }
+            },
+            { 
+                "data": "sum_db", 
+                "width": "5%",
+                "render": function(data, type, row) {
+                    if(data == 0 || data == null){
+                        sum_db = (data ? data : '');
+                    }else{
+                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                    }
+
+                    return sum_db;
                 }
             },
             { "data": "agent","width": "15%"},
