@@ -247,10 +247,10 @@ function getList(){
                 "data": "sum_db", 
                 "width": "5%",
                 "render": function(data, type, row) {
-                    if(data != 0){
-                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
-                    }else{
+                    if(data == 0 || data == null){
                         sum_db = (data ? data : '');
+                    }else{
+                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
                     }
 
                     return sum_db;
@@ -262,10 +262,10 @@ function getList(){
                 "data": "total", 
                 "width": "5%",
                 "render": function(data, type, row) {
-                    if(data != 0){
-                        total = '<button id="totalBtn" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
-                    }else{
+                    if(data == 0 || data == null){
                         total = (data ? data : '');
+                    }else{
+                        total = '<button id="totalBtn" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
                     }
 
                     return total;

@@ -678,10 +678,10 @@ function getList(){
                 "data": "db",
                 "width": "4%",
                 "render": function(data, type, row) {
-                    if(data != 0){
-                        db = '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : 0)+'</button>';
-                    }else{
+                    if(data == 0 || data == null){
                         db = (data ? data : 0);
+                    }else{
+                        db = '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : 0)+'</button>';
                     }
                     
                     return db;
