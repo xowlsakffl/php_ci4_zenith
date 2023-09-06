@@ -540,7 +540,7 @@
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="dataTable table table-bordered table-modal" id="impression-view-table">
+                    <table class="dataTable table table-bordered" id="impression-view-table">
                         <colgroup>
                             <col style="width:30%;">
                             <col style="width:30%;">
