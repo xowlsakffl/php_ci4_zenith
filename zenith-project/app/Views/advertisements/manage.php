@@ -721,6 +721,22 @@ function setReport(data){
     });
 }
 
+function getCheckReport(){
+    $.ajax({
+        type: "GET",
+        url: "<?=base_url()?>/advertisements/check-report",
+        data: {"searchData":tableParam.searchData},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setReport(data.report);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
 function setAccount(data) {
     var $row = $('.advertiser .row');
 
@@ -971,19 +987,7 @@ $('form[name="search-form"]').bind('submit', function() {
 $('body').on('change', '.check input[name=check01]', function() {
     debug('체크 선택')
     dataTable.state.save();
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/check-report",
-        data: {"searchData":tableParam.searchData},
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            setReport(data.report);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
+    getCheckReport();
 });
 
 var prevVal;

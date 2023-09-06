@@ -23,7 +23,7 @@ class EventController extends BaseController
 
     public function getList()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->event->getInformation($arg);
             $ads = $this->event->getEnabledAds();
@@ -39,7 +39,7 @@ class EventController extends BaseController
                 if($list[$i]['interlock']){
                     $list[$i]['interlock'] = 'O';
                 }else{
-                    $list[$i]['interlock'] = 'X';
+                    $list[$i]['interlock'] = '';
                 }
 
                 if($list[$i]['lead']){
@@ -65,6 +65,10 @@ class EventController extends BaseController
                     if($is_enabledAds) {
                         $list[$i]['config'] = 'enabled';
                     }
+                }
+
+                if(!$list[$i]['impressions']){
+                    $list[$i]['impressions'] = 0;
                 }
 
                 $list[$i]['db_price'] = number_format($list[$i]['db_price']);
@@ -251,7 +255,7 @@ class EventController extends BaseController
             'check_name' => $arg['check_name'],
             'check_cookie' => $arg['check_cookie'],
             'duplicate_precheck' => $arg['duplicate_precheck'],
-            'username' => auth()->user()->username,
+            'username' => auth()->user()->nickname,
         ];
 
         return $data;

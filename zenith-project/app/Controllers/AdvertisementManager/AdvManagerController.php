@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
