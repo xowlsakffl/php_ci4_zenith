@@ -186,6 +186,17 @@ class EventModel extends Model
         return $result;
     }
 
+    public function getEventImpressions($seq)
+    {
+        $builder = $this->db->table('event_impressions_history');
+        $builder->select('seq, code, site, SUM(impressions) AS impressions');
+        $builder->where('seq', $seq);
+        $builder->groupBy(['seq', 'code', 'site']);
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
     public function deleteEvent($seq)
     {
         $builder = $this->db->table('event_information');

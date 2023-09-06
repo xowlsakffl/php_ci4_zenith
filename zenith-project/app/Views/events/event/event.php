@@ -535,17 +535,12 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title" id="impressionViewLabel">유입수</h1>
+                <h1 class="modal-title" id="impressionViewLabel"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
                     <table class="dataTable table table-bordered table-modal" id="impression-view-table">
-                        <colgroup>
-                            <col style="width:30%;">
-                            <col style="width:30%;">
-                            <col style="width:40%;">
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th scope="col">매체코드</th>
@@ -712,7 +707,7 @@ function getList(){
 function getImpressions(seq){
     impressionsTable = $('#impression-view-table').DataTable({
         "destroy": true,
-        "autoWidth": true,
+        "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -732,23 +727,9 @@ function getImpressions(seq){
             }
         },
         "columns": [
-            { "data": null, "width": "10%"},
-            { "data": "username", "width": "30%"},
-            { "data": "nickname", "width": "30%"},
-            { 
-                "data": "created_at",
-                "width": "20%",
-                "render": function(data){
-                    return data.substr(0, 10);
-                }
-            },
-            { 
-                "data": "null",
-                "width": "10%",
-                "render": function(){
-                    return '<button class="btn btn-danger" id="exceptUserBelongBtn">제외</button>';
-                }
-            },
+            { "data": "code", "width": "30%"},
+            { "data": "site", "width": "30%"},
+            { "data": "impressions", "width": "40%"},
         ],
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
@@ -1113,7 +1094,7 @@ $('form[name="event-register-form"]').bind('submit', function(e) {
 $('#impressionView').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     var seq = $btn.closest('tr').attr('id');
-    console.log(seq);
+    $('#impressionViewLabel').text(seq+"번 유입수");
     getImpressions(seq);
 })
 .on('hidden.bs.modal', function(e) { //modal Reset

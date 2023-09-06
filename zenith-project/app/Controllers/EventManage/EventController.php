@@ -230,8 +230,7 @@ class EventController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $seq = $this->request->getGet('seq');
-            $result = $this->event->getEvent($seq);
-            $result['keywords'] = explode(',', $result['keywords']);
+            $result = $this->event->getEventImpressions($seq);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
