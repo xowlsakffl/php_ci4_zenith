@@ -353,7 +353,6 @@ let dataTable, tableParam = {};
 let loadData = false;
 //if(typeof tableParam != 'undefined'){
     $('.tab-link[value="campaigns"]').addClass('active');
-    $('#media_btn[value="facebook"]').addClass('active');
 
     tableParam.searchData = {
         'type': $('.tab-link.active').val(),
@@ -1458,7 +1457,6 @@ $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
     $('#media_btn, #business_btn, #company_btn, .tab-link, #media_account_btn').removeClass('active');
     $('.tab-link[value="campaigns"]').addClass('active');
-    $('#media_btn[value="facebook"]').addClass('active');
     $('#stx').val('');
     dataTable.state.clear();
     dataTable.state.save();
