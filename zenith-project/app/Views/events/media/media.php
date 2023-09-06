@@ -149,7 +149,7 @@ function getList(){
             "dataType": "json",
         },
         "columns": [
-            { "data": "seq", "width": "5%" },
+            { "data": null, "width": "5%" },
             { 
                 "data": "media", 
                 "width": "75%",
@@ -168,6 +168,17 @@ function getList(){
         ],
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+        "rowCallback": function(row, data, index) {
+            var api = this.api();
+            var totalRecords = api.page.info().recordsTotal;
+            var pageSize = api.page.len();
+            var currentPage = api.page();
+            var totalPages = Math.ceil(totalRecords / pageSize);
+            
+            var seqNumber = totalRecords - (currentPage * pageSize) - index; // 계산된 순번 (내림차순)
+            
+            $('td:eq(0)', row).html(seqNumber);
         },
         "infoCallback": function(settings, start, end, max, total, pre){
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";
