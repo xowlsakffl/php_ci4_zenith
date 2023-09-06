@@ -1,24 +1,11 @@
 body{background:#f7f7f7;}
 
-.left-side{display:flex; flex-direction:column; width:240px;  height:100vh; box-sizing:border-box; padding:42px 0; border-radius:0 0 40px 0; background:$color-dark; overflow:hidden; transition:all .2s;
-    .btn-menu{position:absolute; top:40px; left:10px; display:block; border:none; width:20px; height:20px; overflow:hidden; text-indent:-9999px;  transition:all .2s; 
-        &:before{position:absolute; top:1px; left:50%; height:100%; width:2px; content:''; background:#fff; transform: rotate(45deg);}
-        &:after{position:absolute;  left:50%; height:100%; width:2px; content:''; background:#fff; transform: rotate(-45deg);}
-    } 
-    .logo{margin:0 auto 40px; transition: transform 0.7s;}
-
-    
-    &.hide{width:40px; 
-        .logo{transform: translateX(100%);}
-        .btn-menu{border-top:2px solid #fff;
-            &:active{transform: rotate(360deg); transition:all 0.4s;}
-            &:before{width:100%; left:0%; height:2px; top:7px;  transform: rotate(0deg);}
-            &:after{width:100%; left:0%; height:2px; bottom:0;  transform: rotate(0deg);}
-        }
-    }      
+.left-side{display:flex; flex-direction:column; width:240px; height:100vh; box-sizing:border-box; padding:42px 0; border-radius:0 0 40px 0; background:$color-dark;
+    .btn-menu{display:none;}
+    .logo{margin:0 auto 40px;}
 }
- 
-.nav-wrap{flex:1; overflow:auto; width:240px;
+
+.nav-wrap{flex:1; overflow:auto;
     &::-webkit-scrollbar{width:6px; background:transparent;}
     &::-webkit-scrollbar-thumb{border-radius:3px;  background:#aaa;}
     .nav{
@@ -36,11 +23,7 @@ body{background:#f7f7f7;}
             }
         }
         button{display:block; padding:0 0 0 33px; color:#fff;
-            > i.bi {display:inline-block; margin:5px 10px 0 -35px; font-size: 150%; vertical-align: middle; transition:0.2s;}  
-            
-            &:hover {
-                > i.bi::before{animation:sidebarShake 0.5s infinite linear alternate; color:#929292;}
-            } 
+            > i.bi {display:inline-block; margin:5px 10px 0 -35px; font-size: 150%; vertical-align: middle;}          
         }   
         .btn-toggle-nav{padding:18px 0 0;
             li{margin:0 0 12px 32px;}
@@ -48,15 +31,8 @@ body{background:#f7f7f7;}
             .active{color:$color-primary; border-bottom:2px solid #e58489;}
             .active:before{position:absolute; top:6px; left:0; width:3px; height:3px; content:''; border-radius:50%; background:$color-primary;}
         }
-        a.active{
-            button {
-                > i.bi{border-bottom:2px solid #e58489; animation:updown 1.5s infinite linear alternate;} 
-            }
-        }
     }
 }
-.user-nav{width: 240px;}
-
 .util-nav{display:flex; justify-content:space-between; margin:0 38px; padding:20px 0 0;
     a{font-size:0.813rem; color:#aaa;}
 }
@@ -126,23 +102,16 @@ body{background:#f7f7f7;}
 }
 @include medium{
     .wrap{min-width:580px;}
-    .main-contents-wrap{padding:30px 30px 30px 70px;}   
-    .left-side{position:fixed; width:40px; height:100%; padding:20px 0; border-radius:0;  z-index:99;
-        .logo{transform: translateX(100%);}
-        .btn-menu{top:20px; border-top:2px solid #fff;         
-            &:before{width:100%; left:0%; height:2px; top:7px; transform: rotate(0deg);}
-            &:after{width:100%; left:0%; height:2px; bottom:0; transform: rotate(0deg);}
-        }
-        &.open{width:240px;//mo에서 열기
-            .logo{transform: translateX(0%);}          
-            .btn-menu{position:absolute; left:10px; display:block; border:none; width:20px; height:20px; overflow:hidden; text-indent:-9999px; 
-                &:active{transform: rotate(360deg); transition:0.4s;}
-                &:before{position:absolute; top:0px; left:50%; height:100%; width:2px; content:''; background:#fff; transform: rotate(-45deg);}
-                &:after{position:absolute;  left:50%; height:100%; width:2px; content:''; background:#fff; transform: rotate(45deg);}
-            } 
-        } 
+    .main-contents-wrap{padding:30px 30px 30px 70px;}
+    .left-side{position:fixed; z-index:1; width:40px; height:100%; overflow:hidden; padding:20px 0; border-radius:0; transition:all .2s; z-index:99;
+        .logo{margin:0 0 20px 45px;}
+        &.open{width:240px;}
+        .btn-menu{position:absolute; top:20px; left:10px; display:block; width:20px; height:20px; overflow:hidden; text-indent:-9999px; border-top:2px solid #fff;
+            &:before{position:absolute; top:7px; left:0; width:100%; height:2px; content:''; background:#fff;}
+            &:after{position:absolute; bottom:0; left:0; width:100%; height:2px; content:''; background:#fff;}
+        }       
     }
-    .nav-wrap{
+    .nav-wrap{width:240px;
         .nav{
             > li:not(:last-child){margin:0 0 10px;}
             button{display:block; padding:0 0 0 33px; color:#fff;}
