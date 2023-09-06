@@ -372,7 +372,6 @@ function setAdv(data){
     $('input[name="interlock_url"]').val(data.advertiser.interlock_url);
     $('input[name="agreement_url"]').val(data.advertiser.agreement_url);
     $('input[name="account_balance"]').val(data.advertiser.account_balance);
-    $('input[name="agreement_url"]').val(data.advertiser.agreement_url);
     $('input:radio[name="is_stop"][value="'+data.advertiser.is_stop+'"]').prop('checked', true);
     if(data.ow){
         $('input:radio[name="sms_alert"][value="1"]').prop('checked', true);
