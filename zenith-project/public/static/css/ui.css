@@ -1959,6 +1959,9 @@ div.dataTables_processing > div:last-child > div {
   bottom: 0;
   right: 0;
 }
+.sub-contents-wrap .dataTables_wrapper table.dataTable .is_stop {
+  color: red;
+}
 
 .db-manage-contaniner .search-wrap {
   border-radius: 10px;

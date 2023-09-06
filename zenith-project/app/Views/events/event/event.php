@@ -653,7 +653,11 @@ function getList(){
                 "data": "is_stop",
                 "width": "4%",
                 "render": function(data, type, row) {
-                    is_stop = '<p class="is_stop_custom">'+data+'</p>';
+                    if(data != '사용중'){
+                        is_stop = '<span class="is_stop">'+data+'</span>';  
+                    }else{
+                        is_stop = '<span class="is_ing">'+data+'</span>';     
+                    }        
                     return is_stop;
                 }
             },
