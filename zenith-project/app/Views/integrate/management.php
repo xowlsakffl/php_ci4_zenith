@@ -289,7 +289,7 @@ function getList(data = []) { //리스트 세팅
             { "data": "tab_name" },
             { "data": "name", "width": "50px",
                 "render": function(data) {
-                    return '<span title="'+$(`<span>${data}</span>`).text()+'">'+(data ? data : '')+'</span>';
+                    return '<span style="display:inline-block;width:50px;max-height:15px;overflow:hidden" title="'+$(`<span>${data}</span>`).text()+'">'+(data ? data : '')+'</span>';
                 } 
             },
             { "data": "dec_phone", "width": "90px" },
