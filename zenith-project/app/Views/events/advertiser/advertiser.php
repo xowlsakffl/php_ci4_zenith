@@ -472,10 +472,10 @@ $('body').on('click', '#sumDB', function() {
                 sdate: formattedFirstDay,
                 edate: formattedLastDay,
                 advertiser: advertiser,
-                media: "",
-                event: "",
-                status: "",
-                stx: ""
+                media: '',
+                event: '',
+                status: '',
+                stx: ''
             }
         };
     }

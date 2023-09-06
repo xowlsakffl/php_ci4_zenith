@@ -672,6 +672,9 @@ function getList(){
             { 
                 "data": "db",
                 "width": "4%",
+                "render": function(data, type, row) {
+                    return '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : '')+'</button>';
+                }
             },
             { "data": "db_price", "width": "6%"},
             { "data": "username", "width": "5%"},
@@ -1174,6 +1177,51 @@ $('#landingView').on('show.bs.modal', function(e) {
 })
 .on('hidden.bs.modal', function(e) { 
     $('#eventContent').attr('src', '');
+});
+
+$('body').on('click', '#sumDB', function() {
+    var currentDate = new Date();
+    var firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2);
+    var lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+
+    var formattedFirstDay = firstDay.toISOString().slice(0, 10);
+    var formattedLastDay = lastDay.toISOString().slice(0, 10);
+
+    var description = $(this).data('description');
+    if(window.localStorage.getItem('DataTables_deviceTable_/integrate')){
+        var integrateStorage = window.localStorage.getItem('DataTables_deviceTable_/integrate');
+        var data = JSON.parse(integrateStorage);
+        data.searchData.event = description;
+        data.searchData.sdate = formattedFirstDay;
+        data.searchData.edate = formattedLastDay;
+        data.searchData.advertiser = '';
+        data.searchData.media = '';
+        data.searchData.status = '';
+        data.searchData.stx = '';
+    }else{
+        var data = {
+            time: Date.now(),
+            start: 0,
+            length: 25,
+            order: [[12, "desc"]],
+            search: { search: "", smart: true, regex: false, caseInsensitive: true },
+            columns: [],
+            memoView: "modal",
+            searchData: {
+                sdate: formattedFirstDay,
+                edate: formattedLastDay,
+                advertiser: '',
+                media: '',
+                event: description,
+                status: '',
+                stx: ''
+            }
+        };
+    }
+    
+    updatedStorageValue = JSON.stringify(data);
+    window.localStorage.setItem('DataTables_deviceTable_/integrate', updatedStorageValue);
+    window.location.href = '/integrate';
 });
 
 </script>
