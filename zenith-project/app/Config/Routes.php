@@ -158,6 +158,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->put('update', 'EventManage\EventController::updateEvent');
             $routes->get('view', 'EventManage\EventController::getEvent');
             $routes->delete('delete', 'EventManage\EventController::deleteEvent');
+            $routes->get('impressions', 'EventManage\EventController::getEventImpressions');
         });
 
         $routes->group('advertiser', static function($routes){   

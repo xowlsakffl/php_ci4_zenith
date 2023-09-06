@@ -31,10 +31,11 @@ class EventModel extends Model
             $builder->groupEnd();
         }
 
+        $builder->groupBy('info.seq');
+
         // limit 적용하지 않은 쿼리
         $builderNoLimit = clone $builder;
 
-        $builder->groupBy('info.seq');
         $orderBy = [];
         if(!empty($data['order'])) {
             foreach($data['order'] as $row) {

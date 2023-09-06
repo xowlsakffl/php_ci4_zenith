@@ -529,6 +529,39 @@
     </div>
 </div>
 <!-- //이벤트 랜딩보기 -->
+
+<!-- 유입수 보기 -->
+<div class="modal fade" id="impressionView" tabindex="-1" aria-labelledby="impressionViewLabel"  aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="impressionViewLabel">유입수</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="dataTable table table-bordered table-modal" id="impression-view-table">
+                        <colgroup>
+                            <col style="width:30%;">
+                            <col style="width:30%;">
+                            <col style="width:40%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col">매체코드</th>
+                                <th scope="col">사이트</th>
+                                <th scope="col">유입수</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- //유입수 보기 -->
 <?=$this->endSection();?>
 
 <!--스크립트-->
@@ -621,13 +654,27 @@ function getList(){
             { "data": "title", "width": "18%"},
             { "data": "description","width": "21%"},
             { "data": "interlock", "width": "4%"},
-            { "data": "is_stop","width": "4%"},
-            { "data": "impressions","width": "4%"},
-            { "data": "db","width": "4%"},
             { 
-                "data": "db_price",
-                "width": "6%",
+                "data": "is_stop",
+                "width": "4%",
+                "render": function(data, type, row) {
+                    is_stop = '<p class="is_stop_custom">'+data+'</p>';
+                    return is_stop;
+                }
             },
+            { 
+                "data": "impressions",
+                "width": "4%",
+                "render": function(data, type, row) {
+                    impressions = '<button type="button" data-bs-toggle="modal" data-bs-target="#impressionView">'+data+'</button>';
+                    return impressions;
+                }
+            },
+            { 
+                "data": "db",
+                "width": "4%",
+            },
+            { "data": "db_price", "width": "6%"},
             { "data": "username", "width": "5%"},
             { 
                 "data": "mantis", "width": "5%",
@@ -659,6 +706,53 @@ function getList(){
         "drawCallback": function( settings ) {
             fileCheck();
         },
+    });
+}
+
+function getImpressions(seq){
+    impressionsTable = $('#impression-view-table').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/eventmanage/event/impressions",
+            "data": {"seq": seq},
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res;
+            }
+        },
+        "columns": [
+            { "data": null, "width": "10%"},
+            { "data": "username", "width": "30%"},
+            { "data": "nickname", "width": "30%"},
+            { 
+                "data": "created_at",
+                "width": "20%",
+                "render": function(data){
+                    return data.substr(0, 10);
+                }
+            },
+            { 
+                "data": "null",
+                "width": "10%",
+                "render": function(){
+                    return '<button class="btn btn-danger" id="exceptUserBelongBtn">제외</button>';
+                }
+            },
+        ],
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        }
     });
 }
 
@@ -1014,6 +1108,17 @@ $('form[name="event-register-form"]').bind('submit', function(e) {
     }
     
     return false;
+});
+//유입수 모달
+$('#impressionView').on('show.bs.modal', function(e) {
+    var $btn = $(e.relatedTarget);
+    var seq = $btn.closest('tr').attr('id');
+    console.log(seq);
+    getImpressions(seq);
+})
+.on('hidden.bs.modal', function(e) { //modal Reset
+    $('#impression-view-table').DataTable().destroy();
+    $('#impression-view-table tbody').empty();
 });
 
 $('#copyActionBtn').on('click', function(e) {
