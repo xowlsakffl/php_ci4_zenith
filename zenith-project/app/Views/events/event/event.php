@@ -678,7 +678,13 @@ function getList(){
                 "data": "db",
                 "width": "4%",
                 "render": function(data, type, row) {
-                    return '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : '')+'</button>';
+                    if(data != 0){
+                        db = '<button id="sumDB" data-description="'+row.description+'">'+(data ? data : 0)+'</button>';
+                    }else{
+                        db = (data ? data : 0);
+                    }
+                    
+                    return db;
                 }
             },
             { "data": "db_price", "width": "6%"},

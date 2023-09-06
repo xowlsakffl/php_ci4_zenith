@@ -247,7 +247,13 @@ function getList(){
                 "data": "sum_db", 
                 "width": "5%",
                 "render": function(data, type, row) {
-                    return '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                    if(data != 0){
+                        sum_db = '<button id="sumDB" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                    }else{
+                        sum_db = (data ? data : '');
+                    }
+
+                    return sum_db;
                 }
             },
             { "data": "sum_price", "width": "8%"},
@@ -256,7 +262,13 @@ function getList(){
                 "data": "total", 
                 "width": "5%",
                 "render": function(data, type, row) {
-                    return '<button id="totalBtn" data-name="'+row.name+'">'+data+'</button>';
+                    if(data != 0){
+                        total = '<button id="totalBtn" data-name="'+row.name+'">'+(data ? data : '')+'</button>';
+                    }else{
+                        total = (data ? data : '');
+                    }
+
+                    return total;
                 }
             },
             { "data": "agent","width": "15%"},
