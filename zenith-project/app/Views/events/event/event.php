@@ -541,6 +541,11 @@
             <div class="modal-body">
                 <div class="table-responsive">
                     <table class="dataTable table table-bordered table-modal" id="impression-view-table">
+                        <colgroup>
+                            <col style="width:30%;">
+                            <col style="width:30%;">
+                            <col style="width:40%;">
+                        </colgroup>
                         <thead>
                             <tr>
                                 <th scope="col">매체코드</th>
@@ -714,7 +719,7 @@ function getList(){
 function getImpressions(seq){
     impressionsTable = $('#impression-view-table').DataTable({
         "destroy": true,
-        "autoWidth": true,
+        "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
