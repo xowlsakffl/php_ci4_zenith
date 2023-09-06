@@ -1457,6 +1457,7 @@ $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
     $('#media_btn, #business_btn, #company_btn, .tab-link, #media_account_btn').removeClass('active');
     $('.tab-link[value="campaigns"]').addClass('active');
+    $('#total td').empty();
     $('#stx').val('');
     dataTable.state.clear();
     dataTable.state.save();
