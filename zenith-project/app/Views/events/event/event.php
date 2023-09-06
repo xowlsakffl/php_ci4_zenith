@@ -714,7 +714,7 @@ function getList(){
 function getImpressions(seq){
     impressionsTable = $('#impression-view-table').DataTable({
         "destroy": true,
-        "autoWidth": false,
+        "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
