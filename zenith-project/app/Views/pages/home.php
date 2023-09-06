@@ -20,17 +20,15 @@
 <?php if($password_check){?>
 <!--비밀번호 변경 팝업-->
 <div class="modal fade show" id="passwordChangeModal" tabindex="-1" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog max-520">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="passwordChangeModalLabel"> 비밀번호 변경 알림</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>
-                    회원님의 개인정보를 안전하게 보호하고, 개인정보 도용으로 인한 피해를 예방하기 위해
-                    90일 이상 비밀번호를 변경하지 않은 경우 비밀번호 변경을 권장하고 있습니다.
-                </p>
+                <p>회원님의 개인정보를 안전하게 보호하고, 개인정보 도용으로 인한 <br>피해를 예방하기 위해
+                <b>90일 이상</b><span> 비밀번호를 변경하지 않은 경우 비밀번호 변경을 권장</span>하고 있습니다.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="password_extension_btn">2주 후에 알림</button>

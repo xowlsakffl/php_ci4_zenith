@@ -1,7 +1,14 @@
 .modal{
     --bs-modal-header-padding:30px 30px 15px;
     --bs-modal-padding:15px 30px 30px;
-    .modal-dialog{--bs-modal-width:620px;}
+    .modal-dialog{--bs-modal-width:620px;
+        &.max-520{--bs-modal-width:520px; word-break: keep-all; line-height: 1.6;
+            .modal-body p {color:#555;
+                b{color:red; font-weight: 900;}  
+                span{border-bottom: 2px solid #ccc; color:#000; font-weight: 600; text-shadow: 0px 1px 10px #ccc;}
+            }
+        }
+    }
     .modal-lg{--bs-modal-width:895px;}
     &.fade{
         .modal-dialog{transform:translate(50px,0);}
