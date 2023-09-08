@@ -95,7 +95,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
-        $routes->get('check-report', 'AdvertisementManager\AdvManagerController::getCheckReport');
+        $routes->get('check-data', 'AdvertisementManager\AdvManagerController::getCheckData');
         $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
@@ -118,6 +118,20 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('manageaccounts', 'AdvertisementManager\AdvGoogleManagerController::getManageAccounts');
             $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
         });
+    });
+
+    //자동화
+    $routes->group('automation', static function($routes){ 
+        $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
+        $routes->post('create', 'AdvertisementManager\Automation\AutomationController::createAutomation');
+        $routes->post('create-target', 'AdvertisementManager\Automation\AutomationController::createAutomationTarget');
+        $routes->post('create-condition', 'AdvertisementManager\Automation\AutomationController::createAutomation');
+        $routes->post('create-execution', 'AdvertisementManager\Automation\AutomationController::createAutomation');
+        $routes->put('update', 'AdvertisementManager\Automation\AutomationController::updateAutomation');
+        $routes->put('update-target', 'AdvertisementManager\Automation\AutomationController::updateAutomationTarget');
+        $routes->put('update-condition', 'AdvertisementManager\Automation\AutomationController::updateAutomationCondition');
+        $routes->put('update-execution', 'AdvertisementManager\Automation\AutomationController::updateAutomationExecution');
+        $routes->delete('delete', 'AdvertisementManager\Automation\AutomationController::deleteAutomation');
     });
     
     // 통합 DB관리

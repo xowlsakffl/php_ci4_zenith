@@ -170,10 +170,11 @@ class AdvManagerController extends BaseController
         return $data;
     } */
     
-    public function getCheckReport(){
+    public function getCheckData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result['report'] = $this->getReport($arg);
+            //$result['report'] = $this->getReport($arg);
 
             return $this->respond($result);
         }else{

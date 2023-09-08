@@ -720,10 +720,10 @@ function setReport(data){
     });
 }
 
-function getCheckReport(){
+function getCheckData(){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/check-report",
+        url: "<?=base_url()?>/advertisements/check-data",
         data: {"searchData":tableParam.searchData},
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
@@ -986,7 +986,7 @@ $('form[name="search-form"]').bind('submit', function() {
 $('body').on('change', '.check input[name=check01]', function() {
     debug('체크 선택')
     dataTable.state.save();
-    getCheckReport();
+    getCheckData();
 });
 
 var prevVal;

@@ -150,6 +150,11 @@ class BlackListController extends BaseController
                 $checkRow = $this->blacklist->getBlackListByIp($data['ip']);
             } else {
                 $data['phone'] = $arg['phone'];
+                if (strpos($arg['phone'], '-') !== false) {
+                    $data['phone'] = str_replace("-", "", $arg['phone']);
+                } else {
+                    $data['phone'] = $arg['phone'];
+                }
                 $checkRow = $this->blacklist->getBlackListByPhone($data['phone']);
             }
             
