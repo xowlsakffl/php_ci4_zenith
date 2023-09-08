@@ -124,13 +124,15 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('automation', static function($routes){ 
         $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
         $routes->post('create', 'AdvertisementManager\Automation\AutomationController::createAutomation');
+        $routes->post('create-schedule', 'AdvertisementManager\Automation\AutomationController::createAutomationSchedule');
         $routes->post('create-target', 'AdvertisementManager\Automation\AutomationController::createAutomationTarget');
-        $routes->post('create-condition', 'AdvertisementManager\Automation\AutomationController::createAutomationCondition');
-        $routes->post('create-execution', 'AdvertisementManager\Automation\AutomationController::createAutomationExecution');
+        $routes->post('create-conditions', 'AdvertisementManager\Automation\AutomationController::createAutomationCondition');
+        $routes->post('create-executions', 'AdvertisementManager\Automation\AutomationController::createAutomationExecution');
         $routes->put('update', 'AdvertisementManager\Automation\AutomationController::updateAutomation');
+        $routes->put('update-schedule', 'AdvertisementManager\Automation\AutomationController::updateAutomationSchedule');
         $routes->put('update-target', 'AdvertisementManager\Automation\AutomationController::updateAutomationTarget');
-        $routes->put('update-condition', 'AdvertisementManager\Automation\AutomationController::updateAutomationCondition');
-        $routes->put('update-execution', 'AdvertisementManager\Automation\AutomationController::updateAutomationExecution');
+        $routes->put('update-conditions', 'AdvertisementManager\Automation\AutomationController::updateAutomationCondition');
+        $routes->put('update-executions', 'AdvertisementManager\Automation\AutomationController::updateAutomationExecution');
         $routes->delete('delete', 'AdvertisementManager\Automation\AutomationController::deleteAutomation');
     });
     

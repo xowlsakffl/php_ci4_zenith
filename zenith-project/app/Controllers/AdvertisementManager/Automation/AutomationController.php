@@ -57,6 +57,35 @@ class AutomationController extends BaseController
         }
     }
 
+    public function createAutomationSchedule()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
+            $arg = $this->request->getPost();
+            
+            if(empty($arg)){
+                return $this->fail("잘못된 요청");
+            }
+
+            $data = [
+                'idx' => $arg['idx'],
+                'exec_type' => $arg['exec_type'],
+                'type_value' => $arg['type_value'],
+                'exec_time' => $arg['exec_time'],
+                'ignore_time' => $arg['ignore_time'],
+                'exec_week' => $arg['exec_week'],
+                'month_type' => $arg['month_type'],
+                'month_day' => $arg['month_day'],
+                'month_week' => $arg['month_week'],
+            ];
+            
+            $this->automation->createAutomationSchedule($data);
+            
+            return $this->respond(true);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function createAutomationTarget()
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
@@ -86,17 +115,11 @@ class AutomationController extends BaseController
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
             $args = $this->request->getPost();
 
-            foreach ($args['data'] as $arg) {
-                $data = [
-                    'idx' => $arg['idx'],
-                    'order' => $arg['order'],
-                    'type' => $arg['type'],
-                    'type_value' => $arg['type_value'],
-                    'compare' => $arg['compare'],
-                    'operation' => $arg['operation'],
-                ];
-                $result = $this->automation->createAutomationCondition($data);
+            if(empty($args)){
+                return $this->fail("잘못된 요청");
             }
+
+            $result = $this->automation->createAutomationCondition($args);
             
             return $this->respond($result);
         }else{
@@ -113,21 +136,9 @@ class AutomationController extends BaseController
                 return $this->fail("잘못된 요청");
             }
             
-            foreach ($args['data'] as $arg) {
-                $data = [
-                    'idx' => $args['idx'],
-                    'order' => $arg['order'],
-                    'media' => $arg['media'],
-                    'type' => $arg['type'],
-                    'id' => $arg['id'],
-                    'exec_type' => $arg['exec_type'],
-                    'exec_value' => $arg['exec_value'],
-                ];
-                
-                $this->automation->createAutomationExecution($data);
-            }
-
-            return $this->respond(true);
+            $result = $this->automation->createAutomationExecution($args);
+            
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
@@ -169,6 +180,34 @@ class AutomationController extends BaseController
         }
     }
 
+    public function updateAutomationSchedule()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+            $arg = $this->request->getRawInput();
+            
+            if(empty($arg)){
+                return $this->fail("잘못된 요청");
+            }
+
+            $idx = $arg['idx'];
+            $data = [
+                'exec_type' => $arg['exec_type'],
+                'type_value' => $arg['type_value'],
+                'exec_time' => $arg['exec_time'],
+                'ignore_time' => $arg['ignore_time'],
+                'exec_week' => $arg['exec_week'],
+                'month_type' => $arg['month_type'],
+                'month_day' => $arg['month_day'],
+                'month_week' => $arg['month_week'],
+            ];
+            
+            $result = $this->automation->updateAutomationSchedule($data, $idx);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function updateAutomationTarget()
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
@@ -202,17 +241,7 @@ class AutomationController extends BaseController
             }
 
             $idx = $args['idx'];
-            foreach ($args['data'] as $arg) {
-                $data = [
-                    'order' => $arg['order'],
-                    'type' => $arg['type'],
-                    'type_value' => $arg['type_value'],
-                    'compare' => $arg['compare'],
-                    'operation' => $arg['operation'],
-                ];
-                
-                $result = $this->automation->updateAutomationCondition($data, $idx);
-            }
+            $result = $this->automation->updateAutomationCondition($args, $idx);
             
             return $this->respond($result);
         }else{
@@ -230,20 +259,9 @@ class AutomationController extends BaseController
             }
 
             $idx = $args['idx'];
-            foreach ($args['data'] as $arg) { 
-                $data = [
-                    'order' => $arg['order'],
-                    'media' => $arg['media'],
-                    'type' => $arg['type'],
-                    'id' => $arg['id'],
-                    'exec_type' => $arg['exec_type'],
-                    'exec_value' => $arg['exec_value'],
-                ];
-                
-                $this->automation->updateAutomationExecution($data, $idx);
-            }
+            $result = $this->automation->updateAutomationExecution($args, $idx);
 
-            return $this->respond(true);
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }
