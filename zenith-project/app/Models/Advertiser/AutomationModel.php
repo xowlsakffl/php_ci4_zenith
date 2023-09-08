@@ -57,6 +57,7 @@ class AutomationModel extends Model
     {
         $builder = $this->zenith->table('aa_target');
         $builder->where('idx', $idx);
+        $builder->where('id', $data['id']);
         $result = $builder->update($data);
 
         return $result;
