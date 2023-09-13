@@ -1646,6 +1646,14 @@ div.dataTables_processing > div:last-child > div {
     transform: rotateX(45deg);
   }
 }
+@keyframes shadow {
+  0% {
+    box-shadow: inset 3px 0px 7px red;
+  }
+  100% {
+    box-shadow: inset 200px 0px 7px red;
+  }
+}
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
 }
@@ -1987,41 +1995,57 @@ div.dataTables_processing > div:last-child > div {
   font-weight: 900;
 }
 
-.dt-button-collection {
+div.dt-button-collection {
   padding: 0;
 }
-.dt-button-collection .export {
+div.dt-button-collection .export {
   display: none;
 }
-.dt-button-collection button {
+div.dt-button-collection button {
   text-align: left;
   font-size: 90%;
   padding: 0.3rem 0 0.3rem 0rem;
   width: 100%;
 }
-.dt-button-collection button span {
-  display: block;
-  padding: 0.3rem 0 0.3rem 0.5rem;
-}
-.dt-button-collection button span:hover {
+div.dt-button-collection button:hover {
   font-weight: 900;
   background-color: var(--bs-gray-200);
 }
-.dt-button-collection button span:hover i.bi::before {
+div.dt-button-collection button:hover span {
+  text-indent: 2rem;
+}
+div.dt-button-collection button:hover span i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
-.dt-button-collection button span.dt-down-arrow {
+div.dt-button-collection button span {
+  display: block;
+  padding: 0.3rem 0 0.3rem 0.5rem;
+  transition: all 0.2s;
+}
+div.dt-button-collection button span.dt-down-arrow {
   display: none;
 }
-.dt-button-collection button.active span {
+div.dt-button-collection button.active span {
   background-color: var(--bs-gray-300);
 }
-.dt-button-collection .dt-btn-split-wrapper:active:not(.disabled) button,
-.dt-button-collection .dt-btn-split-wrapper.active:not(.disabled) button {
-  background-color: var(--bs-warning);
+div.dt-button-collection .dt-btn-split-wrapper {
+  transition: 0.2s;
 }
-.dt-button-collection h3 {
-  font-size: 1.3em;
+div.dt-button-collection .dt-btn-split-wrapper:active:not(.disabled) button {
+  color: blue;
+}
+div.dt-button-collection .dt-btn-split-wrapper.active:not(.disabled) button {
+  background-color: transparent;
+  color: red;
+}
+div.dt-button-collection .dt-btn-split-wrapper.active:not(.disabled) button:hover {
+  background-color: var(--bs-gray-200);
+}
+div.dt-button-collection .dt-btn-split-wrapper.active:not(.disabled) button.dt-btn-split-drop {
+  background-color: transparent;
+}
+div.dt-button-collection h3 {
+  font-size: 1.25em !important;
 }
 
 @media screen and (max-width: 767px) {

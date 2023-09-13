@@ -59,6 +59,16 @@ class AdvertiserModel extends Model
         return $result;
     }
 
+    public function getCompanies($data)
+    {
+        $builder = $this->db->table('event_advertiser');
+        $builder->select('*');
+        $builder->where('seq', $data['seq']);
+
+        $result = $builder->get()->getRowArray();
+        return $result;
+    }
+
     public function getOverwatchByAdvertiser($seq)
     {
         $builder = $this->db->table('event_overwatch');

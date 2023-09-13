@@ -92,7 +92,7 @@
                             <tr>
                                 <th scope="row" class="text-end">광고주명</th>
                                 <td>
-                                    <input type="text" class="form-control" name="name" placeholder="광고주명을 입력하세요." title="광고주" <?php 
+                                    <input type="text" class="form-control" name="name" placeholder="광고주명을 입력하세요." id="adv-name-input" title="광고주" <?php 
                                     if(!auth()->user()->inGroup('superadmin', 'admin', 'developer')){
                                         echo "readonly disabled";
                                     };
@@ -409,6 +409,45 @@ function setAdv(data){
     }
 }
 
+function getAdvs(){
+    $('#adv-name-input').autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/eventmanage/advertiser/company", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {'stx': request.term}, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.username,
+                                value: item.username,
+                                id: item.id
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        select: function(event, ui) {
+            $(event.target).val(ui.item.value);
+            $(event.target).siblings('input[name="user_id"]').val(ui.item.id);
+            $(event.target).closest('form[name="belong-user-form"]').trigger('submit');
+        },
+        focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
 function chkInput() {
     if($('input:radio[name="sms_alert"][value="1"]').is(':checked')){
         $('.ow_info').show();
@@ -421,6 +460,10 @@ function chkInput() {
 $('input[name="sms_alert"]').bind('change', function() {
     chkInput();
 });
+
+$('#adv-name-input').on("focus", function(){
+    getAdvs();
+})
 
 $('#clientModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);

@@ -181,6 +181,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
             $routes->get('', 'EventManage\AdvertiserController::index');
             $routes->get('list', 'EventManage\AdvertiserController::getList');
             $routes->get('view', 'EventManage\AdvertiserController::getAdvertiser');
+            $routes->get('company', 'EventManage\AdvertiserController::getCompanies');
             $routes->post('create', 'EventManage\AdvertiserController::createAdv');
             $routes->put('update', 'EventManage\AdvertiserController::updateAdv');
         });

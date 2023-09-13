@@ -38,5 +38,9 @@
     100% {transform: rotateX(45deg);}
 }
 
+@keyframes shadow { //dt-buttons hover
+    0% {box-shadow: inset 3px 0px 7px $red;}
+    100% {box-shadow: inset 200px 0px 7px $red;}
+}
 
 

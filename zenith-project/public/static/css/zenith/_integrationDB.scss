@@ -168,21 +168,26 @@
     }
 }
 
-.dt-button-collection{padding:0;    
+div.dt-button-collection{padding:0;    
     .export{display: none;}
-    button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;          
-        span{display: block; padding:0.3rem 0 0.3rem 0.5rem;
-            &:hover{font-weight: 900; background-color: var(--bs-gray-200);
+    button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;         
+        &:hover{font-weight: 900; background-color: var(--bs-gray-200);
+            span{text-indent: 2rem;
                 i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
             }            
         }
+        span{display: block; padding:0.3rem 0 0.3rem 0.5rem; transition: all 0.2s;}
         span.dt-down-arrow{display:none;}
         &.active span{background-color: var(--bs-gray-300);
         } 
     } 
-    .dt-btn-split-wrapper:active:not(.disabled) button,
-    .dt-btn-split-wrapper.active:not(.disabled) button{background-color:var(--bs-warning);}
-    h3{font-size: 1.3em;}
+    .dt-btn-split-wrapper{ transition:0.2s; }
+    .dt-btn-split-wrapper:active:not(.disabled) button{color:blue;}
+    .dt-btn-split-wrapper.active:not(.disabled) button{background-color:transparent; color: red;
+        &:hover{background-color:var(--bs-gray-200);}
+        &.dt-btn-split-drop{background-color:transparent;}
+    }
+    h3{font-size: 1.25em !important;}
 }
 
 @media screen and (max-width: 767px){

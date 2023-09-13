@@ -85,6 +85,18 @@ class AdvertiserController extends BaseController
         }
     }
 
+    public function getCompanies()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->advertiser->getCompanies($arg);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function createAdv()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
