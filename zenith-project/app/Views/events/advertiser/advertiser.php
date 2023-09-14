@@ -12,6 +12,22 @@
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<style>
+    .ui-autocomplete{
+        z-index: 10000000;
+        max-height: 300px;
+        overflow-y: auto; /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+        
+    hr{
+        display: block !important;
+    }
+
+    .ui-widget{
+        font-family: "NanumSquareNeo", "Noto Sans", dotum, Gulim, sans-serif;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -92,6 +108,7 @@
                             <tr>
                                 <th scope="row" class="text-end">광고주명</th>
                                 <td>
+                                    <input type="hidden" name="company_id">
                                     <input type="text" class="form-control" name="name" placeholder="광고주명을 입력하세요." id="adv-name-input" title="광고주" <?php 
                                     if(!auth()->user()->inGroup('superadmin', 'admin', 'developer')){
                                         echo "readonly disabled";
@@ -422,8 +439,8 @@ function getAdvs(){
                     response(
                         $.map(data, function(item) {
                             return {
-                                label: item.username,
-                                value: item.username,
+                                label: item.name,
+                                value: item.name,
                                 id: item.id
                             };
                         })
@@ -436,11 +453,13 @@ function getAdvs(){
         },
         select: function(event, ui) {
             $(event.target).val(ui.item.value);
-            $(event.target).siblings('input[name="user_id"]').val(ui.item.id);
-            $(event.target).closest('form[name="belong-user-form"]').trigger('submit');
+            $(event.target).siblings('input[name="company_id"]').val(ui.item.id);
         },
         focus : function(event, ui) {	
             return false;
+        },
+        classes : {
+            'ui-autocomplete': 'highlight'
         },
         minLength: 1,
         autoFocus : true,
@@ -501,6 +520,7 @@ $('#clientModal').on('show.bs.modal', function(e) {
 })
 .on('hidden.bs.modal', function(e) { 
     $('input[name="seq"]').val('');
+    $('input[name="company_id"]').val('');
     $('input[name="checkname"]').val('');
     $('form[name="adv-register-form"]')[0].reset();
     $('.watch_list').remove();

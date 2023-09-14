@@ -88,8 +88,8 @@ class AdvertiserController extends BaseController
     public function getCompanies()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
-            $result = $this->advertiser->getCompanies($arg);
+            $stx = $this->request->getGet('stx');
+            $result = $this->advertiser->getCompanies($stx);
 
             return $this->respond($result);
         }else{
@@ -102,6 +102,7 @@ class AdvertiserController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $arg = $this->request->getRawInput();
             $data = [
+                'company_seq' => $arg['company_id'],
                 'name' => $arg['name'],
 				'agent' => $arg['agent'],
 				'username' => auth()->user()->username,

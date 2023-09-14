@@ -59,13 +59,13 @@ class AdvertiserModel extends Model
         return $result;
     }
 
-    public function getCompanies($data)
+    public function getCompanies($stx)
     {
-        $builder = $this->db->table('event_advertiser');
+        $builder = $this->db->table('companies');
         $builder->select('*');
-        $builder->where('seq', $data['seq']);
+        $builder->like('name', $stx);
 
-        $result = $builder->get()->getRowArray();
+        $result = $builder->get()->getResultArray();
         return $result;
     }
 
