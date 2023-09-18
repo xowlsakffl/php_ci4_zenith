@@ -381,9 +381,9 @@ function setSearchData() {
         data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
     }
 
-    if(data.searchData.check){
+    /* if(data.searchData.check){
         data.searchData.check.map(function(txt){ $(`.check input[value="${txt}"]`).prop('checked', true); });
-    }
+    } */
 
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
@@ -441,7 +441,7 @@ function getList(data = []){
                     'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
+                    //'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
                 };
 
                 tableParam = data;
@@ -720,11 +720,14 @@ function setReport(data){
     });
 }
 
-function getCheckData(){
+function getCheckData(check){
     $.ajax({
         type: "GET",
         url: "<?=base_url()?>/advertisements/check-data",
-        data: {"searchData":tableParam.searchData},
+        data: {
+            "searchData":tableParam.searchData,
+            "check": check
+        },
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
@@ -986,7 +989,8 @@ $('form[name="search-form"]').bind('submit', function() {
 $('body').on('change', '.check input[name=check01]', function() {
     debug('체크 선택')
     dataTable.state.save();
-    getCheckData();
+    var check = $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get()
+    getCheckData(check);
 });
 
 var prevVal;

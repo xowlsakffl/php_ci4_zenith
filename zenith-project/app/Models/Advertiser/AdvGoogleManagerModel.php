@@ -41,6 +41,22 @@ class AdvGoogleManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
 		
+		if(!empty($data['googleCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.id', $data['googleCheck']);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.id', $data['googleCheck']);
+					break;
+				case 'ads':
+					$builder->whereIn('B.id', $data['googleCheck']);
+					break;
+				default:
+					break;
+			}
+        }
+
 		return $builder;
 	}
 
@@ -67,6 +83,22 @@ class AdvGoogleManagerModel extends Model
 
 		if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+		
+		if(!empty($data['googleCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.id', $data['googleCheck']);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.id', $data['googleCheck']);
+					break;
+				case 'ads':
+					$builder->whereIn('B.id', $data['googleCheck']);
+					break;
+				default:
+					break;
+			}
         }
 		
 		return $builder;

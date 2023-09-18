@@ -43,4 +43,9 @@
     100% {box-shadow: inset 200px 0px 7px $red;}
 }
 
+@keyframes animate_x {//main 더보기 버튼
+    0% {transform: translateX(-100%); text-shadow: 30px 4px 23px #555;}
+    80% {text-shadow: 15px 5px 10px #746a6a;}
+    100% {transform: translateX(0%);     text-shadow:none;}
+}
 

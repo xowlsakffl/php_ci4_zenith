@@ -554,11 +554,14 @@ body {
   display: flex;
   align-items: center;
   margin: 0 0 20px;
+  transition: all 0.5s;
 }
 .title-area .page-title {
   font-size: 1.75rem;
   font-weight: 600;
   font-variation-settings: "wght" 600;
+  animation: animate_x 0.4s linear;
+  transition: all 0.5s;
 }
 .title-area .title-disc {
   margin: 0 0 0 15px;
@@ -1654,6 +1657,19 @@ div.dataTables_processing > div:last-child > div {
     box-shadow: inset 200px 0px 7px red;
   }
 }
+@keyframes animate_x {
+  0% {
+    transform: translateX(-100%);
+    text-shadow: 30px 4px 23px #555;
+  }
+  80% {
+    text-shadow: 15px 5px 10px #746a6a;
+  }
+  100% {
+    transform: translateX(0%);
+    text-shadow: none;
+  }
+}
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
 }
@@ -2011,16 +2027,16 @@ div.dt-button-collection button:hover {
   font-weight: 900;
   background-color: var(--bs-gray-200);
 }
-div.dt-button-collection button:hover span {
-  text-indent: 2rem;
+div.dt-button-collection button:hover > span {
+  text-indent: 1.5rem;
 }
-div.dt-button-collection button:hover span i.bi::before {
+div.dt-button-collection button:hover > span i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
 div.dt-button-collection button span {
   display: block;
   padding: 0.3rem 0 0.3rem 0.5rem;
-  transition: all 0.2s;
+  transition: all 0.4s;
 }
 div.dt-button-collection button span.dt-down-arrow {
   display: none;

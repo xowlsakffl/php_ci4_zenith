@@ -5,8 +5,8 @@
 
 .sub-contents-wrap{flex:1; height:100vh; overflow:auto; padding:40px 2.9908vw 50px; transition:all 0.3s;}
 
-.title-area{display:flex; align-items:center; margin:0 0 20px;
-    .page-title{font-size:1.750rem; @include bold;}
+.title-area{display:flex; align-items:center; margin:0 0 20px; transition:all 0.5s;
+    .page-title{font-size:1.750rem; @include bold; animation: animate_x 0.4s linear; transition:all 0.5s;}
     .title-disc{margin:0 0 0 15px;}
 }
 .content-title{position:relative; display:flex; align-items:center; margin:0 0 18px; font-size:1.250rem; @include bold;

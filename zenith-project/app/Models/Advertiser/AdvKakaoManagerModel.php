@@ -26,6 +26,22 @@ class AdvKakaoManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
+        if(!empty($data['kakaoCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+                    $builder->whereIn('D.id', $data['kakaoCheck']);
+                    break;
+                case 'adsets':
+                    $builder->whereIn('C.id', $data['kakaoCheck']);
+                    break;
+                case 'ads':
+                    $builder->whereIn('B.id', $data['kakaoCheck']);
+                    break;
+				default:
+					break;
+			}
+        }
+        
         return $builder;
 	}
 
@@ -53,6 +69,22 @@ class AdvKakaoManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
         
+        if(!empty($data['kakaoCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+                    $builder->whereIn('D.id', $data['kakaoCheck']);
+                    break;
+                case 'adsets':
+                    $builder->whereIn('C.id', $data['kakaoCheck']);
+                    break;
+                case 'ads':
+                    $builder->whereIn('B.id', $data['kakaoCheck']);
+                    break;
+				default:
+					break;
+			}
+        }
+
         return $builder;
 	}
 

@@ -174,7 +174,8 @@ class AdvManagerController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result['report'] = $this->getReport($arg);
-            //$result['report'] = $this->getReport($arg);
+            $result['account'] = $this->getAccounts($arg);
+            $result['media_accounts'] = $this->getMediaAccounts($arg);
 
             return $this->respond($result);
         }else{

@@ -26,6 +26,22 @@ class AdvFacebookManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
 		
+		if(!empty($data['facebookCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.campaign_id', $data['facebookCheck']);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.adset_id', $data['facebookCheck']);
+					break;
+				case 'ads':
+					$builder->whereIn('B.ad_id', $data['facebookCheck']);
+					break;
+				default:
+					break;
+			}
+        }
+
         return $builder;
 	}
 
@@ -51,6 +67,22 @@ class AdvFacebookManagerModel extends Model
 
 		if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
+        }
+
+		if(!empty($data['facebookCheck'])){
+			switch ($data['type']) {
+				case 'campaigns':
+					$builder->whereIn('D.campaign_id', $data['facebookCheck']);
+					break;
+				case 'adsets':
+					$builder->whereIn('C.adset_id', $data['facebookCheck']);
+					break;
+				case 'ads':
+					$builder->whereIn('B.ad_id', $data['facebookCheck']);
+					break;
+				default:
+					break;
+			}
         }
 
         return $builder;

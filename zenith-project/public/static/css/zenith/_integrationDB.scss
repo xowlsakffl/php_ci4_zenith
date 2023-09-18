@@ -172,11 +172,11 @@ div.dt-button-collection{padding:0;
     .export{display: none;}
     button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;         
         &:hover{font-weight: 900; background-color: var(--bs-gray-200);
-            span{text-indent: 2rem;
+            > span{text-indent: 1.5rem;
                 i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
             }            
         }
-        span{display: block; padding:0.3rem 0 0.3rem 0.5rem; transition: all 0.2s;}
+        span{display: block; padding:0.3rem 0 0.3rem 0.5rem; transition: all 0.4s;}
         span.dt-down-arrow{display:none;}
         &.active span{background-color: var(--bs-gray-300);
         } 
