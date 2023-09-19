@@ -732,6 +732,8 @@ function getCheckData(check){
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
             setReport(data.report);
+            setAccount(data.account);
+            setMediaAccount(data.media_accounts);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
