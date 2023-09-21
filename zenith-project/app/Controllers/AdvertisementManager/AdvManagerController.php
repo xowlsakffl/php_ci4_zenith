@@ -819,36 +819,73 @@ class AdvManagerController extends BaseController
 
     public function updateAdv()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
-            $data = $this->request->getRawInput();
-
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            //$data = $this->request->getRawInput();
+            $data = $this->request->getGet();
+            $result = false;
+            $facebookArray = [];
+            $googleArray = [];
+            $kakaoArray = [];
             foreach ($data['check'] as $id) {
                 $sliceId = explode("_", $id);
                 $media = $sliceId[0];
                 $advId = $sliceId[1];
-
+  
                 switch ($media) {
                     case 'facebook':
-                        
-                        
+                        $facebookArray[] = $advId;
                         break;
                     case 'kakao':
-                        
+                        $kakaoArray[] = $advId;
                         break;
                     case 'google':
-                        
+                        $googleArray[] = $advId;
                         break;
                     default:
                         return $this->fail("지원하지 않는 매체입니다.");
                 }
             }
 
-            if(!empty($result)){
-                $result['response'] = true;
-                return $this->respond($result);
-            }else{
-                return $this->fail("잘못된 요청");
+            if (!empty($facebookArray)) {
+                $this->facebook->setUpdatingByAds($facebookArray);
+
+                $zenith = new ZenithFB();
+                $updated = $zenith->setManualUpdate($facebookArray);
+
+                if(!empty($updated)){
+                    $result = true;
+                }else{
+                    return $this->fail("수동 업데이트 요청에 실패하였습니다.");
+                }
             }
+
+            if (!empty($googleArray)) {
+                $ids = $this->google->getCustomerByCampaignId($googleArray);
+                $this->google->setUpdatingByAds($googleArray);
+                $zenith = new ZenithGG();
+                $updated = $zenith->setManualUpdate($ids);
+
+                if(!empty($updated)){
+                    $result = true;
+                }else{
+                    return $this->fail("수동 업데이트 요청에 실패하였습니다.");
+                }
+            }
+
+            if (!empty($kakaoArray)) {
+                $ids = $this->kakao->getAccountByCampaignId($kakaoArray);
+                $this->kakao->setUpdatingByAds($ids);
+                $zenith = new ZenithKM();
+                $updated = $zenith->setManualUpdate($kakaoArray);
+                
+                if(!empty($updated)){
+                    $result = true;
+                }else{
+                    return $this->fail("수동 업데이트 요청에 실패하였습니다.");
+                }
+            }
+
+            return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
         }

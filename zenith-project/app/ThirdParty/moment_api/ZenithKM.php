@@ -907,6 +907,30 @@ class ZenithKM
         return $result;
     }
 
+    public function setManualUpdate($campaigns)
+    {
+        if(!$campaigns){return false;}
+        foreach ($campaigns as $campaign) {
+            $campaign = $this->getCampaign($campaignId);
+            dd($campaign);
+            if ($campaign['id'] && $campaign['config'] != 'DEL') {
+                if (isset($campaign['extras']) && $campaign['extras']['detailCode'] == '31001') {
+                    $delete = ['id' => $campaign['id'], 'config' => 'DEL'];
+                    $this->db->setCampaign($delete);
+                    continue;
+                }
+            } else if ($campaign['config'] == 'DEL') {
+                $delete = ['id' => $campaign['id'], 'config' => 'DEL'];
+                $this->db->setCampaign($delete);
+                continue;
+            }
+            $result = $this->db->updateCampaign($campaign);
+            if(!$result){return false;}
+        }
+
+        return true;
+    }
+
     public function landingGroup($title, $landingUrl = '')
     {
         if (empty($title)) return [];

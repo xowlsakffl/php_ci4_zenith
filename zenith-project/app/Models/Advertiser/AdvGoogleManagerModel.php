@@ -486,4 +486,26 @@ class AdvGoogleManagerModel extends Model
 
 		return $result;
 	}
+
+	public function getCustomerByCampaignId($campaignIds) {
+        $builder = $this->db->table('z_adwords.aw_campaign A');  
+		$builder->select('A.id, B.customerId, B.manageCustomer');
+		$builder->join('z_adwords.aw_ad_account B', 'A.customerId = B.customerId');
+		$builder->whereIn('A.id', $campaignIds);
+		$builder->groupBy('A.id');
+		$result = $builder->get()->getResultArray();
+
+		return $result;
+	}
+
+	public function setUpdatingByAds($campaignIds){
+		$this->db->transStart();
+		$builder_2 = $this->db->table('z_adwords.aw_campaign');
+		$builder_2->whereIn('id', $campaignIds);
+		$builder_2->set('is_updating', 1);
+		$result = $builder_2->update();
+		$result = $this->db->transComplete();
+
+		return $result;
+	}
 }

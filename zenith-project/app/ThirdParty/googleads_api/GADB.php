@@ -234,7 +234,7 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "INSERT INTO aw_ad(adgroupId, id, name, status, reviewStatus, approvalStatus, code, adType, mediaType, assets, imageUrl, finalUrl, create_time)
+		$sql = "INSERT INTO aw_ad(adgroupId, id, name, status, reviewStatus, approvalStatus, policyTopic, code, adType, mediaType, assets, imageUrl, finalUrl, create_time)
 				VALUES(
 					{$data['adgroupId']}, 
 					{$data['id']}, 
@@ -242,6 +242,7 @@ class GADB
 					{$data['status']}, 
 					{$data['reviewStatus']}, 
 					{$data['approvalStatus']}, 
+					{$data['policyTopic']}, 
 					{$data['code']}, 
 					{$data['adType']}, 
 					{$data['mediaType']}, 
@@ -255,6 +256,7 @@ class GADB
 					status = {$data['status']},
 					reviewStatus = {$data['reviewStatus']},
 					approvalStatus = {$data['approvalStatus']},
+					policyTopic = {$data['policyTopic']},
 					adType = {$data['adType']},
 					mediaType = {$data['mediaType']},
 					assets = {$data['assets']},

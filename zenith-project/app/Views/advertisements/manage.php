@@ -362,6 +362,13 @@ let loadData = false;
 
 getList();
 function setSearchData() {
+    tab = $('.tab-link.active').val();
+    if(tab == 'adsets' || tab == 'ads'){
+        $('#update_btn').hide();
+    }else{
+        $('#update_btn').show();
+    }
+
     var data = tableParam;
 
     if(typeof data.searchData == 'undefined') return;
@@ -930,16 +937,19 @@ function handleInput(tab, id, tmp_name, inputElement) {
 
 function setManualUpdate(data){
     $.ajax({
-        type: "put",
+        type: "get",
         url: "<?=base_url()?>/advertisements/set-adv",
         data: data,
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             if (data.response == true) {
-                
+                alert('수동 업데이트 완료');
             }
         },
+        complete: function () {
+			$('.fa-spinner').remove();
+		},
         error: function(error, status, msg) {
             alert("상태코드 " + status + "에러메시지" + msg);
         }
@@ -959,8 +969,8 @@ $('body').on('click', '#media_btn, #company_btn, #media_account_btn', function()
     dataTable.state.save();
     dataTable.draw();
 });
-
 $('body').on('click', '.tab-link', function() {
+    
     $('.tab-link').removeClass('active');
     $(this).addClass('active');
     debug('필터링 탭 클릭');
@@ -970,15 +980,21 @@ $('body').on('click', '.tab-link', function() {
 
 /*체크 항목 수동 업데이트*/
 $('body').on('click', '#update_btn', function() {
-    data = {
-        'ids' : tableParam.searchData.check,
-        'type' : tableParam.searchData.type
+    var checkedInputs = $('.check input[name=check01]:checked');
+    checkedInputs.each(function() {
+        var icon = $('<i>').addClass('fa fa-spinner fa-spin'); 
+        $(this).parent('label.check').before(icon);
+    });
+    var check = checkedInputs.map(function() { return $(this).val(); }).get();
+    var data = {
+        'check' : check,
     }
-    if(!data.ids.length){
+    if(!data.check.length){
         alert("업데이트 할 항목을 선택해주세요.");
 		return;
     }
-    //setManualUpdate(data);
+
+    setManualUpdate(data);
 });
 
 $('form[name="search-form"]').bind('submit', function() {
