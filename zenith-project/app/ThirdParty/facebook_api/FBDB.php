@@ -297,7 +297,8 @@ class FBDB extends Config
 						created_time = '{$created_time}',
 						updated_time = '{$updated_time}',
 						update_date = NOW()";
-            $this->db_query($sql);
+            $result = $this->db_query($sql);
+            if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE ad_id = '{$report['id']}'");
             if (!empty($report['recommendations'])) { //권고사항 정보 같이 저장
@@ -329,6 +330,7 @@ class FBDB extends Config
             }
             */
         }
+        return true;
     }
       
     public function updateAdsets($data)
@@ -340,10 +342,10 @@ class FBDB extends Config
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
             $name = $this->db->escape($report['name']);
-            if (isset($report['lifetime_budget'])) {
+            if ($report['lifetime_budget']) {
                 $budget_type = 'lifetime';
                 $budget = $report['lifetime_budget'];
-            } elseif (isset($report['daily_budget'])) {
+            } elseif ($report['daily_budget']) {
                 $budget_type = 'daily';
                 $budget = $report['daily_budget'];
             } else {
@@ -352,8 +354,8 @@ class FBDB extends Config
             }
 
             $lst_sig_edit_ts = '0000-00-00 00:00:00';
-            if(isset($report['learning_stage_info'])){
-                if(isset($report['learning_stage_info']['last_sig_edit_ts'])){
+            if($report['learning_stage_info']){
+                if($report['learning_stage_info']['last_sig_edit_ts']){
                     $lst_sig_edit_ts = date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']);
                 }
             }
@@ -401,7 +403,8 @@ class FBDB extends Config
                         created_time = '{$created_time}',
 						updated_time = '{$updated_time}',
 						update_date = NOW()";
-            $this->db_query($sql);
+            $result = $this->db_query($sql);
+            if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE adset_id = '{$report['id']}'");
             if (!empty($report['recommendations'])) { //권고사항 정보 같이 저장
@@ -433,6 +436,7 @@ class FBDB extends Config
             }
             */
         }
+        return true;
     }
       
     public function updateCampaigns($data)
@@ -445,15 +449,16 @@ class FBDB extends Config
             $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
-            $spend_cap = isset($report['spend_cap']) ? $report['spend_cap'] : 'NULL';
-            if (isset($report['lifetime_budget'])) {
+            $spend_cap = $report['spend_cap'] ? $report['spend_cap'] : 'NULL';
+            
+            if ($report['lifetime_budget']) {
                 $budget_type = 'lifetime';
                 $budget = $report['lifetime_budget'];
-            } elseif (isset($report['daily_budget'])) {
+            } elseif ($report['daily_budget']) {
                 $budget_type = 'daily';
                 $budget = $report['daily_budget'];
             } else {
-                $budget_type = NULL;
+                $budget_type = "";
                 $budget = 'NULL';
             }
 
@@ -507,7 +512,8 @@ class FBDB extends Config
 						updated_time = '{$updated_time}',
                         is_updating = 0,
 						update_date = NOW()";
-            $this->db_query($sql);
+            $result = $this->db_query($sql, true);
+            if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE campaign_id = '{$report['id']}'");
             if (!empty($report['recommendations'])) { //권고사항 정보 같이 저장
@@ -539,6 +545,7 @@ class FBDB extends Config
             }
             */
         }
+        return true;
     }
       
     public function insertAdLeads($data)

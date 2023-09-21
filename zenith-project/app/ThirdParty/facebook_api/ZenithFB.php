@@ -416,12 +416,16 @@ class ZenithFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
+            if(is_cli()){
+                CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고 데이터 수신을 시작합니다.", "light_red");
+            }
             foreach ($ids as $ad_id) {
                 $this->setAdId($ad_id);
                 $ads = $this->ad->getSelf([], $params);
                 $response = $ads->getData();
-                CLI::showProgress($step++, $total);
+                if(is_cli()){
+                    CLI::showProgress($step++, $total);
+                }
                 $result[] = [
                     'tracking_specs' => $response['tracking_specs'] ?? [],
                     'conversion_specs' => $response['conversion_specs'] ?? [],
@@ -432,11 +436,13 @@ class ZenithFB
                     'adset_id' => $response['adset_id'] ?? '',
                     'campaign_id' => $response['campaign_id'] ?? '',
                     'effective_status' => $response['effective_status'] ?? '',
+                    'status' => $response['status'] ?? '',
                     'fb_pixel' => $response['fb_pixel'] ?? '',
                 ];
             }
             $this->db->updateAds($result);
         }
+
         return $result;
     }
 
@@ -474,13 +480,17 @@ class ZenithFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
+            if(is_cli()){
+                CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고그룹 데이터 수신을 시작합니다.", "light_red");
+            }
             foreach ($ids as $adset_id) {
                 $this->setAdsetId($adset_id);
                 $adset = $this->adset->getSelf([], $params);
                 $response = $adset->getData();
                 // echo '<pre>'.print_r($response,1).'</pre>'; exit;
-                CLI::showProgress($step++, $total);
+                if(is_cli()){
+                    CLI::showProgress($step++, $total);
+                }
                 $result[] = [
                     'budget_remaining' => $response['budget_remaining'] ?? '',
                     'start_time' => $response['start_time'] ?? '',
@@ -537,12 +547,17 @@ class ZenithFB
             $ids = array_unique($_ids);
             $total = count($ids);
             $step = 1;
-            CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
+            if(is_cli()){
+                CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 캠페인 데이터 수신을 시작합니다.", "light_red");
+            }
             foreach ($ids as $campaign_id) {
                 $this->setCampaignId($campaign_id);
                 $campaign = $this->campaign->getSelf([], $params);
                 $response = $campaign->getData();
-                CLI::showProgress($step++, $total);
+                dd($this->campaign->getAdSets());
+                if(is_cli()){
+                    CLI::showProgress($step++, $total);
+                }
                 $result[] = [
                     'budget_remaining' => $response['budget_remaining'] ?? '',
                     'start_time' => $response['start_time'] ?? '',
@@ -561,8 +576,10 @@ class ZenithFB
                     'objective' => $response['objective'] ?? '',
                 ];
             }
+
             $this->db->updateCampaigns($result);
         }
+
         return $result;
     }
 
@@ -1065,6 +1082,162 @@ class ZenithFB
             return $apiResult;
         }
         return null;
+    }
+
+    public function setManualUpdate($campaignIds)
+    {
+        if(!$campaignIds){return false;}
+
+        $campaignParam = [
+            CampaignFields::ID,
+            CampaignFields::NAME,
+            CampaignFields::ACCOUNT_ID,
+            CampaignFields::DAILY_BUDGET,
+            CampaignFields::BUDGET_REMAINING,
+            CampaignFields::BUDGET_REBALANCE_FLAG,
+            CampaignFields::CAN_USE_SPEND_CAP,
+            CampaignFields::SPEND_CAP,
+            CampaignFields::OBJECTIVE,
+            CampaignFields::EFFECTIVE_STATUS,
+            //CampaignFields::RECOMMENDATIONS,
+            CampaignFields::STATUS,
+            CampaignFields::START_TIME,
+            CampaignFields::CREATED_TIME,
+            CampaignFields::UPDATED_TIME
+        ];
+
+        $adsetParam = [
+            AdSetFields::ID,
+            AdSetFields::NAME,
+            AdSetFields::CAMPAIGN_ID,
+            AdSetFields::EFFECTIVE_STATUS,
+            AdSetFields::STATUS,
+            AdSetFields::LEARNING_STAGE_INFO,
+            //AdSetFields::RECOMMENDATIONS,
+            AdSetFields::START_TIME,
+            AdSetFields::UPDATED_TIME,
+            AdSetFields::CREATED_TIME,
+            AdSetFields::DAILY_BUDGET,
+            AdSetFields::LIFETIME_BUDGET,
+            AdSetFields::BUDGET_REMAINING
+        ];
+
+        $adParam = [
+            AdFields::ID,
+            AdFields::NAME,
+            AdFields::ADSET_ID,
+            AdFields::EFFECTIVE_STATUS,
+            AdFields::STATUS,
+            //AdFields::RECOMMENDATIONS,
+            AdFields::UPDATED_TIME,
+            AdFields::CREATED_TIME,
+            AdFields::TRACKING_SPECS,
+            AdFields::CONVERSION_SPECS
+        ];
+
+        $adCreativeParams = [
+            'thumbnail_width' => 250,
+            'thumbnail_height' => 250,
+        ];
+
+        $adCreativeFields = [
+            AdCreativeFields::ID,
+            AdCreativeFields::BODY,
+            AdCreativeFields::OBJECT_TYPE,
+            AdCreativeFields::OBJECT_URL,
+            AdCreativeFields::THUMBNAIL_URL,
+            AdCreativeFields::IMAGE_FILE,
+            AdCreativeFields::IMAGE_URL,
+            AdCreativeFields::CALL_TO_ACTION_TYPE,
+            AdCreativeFields::OBJECT_STORY_SPEC
+        ];
+
+        $campaignResult = [];
+        foreach ($campaignIds as $campaignId) {
+            $this->setCampaignId($campaignId);
+            $campaign = $this->campaign->read($campaignParam);
+            $campaignResponse = $campaign->getData();
+            $campaignResult[] = [
+                'budget_remaining' => $campaignResponse['budget_remaining'] ?? '',
+                'start_time' => $campaignResponse['start_time'] ?? '',
+                'created_time' => $campaignResponse['created_time'] ?? '',
+                'updated_time' => $campaignResponse['updated_time'] ?? '',
+                'name' => $campaignResponse['name'] ?? '',
+                'can_use_spend_cap' => $campaignResponse['can_use_spend_cap'] ?? '',
+                'budget_rebalance_flag' => $campaignResponse['budget_rebalance_flag'] ?? '',
+                'spend_cap' => $campaignResponse['spend_cap'] ?? '',
+                'lifetime_budget' => $campaignResponse['lifetime_budget'] ?? '',
+                'daily_budget' => $campaignResponse['daily_budget'] ?? '',
+                'id' => $campaignResponse['id'] ?? '',
+                'account_id' => $campaignResponse['account_id'] ?? '',
+                'effective_status' => $campaignResponse['effective_status'] ?? '',
+                'status' => $campaignResponse['status'] ?? '',
+                'objective' => $campaignResponse['objective'] ?? '',
+            ];
+
+            $adsetResult = [];
+            $adsets = $this->campaign->getAdSets($adsetParam);
+            foreach ($adsets as $adset) {
+                $adsetResponse = $adset->getData();
+                $adsetResult[] = [
+                    'budget_remaining' => $adsetResponse['budget_remaining'] ?? '',
+                    'start_time' => $adsetResponse['start_time'] ?? '',
+                    'created_time' => $adsetResponse['created_time'] ?? '',
+                    'updated_time' => $adsetResponse['updated_time'] ?? '',
+                    'name' => $adsetResponse['name'] ?? '',
+                    'lifetime_budget' => $adsetResponse['lifetime_budget'] ?? '',
+                    'daily_budget' => $adsetResponse['daily_budget'] ?? '',
+                    'learning_stage_info' => $adsetResponse['learning_stage_info'] ?? [],
+                    'id' => $adsetResponse['id'] ?? '',
+                    'campaign_id' => $adsetResponse['campaign_id'] ?? '',
+                    'effective_status' => $adsetResponse['effective_status'] ?? '',
+                    'status' => $adsetResponse['status'] ?? '',
+                ];
+
+                $adResult = [];
+                $ads = $adset->getAds($adParam);
+                foreach ($ads as $ad) {
+                    $adResponse = $ad->getData();
+                    $adResult[] = [
+                        'tracking_specs' => $adResponse['tracking_specs'] ?? [],
+                        'conversion_specs' => $adResponse['conversion_specs'] ?? [],
+                        'created_time' => $adResponse['created_time'] ?? '',
+                        'updated_time' => $adResponse['updated_time'] ?? '',
+                        'name' => $adResponse['name'] ?? '',
+                        'id' => $adResponse['id'] ?? '',
+                        'adset_id' => $adResponse['adset_id'] ?? '',
+                        'campaign_id' => $adResponse['campaign_id'] ?? '',
+                        'effective_status' => $adResponse['effective_status'] ?? '',
+                        'status' => $adResponse['status'] ?? '',
+                        'fb_pixel' => $adResponse['fb_pixel'] ?? '',
+                    ];
+
+                    $adCreatives = $ad->getAdCreatives($adCreativeFields, $adCreativeParams);
+                    foreach ($adCreatives as $adCreative) {
+                        $acResponse = $adCreative->getData();
+                        $acResponse['ad_id'] = $adResponse['id'];
+                        $acResult[] = $acResponse;
+                    }
+                    $result = $this->updateAdcreatives(null, $acResult);
+                    if(!$result){
+                        return false;
+                    }
+                }
+                $result = $this->db->updateAds($adResult);
+                if(!$result){
+                    return false;
+                }
+            }
+            $result = $this->db->updateAdsets($adsetResult);
+            if(!$result){
+                return false;
+            }
+        }
+        $result = $this->db->updateCampaigns($campaignResult);
+        if(!$result){
+            return false;
+        }
+        return true;
     }
 
     public function landingGroup($title)

@@ -238,12 +238,16 @@ class ZenithGG
         return $data;
     }
       
-    public function getCampaigns($loginCustomerId = null, $customerId = null)
+    public function getCampaigns($loginCustomerId = null, $customerId = null, $campaignId = null)
     {
         self::setCustomerId($loginCustomerId);
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
         // Creates a query that retrieves all campaigns.
-        $query = 'SELECT customer.id, campaign.id, campaign.name, campaign.status, campaign.serving_status, campaign.start_date, campaign.end_date, campaign.advertising_channel_type, campaign.advertising_channel_sub_type, campaign.ad_serving_optimization_status, campaign.base_campaign, campaign_budget.id, campaign_budget.name, campaign_budget.reference_count, campaign_budget.status, campaign_budget.amount_micros, campaign_budget.delivery_method, campaign.target_cpa.target_cpa_micros, campaign.frequency_caps FROM campaign WHERE campaign.status IN ("ENABLED","PAUSED","REMOVED") ORDER BY campaign.start_date DESC ';
+        $query = 'SELECT customer.id, campaign.id, campaign.name, campaign.status, campaign.serving_status, campaign.start_date, campaign.end_date, campaign.advertising_channel_type, campaign.advertising_channel_sub_type, campaign.ad_serving_optimization_status, campaign.base_campaign, campaign_budget.id, campaign_budget.name, campaign_budget.reference_count, campaign_budget.status, campaign_budget.amount_micros, campaign_budget.delivery_method, campaign.target_cpa.target_cpa_micros, campaign.frequency_caps FROM campaign WHERE campaign.status IN ("ENABLED","PAUSED","REMOVED") ';
+        if($campaignId !== null){
+            $query .= "AND campaign.id = $campaignId";
+        }
+        $query .= " ORDER BY campaign.start_date DESC";
         $stream = $googleAdsServiceClient->searchStream($customerId, $query);
         $result = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
@@ -490,10 +494,11 @@ class ZenithGG
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
         if ($date == null)
             $date = date('Y-m-d');
-        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
+        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE segments.date = "' . $date . '" ';
         if ($adGroupId !== null) {
             $query .= " AND ad_group.id = $adGroupId";
         }
+
         //echo $query;
 
         $stream = $googleAdsServiceClient->searchStream($customerId, $query);
@@ -562,6 +567,7 @@ class ZenithGG
             if ($this->db->updateAd($data))
                 $result[] = $data;
         }
+        
         return $result;
     }
       
@@ -734,6 +740,31 @@ class ZenithGG
         }
     }
       
+    public function setManualUpdate($campaigns)
+    {
+        if(!$campaigns){return false;}
+        foreach ($campaigns as $campaign) {
+            $campaignResult = $this->getCampaigns($campaign['manageCustomer'], $campaign['customerId'], $campaign['id']);
+            if(!$campaignResult){
+                return false;
+            }
+
+            $adGroupResult = $this->getAdGroups($campaign['manageCustomer'], $campaign['customerId'], $campaign['id']);
+            if(!$adGroupResult){
+                return false;
+            }
+            
+            foreach ($adGroupResult as $adGroup) {
+                $adResult[] = $this->getAds($campaign['manageCustomer'], $campaign['customerId'], $adGroup['id']);
+                if(!$adResult){
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
     public function landingGroup($title)
     {
         if (empty($title)) return [];
