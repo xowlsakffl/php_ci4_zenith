@@ -447,9 +447,9 @@ class FBDB extends Config
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
             $name = $this->db->escape($report['name']);
-            $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
-            $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
-            $spend_cap = $report['spend_cap'] ? $report['spend_cap'] : 'NULL';
+            $can_use_spend_cap = isset($report['can_use_spend_cap']) ? $report['can_use_spend_cap'] : '0';
+            $budget_rebalance_flag = isset($report['budget_rebalance_flag']) ? $report['budget_rebalance_flag'] : '0';
+            $spend_cap = isset($report['spend_cap']) ? $report['spend_cap'] : 'NULL';
             
             if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
