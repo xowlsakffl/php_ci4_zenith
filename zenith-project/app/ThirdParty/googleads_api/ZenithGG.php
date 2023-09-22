@@ -280,7 +280,7 @@ class ZenithGG
         return $result;
     }
 
-    public function updateCampaign($customerId = null, $campaignId = null, $param)
+    public function updateCampaign($customerId = null, $campaignId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
@@ -334,7 +334,7 @@ class ZenithGG
         };
     }
 
-    public function updateCampaignBudget($customerId = null, $campaignId = null, $param)
+    public function updateCampaignBudget($customerId = null, $campaignId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
@@ -433,7 +433,7 @@ class ZenithGG
         return $result;
     }
 
-    public function updateAdGroup($customerId = null, $adsetId = null, $param)
+    public function updateAdGroup($customerId = null, $adsetId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
@@ -579,7 +579,7 @@ class ZenithGG
         return $result;
     }
       
-    public function updateAdGroupAd($customerId = null, $adGroupId = null, $adId = null, $param)
+    public function updateAdGroupAd($customerId = null, $adGroupId = null, $adId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
@@ -628,7 +628,7 @@ class ZenithGG
         };
     }
 
-    public function updateAd($customerId = null, $adGroupId = null, $adId = null, $param)
+    public function updateAd($customerId = null, $adGroupId = null, $adId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
         $account = $account->getRowArray();
