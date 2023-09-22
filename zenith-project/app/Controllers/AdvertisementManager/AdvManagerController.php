@@ -819,9 +819,8 @@ class AdvManagerController extends BaseController
 
     public function updateAdv()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
-            //$data = $this->request->getRawInput();
-            $data = $this->request->getGet();
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
             $result = false;
             $facebookArray = [];
             $googleArray = [];

@@ -937,7 +937,7 @@ function handleInput(tab, id, tmp_name, inputElement) {
 
 function setManualUpdate(data){
     $.ajax({
-        type: "get",
+        type: "put",
         url: "<?=base_url()?>/advertisements/set-adv",
         data: data,
         dataType: "json",
