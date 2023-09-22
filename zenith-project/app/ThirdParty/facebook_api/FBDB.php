@@ -354,7 +354,7 @@ class FBDB extends Config
             }
 
             $lst_sig_edit_ts = '0000-00-00 00:00:00';
-            if($report['learning_stage_info']){
+            if(!is_null($report['learning_stage_info'])){
                 if(!is_null($report['learning_stage_info']['last_sig_edit_ts'])){
                     $lst_sig_edit_ts = date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']);
                 }
