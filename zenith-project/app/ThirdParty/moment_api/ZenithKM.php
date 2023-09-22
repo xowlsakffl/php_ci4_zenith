@@ -911,21 +911,101 @@ class ZenithKM
     {
         if(!$campaigns){return false;}
         foreach ($campaigns as $campaign) {
-            $campaign = $this->getCampaign($campaignId);
-            dd($campaign);
-            if ($campaign['id'] && $campaign['config'] != 'DEL') {
-                if (isset($campaign['extras']) && $campaign['extras']['detailCode'] == '31001') {
-                    $delete = ['id' => $campaign['id'], 'config' => 'DEL'];
+            $campaignList = $this->getCampaign($campaign['id'], $campaign['ad_account_id']);
+            if ($campaignList['id'] && $campaignList['config'] != 'DEL') {
+                if (isset($campaignList['extras']) && $campaignList['extras']['detailCode'] == '31001') {
+                    $delete = ['id' => $campaignList['id'], 'config' => 'DEL'];
                     $this->db->setCampaign($delete);
                     continue;
                 }
-            } else if ($campaign['config'] == 'DEL') {
-                $delete = ['id' => $campaign['id'], 'config' => 'DEL'];
+            } else if ($campaignList['config'] == 'DEL') {
+                $delete = ['id' => $campaignList['id'], 'config' => 'DEL'];
                 $this->db->setCampaign($delete);
                 continue;
             }
-            $result = $this->db->updateCampaign($campaign);
+            $result = $this->db->updateCampaign($campaignList);
             if(!$result){return false;}
+            
+            $adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
+            if (isset($adGroupList['content']) && count($adGroupList['content'])) {
+                foreach ($adGroupList['content'] as $row) {
+                    if ($row['id'] && $row['config'] != 'DEL') {
+                        $adgroup = $this->getAdGroup($row['id']);
+                        if (isset($adgroup['extras']) && $adgroup['extras']['detailCode'] == '32026') {
+                            $delete = ['id' => $row['id'], 'config' => 'DEL'];
+                            $this->db->setAdgroup($delete);
+                            continue;
+                        }
+                        $adgroup['campaign_id'] = $adgroup['campaign']['id'];
+                        if(!isset($row['totalBudget']))
+                            $adgroup['totalBudget'] = null;
+                        if(!isset($row['useMaxAutoBidAmount']))
+                            $adgroup['useMaxAutoBidAmount'] = null;
+                        if(!isset($row['autoMaxBidAmount']))
+                            $adgroup['autoMaxBidAmount'] = null;
+                        if(!isset($row['pacing']))
+                            $adgroup['pacing'] = null;
+                        if(!isset($row['dailyBudgetAmount']))
+                            $adgroup['dailyBudgetAmount'] = null;
+                        if(!isset($row['statusDescription']))
+                            $adgroup['statusDescription'] = null;
+                        if(!isset($row['type']))
+                            $adgroup['type'] = null;
+                    } else if ($row['config'] == 'DEL') {
+                        $delete = ['id' => $row['id'], 'config' => 'DEL'];
+                        $this->db->setAdgroup($delete);
+                        continue;
+                    }
+
+                    $result = $this->db->updateAdGroup($adgroup);
+                    if(!$result){return false;}
+
+                    $creativeList = $this->getCreatives($adgroup['id'], $campaign['ad_account_id']);
+                    if (count($creativeList) > 0) {
+                        foreach ($creativeList as $lists) {                            
+                            foreach ($lists as $row) {
+                                if ($row['id'] && $row['config'] != 'DEL') {
+                                    $creative = $this->getCreative($row['id']);
+                                    if (isset($creative['extras']) && $creative['extras']['detailCode'] == '33003') {
+                                        $delete = ['id' => $row['id'], 'config' => 'DEL'];
+                                        $this->db->setCreative($delete);
+                                        continue;
+                                    }
+                                    $creative['adgroup_id'] = $creative['adGroupId'];
+                                    $creative['type'] = $row['type'] ?? '';
+                                    //landingUrl 필드 삭제 변경으로 인한 패치
+                                    if (isset($creative['pcLandingUrl']))
+                                        $creative['landingUrl'] = $creative['pcLandingUrl'];
+                                    if (isset($creative['mobileLandingUrl']))
+                                        $creative['landingUrl'] = $creative['mobileLandingUrl'];
+                                    if (isset($creative['rspvLandingUrl']))
+                                        $creative['landingUrl'] = $creative['rspvLandingUrl'];
+                                    if(!isset($row['bidAmount']))
+                                        $creative['bidAmount'] = null;
+                                    if(!isset($row['altText']))
+                                        $creative['altText'] = null;
+                                    if(!isset($row['hasExpandable']))
+                                        $creative['hasExpandable'] = 0;
+                                    if(!isset($row['frequencyCap']))
+                                        $creative['frequencyCap'] = null;
+                                    if(!isset($row['frequencyCapType']))
+                                        $creative['frequencyCapType'] = null;
+                                    if(!isset($row['reviewStatus']))
+                                        $creative['reviewStatus'] = null;
+                                    if(!isset($creative['landingUrl']))
+                                        $creative['landingUrl'] = null;
+                                } else if ($row['config'] == 'DEL') {
+                                    $delete = ['id' => $row['id'], 'config' => 'DEL'];
+                                    $this->db->setCreative($delete);
+                                    continue;
+                                }
+                                $result = $this->db->updateCreative($creative);
+                                if(!$result){return false;}
+                            }
+                        }
+                    }     
+                }
+            }
         }
 
         return true;

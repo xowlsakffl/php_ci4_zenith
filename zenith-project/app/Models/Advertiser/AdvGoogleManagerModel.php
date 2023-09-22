@@ -500,10 +500,10 @@ class AdvGoogleManagerModel extends Model
 
 	public function setUpdatingByAds($campaignIds){
 		$this->db->transStart();
-		$builder_2 = $this->db->table('z_adwords.aw_campaign');
-		$builder_2->whereIn('id', $campaignIds);
-		$builder_2->set('is_updating', 1);
-		$result = $builder_2->update();
+		$builder = $this->db->table('z_adwords.aw_campaign');
+		$builder->whereIn('id', $campaignIds);
+		$builder->set('is_updating', 1);
+		$builder->update();
 		$result = $this->db->transComplete();
 
 		return $result;

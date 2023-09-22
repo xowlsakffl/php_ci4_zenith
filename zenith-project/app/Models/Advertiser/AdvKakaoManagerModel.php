@@ -337,7 +337,7 @@ class AdvKakaoManagerModel extends Model
 	}
 
     public function getAccountByCampaignId($campaignIds) {
-        $builder = $this->db->table('z_moment.mm_campaign');  
+        $builder = $this->db->table('z_moment.mm_campaign A');  
 		$builder->select('id, ad_account_id');
 		$builder->whereIn('id', $campaignIds);
 		$builder->groupBy('id');
@@ -346,14 +346,12 @@ class AdvKakaoManagerModel extends Model
 		return $result;
 	}
 
-	public function setUpdatingByAds($ids){
-        $adAccountIds = array_column($ids, 'ad_account_id');
-        $adAccountIds = array_unique($adAccountIds);
+	public function setUpdatingByAds($campaignIds){
 		$this->db->transStart();
-		$builder_2 = $this->db->table('z_moment.mm_ad_account');
-		$builder_2->whereIn('id', $adAccountIds);
-		$builder_2->set('is_update', 1);
-		$result = $builder_2->update();
+		$builder = $this->db->table('z_moment.mm_campaign');
+		$builder->whereIn('id', $campaignIds);
+		$builder->set('is_updating', 1);
+		$builder->update();
 		$result = $this->db->transComplete();
 
 		return $result;

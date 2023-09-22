@@ -874,9 +874,9 @@ class AdvManagerController extends BaseController
 
             if (!empty($kakaoArray)) {
                 $ids = $this->kakao->getAccountByCampaignId($kakaoArray);
-                $this->kakao->setUpdatingByAds($ids);
+                $this->kakao->setUpdatingByAds($kakaoArray);
                 $zenith = new ZenithKM();
-                $updated = $zenith->setManualUpdate($kakaoArray);
+                $updated = $zenith->setManualUpdate($ids);
                 
                 if(!empty($updated)){
                     $result = true;
