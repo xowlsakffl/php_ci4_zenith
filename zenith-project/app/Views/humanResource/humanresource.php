@@ -6,9 +6,11 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<script>
-    console.log('header')
-</script>
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -28,15 +30,15 @@
             <div class="search-wrap">
                 <form class="search d-flex justify-content-center">
                     <div class="term d-flex align-items-center">
-                        <input type="text">
+                        <input type="text" name="sdate" id="sdate" readonly="readonly">
                         <button type="button"><i class="bi bi-calendar2-week"></i></button>
                         <span> ~ </span>
-                        <input type="text">
+                        <input type="text" name="edate" id="edate" readonly="readonly">
                         <button type="button"><i class="bi bi-calendar2-week"></i></button>
                     </div>
                     <div class="input">
-                        <input class="" type="text" placeholder="검색어를 입력하세요">
-                        <button class="btn-primary" type="submit">조회</button>
+                        <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
+                        <button class="btn-primary" id="search_btn" type="submit">조회</button>
                     </div>
                 </form>
             </div>
@@ -74,10 +76,10 @@
             <div class="search-wrap">
                 <form class="search d-flex justify-content-center">
                     <div class="term d-flex align-items-center">
-                        <input type="text">
+                        <input type="text" name="sdate" id="sdate" readonly="readonly">
                         <button type="button"><i class="bi bi-calendar2-week"></i></button>
                         <span> ~ </span>
-                        <input type="text">
+                        <input type="text" name="edate" id="edate" readonly="readonly">
                         <button type="button"><i class="bi bi-calendar2-week"></i></button>
                     </div>
                     <div class="input">
@@ -231,7 +233,56 @@
 
 <!--스크립트-->
 <?=$this->section('script');?>
-<script></script>
+<script>
+
+setDate();
+
+function setDate(){
+    $('#sdate, #edate').daterangepicker({
+        locale: {
+                "format": 'YYYY-MM-DD',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        alwaysShowCalendars: true,                        // 시간 노출 여부
+        showDropdowns: true,                     // 년월 수동 설정 여부
+        autoApply: true,                         // 확인/취소 버튼 사용여부
+        maxDate: new Date(),
+        autoUpdateInput: false,
+        ranges: {
+            '오늘': [moment(), moment()],
+            '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            '지난 일주일': [moment().subtract(6, 'days'), moment()],
+            '지난 한달': [moment().subtract(29, 'days'), moment()],
+            '이번달': [moment().startOf('month'), moment().endOf('month')],
+        }
+    }, function(start, end, label) {
+        // Lets update the fields manually this event fires on selection of range
+        startDate = start.format('YYYY-MM-DD'); // selected start
+        endDate = end.format('YYYY-MM-DD'); // selected end
+
+        $checkinInput = $('#sdate');
+        $checkoutInput = $('#edate');
+
+        // Updating Fields with selected dates
+        $checkinInput.val(startDate);
+        $checkoutInput.val(endDate);
+
+        // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
+        var checkOutPicker = $checkoutInput.data('daterangepicker');
+        checkOutPicker.setStartDate(startDate);
+        checkOutPicker.setEndDate(endDate);
+
+        // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
+        var checkInPicker = $checkinInput.data('daterangepicker');
+        checkInPicker.setStartDate($checkinInput.val(startDate));
+        checkInPicker.setEndDate(endDate);
+    
+    });
+}
+</script>
 <?=$this->endSection();?>
 
 <!--푸터-->
