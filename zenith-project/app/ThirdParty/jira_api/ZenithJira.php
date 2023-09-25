@@ -12,7 +12,7 @@ class ZenithJira
 {
     //jira api 패키지
     private $iss;
-    private $accessToken = "ATATT3xFfGF0WjczkQJ84WzpV7y2Q9rogxee-uxUMYHMOitNzWjOcgPHLDEDlde16y4oumZRZw4izgkF8v__Tr7zjvfx_4jAXNnnnrPtq5umTf8nmWbMXqRTfuiKA-pmFsRIdDH4aHTzQz2ySXPggG1ud9u33N8y463gNVUzbkjm_ns8PP9nA0s=3F1DC5CB";
+    private $accessToken = "ATATT3xFfGF0VyX1V8f8LBfvLor56_m4j5YwjzThpLImqjCU2GP5kN9h50TxGAF2Eyzp17kNNxTHsRP5ECZkI1idb5cYRuqueGHtt3SBS6xvsMr-XQAFwxcoDeyooYA6jP6ipoC8t-mCgdUn48P-xRjN_unPTY4cZBa7lo_tOSW4k4LfUDGi2Cw=75FDE1D8";
     private $jiraHost = "https://carelabs-dm.atlassian.net";
 
     //jira rest api
@@ -75,6 +75,25 @@ class ZenithJira
             $issue = $issueService->get('TEST-867', $queryParam);
             
             dd($issue);
+        } catch (JiraException $e) {
+            print_r("에러 발생 : ".$e->getMessage());
+        }
+    }
+
+    public function getComments()
+    {
+        try {
+            $issueService = new IssueService();
+    
+            $param = [
+                'startAt' => 0, 
+                'maxResults' => 3,
+                'expand' => 'renderedBody',
+            ];
+        
+            $comments = $issueService->getComments('TEST-867', $param);
+            
+            dd($comments);
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
