@@ -150,12 +150,20 @@ function setSearchData() { //state 에 저장된 내역으로 필터 active 세�
     var data = tableParam;
     $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData == 'undefined') return;
-    data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
-    data.searchData.media.split('|').map(function(txt){ $(`#media-list button[value="${txt}"]`).addClass('active'); });
-    data.searchData.event.split('|').map(function(txt){ $(`#event-list button[value="${txt}"]`).addClass('active'); });
-    data.searchData.status.split('|').map(function(txt){
-        $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
-    });
+    if(typeof data.searchData.advertiser != 'undefined') {
+        data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
+    }
+    if(typeof data.searchData.media != 'undefined') {
+        data.searchData.media.split('|').map(function(txt){ $(`#media-list button[value="${txt}"]`).addClass('active'); });
+    }
+    if(typeof data.searchData.event != 'undefined') {
+        data.searchData.event.split('|').map(function(txt){ $(`#event-list button[value="${txt}"]`).addClass('active'); });
+    }
+    if(typeof data.searchData.status != 'undefined') {
+        data.searchData.status.split('|').map(function(txt){
+            $('.statusCount dt:contains("'+txt+'")').filter(function() { return $(this).text() === txt;}).parent().addClass('active');
+        });
+    }
     
     //$('#sdate').val(data.searchData.sdate);
     //$('#edate').val(data.searchData.edate);
@@ -226,6 +234,7 @@ function getList(data = []) { //리스트 세팅
             debug('state 로드')
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
+            if(typeof tableParam.searchData == 'undefined') tableParam.searchData = [];
             tableParam.searchData.sdate = today;
             tableParam.searchData.edate = today;
             setSearchData();
