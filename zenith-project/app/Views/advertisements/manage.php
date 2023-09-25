@@ -943,8 +943,10 @@ function setManualUpdate(data){
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
-            if (data.response == true) {
+            if (data == true) {
                 alert('수동 업데이트 완료');
+            }else{
+                alert('수동 업데이트 실패');
             }
         },
         complete: function () {

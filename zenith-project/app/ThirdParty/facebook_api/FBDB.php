@@ -155,7 +155,7 @@ class FBDB extends Config
             $updateTime = ['update_date' => new RawSql('NOW()')];
             $builder->updateFields($updateTime, true);
             $result = $builder->upsert();
-
+            
             // 캠페인 저장
             $data = [
                 'campaign_id' => $report['campaign_id'],
@@ -167,6 +167,7 @@ class FBDB extends Config
             $updateTime = ['update_date' => new RawSql('NOW()')];
             $builder->updateFields($updateTime, true);
             $result = $builder->upsert();
+            
             // 광고세트 저장
             $data = [
                 'adset_id' => $report['adset_id'],
@@ -392,7 +393,7 @@ class FBDB extends Config
                     ) ON DUPLICATE KEY UPDATE
 						adset_name = {$name},
 						budget_type = '{$budget_type}',
-						budget = {$budget},
+						budget = '{$budget}',
 						budget_remaining = {$report['budget_remaining']},
 						effective_status = '{$report['effective_status']}',
 						status = '{$report['status']}',
@@ -403,7 +404,7 @@ class FBDB extends Config
                         created_time = '{$created_time}',
 						updated_time = '{$updated_time}',
 						update_date = NOW()";
-            $result = $this->db_query($sql);
+            $result = $this->db_query($sql, true);
             if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE adset_id = '{$report['id']}'");
@@ -486,11 +487,11 @@ class FBDB extends Config
                         '{$report['effective_status']}',
                         '{$report['status']}',
                         '{$budget_type}',
-                        {$budget},
+                        '{$budget}',
                         {$report['budget_remaining']},
                         {$budget_rebalance_flag},
                         '{$can_use_spend_cap}',
-                        {$spend_cap},
+                        '{$spend_cap}',
                         '{$report['objective']}',
                         '{$start_time}',
                         '{$created_time}',
@@ -499,11 +500,11 @@ class FBDB extends Config
                     ) ON DUPLICATE KEY UPDATE
 						campaign_name = {$name},
                         budget_type = '{$budget_type}',
-                        budget = {$budget},
+                        budget = '{$budget}',
                         budget_remaining = {$report['budget_remaining']},
-                        budget_rebalance_flag = {$budget_rebalance_flag},
+                        budget_rebalance_flag = '{$budget_rebalance_flag}',
 						can_use_spend_cap = '{$can_use_spend_cap}',
-						spend_cap = {$spend_cap},
+						spend_cap = '{$spend_cap}',
 						objective = '{$report['objective']}',
 						effective_status = '{$report['effective_status']}',
 						status = '{$report['status']}',

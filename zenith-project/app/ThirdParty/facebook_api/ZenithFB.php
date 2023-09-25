@@ -35,8 +35,8 @@ class ZenithFB
 {
     private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
     private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
-    private $access_token = 'EAAKNGLMV4o4BAGjK3GVBlpZBsjYYQjrfLzt22KAoJO5Jpbw4upgVLFkOykdZCJsyNq1k5btTJ3IHzpgrnRzVL3lO1xoxqbnpZBvxhbqoiMZAT0ifXnArBNIaBHZBHrivs8Lcoc0ew3w9CUNJZCiuANnAEFVF0hQTRzq9mucDLxVN5dtFXMO9VUrf0O1sxwQID4BXn0IVYZB8zKSPQHNgT4Md6H8zLiiBekZD';
-    private $longLivedAccessToken = 'EAAKNGLMV4o4BADZChadpn1dG23KqHguUAU1osVFqCyKG96Ob421uhFLQZA7E59MlhXX7nbfABLhKOkuBuHtm8drjgVmN4AFinQIKKnBM63Pn2qwJuephE15OLRzJnE3aCYv3YpiIV8MVxYrygHPSX7tZBXRapZCs43gfAvoLc5FhjkJ1rdKq';
+    private $access_token = 'EAAKNGLMV4o4BOwsm2HN5fK8UXl7ujZBZBSuFAwGDZCQSNL70wLYRHh9YeyQrjJf4TdMZCMZAjuD4iiKl5UyE8LKRsZAZAOvcin4FKjjOI2VYvnJ5WkHJwyWr9ZBCl3aWQcnJy6M0PLxiD6bba8Ao2nVZBTeAbfiAlZAa98QLMvoZC3ny2b7ZBPpDxYX20EQn0zrHwX4tXbn9JcIP0DFQgaJMAZCyJzrzS8PoDPZCoZD';
+    private $longLivedAccessToken = 'EAAKNGLMV4o4BO9TZBwhZCPsTCz2N39rgNaxagnHy7EZBZBI44SG1MZCwbI9WbnmoY6K848H58QvAGvmg1WuVlTuSJvhsaE0hbGUOLhNF6cZAUkcfffIrwjM8fbagU4Y0bCIb8wp9SYXpzRvcEVlWQn9ItqRmaZCZCBOgpvMZBJrOe1O9lOqKPZCw2ZAYovwIqpDfZAvf';
     private $db;
     private $fb;
     private $business_id_list = [
@@ -78,7 +78,6 @@ class ZenithFB
     public function getLongLivedAccessToken()
     {
         try { //EAAEhoHjMl7gBAJVuAZCygZCHp11NFWNmf6Hng4KSCDBZCEakZC7yEkZAnAkqvXw9wSAqWX3Qg20r0rzoQORglAp1RMNdqHEeQ4Gy1GZCBlVaDIwvI4BiQzBNavFDRWk49adliwGauowZCc6j3DoMKyDuenoSa0iBVHh9t2hMJ35Pfd8Y1XcHRBy
-            // 주석된 부분이 토큰을 연장하는 부분
             $oAuth2Client = $this->fb->getOAuth2Client();
             $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($this->access_token);
             $this->access_token = $longLivedAccessToken;

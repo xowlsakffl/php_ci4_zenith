@@ -821,6 +821,7 @@ class AdvManagerController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $data = $this->request->getRawInput();
+            //$data = $this->request->getGet();
             $result = false;
             $facebookArray = [];
             $googleArray = [];
