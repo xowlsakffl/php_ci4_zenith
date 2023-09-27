@@ -12,6 +12,20 @@ class AutomationModel extends Model
         $this->zenith = \Config\Database::connect();
     }
 
+    public function getAutomations()
+    {
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('aa.seq, aas.idx as aas_idx, aas.exec_type, aas.type_value, DATE_FORMAT(aas.exec_time, "%H:%i") as exec_time, DATE_FORMAT(aas.ignore_start_time, "%H:%i") as ignore_start_time, DATE_FORMAT(aas.ignore_end_time, "%H:%i") as ignore_end_time, aas.exec_week, aas.month_type, aas.month_day, aas.month_week, aas.reg_datetime as aas_reg_datetime, aar.seq as aar_seq, aar.exec_timestamp');
+        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
+        $builder->join('aa_conditions aac', 'aac.idx = aa.seq', 'left');
+        $builder->join('aa_executions aae', 'aae.idx = aa.seq', 'left');
+        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+    
     public function createAutomation($data)
     {
         $this->zenith->transStart();
@@ -24,10 +38,10 @@ class AutomationModel extends Model
 
     public function createAutomationSchedule($data)
     {
-        $this->zenith->transStart();
+        //$this->zenith->transStart();
         $builder = $this->zenith->table('aa_schedule');
-        $builder->insert($data);
-        $result = $this->zenith->transComplete();
+        $result = $builder->insert($data);
+        //$result = $this->zenith->transComplete();
         return $result;
     }
 

@@ -39,5 +39,7 @@ class Tasks extends BaseConfig
         $schedule->command('GwCron')->cron('0 11-19 * * *')->named('gw');
 
         $schedule->command('todayDayOff')->cron('0 9-19 * * *')->named('sendSlackForDayOff');
+
+        $schedule->command('Automation')->everyMinute(1)->named('aaCheck');
     }
 }
