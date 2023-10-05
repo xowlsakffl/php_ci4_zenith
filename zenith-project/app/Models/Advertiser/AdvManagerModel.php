@@ -131,12 +131,11 @@ class AdvManagerModel extends Model
             } else {
                 $unionBuilder = $builder;
             }
-            
         }
 
         if ($unionBuilder) {
             $resultQuery = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
-
+            
             if($type == 'getAccounts'){   
                 $resultQuery->groupBy('adv.company_id');
                 $resultQuery->orderBy('adv.company_name', 'asc');

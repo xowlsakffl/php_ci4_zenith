@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             if(empty($arg['searchData']['media'])){
@@ -236,7 +236,7 @@ class AdvManagerController extends BaseController
         $result = $this->admanager->getReport($arg);
         $columnIndex = 0;
         $data = [];
-
+        
         foreach($result as $row) {
             $data[] = $row;
             foreach ($row as $col => $val) {
@@ -245,7 +245,7 @@ class AdvManagerController extends BaseController
             }
             $columnIndex++;
         }
-
+        
         $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] =$report['cpc'] = 0;
 
         if(!empty($result)){

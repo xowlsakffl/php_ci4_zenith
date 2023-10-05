@@ -58,9 +58,8 @@ class Automation extends BaseCommand
      */
     public function run(array $params)
     {
-        $currentDate = new DateTime();
         $automation = new AutomationController;
-        $checkSchedule = $automation->checkAutomationSchedule($currentDate);
+        $checkSchedule = $automation->checkAutomationSchedule();
         dd($checkSchedule);
     }
 }
