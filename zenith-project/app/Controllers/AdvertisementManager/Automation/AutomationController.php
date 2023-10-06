@@ -7,6 +7,7 @@ use App\Models\Advertiser\AutomationModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\I18n\Time;
 use DateTime;
+use Exception;
 
 class AutomationController extends BaseController
 {
@@ -284,7 +285,7 @@ class AutomationController extends BaseController
     public function checkAutomationSchedule()
     {
         $automations = $this->automation->getAutomations();
-        $execArray = [];
+        $matchedArray = [];
         foreach ($automations as $automation) {
             if(empty($automation['aas_idx'])){continue;}
             $lastExecTime = $automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime'];
@@ -314,7 +315,7 @@ class AutomationController extends BaseController
                         $diffTime = $diffTime->getMinutes();
                     }
                     if($diffTime >= $automation['aas_type_value']){
-                        $execArray[] = $automation;
+                        $matchedArray[] = $automation;
                         continue;
                     }
                 }
@@ -324,7 +325,7 @@ class AutomationController extends BaseController
                     $diffTime = $lastExecTime->difference($currentDate);
                     $diffTime = $diffTime->getDays();
                     if($diffTime >= $automation['aas_type_value'] && $currentTime === $automation['aas_exec_time']){
-                        $execArray[] = $automation;
+                        $matchedArray[] = $automation;
                         continue;
                     }
                 }
@@ -335,7 +336,7 @@ class AutomationController extends BaseController
                     $diffTime = $diffTime->getWeeks();
                     $currentDoW = $currentDate->dayOfWeek;
                     if($diffTime >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $currentTime === $automation['aas_exec_time']){
-                        $execArray[] = $automation;
+                        $matchedArray[] = $automation;
                         continue;
                     }
                 }
@@ -348,13 +349,13 @@ class AutomationController extends BaseController
                     $currentDay = $currentDate->getDay();
                     if($automation['aas_month_type'] === 'start_day'){
                         if($diffTime >= $automation['aas_type_value'] && $currentDay === '1' && $currentTime === $automation['aas_exec_time']){
-                            $execArray[] = $automation;
+                            $matchedArray[] = $automation;
                             continue;
                         }
                     }else if($automation['aas_month_type'] === 'end_day'){
                         $currentMonthLastDay = $currentDate->format('t');      
                         if($diffTime >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $currentTime === $automation['aas_exec_time']){
-                            $execArray[] = $automation;
+                            $matchedArray[] = $automation;
                             continue;
                         }
                     }else if($automation['aas_month_type'] === 'first'){
@@ -363,7 +364,7 @@ class AutomationController extends BaseController
                             $firstDayMonth = $firstDayMonth->addDays(1);
                         }
                         if($diffTime >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                            $execArray[] = $automation;
+                            $matchedArray[] = $automation;
                             continue;
                         }
                     }else if($automation['aas_month_type'] === 'last'){
@@ -372,12 +373,12 @@ class AutomationController extends BaseController
                             $lastDayMonth = $lastDayMonth->subDays(1);
                         }
                         if($diffTime >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                            $execArray[] = $automation;
+                            $matchedArray[] = $automation;
                             continue;
                         }
                     }else if($automation['aas_month_type'] === 'day'){
                         if($diffTime >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $currentTime === $automation['aas_exec_time']){
-                            $execArray[] = $automation;
+                            $matchedArray[] = $automation;
                             continue;
                         }
                     }
@@ -385,13 +386,13 @@ class AutomationController extends BaseController
             }
         }
 
-        return $execArray;
+        return $matchedArray;
     }
 
     public function getAutomationTarget($automations)
     {
         if(empty($automations)){return false;}
-        $execArray = [];
+        $matchedArray = [];
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         foreach ($automations as $automation) {
@@ -401,34 +402,67 @@ class AutomationController extends BaseController
                     $data = $this->automation->$methodName($automation);
                     $data = $this->setData($data);
                     $data['aa_seq'] = $automation['aa_seq'];
-                    $execArray[] = $data;
+                    $matchedArray[] = $data;
                 }
             }
         }
 
-        return $execArray;
+        return $matchedArray;
     }
 
     public function checkAutomationCondition($targets)
     {
         if(empty($targets)){return false;}
+        $matchedArray = [];
+        $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
         foreach ($targets as $target) {
+            d($target);
             $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
-            dd($conditions);
-            /* switch ($conditions['type']) {
-                case 'status':
-                    if($target['status'] === $conditions['type_value']){
-                        
-                    }else{
-                        continue;
+            $isTargetMatched = false;
+            foreach ($conditions as $condition) {
+                $conditionMatched = false;       
+                if ($condition['type'] === 'status') {//status 비교
+                    if ($target['status'] == $condition['type_value']) {
+                        $conditionMatched = true;
                     }
-                    break;
-                
-                default:
-                    
-                    break;
-            } */
+                }else{//그 외 필드 비교
+                    foreach ($types as $type) {
+                        if ($condition['type'] === $type) {
+                            $conditionMatched = $this->compareType($target[$type], $condition);
+                            break;
+                        }
+                    }
+                }
+
+                switch($condition['operation']) { 
+                    case "and":  
+                        // AND 하나라도 일치하지 않으면 전부 false 처리
+                        if (!$conditionMatched) {
+                            $isTargetMatched = false;
+                        }
+                        break; 
+        
+                    case "or":
+                         // OR 하나 이상 일치하면 true 처리
+                         if ($conditionMatched) {
+                            $isTargetMatched = true;
+                         }
+                         break;
+        
+                     default:
+                        
+                 }
+                 d($isTargetMatched);
+            }
+            
+            if($isTargetMatched){
+                $matchedArray[] = $target;
+            }
+            dd($matchedArray);
+            
         }
+        //dd($matchedArray);
+        
     }
 
     public function execAutomation()
@@ -441,7 +475,7 @@ class AutomationController extends BaseController
     private function setData($data)
     {
         $formatData = [];
-        $formatData['budget'] = $formatData['impressions'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = $formatData['cpc'] = $formatData['ctr'] = $formatData['cpa'] = $formatData['cvr']= $formatData['margin_ratio'] = 0;
+        $formatData['budget'] = $formatData['impression'] = $formatData['click'] = $formatData['cost'] = $formatData['sale'] = $formatData['dbcount'] = $formatData['margin'] = $formatData['cpc'] = $formatData['ctr'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
         foreach ($data as $d) {
             if(isset($d['status']) && in_array($d['status'], ['ON', '1', 'ACTIVE', 'ENABLED'])){
                 $formatData['status'] = 'ON';
@@ -450,42 +484,62 @@ class AutomationController extends BaseController
             }
             
             $formatData['budget'] += $d['budget'];
-            $formatData['impressions'] += $d['impressions'];
+            $formatData['impression'] += $d['impressions'];
             $formatData['click'] += $d['click'];
-            $formatData['spend'] += $d['spend'];
-            $formatData['sales'] += $d['sales'];
-            $formatData['unique_total'] += $d['unique_total'];
+            $formatData['cost'] += $d['spend'];
+            $formatData['sale'] += $d['sales'];
+            $formatData['dbcount'] += $d['unique_total'];
             $formatData['margin'] += $d['margin'];
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
             if($formatData['click'] > 0){
-                $formatData['cpc'] = $formatData['spend'] / $formatData['click'];
+                $formatData['cpc'] = round($formatData['cost'] / $formatData['click']);
             }
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
             
-            if($formatData['impressions'] > 0){
-                $formatData['ctr'] = ($formatData['click'] / $formatData['impressions']) * 100;
+            if($formatData['impression'] > 0){
+                $formatData['ctr'] = ($formatData['click'] / $formatData['impression']) * 100;
             }
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
-            if($formatData['unique_total'] > 0){
-                $formatData['cpa'] = $formatData['spend'] / $formatData['unique_total'];
+            if($formatData['dbcount'] > 0){
+                $formatData['dbcost'] = round($formatData['cost'] / $formatData['dbcount']);
             }
 
             //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
             if ($formatData['click'] > 0) {
-                $formatData['cvr'] = ($formatData['unique_total'] / $formatData['click']) * 100;
+                $formatData['conversion'] = ($formatData['dbcount'] / $formatData['click']) * 100;
             }
 
             //수익률 = (수익/매출액)*100
-            if ($formatData['sales'] > 0) {
-                $formatData['margin_ratio'] = ($formatData['margin'] / $formatData['sales']) * 100;
+            if ($formatData['sale'] > 0) {
+                $formatData['margin_rate'] = round(($formatData['margin'] / $formatData['sale']) * 100);
             } else {
-                $formatData['margin_ratio'] = 0;
+                $formatData['margin_rate'] = 0;
             } 
         }
 
         return $formatData;
+    }
+
+    private function compareType($type, $condition)
+    {
+        switch ($condition['compare']) {
+            case 'less':
+                return $type < $condition['type_value'];
+            case 'greater':
+                return $type > $condition['type_value'];
+            case 'less_equal':
+                return $type <= $condition['type_value'];
+            case 'greater_equal':
+                return $type >= $condition['type_value'];
+            case 'equal':
+                return $type == $condition['type_value'];
+            case 'not_equal':
+                return $type != $condition['type_value'];
+            default:
+                return false;
+        }
     }
 }
