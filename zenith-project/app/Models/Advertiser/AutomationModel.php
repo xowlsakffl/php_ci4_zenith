@@ -28,19 +28,29 @@ class AutomationModel extends Model
         aas.month_day as aas_month_day, 
         aas.month_week as aas_month_week, 
         aas.reg_datetime as aas_reg_datetime, 
-        aat.idx as aat_idx,
-        aat.type as aat_type,
-        aat.media as aat_media,
-        aat.id as aat_id,
-        aar.seq as aar_seq, 
         aar.exec_timestamp as aar_exec_timestamp
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
-        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
-        $builder->join('aa_conditions aac', 'aac.idx = aa.seq', 'left');
-        $builder->join('aa_executions aae', 'aae.idx = aa.seq', 'left');
         $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+        //가장 최근 날짜 reg_datetime
         $builder->groupBy('aa.seq');
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getTargets($aaSeqs)
+    {   
+        $builder = $this->zenith->table('aa_target as aat');
+        $builder->select('
+        aa.seq as aa_seq,
+        aat.idx as aat_idx,
+        aat.type as aat_type,
+        aat.media as aat_media,
+        aat.id as aat_id
+        ');
+        $builder->join('admanager_automation aa', 'aat.idx = aa.seq');
+        $builder->whereIn('aat.idx', $aaSeqs);
         $result = $builder->get()->getResultArray();
 
         return $result;
@@ -322,6 +332,25 @@ class AutomationModel extends Model
         return $result;
     }
     
+    public function getExecutions($aaSeqs)
+    {   
+        $builder = $this->zenith->table('aa_executions as aae');
+        $builder->select('
+        aa.seq as aa_seq,
+        aae.order as aae_order,
+        aae.media as aae_media,
+        aae.type as aae_type,
+        aae.id as aae_id,
+        aae.exec_type as aae_exec_type,
+        aae.exec_value as aae_exec_value,
+        ');
+        $builder->join('admanager_automation aa', 'aae.idx = aa.seq');
+        $builder->whereIn('aae.idx', $aaSeqs);
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
     public function createAutomation($data)
     {
         $this->zenith->transStart();
