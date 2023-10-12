@@ -570,4 +570,15 @@ class AutomationModel extends Model
         $result = $this->zenith->transComplete();
         return $result;
     }
+
+    public function setAutomationStatus($data)
+    {
+        $this->zenith->transStart();
+        $builder = $this->zenith->table('admanager_automation');
+        $builder->set('status', $data['status']);
+        $builder->where('seq', $data['seq']);
+        $builder->update();
+        $result = $this->zenith->transComplete();
+        return $result;
+    }
 }

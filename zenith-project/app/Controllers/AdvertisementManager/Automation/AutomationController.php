@@ -28,7 +28,7 @@ class AutomationController extends BaseController
     
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomationList($arg);
             $result = [
@@ -37,6 +37,22 @@ class AutomationController extends BaseController
                 'recordsFiltered' => $result['allCount'],
                 'draw' => intval($arg['draw']),
             ];
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function setStatus()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+            $arg = $this->request->getRawInput();
+            $data = [
+                'seq' => $arg['seq'],
+				'status' => $arg['status'],
+            ];
+            $result = $this->automation->setAutomationStatus($data);
 
             return $this->respond($result);
         }else{
