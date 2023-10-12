@@ -25,6 +25,24 @@ class AutomationController extends BaseController
     {
         return view('automation/automation');
     }
+    
+    public function getList()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->automation->getAutomationList($arg);
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($arg['draw']),
+            ];
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
 
     public function createAutomation()
     {

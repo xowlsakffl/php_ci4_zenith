@@ -12,6 +12,56 @@ class AutomationModel extends Model
         $this->zenith = \Config\Database::connect();
     }
 
+    public function getAutomationList($data)
+    {
+        $srch = $data['searchData'];
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('
+        aa.seq as aa_seq, 
+        aa.subject as aa_subject,
+        aa.description as aa_description,
+        aa.status as aa_status,
+        aa.mod_datetime as aa_mod_datetime, 
+        aar.exec_timestamp as aar_exec_timestamp
+        ');
+        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+
+        if(!empty($srch['sdate']) && !empty($srch['edate'])){
+            $builder->where('DATE(aa.mod_datetime) >=', $srch['sdate']);
+            $builder->where('DATE(aa.mod_datetime) <=', $srch['edate']);
+        }
+
+        if(!empty($srch['stx'])){
+            $builder->groupStart();
+            $builder->like('aa.subject', $srch['stx']);
+            $builder->orLike('aa.description', $srch['stx']);
+            $builder->groupEnd();
+        }
+
+        $builder->groupBy('aa.seq');
+        // limit 적용하지 않은 쿼리
+        $builderNoLimit = clone $builder;
+
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "aa.seq DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+    }
+
     public function getAutomations()
     {
         $builder = $this->zenith->table('admanager_automation aa');

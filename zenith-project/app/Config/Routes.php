@@ -123,6 +123,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     //자동화
     $routes->group('automation', static function($routes){ 
         $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
+        $routes->get('list', 'AdvertisementManager\Automation\AutomationController::getList');
         $routes->post('create', 'AdvertisementManager\Automation\AutomationController::createAutomation');
         $routes->post('create-schedule', 'AdvertisementManager\Automation\AutomationController::createAutomationSchedule');
         $routes->post('create-target', 'AdvertisementManager\Automation\AutomationController::createAutomationTarget');

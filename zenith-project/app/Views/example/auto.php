@@ -199,8 +199,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="step">
                         <ol class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="tab-link" type="button" id="home-tab"  data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false"><strong>일정</strong></button>
+                            <li class="tab-link" role="presentation" type="button" id="home-tab"  data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false">
+                                <strong>일정</strong>
                                 
                                 <p>매 2시간 마다<br>
                                 매일 00시 30분[7일 마다 7시 정각에]<br>
@@ -208,22 +208,22 @@
                                 매월 [첫번째 날, 마지막 날] 09시 30분에
                                 ...</p>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="tab-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false"><strong>대상</strong></button>
+                            <li class="tab-link" role="presentation" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+                                <strong>대상</strong>
                              
                                 <p>광고주<br>
                                 페이스북<br>
                                 [전국]상상의원_광고주랜딩*
                                 ...</p>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="tab-link"  id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false"><strong>조건</strong></button>
+                            <li class="tab-link" role="presentation" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                                <strong>조건</strong>
                                 <p>지출액 - 100,000원 초과<br>
                                 AND<br>
                                 유효DB - 100건 이하</p>
                             </li>
-                            <li class="nav-item active" role="presentation">
-                                <button class="tab-link"  id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="true"><strong>실행</strong></button>
+                            <li class="tab-link active" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="true">
+                                <strong>실행</strong>
                                 <p>* 캠페인 - 페이스북<br>
                                 노안라식_180509<br>
                                 상태 OFF<br>
@@ -232,13 +232,13 @@
                                 전국 #2000_001 *40000 &fhr<br>
                                 예산 50,000원</p>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="tab-link"  id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab" aria-controls="messages" aria-selected="false"><strong>상세정보</strong></button>
+                            <li class="tab-link" role="presentation" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                                <strong>상세정보</strong>
                             </li>
                         </ol>
                     </div>
                     <div class="detail-wrap">
-                        <div class="detail tab-pane" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0"> 
+                        <div class="detail" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0"> 
                             <table class="table tbl-side">
                                 <colgroup>
                                     <col style="width:35%">
@@ -352,7 +352,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="detail tab-pane" id="profile" role="tabpanel"  aria-labelledby="profile-tab" tabindex="0">
+                        <div class="detail" id="profile" role="tabpanel"  aria-labelledby="profile-tab" tabindex="1">
                             <ul class="tab">
                                 <li class="active"><a href="#">광고주</a></li>
                                 <li><a href="#">캠페인</a></li>
@@ -405,7 +405,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="detail tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab" tabindex="0">
+                        <div class="detail" id="messages" role="tabpanel" aria-labelledby="messages-tab" tabindex="2">
                             <table class="table tbl-header">
                                 <colgroup>
                                     <col>
@@ -515,7 +515,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="detail tab-pane active" id="preactice" role="tabpanel" aria-labelledby="preactice-tab" tabindex="0">
+                        <div class="detail" id="preactice" role="tabpanel" aria-labelledby="preactice-tab" tabindex="3">
                             <ul class="tab">
                                 <li class="active"><a href="#">캠페인</a></li>
                                 <li><a href="#">광고그룹</a></li>
@@ -598,7 +598,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="detail tab-pane" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
+                        <div class="detail" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="4">
                             <table class="table tbl-side">
                                 <colgroup>
                                     <col style="width:35%">
@@ -742,6 +742,16 @@
         </div>
     </div>
 </div>
+<script>
+    $('body').on('click', '.tab-link', function() {
+        $('.tab-link').removeClass('active');
+        $(this).addClass('active');
+    });
+
+   if($('#preactice-tab').attr('aria-selected')){
+        $('#preactice').addClass('active');
+    }
+</script>
 <?=$this->endSection();?>
 
 
