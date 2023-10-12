@@ -9,11 +9,17 @@
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-scroller-bs5/css/scroller.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+<script src="/static/node_modules/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
 <script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
@@ -168,6 +174,7 @@
                             <tr>
                                 <th scope="col"></th>
                                 <th scope="col">매체</th>
+                                <th scope="col">ID</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -186,6 +193,7 @@
                         </thead>
                         <thead>
                             <tr id="total">
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td id="total-count"></td>
@@ -423,8 +431,13 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
 function getList(data = []){
     dataTable = $('#adv-table').DataTable({
         "dom": '<Bfr<t>ip>',
-        "autoWidth": false,
-        "order": [[2,'asc']],
+        "fixedHeader": true,
+        "fixedColumns": {
+            "left": 4
+        },
+        "deferRender": true,
+        "autoWidth": true,
+        "order": [[3,'asc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -432,8 +445,9 @@ function getList(data = []){
         "ordering": true,
         "paging": false,
         "info": false,
+        "scroller": false,
         "scrollX": true,
-        "scrollY": 500,
+        // "scrollY": 500,
         "scrollCollapse": true,
         "stateSave": true,
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
@@ -507,12 +521,13 @@ function getList(data = []){
         },
         "columnDefs": [
             { targets: [0], orderable: false},
+            { targets: [2], orderable: false, class: "none"},
             { targets: '_all', visible: true },
         ],
         "columns": [
             { 
                 "data": null, 
-                "width": "2%",
+                "width": "40px",
                 "render": function (data, type, row) {
                     media = '<label class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></label>';
                     return media;
@@ -520,15 +535,16 @@ function getList(data = []){
             },
             { 
                 "data": "media", 
-                "width": "4%",
+                "width": "40px",
                 "render": function (data, type, row) {
                     media = '<div class="media_box"><i class="'+row.media+'"></i></div>';
                     return media;
                 },
             },
+            {"data": "id", "width": "180px"},
             { 
                 "data": "name", 
-                "width": "20%",
+                "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
                         name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-c-circle"></i></button><span style="font-size:80%"><p data-editable="true">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
@@ -542,7 +558,7 @@ function getList(data = []){
             },
             { 
                 "data": "status", 
-                "width": "6%",
+                "width": "60px",
                 "render": function (data, type, row) {
                     status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select>';
                     return status;
@@ -550,7 +566,7 @@ function getList(data = []){
             },
             { 
                 "data": "budget", 
-                "width": "10%",
+                "width": "100px",
                 "render": function (data, type, row) {
                     budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
@@ -558,22 +574,22 @@ function getList(data = []){
             },
             { 
                 "data": "cpa",
-                "width": "7%",
+                "width": "80px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
-            { "data": "unique_total", "width": "5%"},
+            { "data": "unique_total", "width": "60px"},
             {
                 "data": "spend",
-                "width": "8%",
+                "width": "100px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
             { 
                 "data": "margin",
-                "width": "8%",
+                "width": "100px",
                 "render": function (data, type, row) {
                     if(parseInt(data) < 0){
                         margin = '\u20A9'+data; 
@@ -586,7 +602,7 @@ function getList(data = []){
             },
             { 
                 "data": "margin_ratio",
-                "width": "5%",
+                "width": "80px",
                 "render": function (data, type, row) {
                     if(data < 20 && data != 0){
                         margin_ratio = data+'\u0025';   
@@ -600,30 +616,30 @@ function getList(data = []){
             },
             { 
                 "data": "sales",
-                "width": "9%",
+                "width": "100px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
-            { "data": "impressions", "width": "7%"},
-            { "data": "click", "width": "5%"},
+            { "data": "impressions", "width": "80px"},
+            { "data": "click", "width": "80px"},
             { 
                 "data": "cpc", 
-                "width": "5%",
+                "width": "80px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             }, //클릭당단가 (1회 클릭당 비용)
             { 
                 "data": "ctr", 
-                "width": "5%",
+                "width": "80px",
                 "render": function (data, type, row) {
                     return data+'\u0025';
                 },
             }, //클릭율 (노출 대비 클릭한 비율)
             { 
                 "data": "cvr", 
-                "width": "5%",
+                "width": "80px",
                 "render": function (data, type, row) {
                     return data+'\u0025';
                 },

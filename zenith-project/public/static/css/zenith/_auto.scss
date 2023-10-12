@@ -1,0 +1,177 @@
+
+.btn-primary + .btn-special{margin-left:5px;}
+.num-line{display:flex; align-items:center; margin:0 0 12px; font-size:15px;
+    span{display:inline-block; margin:0 0 0 4px; padding:2px 12px; border:1px dashed #acaeaf; border-radius:4px; background:#fff;}
+}
+
+.ui-toggle{position:relative; width:42px; overflow:hidden; margin:0 auto;
+    input[type="checkbox"]{position:absolute; top:0; left:0; opacity:0;}
+    label{position:relative; display:block; width:100%; height:24px; overflow:hidden; text-indent:-9999px; border-radius:12px; background:#bababa; transition:all .2s;
+        &:before{position:absolute; top:2px; left:2px; width:20px; height:20px; content:''; border-radius:50%; background:#fff; transition:all .2s;}
+    }
+    input[type="checkbox"]:checked{
+        & + label{background:#0262cd;
+            &:before{left:auto; left:20px;}
+        }
+    }
+}
+.tbl-dark{
+    th{text-align:center;
+        &:not(:first-child){border-left:1px dashed #c3c3c3;}
+    }
+    td{font-size:14px; vertical-align:middle;
+        &:not(:first-child){border-left:1px dashed #c3c3c3;}
+    }
+}
+.td-inner{position:relative;
+    .more-action{position:absolute; top:0; right:0;
+        button{position:relative; width:12px; height:22px;
+            &:before{position:absolute; top:0; left:50%; width:4px; height:4px; content:''; border-radius:50%; background:#bababa; transform:translateX(-50%);}
+            span{display:block; overflow:hidden; text-indent:-9999px;
+                &:before{position:absolute; top:50%; left:50%; width:4px; height:4px; content:''; border-radius:50%; background:#bababa; transform:translate(-50%, -50%);}
+                &:after{position:absolute; bottom:0; left:50%; width:4px; height:4px; content:''; border-radius:50%; background:#bababa; transform:translateX(-50%);}
+            }
+        }
+        ul{position:absolute; top:0; right:12px; display:none; width:76px; padding:10px 0; border:1px solid #c7c7c7; border-radius:5px; background:#fff;
+            li:not(:first-child){margin-top:8px;}
+        }
+    }
+}
+.paging{display:flex; justify-content:center; margin:50px 0 0;
+    a{min-width:38px; height:22px; box-sizing:border-box; padding:0 10px; font-size:15px; text-align:center; line-height:22px; border-radius:3px;
+        &[class^="btn"]{color:#aaa;}
+        &.current{color:#fff; background:#f00;}
+    }
+}
+
+.regi-content{display:flex; padding:35px 0 20px;
+    .btn-close{position:absolute; top:20px; right:20px;}
+    .step{width:270px; height:580px; margin:0 12px 0 10px;
+        ol{position:relative; display:flex; flex-direction:column; height:100%;
+            &:before{position:absolute; top:5%; left:17px; width:0; height:90%; content:''; border-left:2px dashed #dfdfdf;}
+        }
+        li{position:relative; flex:1;
+            &:last-child{flex:none;}
+            strong{display:block; height:32px; padding:0 0 0 40px; font-size:20px; font-weight:700; line-height:32px;}
+            p{margin:5px 0 15px 40px; font-size:13px; line-height:1.4;}
+            &:nth-child(1) strong{@include bg('ico_regi01.png', 0, center);}
+            &:nth-child(2) strong{@include bg('ico_regi02.png', 6px, center);}
+            &:nth-child(3) strong{@include bg('ico_regi03.png', 7px, center);}
+            &:nth-child(4) strong{@include bg('ico_regi04.png', 6px, center);}
+            &:nth-child(5) strong{@include bg('ico_regi05.png', 1px, center);}
+            &.active{
+                strong{color:#0d6efd;}
+                &:nth-child(1) strong{@include bg('ico_regi01_on.png', 0, center);}
+                &:nth-child(2) strong{@include bg('ico_regi02_on.png', 0, center);}
+                &:nth-child(3) strong{@include bg('ico_regi03_on.png', 0, center);}
+                &:nth-child(4) strong{@include bg('ico_regi04_on.png', 0, center);}
+                &:nth-child(5) strong{@include bg('ico_regi05_on.png', 0, center);}
+            }
+        }
+    }
+    .detail-wrap{flex:1;
+        .detail{display:none;
+            &.active{display:block;}
+        }
+        .tbl-side{font-size:15px; border-radius:5px; box-shadow:0 0 0 1px #c3c3c3;
+            tr:first-child{
+                th{border-radius:5px 0 0 0;}
+            }
+            tr:last-child{
+                th{border-radius:0 0 0 5px;}
+            }
+            tr:not(:last-child){
+                th,
+                td{border-bottom:1px solid #c3c3c3;}
+            }
+            th{padding:18px; text-align:right; border-right:1px solid #c3c3c3; background:#f7f7f7;}
+            input[type="text"].bg{background:#f7f7f7;}
+            >:not(caption)>*>*{border-bottom-width:0;}
+        }
+        .tbl-header{font-size:15px; text-align:center; border-radius:5px; box-shadow:0 0 0 1px #c3c3c3;
+            thead{
+                th{padding:.8rem .5rem; border-bottom:1px solid #c3c3c3; background:#f7f7f7;
+                    &:not(:first-child){border-left:1px dashed #c3c3c3;}
+                    &:first-child{border-radius:5px 0 0 0;}
+                    &:last-child{border-radius:0 5px 0 0;}
+                }
+            }
+            tr:not(:last-child){
+                td{border-bottom:1px solid #c3c3c3;}
+            }
+            td{min-height:42px;
+                &:not(:first-child){border-left:1px dashed #c3c3c3;}
+                .em{color:var(--bs-blue);}
+            }
+            >:not(caption)>*>*{border-bottom-width:0;}
+            .btn-add{position:relative; width:19px; height:19px; overflow:hidden; text-indent:-9999px; border-radius:5px; background:#2d2e34;
+                &:before{position:absolute; top:50%; left:50%; width:3px; height:10px; content:''; background:#f7f7f7; transform:translate(-50%, -50%);}
+                &:after{position:absolute; top:50%; left:50%; width:10px; height:3px; content:''; background:#f7f7f7; transform:translate(-50%, -50%);}
+            }
+            .form-flex{gap:5px;
+                .form-select{margin:0; font-size:15px;}
+                .no-flex{flex:none; width:120px;}
+            }
+        }
+        .short{display:inline-block; width:25%;}
+        .middle{width:50%;}
+        .form-select + .form-select{margin-top:6px;}
+        .form-flex{display:flex; align-items:center;
+            *{flex:1;}
+            span{flex:none; width:25px; text-align:center;}
+        }
+        .tab{display:flex; margin:0 0 42px;
+            li{margin:0 8px 0 0;}
+            a{display:block; width:135px; height:42px; font-size:18px; color:#2d2e34; text-align:center; line-height:40px; border:1px solid #2d2e34; border-radius:21px; background:#fff;}
+            .active{
+                a{color:#fff; background:#2d2e34;}
+            }
+        }
+        .search{margin:0 0 18px;
+            input[type="text"]{height:44px; padding:0 0 0 42px; border:1px solid #929292; border-radius:22px; background:url(/images/ico_search.png) no-repeat 20px center;}
+        }
+        .btn-special{float:right; width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:var(--bs-blue);}
+    }
+}
+
+.week-radio{display:inline-flex; overflow:hidden; border:1px solid #cbcbcb; border-radius:5px;
+    .day{position:relative;
+        &:not(:first-child){border-left:1px solid #cbcbcb;}
+        input[type="radio"]{position:absolute; top:0; left:0; opacity:0;}
+        label{display:block; width:45px; height:37px; box-sizing:border-box; font-size:15px; color:#929292; text-align:center; line-height:37px; background:#f7f7f7;}
+        input[type="radio"]:checked{
+            & + label{color:#fff; background:#0d6efd;}
+        }
+    }
+}
+
+.modal{
+    .modal-xl{--bs-modal-width:1100px;}
+    .ico-log{}
+    .tbl-dark{border:1px solid #c3c3c3;
+        td{
+            .num{color:#a2a2a2;}
+        }
+        .em{color:var(--bs-blue);}
+    }
+}
+#logModal{
+    .modal-header{
+        .modal-title{font-size:20px; font-weight:700; border:0;
+            .ico-log{display:inline-block; width:25px; height:25px; margin:0 12px 0 0; vertical-align:middle; background:url(/images/ico_log.png) no-repeat 0 center;}
+        }
+    }
+}
+
+@include x-large{
+    
+}
+@include large{
+    
+}
+@include medium{
+    
+}
+@include small{
+    
+}

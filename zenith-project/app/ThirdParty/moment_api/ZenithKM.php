@@ -642,8 +642,8 @@ class ZenithKM
             $param['metricsGroup'] = $metrics;
         if(!$this->ad_account_id) $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
         if(isset($adAccountId)) $this->ad_account_id = $adAccountId;
-        $result = $this->getCall($request, $param);
         ob_flush();flush();sleep(5);
+        $result = $this->getCall($request, $param);
         return $result;
     }
 
@@ -785,25 +785,25 @@ class ZenithKM
      
     public function updateHourReportBasic($datePreset = 'TODAY', $dimension = 'HOUR', $metrics = 'BASIC')
     { //소재별 보고서 BASIC 업데이트
-        $creatives = $this->db->getCreatives(['ON', 'OFF'], "ORDER BY B.ad_account_id DESC");
+        $creatives = $this->db->getCreatives(['ON', 'OFF']);
         $cnt = 1;
         $step = 1;
-        $total = $creatives->getNumRows();
-        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 소재 보고서 수신을 시작합니다.", "light_red");
         $result = [];
         $_tmp = [];
-        $data = [];
         foreach($creatives->getResultArray() as $creative) $_tmp[$creative['ad_account_id']][] = $creative['id'];
         foreach($_tmp as $account_id => $row) $lists[$account_id] = array_chunk($row, 100);
+        $total = $creatives->getNumRows();
+        CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 소재 보고서 수신을 시작합니다.", "light_red");
         foreach($lists as $account_id => $list) {
             $this->ad_account_id = $account_id;
-            CLI::showProgress($step++, $total);
+            $data = [];
+            $i = 0;
             foreach($list as $ids) {
+                $step += @count($ids);
+                CLI::showProgress($step, $total);
                 $creative_ids = implode(",", $ids);
-                $data = [];
                 $report = $this->getCreativeReport($creative_ids, $datePreset, $dimension, $metrics);
                 if (isset($report['message']) && $report['message'] == 'Success' && isset($report['data'])) {
-                    $i = 0;
                     foreach ($report['data'] as $row) {
                         if (count($row['metrics'])) {
                             $data[$row['dimensions']['creative_id']][$i] = $row['metrics'];
@@ -819,7 +819,6 @@ class ZenithKM
             $this->db->updateCreativesReportBasic($data);
             $result = array_merge($result, $data);
         }
-        
         return $result;
     }
 
@@ -1138,12 +1137,11 @@ class ZenithKM
             $lead = [];
             if(!is_null($leads)) {
                 foreach($leads->getResultArray() as $row) {
-                    // if($data['ad_id'] == 23853888597370162) dd($row);
                     $sales = 0;
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
                     if($initZero) $sales = 0;
-                    if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                    // if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
                     $lead[$row['hour']] = [
                         'sales' => $sales
                         ,'db_count' => $db_count
@@ -1158,7 +1156,7 @@ class ZenithKM
                 $sales = $lead[$i]['sales']??0;
                 $margin = $sales - $spend;
                 if($initZero) $margin = $sales = 0;
-                if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                // if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
                 if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
                 $data['data'][] = [
                     'hour' => $hour

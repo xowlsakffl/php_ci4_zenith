@@ -60,4 +60,7 @@ $uri = current_url(true)->getPath();
             <a href="/logout">로그아웃</a>
         </div>
     </div>
+    <div class="btn-top">
+        <a href="#"><i class="bi bi-arrow-up-square-fill"></i>TOP</a>
+    </div>
 </div>

@@ -3,18 +3,46 @@
 namespace App\Controllers\Advertisement;
 
 use CodeIgniter\CLI\CLI;
-use App\Controllers\BaseController;
 use App\ThirdParty\moment_api\ZenithKM;
+use CodeIgniter\Controller;
+
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use DateInterval;
 use DatePeriod;
 
-class KakaoMoment extends BaseController
+class KakaoMoment extends Controller
 {
     private $chainsaw;
+	private $run_proc = [];
 
     public function __construct(...$param)
     {
         $this->chainsaw = new ZenithKM();       
+    }
+
+	public function initController(
+        RequestInterface $request,
+        ResponseInterface $response,
+        LoggerInterface $logger
+    ) {
+        $uname = php_uname();
+        if(stripos($uname, 'windows') === false) {
+            @exec("ps ax | grep -i kmapi | grep -v grep", $exec);
+            if($exec) {
+                foreach($exec as $v) $proc[] = preg_replace('/^.+php\skmapi\s(.+)$/', '$1', $v);
+                foreach($proc as $v) {
+                    $method = preg_replace('/^([a-z]+)\s.+$/i', '$1', $v);
+                    $_params = preg_replace('/^([a-z]+)\s(.+)$/i', '$2', str_replace('\\', '', $v));
+                    $params = explode(' ', $_params);
+                    $this->run_proc = [
+                        'method' => $method,
+                        'params' => $params
+                    ];
+                }
+            }
+        }
     }
 
     //토큰 업데이트
@@ -125,7 +153,7 @@ class KakaoMoment extends BaseController
         foreach($date_range as $date) {
             $date = $date->format('Y-m-d');
             CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
-            $this->chainsaw->getCreativesUseLanding($date);
+            $result = $this->chainsaw->getCreativesUseLanding($date);
         }
     }
 

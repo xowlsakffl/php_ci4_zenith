@@ -198,6 +198,7 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
+        "fixedHeader": true,
         "autoWidth": false,
         "order": [[12,'desc']],
         "processing" : true,
@@ -205,9 +206,6 @@ function getList(data = []) { //리스트 세팅
         "responsive": true,
         "searching": false,
         "ordering": true,
-        "scrollX": true,
-        "scrollY": 500,
-        "scrollCollapse": true,
         "stateSave": true,
         "deferRender": true,
         "rowId": "seq",

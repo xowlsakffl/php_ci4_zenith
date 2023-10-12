@@ -171,7 +171,7 @@
 div.dt-button-collection{padding:0;    
     .export{display: none;}
     button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;         
-        &:hover{font-weight: 900; background-color: var(--bs-gray-200);
+        &:hover,&.dt-button-active{font-weight: 900; background-color: var(--bs-gray-200);
             > span{text-indent: 1.5rem;
                 i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
             }            

@@ -4,8 +4,8 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
 .btns-memo-style{display:inline; width:auto; position:absolute; right:0; top:0; z-index:1;
     button.active{color:var(--bs-red);}
 }
-.custom-btn-collection>.dt-down-arrow {display:none;}
-.table{
+.dt-buttons .dt-button-down-arrow {display:none;}
+.table{table-layout:fixed; width:auto;
     .none{padding:50px 0; text-align:center;}
     .ico{display:inline-block; width:8px; height:8px; border-radius:50%;
         &.green{background:var(--bs-success);}
@@ -24,18 +24,18 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
         }
     }
 }
-.table-default{table-layout:fixed; min-width:1400px;
+.table-default{min-width:1400px;
     --bs-table-hover-bg:#ffebeb;
     --bs-table-striped-bg:rgba(0, 0, 0, .03);
     font-size:0.813rem;
     thead{
-        th{font-size:0.875rem; text-align:center; vertical-align:middle; line-height:1.4;
+        th{font-size:0.875rem; text-align:center; vertical-align:middle; line-height:1.4; background-color: var(--bs-table-bg) !important;
             &:not(:last-child){border-right:1px dashed #dfdfdf;}
         }
     }
     tbody{
-        th{position:relative; padding:12px; font-weight:400; border-right:1px dashed #dfdfdf;}
-        td{position:relative; padding:12px 8px; text-align:center; vertical-align:middle; word-break:break-word;
+        th{position:relative; font-weight:400; border-right:1px dashed #dfdfdf;}
+        td{position:relative; text-align:center; vertical-align:middle; word-break:break-word;
             &:not(:last-child){border-right:1px dashed #dfdfdf;}
         }
     }
