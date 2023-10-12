@@ -31,7 +31,7 @@
     </div>
 
     <div class="search-wrap">
-        <form class="search d-flex justify-content-center">
+        <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
                 <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
@@ -783,6 +783,11 @@ function setAutomationStatus(data)
     });
 }
 
+$('form[name="search-form"]').bind('submit', function() {
+    dataTable.draw();
+    return false;
+});
+
 $('#automation-table').on('click', '.btn-more', function () {
     var seq = $(this).data('seq');
     var currentActionList = $(this).closest('.more-action').find('.action-list');
@@ -810,6 +815,11 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
 if($('#preactice-tab').attr('aria-selected')){
     $('#preactice').addClass('active');
 }
+
+//등록
+$('input[name="interlock"]').bind('change', function() {
+    chkInterlock();
+});
 </script>
 <?=$this->endSection();?>
 
