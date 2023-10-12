@@ -431,15 +431,48 @@ class AutomationController extends BaseController
             $isTargetMatched = false;
             $allConditionsMatched = true;
             foreach ($conditions as $condition) {
+                list($conditionMatched, $message) = [false, "일치하는 조건이 존재하지 않습니다."];
                 $conditionMatched = false;       
                 if ($condition['type'] === 'status') {//status 비교
                     if ($target['status'] == $condition['type_value']) {
                         $conditionMatched = true;
+                        $message = '조건 일치';
+                    }else{
+                        $message = 'status가 일치하지 않습니다.';
                     }
                 }else{//그 외 필드 비교
-                    foreach ($types as $type) {
+                    foreach ($types as $type) {                     
                         if ($condition['type'] === $type) {
-                            $conditionMatched = $this->compareType($target[$type], $condition);
+                            switch ($condition['compare']) {
+                                case 'less':
+                                    $conditionMatched = $target[$type] < $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
+                                    break;
+                                case 'greater':
+                                    $conditionMatched = $target[$type] > $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
+                                    break;
+                                case 'less_equal':
+                                    $conditionMatched = $target[$type] <= $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                    break;
+                                case 'greater_equal':
+                                    $conditionMatched = $target[$type] >= $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                    break;
+                                case 'equal':
+                                    $conditionMatched = $target[$type] == $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
+                                    break;
+                                case 'not_equal':
+                                    $conditionMatched = $target[$type] != $condition['type_value'];
+                                    $message = $conditionMatched ? '조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                                    break;
+                                default:
+                                    $conditionMatched = false;
+                                    $message = '비교할 조건이 존재하지 않습니다.';
+                                    break;
+                            }
                         }
                     }
                 }
@@ -453,20 +486,41 @@ class AutomationController extends BaseController
                         if(count($conditions) == 1){
                             $allConditionsMatched = false; 
                         }
+
+                        //and 조건이 없을때
+                        if (!in_array('and', array_column($conditions, 'operation'))) {
+                            $allConditionsMatched = false; 
+                        }
                     }
                 }
 
                 if($condition['operation'] == 'and'){
                     if(!$conditionMatched){
                         $allConditionsMatched = false; 
+                        //뒤에 or 조건이 있을수 있어서 or 조건이 없을때만 break
+                        $nextKey = array_search($condition, $conditions) + 1;
+                        if ($nextKey < count($conditions)) {
+                            if ($conditions[$nextKey]['operation'] != 'or') {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
                     }
                 }
+                
             }
-            
+
             if($isTargetMatched || $allConditionsMatched){
-                $matchedArray['match'][] = $target['aa_seq'];
+                $matchedArray['match'][] = [
+                    'aa_seq' => $target['aa_seq'],
+                    'msg' => $message
+                ];
             }else{
-                $matchedArray['notMatch'][] = $target['aa_seq'];
+                $matchedArray['notMatch'][] = [
+                    'aa_seq' => $target['aa_seq'],
+                    'msg' => $message
+                ];
             }
         }
         dd($matchedArray);
@@ -600,25 +654,5 @@ class AutomationController extends BaseController
         }
 
         return $formatData;
-    }
-
-    private function compareType($type, $condition)
-    {
-        switch ($condition['compare']) {
-            case 'less':
-                return $type < $condition['type_value'];
-            case 'greater':
-                return $type > $condition['type_value'];
-            case 'less_equal':
-                return $type <= $condition['type_value'];
-            case 'greater_equal':
-                return $type >= $condition['type_value'];
-            case 'equal':
-                return $type == $condition['type_value'];
-            case 'not_equal':
-                return $type != $condition['type_value'];
-            default:
-                return false;
-        }
     }
 }
