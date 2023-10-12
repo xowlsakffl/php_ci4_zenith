@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class AutomationModel extends Model
 {
-    protected $zenith, $test;
+    protected $zenith, $test,$t;
     public function __construct()
     {
         $this->zenith = \Config\Database::connect();
