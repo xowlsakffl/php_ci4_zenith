@@ -1149,6 +1149,7 @@ div.dataTables_processing > div:last-child > div {
   display: flex;
   justify-content: space-between;
   width: 80%;
+  max-width: 100px;
 }
 .table td .btn-budget button:hover {
   color: var(--bs-blue);

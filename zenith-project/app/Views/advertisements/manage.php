@@ -174,7 +174,6 @@
                             <tr>
                                 <th scope="col"></th>
                                 <th scope="col">매체</th>
-                                <th scope="col">ID</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
                                 <th scope="col">예산</th>
@@ -193,7 +192,6 @@
                         </thead>
                         <thead>
                             <tr id="total">
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td id="total-count"></td>
@@ -433,9 +431,9 @@ function getList(data = []){
         "dom": '<Bfr<t>ip>',
         "fixedHeader": true,
         "fixedColumns": {
-            "left": 4
+            "leftColumns": 3
         },
-        "deferRender": true,
+        "deferRender": false,
         "autoWidth": true,
         "order": [[3,'asc']],
         "processing" : true,
@@ -521,7 +519,6 @@ function getList(data = []){
         },
         "columnDefs": [
             { targets: [0], orderable: false},
-            { targets: [2], orderable: false, class: "none"},
             { targets: '_all', visible: true },
         ],
         "columns": [
@@ -541,7 +538,6 @@ function getList(data = []){
                     return media;
                 },
             },
-            {"data": "id", "width": "180px"},
             { 
                 "data": "name", 
                 "width": "250px",
@@ -566,7 +562,7 @@ function getList(data = []){
             },
             { 
                 "data": "budget", 
-                "width": "100px",
+                "width": "80px",
                 "render": function (data, type, row) {
                     budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;

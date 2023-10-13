@@ -108,9 +108,7 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 input[type=submit], button {
@@ -149,9 +147,7 @@ textarea:focus {
 }
 
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 select:focus {
@@ -682,12 +678,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.search-wrap .search .input input[type=text]:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.75rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .search-wrap .search .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -934,12 +924,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.form-control:focus::-moz-placeholder, .form-select:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.5rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .form-control:focus::placeholder, .form-select:focus::placeholder {
   color: red;
   text-indent: 0.5rem;
@@ -949,9 +933,6 @@ body {
 .account-container input.form-control:focus {
   box-shadow: 0 0 0 0.25rem #C0DBEA;
   caret-color: #7286D3;
-  color: #7286D3;
-}
-.account-container input.form-control:focus::-moz-placeholder {
   color: #7286D3;
 }
 .account-container input.form-control:focus::placeholder {
@@ -1148,6 +1129,7 @@ div.dataTables_processing > div:last-child > div {
   display: flex;
   justify-content: space-between;
   width: 80%;
+  max-width: 100px;
 }
 .table td .btn-budget button:hover {
   color: var(--bs-blue);
@@ -1883,8 +1865,15 @@ div.dataTables_processing > div:last-child > div {
   border-left: 2px dashed #dfdfdf;
 }
 .regi-content .step li {
-  position: relative;
-  flex: 1;
+  position: relative; /*flex:1;*/
+  min-height: 15%;
+  max-height: 10rem;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* 익스플로러, 앳지 */
+  scrollbar-width: none; /* 파이어폭스 */
+}
+.regi-content .step li::-webkit-scrollbar {
+  display: none; /* 크롬, 사파리, 오페라 */
 }
 .regi-content .step li:last-child {
   flex: none;
@@ -1896,43 +1885,55 @@ div.dataTables_processing > div:last-child > div {
   font-size: 20px;
   font-weight: 700;
   line-height: 32px;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+}
+.regi-content .step li strong:after {
+  display: block;
+  content: "";
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
 }
 .regi-content .step li p {
   margin: 5px 0 15px 40px;
   font-size: 13px;
   line-height: 1.4;
 }
-.regi-content .step li:nth-child(1) strong {
+.regi-content .step li:nth-child(1) strong::after {
   background: url("/img/ico_regi01.png") no-repeat 0 center;
 }
-.regi-content .step li:nth-child(2) strong {
-  background: url("/img/ico_regi02.png") no-repeat 6px center;
+.regi-content .step li:nth-child(2) strong::after {
+  background: url("/img/ico_regi02.png") no-repeat 0 center;
 }
-.regi-content .step li:nth-child(3) strong {
-  background: url("/img/ico_regi03.png") no-repeat 7px center;
+.regi-content .step li:nth-child(3) strong::after {
+  background: url("/img/ico_regi03.png") no-repeat 0 center;
 }
-.regi-content .step li:nth-child(4) strong {
-  background: url("/img/ico_regi04.png") no-repeat 6px center;
+.regi-content .step li:nth-child(4) strong::after {
+  background: url("/img/ico_regi04.png") no-repeat 0 center;
 }
-.regi-content .step li:nth-child(5) strong {
-  background: url("/img/ico_regi05.png") no-repeat 1px center;
+.regi-content .step li:nth-child(5) strong::after {
+  background: url("/img/ico_regi05.png") no-repeat 0 center;
 }
 .regi-content .step li.active strong {
   color: #0d6efd;
 }
-.regi-content .step li.active:nth-child(1) strong {
+.regi-content .step li.active:nth-child(1) strong::after {
   background: url("/img/ico_regi01_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(2) strong {
+.regi-content .step li.active:nth-child(2) strong::after {
   background: url("/img/ico_regi02_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(3) strong {
+.regi-content .step li.active:nth-child(3) strong::after {
   background: url("/img/ico_regi03_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(4) strong {
+.regi-content .step li.active:nth-child(4) strong::after {
   background: url("/img/ico_regi04_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(5) strong {
+.regi-content .step li.active:nth-child(5) strong::after {
   background: url("/img/ico_regi05_on.png") no-repeat 0 center;
 }
 .regi-content .detail-wrap {
@@ -2682,9 +2683,7 @@ div.dt-button-collection h3 {
 }
 
 .none {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -2718,9 +2717,7 @@ div.dt-button-collection h3 {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -2828,7 +2825,6 @@ div.dt-button-collection h3 {
   background-color: #ededed;
 }
 .account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
-  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 .account-container form .form-check .form-check-input {
@@ -3084,4 +3080,6 @@ div.dt-button-collection h3 {
     padding: 0.6rem 0.7rem;
     font-size: 90%;
   }
-}/*# sourceMappingURL=ui.css.map */
+}
+
+/*# sourceMappingURL=ui.css.map */

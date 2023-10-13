@@ -72,13 +72,13 @@
                 <div class="regi-content">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="step">
-                        <ol class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="tab-link active" role="presentation" type="button" id="home-tab"  data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+                        <ol id="myTab" role="tablist">
+                            <li class="tab-link active" role="presentation" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="true">
                                 <strong>일정</strong>
                                 
                                 <p id="scheduleText"></p>
                             </li>
-                            <li class="tab-link" role="presentation" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+                            <li class="tab-link" role="presentation" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">
                                 <strong>대상</strong>
                              
                                 <p>광고주<br>
@@ -86,7 +86,7 @@
                                 [전국]상상의원_광고주랜딩*
                                 ...</p>
                             </li>
-                            <li class="tab-link" role="presentation" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                            <li class="tab-link" role="presentation" id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" role="tab" aria-controls="condition" aria-selected="false">
                                 <strong>조건</strong>
                                 <p>
                                     지출액 - 100,000원 초과<br>
@@ -95,7 +95,7 @@
 
                                 </p>
                             </li>
-                            <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                            <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="preactice" aria-selected="false">
                                 <strong>실행</strong>
                                 <p>* 캠페인 - 페이스북<br>
                                 노안라식_180509<br>
@@ -104,14 +104,28 @@
                                 밝은성모안과(지원자, 응답) -<br>
                                 전국 #2000_001 *40000 &fhr<br>
                                 예산 50,000원</p>
+                                <p>* 캠페인 - 페이스북<br>
+                                노안라식_180509<br>
+                                상태 OFF<br>
+                                * 캠페인 - 구글<br>
+                                밝은성모안과(지원자, 응답) -<br>
+                                전국 #2000_001 *40000 &fhr<br>
+                                예산 50,000원</p>
+                                <p>* 캠페인 - 페이스북<br>
+                                노안라식_180509<br>
+                                상태 OFF<br>
+                                * 캠페인 - 구글<br>
+                                밝은성모안과(지원자, 응답) -<br>
+                                전국 #2000_001 *40000 &fhr<br>
+                                예산 50,000원</p>
                             </li>
-                            <li class="tab-link" role="presentation" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                            <li class="tab-link" role="presentation" id="detailed-tab" data-bs-toggle="tab" data-bs-target="#detailed" type="button" role="tab" aria-controls="messages" aria-selected="false">
                                 <strong>상세정보</strong>
                             </li>
                         </ol>
                     </div>
                     <div class="detail-wrap">
-                        <div class="detail" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0"> 
+                        <div class="detail" id="schedule" role="tabpanel" aria-labelledby="schedule-tab" tabindex="0"> 
                             <table class="table tbl-side" id="scheduleTable">
                                 <colgroup>
                                     <col style="width:35%">
@@ -250,7 +264,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="detail" id="profile" role="tabpanel"  aria-labelledby="profile-tab" tabindex="1">
+                        <div class="detail" id="target" role="tabpanel"  aria-labelledby="target-tab" tabindex="1">
                             <ul class="tab">
                                 <li class="active"><a href="#">광고주</a></li>
                                 <li><a href="#">캠페인</a></li>
@@ -303,7 +317,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="detail" id="messages" role="tabpanel" aria-labelledby="messages-tab" tabindex="2">
+                        <div class="detail" id="condition" role="tabpanel" aria-labelledby="condition-tab" tabindex="2">
                             <table class="table tbl-header">
                                 <colgroup>
                                     <col>
@@ -496,7 +510,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="detail" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="4">
+                        <div class="detail" id="detailed" role="tabpanel" aria-labelledby="detailed-tab" tabindex="4">
                             <table class="table tbl-side">
                                 <colgroup>
                                     <col style="width:35%">
@@ -825,7 +839,7 @@ function chkSchedule()
         $('#nextDateRow').hide();
         $('#nextDateRow select').val('');
     } else if(selectedValue === "month"){
-        
+
     }
 }
 

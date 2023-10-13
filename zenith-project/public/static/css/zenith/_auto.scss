@@ -50,22 +50,28 @@
         ol{position:relative; display:flex; flex-direction:column; height:100%;
             &:before{position:absolute; top:5%; left:17px; width:0; height:90%; content:''; border-left:2px dashed #dfdfdf;}
         }
-        li{position:relative; flex:1;
+        li{position:relative; /*flex:1;*/ min-height: 15%; max-height: 10rem; overflow-y:scroll;         
+            -ms-overflow-style: none; /* 익스플로러, 앳지 */scrollbar-width: none; /* 파이어폭스 */     
+            &::-webkit-scrollbar {display: none; /* 크롬, 사파리, 오페라 */}
+
             &:last-child{flex:none;}
-            strong{display:block; height:32px; padding:0 0 0 40px; font-size:20px; font-weight:700; line-height:32px;}
-            p{margin:5px 0 15px 40px; font-size:13px; line-height:1.4;}
-            &:nth-child(1) strong{@include bg('ico_regi01.png', 0, center);}
-            &:nth-child(2) strong{@include bg('ico_regi02.png', 6px, center);}
-            &:nth-child(3) strong{@include bg('ico_regi03.png', 7px, center);}
-            &:nth-child(4) strong{@include bg('ico_regi04.png', 6px, center);}
-            &:nth-child(5) strong{@include bg('ico_regi05.png', 1px, center);}
+            strong{display:block; height:32px; padding:0 0 0 40px; font-size:20px; font-weight:700; line-height:32px; position: sticky; top:0; background-color: #fff;
+                &:after{display: block; content: ''; width: 100%; height: 100%; top: 0; left: 0; position: absolute;}
+            }
+            p{margin:5px 0 15px 40px; font-size:13px; line-height:1.4;}           
+     
+            &:nth-child(1) strong::after{@include bg('ico_regi01.png', 0, center);}
+            &:nth-child(2) strong::after{@include bg('ico_regi02.png', 0, center);}
+            &:nth-child(3) strong::after{@include bg('ico_regi03.png', 0, center);}
+            &:nth-child(4) strong::after{@include bg('ico_regi04.png', 0, center);}
+            &:nth-child(5) strong::after{@include bg('ico_regi05.png', 0, center);}
             &.active{
                 strong{color:#0d6efd;}
-                &:nth-child(1) strong{@include bg('ico_regi01_on.png', 0, center);}
-                &:nth-child(2) strong{@include bg('ico_regi02_on.png', 0, center);}
-                &:nth-child(3) strong{@include bg('ico_regi03_on.png', 0, center);}
-                &:nth-child(4) strong{@include bg('ico_regi04_on.png', 0, center);}
-                &:nth-child(5) strong{@include bg('ico_regi05_on.png', 0, center);}
+                &:nth-child(1) strong::after{@include bg('ico_regi01_on.png', 0, center);}
+                &:nth-child(2) strong::after{@include bg('ico_regi02_on.png', 0, center);}
+                &:nth-child(3) strong::after{@include bg('ico_regi03_on.png', 0, center);}
+                &:nth-child(4) strong::after{@include bg('ico_regi04_on.png', 0, center);}
+                &:nth-child(5) strong::after{@include bg('ico_regi05_on.png', 0, center);}
             }
         }
     }
