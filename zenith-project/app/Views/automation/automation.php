@@ -88,9 +88,12 @@
                             </li>
                             <li class="tab-link" role="presentation" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button" role="tab" aria-controls="messages" aria-selected="false">
                                 <strong>조건</strong>
-                                <p>지출액 - 100,000원 초과<br>
-                                AND<br>
-                                유효DB - 100건 이하</p>
+                                <p>
+                                    지출액 - 100,000원 초과<br>
+                                    AND<br>
+                                    유효DB - 100건 이하
+
+                                </p>
                             </li>
                             <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="false">
                                 <strong>실행</strong>
@@ -109,7 +112,7 @@
                     </div>
                     <div class="detail-wrap">
                         <div class="detail" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0"> 
-                            <table class="table tbl-side">
+                            <table class="table tbl-side" id="scheduleTable">
                                 <colgroup>
                                     <col style="width:35%">
                                     <col>
@@ -125,6 +128,7 @@
                                             <option value="week">주</option>
                                             <option value="month">월</option>
                                         </select>
+                                        <p></p>
                                     </td>
                                 </tr>
                                 <tr id="weekdayRow">
@@ -132,31 +136,31 @@
                                     <td>
                                         <div class="week-radio">
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day01">
+                                                <input type="radio" name="exec_week" value="2" id="day01">
                                                 <label for="day01">월</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day02">
+                                                <input type="radio" name="exec_week" value="3" id="day02">
                                                 <label for="day02">화</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day03">
+                                                <input type="radio" name="exec_week" value="4" id="day03">
                                                 <label for="day03">수</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day04">
+                                                <input type="radio" name="exec_week" value="5" id="day04">
                                                 <label for="day04">목</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day05">
+                                                <input type="radio" name="exec_week" value="6" id="day05">
                                                 <label for="day05">금</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day06">
+                                                <input type="radio" name="exec_week" value="7" id="day06">
                                                 <label for="day06">토</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="exec_week" id="day07">
+                                                <input type="radio" name="exec_week" value="1" id="day07">
                                                 <label for="day07">일</label>
                                             </div>
                                         </div>
@@ -167,11 +171,11 @@
                                     <td>
                                         <select name="month_type" class="form-select" id="monthType">
                                             <option value="" selected>선택</option>
-                                            <option value="">매달 첫번째 날</option>
-                                            <option value="">매달 마지막 날</option>
-                                            <option value="">처음</option>
-                                            <option value="">마지막</option>
-                                            <option value="">날짜</option>
+                                            <option value="start_day">매달 첫번째 날</option>
+                                            <option value="end_day">매달 마지막 날</option>
+                                            <option value="first">처음</option>
+                                            <option value="last">마지막</option>
+                                            <option value="day">날짜</option>
                                         </select>
                                         <select name="month_day" class="form-select" id="monthDay">
                                             <option value="" selected>선택</option>
@@ -183,13 +187,13 @@
                                         </select>
                                         <select name="month_week" class="form-select" id="monthWeek">
                                             <option value="" selected>선택</option>
-                                            <option value="">월</option>
-                                            <option value="">화</option>
-                                            <option value="">수</option>
-                                            <option value="">목</option>
-                                            <option value="">금</option>
-                                            <option value="">토</option>
-                                            <option value="">일</option>
+                                            <option value="2">월</option>
+                                            <option value="3">화</option>
+                                            <option value="4">수</option>
+                                            <option value="5">목</option>
+                                            <option value="6">금</option>
+                                            <option value="7">토</option>
+                                            <option value="1">일</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -820,7 +824,68 @@ function chkSchedule()
     } else if (selectedValue === "week") {
         $('#nextDateRow').hide();
         $('#nextDateRow select').val('');
+    } else if(selectedValue === "month"){
+        
     }
+}
+
+function scheduleText()
+{
+    var type_value = $('input[name="type_value"]').val();
+    var exec_type = $('#execType').val();
+    var exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
+    var month_type = $('#monthType').val();
+    var month_day = $('#monthDay').val();
+    var month_week = $('#monthWeek').val();
+    var exec_time = $('#execTime').val();
+    var ignore_start_time = $('select[name="ignore_start_time"] option:selected').text();
+    var ignore_end_time = $('select[name="ignore_end_time"] option:selected').text();
+
+    let scheduleTextParts= [];
+    if(type_value) {
+        switch(exec_type){
+            case "minute":
+                scheduleTextParts.push("매 "+type_value+"분 마다");
+                break;
+            case "hour":
+                scheduleTextParts.push("매 "+type_value+"시간 마다");
+                break;
+            case "day":
+                dayTextPart_1 = type_value == 1 ? '매일' : '매 '+type_value+'일 마다 ';
+                dayTextPart_2 = exec_time ? exec_time+'에' : '';
+                scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
+                break;
+            case "week":
+                if(exec_week){
+                    weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
+                    weekTextPart_2 = exec_time ? exec_time+'에' : '';
+                    scheduleTextParts.push(weekTextPart_1+exec_week+"요일 마다 "+weekTextPart_2);
+                }
+                break;
+            case "month":
+                if(month_type){
+                    switch(month_type){
+                        case "":
+                            // 첫번째 날, 마지막 날 
+                            scheduleTextParts.push("매월 첫번째 날, 마지막 날"+ exec_time +"에");
+                            break;
+                        default:
+                            // 처음, 마지막 
+                            let weekDayIndex= parseInt(month_day.replace('day',''))-1;   
+                            scheduleTextParts.push("매월 처음, 마지막"+ dayText[weekDayIndex] +"요일 "+ exec_time +"에");  
+                            break;
+                    }
+                }else{
+                    // 2달 마다 3일째 23시 30분에
+                    if(month_day && exec_time)
+                        scheduleTextParts.push(type_value+"달 마다" + month_day+ " 일째"+ exec_time+ "에");  
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    $("#scheduleText").html(scheduleTextParts.join(", "));
 }
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
@@ -865,6 +930,10 @@ $('#automationModal').on('show.bs.modal', function(e) {
 //등록
 $('body').on('change', '#execType', function() {
     chkSchedule();
+});
+
+$('body').on('change', '#scheduleTable input, #scheduleTable select', function() {
+    scheduleText();
 });
 </script>
 <?=$this->endSection();?>
