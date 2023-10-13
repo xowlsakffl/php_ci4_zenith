@@ -838,8 +838,25 @@ function chkSchedule()
     } else if (selectedValue === "week") {
         $('#nextDateRow').hide();
         $('#nextDateRow select').val('');
-    } else if(selectedValue === "month"){
+    } else if (selectedValue === "month"){
+        $('#weekdayRow').hide();
+        $('input[name=exec_week]').prop('checked', false);
+    }
+}
 
+function chkScheduleMonthType()
+{
+    month_type = $('#monthType').val();
+    $('#nextDateRow select').show();
+    if(month_type == 'start_day' || month_type == 'end_day' ){
+        $('#nextDateRow select[name=month_day], #nextDateRow select[name=month_week]').hide();
+        $('#monthDay, #monthWeek').val('');
+    }else if(month_type == 'first' || month_type == 'last'){
+        $('#nextDateRow select[name=month_day]').hide();
+        $('#monthDay').val('');
+    }else if (month_type == 'day'){
+        $('#nextDateRow select[name=month_week]').hide();
+        $('#monthWeek').val('');
     }
 }
 
@@ -854,7 +871,6 @@ function scheduleText()
     var exec_time = $('#execTime').val();
     var ignore_start_time = $('select[name="ignore_start_time"] option:selected').text();
     var ignore_end_time = $('select[name="ignore_end_time"] option:selected').text();
-
     let scheduleTextParts= [];
     if(type_value) {
         switch(exec_type){
@@ -870,30 +886,28 @@ function scheduleText()
                 scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
                 break;
             case "week":
-                if(exec_week){
-                    weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
-                    weekTextPart_2 = exec_time ? exec_time+'에' : '';
-                    scheduleTextParts.push(weekTextPart_1+exec_week+"요일 마다 "+weekTextPart_2);
-                }
+                weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
+                weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
+                weekTextPart_3 = exec_time ? exec_time+'에' : '';
+                scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
                 break;
             case "month":
-                if(month_type){
-                    switch(month_type){
-                        case "":
-                            // 첫번째 날, 마지막 날 
-                            scheduleTextParts.push("매월 첫번째 날, 마지막 날"+ exec_time +"에");
-                            break;
-                        default:
-                            // 처음, 마지막 
-                            let weekDayIndex= parseInt(month_day.replace('day',''))-1;   
-                            scheduleTextParts.push("매월 처음, 마지막"+ dayText[weekDayIndex] +"요일 "+ exec_time +"에");  
-                            break;
-                    }
-                }else{
-                    // 2달 마다 3일째 23시 30분에
-                    if(month_day && exec_time)
-                        scheduleTextParts.push(type_value+"달 마다" + month_day+ " 일째"+ exec_time+ "에");  
+                monthTextPart_1 = type_value == 1 ? '매월 ' : type_value+'달 마다 ';
+                switch (month_type) {
+                    case 'start_day':
+                        monthTextPart_2 = '첫번째 날 ';
+                        break;
+                    case 'end_day':
+                        monthTextPart_2 = '마지막 날 ';
+                        break;
+                    case 'first':
+                        monthTextPart_2 = '처음 ';
+                        break;
+                    default:
+                        break;
                 }
+
+                scheduleTextParts.push(monthTextPart_1);
                 break;
             default:
                 break;
@@ -930,11 +944,11 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
     setAutomationStatus(data);
 });
 
-if($('#home-tab').attr('aria-selected')){
-    $('#home').addClass('active');
-}
-
 $('#automationModal').on('show.bs.modal', function(e) {
+    if($('#schedule-tab').attr('aria-selected')){
+        $('#schedule').addClass('active');
+    }
+
     chkSchedule();
 })
 .on('hidden.bs.modal', function(e) { 
@@ -944,6 +958,10 @@ $('#automationModal').on('show.bs.modal', function(e) {
 //등록
 $('body').on('change', '#execType', function() {
     chkSchedule();
+});
+
+$('body').on('change', '#monthType', function() {
+    chkScheduleMonthType();
 });
 
 $('body').on('change', '#scheduleTable input, #scheduleTable select', function() {
