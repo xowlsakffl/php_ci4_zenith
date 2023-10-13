@@ -42,7 +42,7 @@
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
-                <button class="btn-special" type="button" data-bs-toggle="modal" data-bs-target="#regiModal">작성하기</button>
+                <button class="btn-special" type="button" data-bs-toggle="modal" data-bs-target="#automationModal">작성하기</button>
             </div>
         </form>
     </div>
@@ -65,7 +65,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="regiModal" tabindex="-1" aria-labelledby="memoModalLabel" aria-hidden="true">
+<div class="modal fade" id="automationModal" tabindex="-1" aria-labelledby="automationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-body">
@@ -73,14 +73,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="step">
                         <ol class="nav nav-tabs" id="myTab" role="tablist">
-                            <li class="tab-link" role="presentation" type="button" id="home-tab"  data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="false">
+                            <li class="tab-link active" role="presentation" type="button" id="home-tab"  data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
                                 <strong>일정</strong>
                                 
-                                <p>매 2시간 마다<br>
-                                매일 00시 30분[7일 마다 7시 정각에]<br>
-                                매주 일요일 03시 정각에<br>
-                                매월 [첫번째 날, 마지막 날] 09시 30분에
-                                ...</p>
+                                <p id="scheduleText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
                                 <strong>대상</strong>
@@ -96,7 +92,7 @@
                                 AND<br>
                                 유효DB - 100건 이하</p>
                             </li>
-                            <li class="tab-link active" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="true">
+                            <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="messages" aria-selected="false">
                                 <strong>실행</strong>
                                 <p>* 캠페인 - 페이스북<br>
                                 노안라식_180509<br>
@@ -121,69 +117,72 @@
                                 <tr>
                                     <th scope="row">다음 시간마다 규칙적으로 실행</th>
                                     <td>
-                                        <input type="text" class="form-control short">
-                                        <select name="" class="form-select short">
-                                            <option value="">분</option>
-                                            <option value="">시간</option>
-                                            <option value="">일</option>
-                                            <option value="">주</option>
-                                            <option value="">월</option>
+                                        <input type="text" name="type_value" class="form-control short">
+                                        <select name="exec_type" class="form-select short" id="execType">
+                                            <option value="minute">분</option>
+                                            <option value="hour">시간</option>
+                                            <option value="day">일</option>
+                                            <option value="week">주</option>
+                                            <option value="month">월</option>
                                         </select>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="weekdayRow">
                                     <th scope="row">요일</th>
                                     <td>
                                         <div class="week-radio">
                                             <div class="day">
-                                                <input type="radio" name="day" id="day01">
+                                                <input type="radio" name="exec_week" id="day01">
                                                 <label for="day01">월</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day02">
+                                                <input type="radio" name="exec_week" id="day02">
                                                 <label for="day02">화</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day03">
+                                                <input type="radio" name="exec_week" id="day03">
                                                 <label for="day03">수</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day04">
+                                                <input type="radio" name="exec_week" id="day04">
                                                 <label for="day04">목</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day05">
+                                                <input type="radio" name="exec_week" id="day05">
                                                 <label for="day05">금</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day06">
+                                                <input type="radio" name="exec_week" id="day06">
                                                 <label for="day06">토</label>
                                             </div>
                                             <div class="day">
-                                                <input type="radio" name="day" id="day07">
+                                                <input type="radio" name="exec_week" id="day07">
                                                 <label for="day07">일</label>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="nextDateRow">
                                     <th scope="row">다음 날짜에</th>
                                     <td>
-                                        <select name="" class="form-select">
+                                        <select name="month_type" class="form-select" id="monthType">
+                                            <option value="" selected>선택</option>
                                             <option value="">매달 첫번째 날</option>
                                             <option value="">매달 마지막 날</option>
                                             <option value="">처음</option>
                                             <option value="">마지막</option>
                                             <option value="">날짜</option>
                                         </select>
-                                        <select name="" class="form-select">
-                                            <option value="">1일</option>
-                                            <option value="">2일</option>
-                                            <option value="">3일</option>
-                                            <option value="">4일</option>
-                                            <option value="">5일</option>
+                                        <select name="month_day" class="form-select" id="monthDay">
+                                            <option value="" selected>선택</option>
+                                            <?php
+                                            for ($i = 1; $i <= 31; $i++) {
+                                                echo "<option value='$i'>".$i."일</option>";
+                                            }
+                                            ?>
                                         </select>
-                                        <select name="" class="form-select">
+                                        <select name="month_week" class="form-select" id="monthWeek">
+                                            <option value="" selected>선택</option>
                                             <option value="">월</option>
                                             <option value="">화</option>
                                             <option value="">수</option>
@@ -194,11 +193,24 @@
                                         </select>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr id="timeRow">
                                     <th scope="row">시간</th>
                                     <td>
-                                        <select name="" class="form-select middle">
-                                            <option value=""></option>
+                                        <?php
+                                        $interval = new DateInterval('PT30M');
+                                        $time = new DateTime('00:00');
+                                        $end = new DateTime('24:00');
+                                        ?>
+                                        <select name="exec_time" id="execTime" class="form-select middle">
+                                            <option value="" selected>선택</option>
+                                            <?php 
+                                            while ($time < $end) {
+                                                $value = $time->format('H:i');
+                                                echo "<option value='$value'>$value</option>";
+                                                $time->add($interval);
+                                            }
+                                            
+                                            ?>
                                         </select>
                                     </td>
                                 </tr>
@@ -206,20 +218,28 @@
                                     <th scope="row">제외 시간</th>
                                     <td>
                                         <div class="form-flex">
-                                            <select name="" class="form-select middle">
-                                                <option value="">00:00</option>
-                                                <option value="">00:30</option>
-                                                <option value="">01:00</option>
-                                                <option value="">01:30</option>
-                                                <option value="">02:00</option>
-                                            </select>
+                                        <select name="ignore_start_time" class="form-select middle">
+                                            <option value="" selected>선택</option>
+                                            <?php
+                                            $time = new DateTime('00:00');
+                                            while ($time < $end) {
+                                                $value = $time->format('H:i');
+                                                echo "<option value='$value'>$value</option>";
+                                                $time->add($interval);
+                                            }
+                                            ?>
+                                        </select>
                                             <span>~</span>
-                                            <select name="" class="form-select middle">
-                                                <option value="">00:00</option>
-                                                <option value="">00:30</option>
-                                                <option value="">01:00</option>
-                                                <option value="">01:30</option>
-                                                <option value="">02:00</option>
+                                            <select name="ignore_end_time" class="form-select middle">
+                                                <option value="">선택</option>
+                                                <?php 
+                                                $time = new DateTime('00:00');
+                                                while ($time < $end) {
+                                                    $value = $time->format('H:i');
+                                                    echo "<option value='$value'>$value</option>";
+                                                    $time->add($interval);
+                                                }
+                                                ?>
                                             </select>
                                         </div>
                                     </td>
@@ -783,6 +803,25 @@ function setAutomationStatus(data)
     });
 }
 
+function chkSchedule()
+{
+    var selectedValue = $('#execType').val();
+    $('#weekdayRow, #nextDateRow, #timeRow').show();
+
+    if (selectedValue === "minute" || selectedValue === "hour") {
+        $('#weekdayRow, #nextDateRow, #timeRow').hide();
+        $('input[name=exec_week]').prop('checked', false);
+        $('#nextDateRow select').val('');
+        $('#timeRow select').val('');
+    } else if (selectedValue === "day") {
+        $('#weekdayRow, #nextDateRow').hide();
+        $('input[name=exec_week]').prop('checked', false);
+        $('#nextDateRow select').val('');
+    } else if (selectedValue === "week") {
+        $('#nextDateRow').hide();
+        $('#nextDateRow select').val('');
+    }
+}
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
@@ -812,13 +851,20 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
     setAutomationStatus(data);
 });
 
-if($('#preactice-tab').attr('aria-selected')){
-    $('#preactice').addClass('active');
+if($('#home-tab').attr('aria-selected')){
+    $('#home').addClass('active');
 }
 
+$('#automationModal').on('show.bs.modal', function(e) {
+    chkSchedule();
+})
+.on('hidden.bs.modal', function(e) { 
+
+});
+
 //등록
-$('input[name="interlock"]').bind('change', function() {
-    chkInterlock();
+$('body').on('change', '#execType', function() {
+    chkSchedule();
 });
 </script>
 <?=$this->endSection();?>
