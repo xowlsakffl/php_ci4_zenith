@@ -46,13 +46,50 @@ class AutomationController extends BaseController
 
     public function setStatus()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
             $arg = $this->request->getRawInput();
             $data = [
                 'seq' => $arg['seq'],
 				'status' => $arg['status'],
             ];
             $result = $this->automation->setAutomationStatus($data);
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getAdv()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+
+            switch ($arg['tab']) {
+                case 'advertiser':
+                    $result = $this->automation->getSearchCompanies($arg);                
+                    break;
+                case 'campaign':
+                    $result = $this->automation->getSearchCampaigns($arg);
+                    break;
+                case 'adset':
+                    $result = $this->automation->getSearchAdsets($arg);
+                    break;
+                case 'ad':
+                    $result = $this->automation->getSearchAds($arg);
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+                    break;
+            }
+            
+            foreach($result as &$row){
+                if($row['status'] == 1 || $row['status'] == 'ON' || $row['status'] == 'ENABLED' || $row['status'] == 'ACTIVE'){
+                    $row['status'] = '활성';
+                }else{
+                    $row['status'] = '비활성';
+                }
+            }
 
             return $this->respond($result);
         }else{

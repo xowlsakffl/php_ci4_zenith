@@ -62,6 +62,103 @@ class AutomationModel extends Model
         ];
     }
 
+    public function getSearchCompanies($data)
+    {
+        $builder = $this->zenith->table('companies c');
+        $builder->select('id, "광고주" AS media, type, name, status');
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('name', $data['stx']);
+            $builder->orLike('id', $data['stx']);
+            $builder->groupEnd();
+        }
+        $builder->limit(20);
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getSearchCampaigns($data)
+    {
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign');
+        $facebookBuilder->select('campaign_id AS id, "페이스북" AS media, "캠페인" AS type, campaign_name AS name, status');
+
+        $googleBuilder = $this->zenith->table('z_adwords.aw_campaign');
+        $googleBuilder->select('id, "구글" AS media, "캠페인" AS type, name, status');
+
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign');
+        $kakaoBuilder->select('id, "카카오" AS media, "캠페인" AS type, name, config AS status');
+
+        $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
+        $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
+
+        if(!empty($data['stx'])){
+            $resultQuery->groupStart();
+            $resultQuery->like('adv.name', $data['stx']);
+            $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->groupEnd();
+        }
+
+        $resultQuery->limit(30);
+        $result = $resultQuery->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getSearchAdsets($data)
+    {
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_adset');
+        $facebookBuilder->select('adset_id AS id, "페이스북" AS media, "광고 세트" AS type, adset_name AS name, status');
+
+        $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup');
+        $googleBuilder->select('id, "구글" AS media, "광고 세트" AS type, name, status');
+
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup');
+        $kakaoBuilder->select('id, "카카오" AS media, "광고 세트" AS type, name, config AS status');
+
+        $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
+        $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
+
+        if(!empty($data['stx'])){
+            $resultQuery->groupStart();
+            $resultQuery->like('adv.name', $data['stx']);
+            $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->groupEnd();
+        }
+
+        $resultQuery->limit(30);
+        $result = $resultQuery->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getSearchAds($data)
+    {
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_ad');
+        $facebookBuilder->select('ad_id AS id, "페이스북" AS media, "광고" AS type, ad_name AS name, status');
+
+        $googleBuilder = $this->zenith->table('z_adwords.aw_ad');
+        $googleBuilder->select('id, "구글" AS media, "광고" AS type, name, status');
+
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_creative');
+        $kakaoBuilder->select('id, "카카오" AS media, "광고" AS type, name, config AS status');
+
+        $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
+        $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
+
+        if(!empty($data['stx'])){
+            $resultQuery->groupStart();
+            $resultQuery->like('adv.name', $data['stx']);
+            $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->groupEnd();
+        }
+
+        $resultQuery->limit(30);
+        $result = $resultQuery->get()->getResultArray();
+
+        return $result;
+    }
+
     public function getAutomations()
     {
         $builder = $this->zenith->table('admanager_automation aa');

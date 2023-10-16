@@ -18,6 +18,14 @@
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
+<style>
+    .ui-autocomplete{
+        z-index: 10000000;
+        max-height: 300px;
+        overflow-y: auto; /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -74,26 +82,16 @@
                     <div class="step">
                         <ol id="myTab" role="tablist">
                             <li class="tab-link active" role="presentation" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="true">
-                                <strong>일정</strong>
-                                
+                                <strong>일정</strong>                            
                                 <p id="scheduleText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">
-                                <strong>대상</strong>
-                             
-                                <p>광고주<br>
-                                페이스북<br>
-                                [전국]상상의원_광고주랜딩*
-                                ...</p>
+                                <strong>대상</strong>                          
+                                <p id="targetText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" role="tab" aria-controls="condition" aria-selected="false">
                                 <strong>조건</strong>
-                                <p>
-                                    지출액 - 100,000원 초과<br>
-                                    AND<br>
-                                    유효DB - 100건 이하
-
-                                </p>
+                                <p id="text-condition-1"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="preactice" aria-selected="false">
                                 <strong>실행</strong>
@@ -125,7 +123,7 @@
                         </ol>
                     </div>
                     <div class="detail-wrap">
-                        <div class="detail" id="schedule" role="tabpanel" aria-labelledby="schedule-tab" tabindex="0"> 
+                        <div class="detail show active" id="schedule" role="tabpanel" aria-labelledby="schedule-tab" tabindex="0"> 
                             <table class="table tbl-side" id="scheduleTable">
                                 <colgroup>
                                     <col style="width:35%">
@@ -265,60 +263,46 @@
                             </table>
                         </div>
                         <div class="detail" id="target" role="tabpanel"  aria-labelledby="target-tab" tabindex="1">
-                            <ul class="tab">
-                                <li class="active"><a href="#">광고주</a></li>
-                                <li><a href="#">캠페인</a></li>
-                                <li><a href="#">광고그룹</a></li>
-                                <li><a href="#">광고</a></li>
+                            
+                            <ul class="tab" id="targetTab">
+                                <li class="active" data-tab="advertiser"><a href="#">광고주</a></li>
+                                <li data-tab="campaign"><a href="#">캠페인</a></li>
+                                <li data-tab="adset"><a href="#">광고그룹</a></li>
+                                <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
-                            <div class="search">
-                                <input type="text" placeholder="검색어를 입력하세요">
+                            <div class="search d-flex align-items-center">
+                                <input type="text" placeholder="검색어를 입력하세요" id="showAdv">
+
+                                <span class="d-inline-block" style="margin-left: 10px;">
+                                    <input class="form-check-input" type="checkbox" value="1" id="targetConditionDisabled">
+                                    <label class="form-check-label" for="targetConditionDisabled">
+                                        대상, 조건 미적용
+                                    </label>
+                                </span>
                             </div>
-                            <table class="table tbl-header">
+                            <table class="table tbl-header w-100" id="targetTable">
                                 <colgroup>
-                                    <col style="width:24%">
-                                    <col style="width:28%">
-                                    <col>
-                                    <col style="width:15%">
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                    <col style="width:30%">
+                                    <col style="width:40%">
+                                    <col style="width:10%">
                                 </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col">매체</th>
-                                        <th scope="col">광고주 ID</th>
-                                        <th scope="col">광고주명</th>
+                                        <th scope="col">분류</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">이름</th>
                                         <th scope="col">상태</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td><b class="em">활성화</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td>중지</td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td><b class="em">활성화</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td>중지</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="detail" id="condition" role="tabpanel" aria-labelledby="condition-tab" tabindex="2">
-                            <table class="table tbl-header">
+                            <table class="table tbl-header" id="conditionTable">
                                 <colgroup>
                                     <col>
                                     <col style="width:45%">
@@ -332,94 +316,50 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr id="condition-1">
                                         <td>
                                             <div class="form-flex">
-                                                <select name="" class="form-select">
+                                                <input type="number" name="order" placeholder="순서" class="form-control">
+                                                <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
-                                                    <option value="">상태</option>
-                                                    <option value="">예산</option>
-                                                    <option value="">DB단가</option>
-                                                    <option value="">유효DB</option>
-                                                    <option value="">지출액</option>
-                                                    <option value="">수익</option>
-                                                    <option value="">수익률</option>
-                                                    <option value="">매출액</option>
-                                                    <option value="">노출수</option>
-                                                    <option value="">링크클릭</option>
-                                                    <option value="">CPC</option>
-                                                    <option value="">CTR</option>
-                                                    <option value="">DB전환률</option>
+                                                    <option value="status">상태</option>
+                                                    <option value="budget">예산</option>
+                                                    <option value="dbcost">DB단가</option>
+                                                    <option value="dbcount">유효DB</option>
+                                                    <option value="cost">지출액</option>
+                                                    <option value="margin">수익</option>
+                                                    <option value="margin_rate">수익률</option>
+                                                    <option value="sale">매출액</option>
+                                                    <option value="impression">노출수</option>
+                                                    <option value="click">링크클릭</option>
+                                                    <option value="cpc">CPC</option>
+                                                    <option value="ctr">CTR</option>
+                                                    <option value="conversion">DB전환률</option>
                                                 </select>
-                                                <select name="" class="form-select">
-                                                    <option value="">상태</option>
-                                                    <option value="">ON</option>
-                                                    <option value="">OFF</option>
+                                           
+                                                <select name="type_value_status" class="form-select" style="display: none;">
+                                                    <option value="">상태값 선택</option>
+                                                    <option value="ON">ON</option>
+                                                    <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" class="form-control">
+                                                <input type="text" name="type_value" class="form-control" placeholder="조건값">
                                             </div>
                                         </td>
                                         <td colspan="2">
                                             <div class="form-flex">
-                                            <select name="" class="form-select">
+                                            <select name="compare" class="form-select">
                                                 <option value="">일치여부</option>
-                                                <option value="">초과</option>
-                                                <option value="">보다 크거나 같음</option>
-                                                <option value="">미만</option>
-                                                <option value="">보다 작거나 같음</option>
-                                                <option value="">같음</option>
-                                                <option value="">같지않음</option>
+                                                <option value="greater">초과</option>
+                                                <option value="greater_equal">보다 크거나 같음</option>
+                                                <option value="less">미만</option>
+                                                <option value="less_equal">보다 작거나 같음</option>
+                                                <option value="equal">같음</option>
+                                                <option value="not_equal">같지않음</option>
                                             </select>
-                                            <select name="" class="form-select no-flex">
+                                            <select name="operation" class="form-select no-flex">
                                                 <option value="">AND / OR</option>
-                                                <option value="">AND</option>
-                                                <option value="">OR</option>
-                                            </select>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="form-flex">
-                                                <select name="" class="form-select">
-                                                    <option value="">조건 항목</option>
-                                                    <option value="">상태</option>
-                                                    <option value="">예산</option>
-                                                    <option value="">DB단가</option>
-                                                    <option value="">유효DB</option>
-                                                    <option value="">지출액</option>
-                                                    <option value="">수익</option>
-                                                    <option value="">수익률</option>
-                                                    <option value="">매출액</option>
-                                                    <option value="">노출수</option>
-                                                    <option value="">링크클릭</option>
-                                                    <option value="">CPC</option>
-                                                    <option value="">CTR</option>
-                                                    <option value="">DB전환률</option>
-                                                </select>
-                                                <select name="" class="form-select">
-                                                    <option value="">상태</option>
-                                                    <option value="">ON</option>
-                                                    <option value="">OFF</option>
-                                                </select>
-                                                <input type="text" class="form-control">
-                                            </div>
-                                        </td>
-                                        <td colspan="2">
-                                            <div class="form-flex">
-                                            <select name="" class="form-select">
-                                                <option value="">일치여부</option>
-                                                <option value="">초과</option>
-                                                <option value="">보다 크거나 같음</option>
-                                                <option value="">미만</option>
-                                                <option value="">보다 작거나 같음</option>
-                                                <option value="">같음</option>
-                                                <option value="">같지않음</option>
-                                            </select>
-                                            <select name="" class="form-select no-flex">
-                                                <option value="">AND / OR</option>
-                                                <option value="">AND</option>
-                                                <option value="">OR</option>
+                                                <option value="and">AND</option>
+                                                <option value="or">OR</option>
                                             </select>
                                             </div>
                                         </td>
@@ -860,6 +800,7 @@ function chkScheduleMonthType()
     }
 }
 
+//좌측 탭 일정 텍스트
 function scheduleText()
 {
     var type_value = $('input[name="type_value"]').val();
@@ -867,7 +808,7 @@ function scheduleText()
     var exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
     var month_type = $('#monthType').val();
     var month_day = $('#monthDay').val();
-    var month_week = $('#monthWeek').val();
+    var month_week = $('#monthWeek option:selected').text();
     var exec_time = $('#execTime').val();
     var ignore_start_time = $('select[name="ignore_start_time"] option:selected').text();
     var ignore_end_time = $('select[name="ignore_end_time"] option:selected').text();
@@ -889,10 +830,13 @@ function scheduleText()
                 weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
                 weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
                 weekTextPart_3 = exec_time ? exec_time+'에' : '';
-                scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
+                if(exec_week){
+                    scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
+                }
                 break;
             case "month":
                 monthTextPart_1 = type_value == 1 ? '매월 ' : type_value+'달 마다 ';
+                monthTextPart_3 = '';
                 switch (month_type) {
                     case 'start_day':
                         monthTextPart_2 = '첫번째 날 ';
@@ -901,13 +845,27 @@ function scheduleText()
                         monthTextPart_2 = '마지막 날 ';
                         break;
                     case 'first':
-                        monthTextPart_2 = '처음 ';
+                        monthTextPart_2 = '처음 ';                  
+                        if(month_week && month_week != '선택'){                          
+                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
+                        }
+                        break;
+                    case 'last':
+                        monthTextPart_2 = '마지막 ';
+                        if(month_week && month_week != '선택'){                          
+                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
+                        }
+                        break;
+                    case 'day':
+                        monthTextPart_2 = month_day ? month_day+'일째 ' : '';
                         break;
                     default:
+                        monthTextPart_2 = '';
                         break;
                 }
+                monthTextPart_4 = exec_time ? exec_time+'에' : '';
 
-                scheduleTextParts.push(monthTextPart_1);
+                scheduleTextParts.push(monthTextPart_1+monthTextPart_2+monthTextPart_3+monthTextPart_4);
                 break;
             default:
                 break;
@@ -915,11 +873,141 @@ function scheduleText()
     }
     $("#scheduleText").html(scheduleTextParts.join(", "));
 }
+
+//좌측 탭 조건 텍스트
+function conditionText($this)
+{
+    console.log($this);
+    var type = $('input[name="type_value"]').val();
+    
+    let scheduleTextParts= [];
+    if(type_value) {
+        switch(exec_type){
+            case "minute":
+                scheduleTextParts.push("매 "+type_value+"분 마다");
+                break;
+            case "hour":
+                scheduleTextParts.push("매 "+type_value+"시간 마다");
+                break;
+            case "day":
+                dayTextPart_1 = type_value == 1 ? '매일' : '매 '+type_value+'일 마다 ';
+                dayTextPart_2 = exec_time ? exec_time+'에' : '';
+                scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
+                break;
+            case "week":
+                weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
+                weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
+                weekTextPart_3 = exec_time ? exec_time+'에' : '';
+                if(exec_week){
+                    scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
+                }
+                break;
+            case "month":
+                monthTextPart_1 = type_value == 1 ? '매월 ' : type_value+'달 마다 ';
+                monthTextPart_3 = '';
+                switch (month_type) {
+                    case 'start_day':
+                        monthTextPart_2 = '첫번째 날 ';
+                        break;
+                    case 'end_day':
+                        monthTextPart_2 = '마지막 날 ';
+                        break;
+                    case 'first':
+                        monthTextPart_2 = '처음 ';                  
+                        if(month_week && month_week != '선택'){                          
+                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
+                        }
+                        break;
+                    case 'last':
+                        monthTextPart_2 = '마지막 ';
+                        if(month_week && month_week != '선택'){                          
+                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
+                        }
+                        break;
+                    case 'day':
+                        monthTextPart_2 = month_day ? month_day+'일째 ' : '';
+                        break;
+                    default:
+                        monthTextPart_2 = '';
+                        break;
+                }
+                monthTextPart_4 = exec_time ? exec_time+'에' : '';
+
+                scheduleTextParts.push(monthTextPart_1+monthTextPart_2+monthTextPart_3+monthTextPart_4);
+                break;
+            default:
+                break;
+        }
+    }
+    $("#scheduleText").html(scheduleTextParts.join(", "));
+}
+
+//대상 자동완성
+function getAdvs(){
+    var targetTab = $('#targetTab li.active').data('tab');
+    $('#showAdv').autocomplete({
+        source : function(request, response) {
+            $.ajax({
+                url : "/automation/adv", 
+                type : "GET", 
+                dataType: "JSON", 
+                data : {
+                    'stx': request.term,
+                    'tab': targetTab,
+                }, 
+                contentType: 'application/json; charset=utf-8',
+                success : function(data){
+                    response(
+                        $.map(data, function(item) {
+                            return {
+                                label: item.media+" / "+item.type+" / "+item.id+" / "+item.name+" / "+item.status,
+                                media: item.media,
+                                type: item.type,
+                                id: item.id,
+                                name: item.name,
+                                status: item.status,
+                                value: item.name,                  
+                            };
+                        })
+                    );
+                }
+                ,error : function(){
+                    alert("에러 발생");
+                }
+            });
+        },
+        select: function(event, ui) {
+            $('#targetTable tbody').empty();
+
+            var selectedData = ui.item;
+            var newRow = '<tr>' +
+                '<td>' + selectedData.media + '</td>' +
+                '<td>' + selectedData.type + '</td>' +
+                '<td>' + selectedData.id + '</td>' +
+                '<td>' + selectedData.name + '</td>' +
+                '<td '+(selectedData.status == '활성' ? 'class="em"' : '')+'>' + selectedData.status+ '</td>'
+            '</tr>';
+            var targetText = selectedData.type+'<br>'+selectedData.media+'<br>'+selectedData.name;
+
+            $('#targetTable tbody').append(newRow);
+            $('#targetText').html(targetText);
+        },
+        focus : function(event, ui) {	
+            return false;
+        },
+        minLength: 1,
+        autoFocus : true,
+        delay: 100
+    });
+}
+
+//검색
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
 
+//리스트 더보기 버튼
 $('#automation-table').on('click', '.btn-more', function () {
     var seq = $(this).data('seq');
     var currentActionList = $(this).closest('.more-action').find('.action-list');
@@ -927,11 +1015,7 @@ $('#automation-table').on('click', '.btn-more', function () {
     currentActionList.fadeToggle();
 });
 
-$('body').on('click', '.tab-link', function() {
-    $('.tab-link').removeClass('active');
-    $(this).addClass('active');
-});
-
+//status 변경
 $('body').on('change', '.ui-toggle input[name=status]', function() {
     var isChecked = $(this).is(':checked');
     var seq = $(this).val();
@@ -944,18 +1028,15 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
     setAutomationStatus(data);
 });
 
+//모달 보기
 $('#automationModal').on('show.bs.modal', function(e) {
-    if($('#schedule-tab').attr('aria-selected')){
-        $('#schedule').addClass('active');
-    }
-
     chkSchedule();
 })
 .on('hidden.bs.modal', function(e) { 
 
 });
 
-//등록
+//등록 부분 시작
 $('body').on('change', '#execType', function() {
     chkSchedule();
 });
@@ -967,6 +1048,63 @@ $('body').on('change', '#monthType', function() {
 $('body').on('change', '#scheduleTable input, #scheduleTable select', function() {
     scheduleText();
 });
+
+$('body').on('focus', '#showAdv', function(){
+    getAdvs();
+})
+
+$('body').on('click', '#targetTab li', function(){
+    $('#targetTab li').removeClass('active');
+    $(this).addClass('active');
+})
+
+$('body').on('change', '#targetConditionDisabled', function(){
+    if($(this).is(':checked')) {
+        $('#showAdv').val('');
+        $('#showAdv').prop('disabled', true);
+        $('#targetText').html('미적용');
+        $('#targetTable tbody').empty();
+    }else{
+        $('#showAdv').prop('disabled', false);
+    }
+})
+
+$('body').on('click', '#conditionTable .btn-add', function(){
+    var currentRowCount = $('#conditionTable tbody tr').length;
+    var uniqueId = 'condition-' + (currentRowCount + 1);
+    var row = '<tr id="' + uniqueId + '"><td><div class="form-flex"><input type="number" name="order" placeholder="순서"class="form-control"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select" style="display:none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td></tr>';
+    var rowText = '<p id="text-'+uniqueId+'"></p>';
+    $('#conditionTable tbody').append(row);
+    $('#condition-tab').append(rowText);
+})
+
+$('body').on('change', '#conditionTable select[name=type]', function() {
+    //상태 선택
+    var type = $(this).val();
+    if($(this).hasClass('conditionType')) {
+        if(type == 'status'){
+            $(this).siblings('input[name=type_value]').hide();
+            $(this).closest('tr').find('select[name=compare]').children('option:not([value="equal"], [value="not_equal"])').hide();
+            $(this).siblings('select[name=type_value_status]').show();
+        }else{
+            $(this).siblings('select[name=type_value_status]').hide();
+            $(this).closest('tr').find('select[name=compare]').children('option').show();   
+            $(this).siblings('input[name=type_value]').show();   
+        }
+    }
+});
+
+$('body').on('change', '#conditionTable input, #conditionTable select', function() {
+    var $this = $(this);
+    conditionText($this);
+});
+
+$('body').on('click', '.deleteBtn', function() {
+    $(this).closest('tr').remove();
+    var rowId = $(this).closest('tr').attr('id');
+    $('#condition-tab #text-'+rowId).remove();
+});
+//등록 부분 끝
 </script>
 <?=$this->endSection();?>
 
