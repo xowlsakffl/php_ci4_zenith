@@ -172,7 +172,6 @@
                     <table class="dataTable table table-striped table-hover table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
-                                <th scope="col"></th>
                                 <th scope="col">매체</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
@@ -190,9 +189,8 @@
                                 <th scope="col">DB <br>전환률</th>
                             </tr>
                         </thead>
-                        <thead>
+                        <tfoot>
                             <tr id="total">
-                                <td></td>
                                 <td></td>
                                 <td id="total-count"></td>
                                 <td></td>
@@ -209,7 +207,7 @@
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
                             </tr>
-                        </thead>
+                        </tfoot>
                         <tbody>
                         </tbody>
                     </table>
@@ -374,37 +372,59 @@ function setSearchData() {
     }else{
         $('#update_btn').show();
     }
-
     var data = tableParam;
-
     if(typeof data.searchData == 'undefined') return;
-
     $('#media_btn, #business_btn, #company_btn').removeClass('active');
     $('.check input[name="check01"]').prop('checked', false);
 
     if(data.searchData.media){
         data.searchData.media.split('|').map(function(txt){ $(`#media_btn[value="${txt}"]`).addClass('active'); });
     }
-    
     if(data.searchData.company){
         data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
     }
-
     if(data.searchData.account){
         data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
     }
-
-    /* if(data.searchData.check){
-        data.searchData.check.map(function(txt){ $(`.check input[value="${txt}"]`).prop('checked', true); });
-    } */
-
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
-    //$('#sdate').val(data.searchData.sdate);
-    //$('#edate').val(data.searchData.edate);
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
     if(typeof dataTable != 'undefined') dataTable.state.save();
+}
+function setDrawData() {
+    tab = $('.tab-link.active').val();
+    if(typeof tableParam.searchData == 'undefined') return;
+    if(tableParam.searchData.data){
+        if(tab == 'campaigns' && tableParam.searchData.data.campaigns){
+            tableParam.searchData.data.campaigns.map(function(txt){ 
+                $(`#adv-table tbody tr[data-id="${txt}"]`).addClass('selected'); 
+                if(!$(`#adv-table tbody tr`).is(`[data-id="${txt}"]`)) {
+                    tableParam.searchData.data.campaigns = tableParam.searchData.data.campaigns.filter(function(e) { return e !== txt });
+                    debug(`캠페인 ${txt} 삭제`);
+                }
+            });
+        }
+        if(tab == 'adsets' && tableParam.searchData.data.adsets){
+            tableParam.searchData.data.adsets.map(function(txt){ 
+                $(`#adv-table tbody tr[data-id="${txt}"]`).addClass('selected'); 
+                if(!$(`#adv-table tbody tr`).is(`[data-id="${txt}"]`)) {
+                    tableParam.searchData.data.adsets = tableParam.searchData.data.adsets.filter(function(e) { return e !== txt });
+                    debug(`광고그룹 ${txt} 삭제`);
+                }
+            });
+        }
+        if(tab == 'ads' && tableParam.searchData.data.ads){
+            tableParam.searchData.data.ads.map(function(txt){ 
+                $(`#adv-table tbody tr[data-id="${txt}"]`).addClass('selected'); 
+                if(!$(`#adv-table tbody tr`).is(`[data-id="${txt}"]`)) {
+                    tableParam.searchData.data.ads = tableParam.searchData.data.ads.filter(function(e) { return e !== txt });
+                    debug(`광고 ${txt} 삭제`);
+                }
+            });
+        }
+    }
+    setSearchData();
 }
 
 $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serverside export
@@ -428,18 +448,24 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
 
 function getList(data = []){
     dataTable = $('#adv-table').DataTable({
-        "dom": '<Bfr<t>ip>',
-        "fixedHeader": true,
+        "dom": '<Bfrip<t>>',
+        "fixedHeader": {
+            "header" : true,
+            "footer" : true
+        },
         "fixedColumns": {
             "leftColumns": 3
         },
         "deferRender": false,
         "autoWidth": true,
-        "order": [[3,'asc']],
+        "order": [[1,'asc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
+        "search" : {
+            "return": true
+        },
         "ordering": true,
         "paging": false,
         "info": false,
@@ -460,9 +486,8 @@ function getList(data = []){
                     'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    //'check' : $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get(),
                 };
-
+                data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 debug(tableParam.searchData);
             //}
@@ -474,7 +499,6 @@ function getList(data = []){
             tableParam.searchData.sdate = today;
             tableParam.searchData.edate = today;
             setSearchData();
-            debug(tableParam.searchData);
         },
         "deferRender": true,
         "buttons": [
@@ -522,14 +546,6 @@ function getList(data = []){
             { targets: '_all', visible: true },
         ],
         "columns": [
-            { 
-                "data": null, 
-                "width": "40px",
-                "render": function (data, type, row) {
-                    media = '<label class="check"><input type="checkbox" class="form-check-input" name="check01" value="'+row.media+"_"+row.id+'"></label>';
-                    return media;
-                },
-            },
             { 
                 "data": "media", 
                 "width": "40px",
@@ -650,14 +666,17 @@ function getList(data = []){
         }
     }).on('xhr.dt', function( e, settings, data, xhr ) {
         if(data){
+            debug('ajax loaded');
             setReport(data.report);
             setAccount(data.accounts);
             setMediaAccount(data.media_accounts)
             setTotal(data);
             setDate();
-            setSearchData();
         }
-    });
+    }).on('draw', function() {
+        debug('draw');
+        setDrawData();
+    })
 }
 
 function setTotal(res){
@@ -751,8 +770,8 @@ function getCheckData(check){
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
             setReport(data.report);
-            setAccount(data.account);
-            setMediaAccount(data.media_accounts);
+            // setAccount(data.account);
+            // setMediaAccount(data.media_accounts);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -984,10 +1003,9 @@ $('body').on('click', '#media_btn, #company_btn, #media_account_btn', function()
     dataTable.draw();
 });
 $('body').on('click', '.tab-link', function() {
-    
     $('.tab-link').removeClass('active');
     $(this).addClass('active');
-    debug('필터링 탭 클릭');
+    debug('tab-link 클릭');
     dataTable.state.save();
     dataTable.draw();
 });
@@ -1017,13 +1035,14 @@ $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
-
-$('body').on('change', '.check input[name=check01]', function() {
-    debug('체크 선택')
-    dataTable.state.save();
-    var check = $('.check input[name=check01]:checked').map(function(){return $(this).val();}).get()
-    getCheckData(check);
-});
+$('.dataTable').on('click', 'tbody tr', function(e) {
+    $(this).toggleClass('selected');
+    var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
+    if($('.dataTable tbody tr.selected').length > 0) {
+        if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
+        tableParam.searchData.data[$('.tab-link.active').val()] = selected;
+    }
+})
 
 var prevVal;
 $('body').on('focus', '#status_btn', function(){
@@ -1501,7 +1520,7 @@ $('body').on('click', '.reset-btn', function() {
 });
 
 function debug(msg) {
-    //console.log(msg);
+    console.log(msg);
 }
 </script>
 <?=$this->endSection();?>

@@ -33,6 +33,9 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
             &:not(:last-child){border-right:1px dashed #dfdfdf;}
         }
     }
+    tfoot{
+        td{background-color: var(--bs-gray-400) !important;}
+    }
     tbody{
         th{position:relative; font-weight:400; border-right:1px dashed #dfdfdf;}
         td{position:relative; text-align:center; vertical-align:middle; word-break:break-word;
