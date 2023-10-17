@@ -80,14 +80,37 @@ class AutomationModel extends Model
 
     public function getSearchCampaigns($data)
     {
-        $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign');
-        $facebookBuilder->select('campaign_id AS id, "페이스북" AS media, "캠페인" AS type, campaign_name AS name, status');
+        if(isset($arg['adv'])){
+            $advInfo = explode("_", $arg['adv']);
+            $media = $advInfo[0];
+            $type = $advInfo[1];
+            $id = $advInfo[2];
+        }
 
-        $googleBuilder = $this->zenith->table('z_adwords.aw_campaign');
-        $googleBuilder->select('id, "구글" AS media, "캠페인" AS type, name, status');
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign A');
+        $facebookBuilder->select('A.campaign_id AS id, "페이스북" AS media, "캠페인" AS type, A.campaign_name AS name, A.status');
 
-        $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign');
-        $kakaoBuilder->select('id, "카카오" AS media, "캠페인" AS type, name, config AS status');
+        if(isset($arg['adv'])){
+            $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.campaign_id = B.campaign_id');
+            $facebookBuilder->join('z_facebook.fb_ad AS C', 'B.adset_id = C.adset_id');
+            $facebookBuilder->join('z_facebook.fb_ad_account AS D', 'A.account_id = D.ad_account_id');
+        }
+
+        $googleBuilder = $this->zenith->table('z_adwords.aw_campaign A');
+        $googleBuilder->select('A.id, "구글" AS media, "캠페인" AS type, A.name, A.status');
+
+        if(isset($arg['adv'])){
+            $googleBuilder->join('z_adwords.aw_adgroup AS B', 'A.id = B.campaignId');
+            $googleBuilder->join('z_adwords.aw_ad AS C', 'B.id = C.adgroupId');
+        }
+
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign A');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "캠페인" AS type, A.name, A.config AS status');
+
+        if(isset($arg['adv'])){
+            $kakaoBuilder->join('z_moment.mm_adgroup AS B', 'A.id = B.campaign_id');
+            $kakaoBuilder->join('z_moment.mm_creative AS C', 'B.id = C.adgroup_id');
+        }
 
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
@@ -96,7 +119,14 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
+        }
+
+        if(isset($arg['adv'])){
+            if($type == '캠페인'){
+                $resultQuery->where('adv.id', $id);
+            }
         }
 
         $resultQuery->limit(30);
@@ -108,13 +138,13 @@ class AutomationModel extends Model
     public function getSearchAdsets($data)
     {
         $facebookBuilder = $this->zenith->table('z_facebook.fb_adset');
-        $facebookBuilder->select('adset_id AS id, "페이스북" AS media, "광고 세트" AS type, adset_name AS name, status');
+        $facebookBuilder->select('adset_id AS id, "페이스북" AS media, "광고그룹" AS type, adset_name AS name, status');
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup');
-        $googleBuilder->select('id, "구글" AS media, "광고 세트" AS type, name, status');
+        $googleBuilder->select('id, "구글" AS media, "광고그룹" AS type, name, status');
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup');
-        $kakaoBuilder->select('id, "카카오" AS media, "광고 세트" AS type, name, config AS status');
+        $kakaoBuilder->select('id, "카카오" AS media, "광고그룹" AS type, name, config AS status');
 
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
@@ -123,6 +153,7 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
         }
 
@@ -150,6 +181,7 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
+            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
         }
 

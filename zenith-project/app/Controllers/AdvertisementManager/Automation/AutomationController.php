@@ -60,7 +60,7 @@ class AutomationController extends BaseController
         }
     }
 
-    public function getAdv()
+    public function getTargetAdv()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
