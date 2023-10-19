@@ -93,6 +93,9 @@ body{background:#f7f7f7;}
             &:nth-child(n+5){margin-top:15px;}
         }
     }
+    .btn-top{
+        span{display:none;}
+    }
 }
 @include large{
     .ad-list{

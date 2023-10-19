@@ -458,6 +458,9 @@ body {
   .ad-detail-info .col:nth-child(n+5) {
     margin-top: 15px;
   }
+  .btn-top span {
+    display: none;
+  }
 }
 @media screen and (max-width: 1200px) {
   .ad-list .row {
@@ -964,7 +967,8 @@ input:-internal-autofill-selected {
 
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
-    padding: 30px 30px 30px 70px;
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
   }
   .title-area {
     flex-wrap: wrap;

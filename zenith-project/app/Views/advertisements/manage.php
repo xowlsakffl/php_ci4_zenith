@@ -25,6 +25,10 @@
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
 <style>
+    :root {
+        --dt-row-selected: 130,190,255;
+        --dt-row-selected-text: 0,0,0;
+    }
     .inner button.disapproval::after{
         position: absolute;
         top: 0;
@@ -47,6 +51,17 @@
     }
     .dt-buttons{
         position: initial !important;
+    }
+    /* 업데이트 애니메이션 */
+    tr.updating td:first-child{
+        animation: updating-background 2s linear infinite forwards;
+        background-image: linear-gradient(to right, transparent 8%, #bbbbbb 55%, transparent 80%);
+        background-size: 200%;
+        box-shadow: none !important;
+    }
+    @keyframes updating-background {
+        0% {background-position: 100% 0}
+        100% {background-position: -100% 0}
     }
 </style>
 <?=$this->endSection();?>
@@ -375,7 +390,6 @@ function setSearchData() {
     var data = tableParam;
     if(typeof data.searchData == 'undefined') return;
     $('#media_btn, #business_btn, #company_btn').removeClass('active');
-    $('.check input[name="check01"]').prop('checked', false);
 
     if(data.searchData.media){
         data.searchData.media.split('|').map(function(txt){ $(`#media_btn[value="${txt}"]`).addClass('active'); });
@@ -1012,14 +1026,13 @@ $('body').on('click', '.tab-link', function() {
 
 /*체크 항목 수동 업데이트*/
 $('body').on('click', '#update_btn', function() {
-    var checkedInputs = $('.check input[name=check01]:checked');
+    var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
     checkedInputs.each(function() {
         var icon = $('<i>').addClass('fa fa-spinner fa-spin'); 
         $(this).parent('label.check').before(icon);
     });
-    var check = checkedInputs.map(function() { return $(this).val(); }).get();
     var data = {
-        'check' : check,
+        'check' : selected,
     }
     if(!data.check.length){
         alert("업데이트 할 항목을 선택해주세요.");
