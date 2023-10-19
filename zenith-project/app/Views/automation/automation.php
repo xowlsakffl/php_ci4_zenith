@@ -82,11 +82,11 @@
                     <div class="step">
                         <ol id="myTab" role="tablist">
                             <li class="tab-link active" role="presentation" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="true">
-                                <strong>일정</strong>                            
+                                <strong>일정</strong>
                                 <p id="scheduleText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">
-                                <strong>대상</strong>                          
+                                <strong>대상</strong>   
                                 <p id="targetText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" role="tab" aria-controls="condition" aria-selected="false">
@@ -100,30 +100,13 @@
                             </li>
                             <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="preactice" aria-selected="false">
                                 <strong>실행</strong>
-                                <p>* 캠페인 - 페이스북<br>
-                                노안라식_180509<br>
-                                상태 OFF<br>
-                                * 캠페인 - 구글<br>
-                                밝은성모안과(지원자, 응답) -<br>
-                                전국 #2000_001 *40000 &fhr<br>
-                                예산 50,000원</p>
-                                <p>* 캠페인 - 페이스북<br>
-                                노안라식_180509<br>
-                                상태 OFF<br>
-                                * 캠페인 - 구글<br>
-                                밝은성모안과(지원자, 응답) -<br>
-                                전국 #2000_001 *40000 &fhr<br>
-                                예산 50,000원</p>
-                                <p>* 캠페인 - 페이스북<br>
-                                노안라식_180509<br>
-                                상태 OFF<br>
-                                * 캠페인 - 구글<br>
-                                밝은성모안과(지원자, 응답) -<br>
-                                전국 #2000_001 *40000 &fhr<br>
-                                예산 50,000원</p>
                             </li>
                             <li class="tab-link" role="presentation" id="detailed-tab" data-bs-toggle="tab" data-bs-target="#detailed" type="button" role="tab" aria-controls="messages" aria-selected="false">
                                 <strong>상세정보</strong>
+                                <p id="detailText">
+                                    <span id="subjectText"></span><br>
+                                    <span id="descriptionText"></span>
+                                </p>
                             </li>
                         </ol>
                     </div>
@@ -137,7 +120,7 @@
                                 <tr>
                                     <th scope="row">다음 시간마다 규칙적으로 실행</th>
                                     <td>
-                                        <input type="text" name="type_value" class="form-control short">
+                                        <input type="text" name="type_value" class="form-control short" oninput="onlyNumber(this);" maxlength="3" />
                                         <select name="exec_type" class="form-select short" id="execType">
                                             <option value="minute">분</option>
                                             <option value="hour">시간</option>
@@ -268,15 +251,17 @@
                             </table>
                         </div>
                         <div class="detail" id="target" role="tabpanel"  aria-labelledby="target-tab" tabindex="1">
-                            
                             <ul class="tab" id="targetTab">
                                 <li class="active" data-tab="advertiser"><a href="#">광고주</a></li>
                                 <li data-tab="campaign"><a href="#">캠페인</a></li>
                                 <li data-tab="adset"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
-                            <div class="search d-flex align-items-center">
-                                <input type="text" placeholder="검색어를 입력하세요" id="showTargetAdv">
+                            <div class="search w-100">
+                                <form name="search-target-form" class="search d-flex justify-content-center w-100">
+                                    <input type="text" placeholder="검색어를 입력하세요" id="showTargetAdv" class="w-100">
+                                    <button class="btn-primary" id="search_target_btn" type="submit">조회</button>
+                                </form>
                             </div>
                             <table class="table tbl-header w-100" id="targetTable">
                                 <colgroup>
@@ -288,11 +273,28 @@
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col">매체</th>
-                                        <th scope="col">분류</th>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">이름</th>
-                                        <th scope="col">상태</th>
+                                        <th scope="col"  class="text-center">매체</th>
+                                        <th scope="col"  class="text-center">분류</th>
+                                        <th scope="col"  class="text-center">ID</th>
+                                        <th scope="col"  class="text-center">이름</th>
+                                        <th scope="col"  class="text-center">상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table class="table tbl-header w-100 mt-4" id="targetSelectTable">
+                                <input type="hidden" name="adv_info" id="advInfo">
+                                <colgroup>
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                    <col style="width:30%">
+                                    <col style="width:40%">
+                                    <col style="width:10%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" colspan="5"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -317,7 +319,7 @@
                                     <tr id="condition-1">
                                         <td>
                                             <div class="form-flex">
-                                                <input type="number" name="order" placeholder="순서" class="form-control conditionOrder">
+                                                <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3">
                                                 <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
                                                     <option value="status">상태</option>
@@ -372,91 +374,85 @@
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
                             <div class="search">
-                                <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv">
-                                <input type="hidden" name="adv_info" id="advInfo">
-                                <span class="d-inline-block" style="margin-left: 10px;">
+                                <div class="d-flex align-items-center">
                                     <input class="form-check-input" type="checkbox" value="1" id="targetConditionDisabled">
                                     <label class="form-check-label" for="targetConditionDisabled">
                                         대상, 조건 미적용
                                     </label>
-                                </span>
+                                </div>
+                                <form name="search-exec-form" class="search d-flex justify-content-center w-100">
+                                    <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv" class="w-100">
+                                    <button class="btn-primary" id="search_exec_btn" type="submit">조회</button>
+                                </form>
                             </div>
-                            <table class="table tbl-header" id="execTable">
+                            <table class="table tbl-header w-100 mt-4" id="execTable">
                                 <colgroup>
-                                    <col style="width:24%">
-                                    <col style="width:28%">
-                                    <col>
-                                    <col style="width:15%">
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                    <col style="width:30%">
+                                    <col style="width:40%">
+                                    <col style="width:10%">
                                 </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col">매체</th>
-                                        <th scope="col">광고주 ID</th>
-                                        <th scope="col">광고주명</th>
+                                        <th scope="col">분류</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">이름</th>
                                         <th scope="col">상태</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td><b class="em">활성화</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td>중지</td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td><b class="em">활성화</b></td>
-                                    </tr>
-                                    <tr>
-                                        <td>페이스북</td>
-                                        <td>5897268653698510</td>
-                                        <td>[전국]상상의원_광고주랜딩*</td>
-                                        <td>중지</td>
-                                    </tr>
                                 </tbody>
                             </table>
-                            <table class="table tbl-header">
-                                <colgroup>
-                                    <col>
-                                    <col style="width:5%">
-                                </colgroup>
+                            <table class="table tbl-header w-100 mt-4" id="execConditionTable">
                                 <thead>
                                     <tr>
                                         <th scope="col">항목</th>
-                                        <th scope="col"><button type="button" class="btn-add">추가</button></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="2">
+                                        <td>
                                             <div class="form-flex">
-                                                <select name="" class="form-select">
+                                                <select name="exec_condition_type" class="form-select" id="execConditionType">
                                                     <option value="">실행항목</option>
-                                                    <option value="">상태</option>
-                                                    <option value="">예산</option>
+                                                    <option value="status">상태</option>
+                                                    <option value="budget">예산</option>
                                                 </select>
-                                                <select name="" class="form-select">
+                                                <select name="exec_condition_value_status" class="form-select" style="display: none;" id="execConditionValueStatus">
                                                     <option value="">상태</option>
-                                                    <option value="">ON</option>
-                                                    <option value="">OFF</option>
+                                                    <option value="ON">ON</option>
+                                                    <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" class="form-control">
+                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue">
+                                                <button class="btn-primnary" id="execConditionBtn">적용</button>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                            <table class="table tbl-header w-100 mt-4" id="execSelectTable">
+                                <colgroup>
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                    <col style="width:25%">
+                                    <col style="width:25%">
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                    <col style="width:10%">
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="detail" id="detailed" role="tabpanel" aria-labelledby="detailed-tab" tabindex="4">
-                            <table class="table tbl-side">
+                            <table class="table tbl-side" id="detailTable">
                                 <colgroup>
                                     <col style="width:35%">
                                     <col>
@@ -464,18 +460,18 @@
                                 <tr>
                                     <th scope="row">이름*</th>
                                     <td>
-                                        <input type="text" class="form-control bg">
+                                        <input type="text" name="subject" class="form-control bg">
                                     </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">설명</th>
                                     <td>
-                                        <textarea class="form-control"></textarea>
+                                        <textarea name="description" class="form-control"></textarea>
                                     </td>
                                 </tr>
                             </table>
                             <duv class="btn-area">
-                                <button type="button" class="btn-special">저장</button>
+                                <button type="button" id="createAutomationBtn" class="btn-special">저장</button>
                             </duv>
                         </div>
                     </div>
@@ -916,127 +912,188 @@ function conditionText($this)
 }
 
 //대상 자동완성
-function getTargetAdvs(){
-    var targetTab = $('#targetTab li.active').data('tab');
-    $('#showTargetAdv').autocomplete({
-        source : function(request, response) {
-            $.ajax({
-                url : "/automation/adv", 
-                type : "GET", 
-                dataType: "JSON", 
-                data : {
-                    'stx': request.term,
-                    'tab': targetTab,
-                }, 
-                contentType: 'application/json; charset=utf-8',
-                success : function(data){
-                    response(
-                        $.map(data, function(item) {
-                            return {
-                                label: item.media+" / "+item.type+" / "+item.id+" / "+item.name+" / "+item.status,
-                                media: item.media,
-                                type: item.type,
-                                id: item.id,
-                                name: item.name,
-                                status: item.status,
-                                value: item.name,                  
-                            };
-                        })
-                    );
-                }
-                ,error : function(){
-                    alert("에러 발생");
-                }
-            });
+function getTargetAdvs(data){
+    targetTable = $('#targetTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        'lengthChange': false,
+        'pageLength': 10,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/automation/adv",
+            "data": data,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res.data;
+            }
         },
-        select: function(event, ui) {
-            $('#targetTable tbody').empty();
-
-            var selectedData = ui.item;
-            var newRow = '<tr>' +
-                '<td>' + selectedData.media + '</td>' +
-                '<td>' + selectedData.type + '</td>' +
-                '<td>' + selectedData.id + '</td>' +
-                '<td>' + selectedData.name + '</td>' +
-                '<td '+(selectedData.status == '활성' ? 'class="em"' : '')+'>' + selectedData.status+ '</td>'
-            '</tr>';
-            var targetText = selectedData.type+'<br>'+selectedData.media+'<br>'+selectedData.name;
-
-            $('#targetTable tbody').append(newRow);
-            $('#targetText').html(targetText);
-            console.log(ui.item);
-            $('#advInfo').val(selectedData.media+'_'+selectedData.type+'_'+selectedData.id);
+        "columns": [
+            { "data": "media", "width": "10%"},
+            { "data": "type", "width": "10%"},
+            { "data": "id", "width": "30%"},
+            { "data": "name", "width": "40%"},
+            { "data": "status", "width": "10%"},
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.media+"_"+data.type+"_"+data.id);
         },
-        focus : function(event, ui) {	
-            return false;
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
-        minLength: 1,
-        autoFocus : true,
-        delay: 100
     });
 }
 
 //실행 자동완성
-function getExecAdvs(){
-    var execTab = $('#execTab li.active').data('tab');
-    var disableChecked = $('#targetConditionDisabled').is(':checked');
-    $('#showExecAdv').autocomplete({
-        source : function(request, response) {
-            $.ajax({
-                url : "/automation/adv", 
-                type : "GET", 
-                dataType: "JSON", 
-                data : {
-                    'stx': request.term,
-                    'tab': execTab,
-                    'adv': disableChecked ? null : $('input[name=adv_info]').val(),
-                }, 
-                contentType: 'application/json; charset=utf-8',
-                success : function(data){
-                    response(
-                        $.map(data, function(item) {
-                            return {
-                                label: item.media+" / "+item.type+" / "+item.id+" / "+item.name+" / "+item.status,
-                                media: item.media,
-                                type: item.type,
-                                id: item.id,
-                                name: item.name,
-                                status: item.status,
-                                value: item.name,                  
-                            };
-                        })
-                    );
-                }
-                ,error : function(){
-                    alert("에러 발생");
-                }
-            });
+function getExecAdvs(data){
+    execTable = $('#execTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": false,
+        "deferRender": false,
+        'lengthChange': false,
+        'pageLength': 10,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/automation/adv",
+            "data": data,
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res.data;
+            }
         },
-        select: function(event, ui) {
-            $('#execTable tbody').empty();
-
-            var selectedData = ui.item;
-            var newRow = '<tr>' +
-                '<td>' + selectedData.media + '</td>' +
-                '<td>' + selectedData.type + '</td>' +
-                '<td>' + selectedData.id + '</td>' +
-                '<td>' + selectedData.name + '</td>' +
-                '<td '+(selectedData.status == '활성' ? 'class="em"' : '')+'>' + selectedData.status+ '</td>'
-            '</tr>';
-            var targetText = selectedData.type+'<br>'+selectedData.media+'<br>'+selectedData.name;
-
-            $('#targetTable tbody').append(newRow);
-            $('#targetText').html(targetText);
-            console.log(ui.item);
-            $('#advInfo').val(selectedData.media+'_'+selectedData.type+'_'+selectedData.id);
+        "columns": [
+            { "data": "media", "width": "10%"},
+            { "data": "type", "width": "10%"},
+            { "data": "id", "width": "30%"},
+            { "data": "name", "width": "40%"},
+            { "data": "status", "width": "10%"},
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.media+"_"+data.type+"_"+data.id);
         },
-        focus : function(event, ui) {	
-            return false;
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
-        minLength: 1,
-        autoFocus : true,
-        delay: 100
     });
+}
+
+function validationData(){
+    $type_value = $('#scheduleTable input[name=type_value]').val();
+    $exec_type = $('#scheduleTable select[name=exec_type]').val();
+    $exec_time = $('#scheduleTable select[name=exec_time]').val();
+    $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
+    $month_type = $('#scheduleTable select[name=month_type]').val();
+    $month_week = $('#scheduleTable select[name=month_week]').val();
+    $month_day = $('#scheduleTable select[name=month_day]').val();
+
+    $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
+    $selectTarget = $('#targetSelectTable tbody tr').length;
+
+    /* if (!$type_value) {
+        alert('시간값을 입력해주세요');
+        $('#schedule-tab').trigger('click');
+        $('#scheduleTable input[name=type_value]').focus();
+        return false;
+    }
+
+    if ($exec_type === 'day' && !$exec_time) {
+        alert('시간을 입력해주세요.');
+        $('#schedule-tab').trigger('click');
+        $('#scheduleTable select[name=exec_time]').focus();
+        return false;
+    }
+
+    if ($exec_type === 'week') {
+        if(!$exec_week > 0){
+            alert('요일을 선택해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable input[name=exec_week]').focus();
+            return false;
+        }
+
+        if(!$exec_time){
+            alert('시간을 입력해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable select[name=exec_time]').focus();
+            return false;
+        }
+    }
+
+    if ($exec_type === 'month') {
+        if(!$month_type){
+            alert('월 조건값을 선택해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable select[name=month_type]').focus();
+            return false;
+        }
+
+        if(($month_type === 'first' || $month_type === 'last') && !$month_week){
+            alert('요일을 선택해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable select[name=month_week]').focus();
+            return false;
+        }
+
+        if($month_type === 'day' && !$month_day){
+            alert('일자를 선택해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable select[name=month_day]').focus();
+            return false;
+        }
+
+        if(!$exec_time){
+            alert('시간을 입력해주세요.');
+            $('#schedule-tab').trigger('click');
+            $('#scheduleTable select[name=exec_time]').focus();
+            return false;
+        }
+    } */
+
+    /* if(!$selectTarget > 0){
+        alert('대상을 추가해주세욧.');
+        $('#target-tab').trigger('click');
+        $('#showTargetAdv').focus();
+        return false;
+    } */
+
+    if(!$targetConditionDisabled){
+        $('tr[id^="condition-"]').each(function() {
+            var $row = $(this);
+            var $conditionOrder = $row.find('input[name=order]').val();
+            var $conditionType = $row.find('select[name=type]').val();
+            var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
+            var $conditionTypeValue = $row.find('input[name=conditionTypeValue]').val();
+            var $conditionCompare = $row.find('select[name=compare]').val();
+            var $conditionOperation = $row.find('select[name=operation]').val();
+
+            if(!$conditionOrder){
+                alert('순서를 입력해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('input[name=order]').focus();
+                return false;
+            }
+        });
+    }
+
+    return true;
+}
+
+function onlyNumber(inputElement) {
+    inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 }
 
 //검색
@@ -1087,13 +1144,59 @@ $('body').on('change', '#scheduleTable input, #scheduleTable select', function()
     scheduleText();
 });
 
-$('body').on('focus', '#showTargetAdv', function(){
-    getTargetAdvs();
-})
+$('form[name="search-target-form"]').bind('submit', function() {
+    var data = {
+        'tab': $('#targetTab li.active').data('tab'),
+        'stx': $('#showTargetAdv').val(),
+    }
+    getTargetAdvs(data);
+    return false;
+});
 
-$('body').on('focus', '#showExecAdv', function(){
-    getExecAdvs();
-})
+$('form[name="search-exec-form"]').bind('submit', function() {
+    var disableChecked = $('#targetConditionDisabled').is(':checked');
+    var data = {
+        'tab': $('#execTab li.active').data('tab'),
+        'stx': $('#showExecAdv').val(),
+        'adv': disableChecked ? null : $('input[name=adv_info]').val(),
+    }
+    console.log(data);
+    getExecAdvs(data);
+    return false;
+});
+
+$('body').on('click', '#targetTable tbody tr', function(){
+    if ($(this).hasClass('selected')) {
+         $(this).removeClass('selected');
+         $('#advInfo').val('');
+         $('#targetSelectTable tbody').empty();
+         $('#targetText').html('');
+    }
+    else {
+        $('#targetTable tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        $('#targetSelectTable tbody').empty();
+
+        var targetId = $(this).data('id');
+        var rowMedia = $(this).children('td').eq(0).text();
+        var rowType = $(this).children('td').eq(1).text();
+        var rowName = $(this).children('td').eq(3).text();
+
+        $('#advInfo').val(targetId);
+        $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+        $(this).closest('tr').clone().appendTo('#targetSelectTable');
+    }
+});
+
+$('body').on('click', '#execTable tbody tr', function(){
+    if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+    }
+    else {
+        $('#execTable tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+    }
+});
 
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
@@ -1109,7 +1212,6 @@ $('body').on('click', '#execTab li', function(){
 $('body').on('change', '#targetConditionDisabled', function(){
     if($(this).is(':checked')) {  
         var disabledText = '<p id="disabledText">미적용</p>';
-        $('#showTargetAdv').val('');
         $('#showTargetAdv').prop('disabled', true);
         $('#targetText').hide();
 
@@ -1127,7 +1229,7 @@ $('body').on('change', '#targetConditionDisabled', function(){
 $('body').on('click', '#conditionTable .btn-add', function(){
     var currentRowCount = $('#conditionTable tbody tr').length;
     var uniqueId = 'condition-' + (currentRowCount + 1);
-    var row = '<tr id="' + uniqueId + '"><td><div class="form-flex"><input type="number" name="order" placeholder="순서"class="form-control conditionOrder"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display:none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td></tr>';
+    var row = '<tr id="' + uniqueId + '"><td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display:none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td></tr>';
     var rowText = '<p id="text-'+uniqueId+'"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span><span class="operationText"></span></p>';
     $('#conditionTable tbody').append(row);
     $('#condition-tab').append(rowText);
@@ -1157,10 +1259,85 @@ $('body').on('change', '#conditionTable input, #conditionTable select', function
     conditionText($this);
 });
 
+$('body').on('change', '#execConditionTable select[name=exec_condition_type]', function() {
+    //상태 선택
+    var type = $(this).val();
+    if(type == 'status'){
+        $(this).siblings('input[name=exec_condition_value]').val('').hide();
+        $(this).siblings('select[name=exec_condition_value_status]').show();
+    }else{
+        $(this).siblings('select[name=exec_condition_value_status]').val('').hide();
+        $(this).siblings('input[name=exec_condition_value]').show();   
+    }
+});
+
+$('body').on('click', '#execConditionBtn', function() {
+    var tr = $('#execTable tbody tr.selected');
+    var trId = tr.data('id');
+
+    if(tr.length == 0){
+        alert("항목을 선택해주세요.");
+    }else{
+        if ($('#execSelectTable tbody tr[data-id="' + trId + '"]').length == 0) {
+            var cloneRow = $('#execTable tbody tr.selected').clone();
+            var execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
+            var execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
+            var execConditionValue = '';
+            if(execConditionType != ''){
+                if(execConditionType == 'status'){
+                    execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
+                }else{
+                    execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
+                }
+
+                if(execConditionValue != ''){
+                    var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
+
+                    cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
+
+                    var selectedMediaTd = tr.children('td').eq(0).text();
+                    var selectedTypeTd = tr.children('td').eq(1).text();
+                    var selectedNameTd = tr.children('td').eq(3).text();
+                    var selectedStatusTd = tr.children('td').eq(4).text();
+
+                    var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
+                    $('#preactice-tab').append(newExecText);
+                }else{
+                    alert("세부항목을 선택해주세요.");
+                }
+            }else{
+                alert("실행항목을 선택해주세요.");
+            } 
+        } else {
+            alert("중복된 항목은 추가할 수 없습니다.");
+        }
+    }
+});
+
+$('body').on('click', '.exec_condition_except_btn', function() {
+    $(this).closest('tr').remove();
+    var rowId = $(this).closest('tr').attr('id');
+    $('#preactice-tab #text-'+rowId).remove();
+});
+
 $('body').on('click', '.deleteBtn', function() {
     $(this).closest('tr').remove();
     var rowId = $(this).closest('tr').attr('id');
     $('#condition-tab #text-'+rowId).remove();
+});
+
+$('body').on('focusout', '#detailTable input[name=subject]', function() {
+    var detailTextSubject = $(this).val();
+    $('#detailText #subjectText').text(detailTextSubject);
+});
+
+$('body').on('focusout', '#detailTable textarea[name=description]', function() {
+    var detailTextDescription = $(this).val();
+    $('#detailText #descriptionText').text(detailTextDescription);
+});
+
+$('body').on('click', '#createAutomationBtn', function() {
+    validationData();
 });
 //등록 부분 끝
 </script>

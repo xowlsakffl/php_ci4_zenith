@@ -60,9 +60,9 @@ class AutomationController extends BaseController
         }
     }
 
-    public function getTargetAdv()
+    public function getAdv()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             switch ($arg['tab']) {
@@ -83,13 +83,20 @@ class AutomationController extends BaseController
                     break;
             }
             
-            foreach($result as &$row){
+            foreach($result['data'] as &$row){
                 if($row['status'] == 1 || $row['status'] == 'ON' || $row['status'] == 'ENABLED' || $row['status'] == 'ACTIVE'){
                     $row['status'] = '활성';
                 }else{
                     $row['status'] = '비활성';
                 }
             }
+            
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($arg['draw']),
+            ];
 
             return $this->respond($result);
         }else{
