@@ -400,6 +400,42 @@ class AutomationModel extends Model
         ];
     }
 
+    public function getAutomation($data)
+    {
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('
+        aa.seq as aa_seq, 
+        aa.subject as aa_subject,
+        aa.description as aa_description,
+        aas.exec_type as aas_exec_type,
+        aas.type_value as aas_type_value,
+        aas.exec_time as aas_exec_time,
+        aas.ignore_start_time as aas_ignore_start_time,
+        aas.ignore_end_time as aas_ignore_end_time,
+        aas.exec_week as aas_exec_week,
+        aas.month_type as aas_month_type,
+        aas.month_day as aas_month_day,
+        aas.month_week as aas_month_week,
+        aat.type as aat_type,
+        aat.media as aat_media,
+        aat.id as aat_id,
+        ');
+        $builder->join('aa_schedule aas', 'aas.idx = aa.seq');
+        $builder->join('aa_target aat', 'aat.idx = aa.seq');
+        $builder->groupBy('aa.seq');
+        $automations = $builder->get()->getResultArray();
+
+        foreach ($automations as $d) {
+            aac.order as aac_order,
+            aac.type as aac_type,
+            aac.type_value as aac_type_value,
+            aac.compare as aac_compare,
+            aac.operation as aac_operation,
+        }
+
+        return $result;
+    }
+
     public function getAutomations()
     {
         $builder = $this->zenith->table('admanager_automation aa');

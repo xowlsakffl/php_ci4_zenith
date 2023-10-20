@@ -50,7 +50,7 @@
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
-                <button class="btn-special" type="button" data-bs-toggle="modal" data-bs-target="#automationModal">작성하기</button>
+                <button class="btn-special createBtn" type="button" data-bs-toggle="modal" data-bs-target="#automationModal">작성하기</button>
             </div>
         </form>
     </div>
@@ -688,6 +688,12 @@ function getList(){
                 }
             },
         ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.aa_seq);
+            $(row).addClass("updateBtn");
+            $(row).attr("data-bs-toggle", "modal");
+            $(row).attr("data-bs-target", "#automationModal");
+        },
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
@@ -1066,14 +1072,14 @@ function validationData(){
         }
     }
 
-    if(!$selectTarget > 0){
-        alert('대상을 추가해주세욧.');
-        $('#target-tab').trigger('click');
-        $('#showTargetAdv').focus();
-        return false;
-    }
-
     if(!$targetConditionDisabled){
+        if(!$selectTarget > 0){
+            alert('대상을 추가해주세욧.');
+            $('#target-tab').trigger('click');
+            $('#showTargetAdv').focus();
+            return false;
+        }
+
         var eachValid = true;
         $('tr[id^="condition-"]').each(function() {
             var $row = $(this);
@@ -1149,7 +1155,7 @@ function validationData(){
 
     if(!$subject){
         alert('제목을 추가해주세요.');
-        $('#showExecAdv').focus();
+        $('#detailTable input[name=subject]').focus();
         return false;
     }
 
@@ -1160,6 +1166,46 @@ function onlyNumber(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 }
 
+function reset(){
+    $('#conditionTable tbody tr:not(#condition-1)').remove()
+    $('#target-tab #disabledText, #condition-tab #disabledText').remove();
+    $('#targetSelectTable tbody tr, #execSelectTable tbody tr').empty();
+
+    $('#myTab li').each(function(index){
+        let $pTags = $(this).find('p');
+        if (index === 2 || index === 4) {
+            $pTags.first().find('span').text('');
+            
+        } else {
+            $pTags.first().text('');
+        }
+        $pTags.not(':first').remove();
+    })
+
+    $('#automationModal').find('select').each(function() {
+        $(this).prop('selectedIndex', 0);
+    });
+    $('#automationModal').find('input[type=text], input[type=hidden], textarea').each(function() {
+        $(this).val('');
+    }); 
+    
+    $('#targetConditionDisabled').prop('checked', false);
+    $('#showTargetAdv').prop('disabled', false);
+    
+    $('#targetText').show();
+    $('#condition-tab p').show();
+    
+    if ($.fn.DataTable.isDataTable('#targetTable')) {
+        targetTable = $('#targetTable').DataTable();
+        targetTable.destroy();
+    }
+    if ($.fn.DataTable.isDataTable('#execTable')) {
+        execTabl = $('#execTable').DataTable();
+        execTabl.destroy();
+    }
+
+    $('#targetTable tbody tr, #execTable tbody tr').remove();
+}
 //검색
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
@@ -1189,10 +1235,17 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
 
 //모달 보기
 $('#automationModal').on('show.bs.modal', function(e) {
-    chkSchedule();
+    var $btn = $(e.relatedTarget);
+    if ($btn.hasClass('updateBtn')) {
+        var id = $btn.data('id');
+    }else{
+        
+    }
+
+    //chkSchedule();
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
-
+    reset();
 });
 
 //등록 부분 시작
@@ -1415,6 +1468,53 @@ $('body').on('click', '#createAutomationBtn', function() {
         let $target_media = $('#targetSelectTable tbody tr').eq(0).text();
         let $target_type = $('#targetSelectTable tbody tr').eq(1).text();
         let $target_id = $('#targetSelectTable tbody tr').eq(2).text();
+
+        let $conditions = [];
+        let $executions = [];
+        $('#conditionTable tbody tr[id^="condition-"]').each(function(){
+            let $row = $(this);
+            let order = $row.find('input[name=order]').val();
+            let type = $row.find('select[name=type]').val();
+            let type_value = '';
+            if(type = 'status'){
+                type_value = $row.find('select[name=type_value_status]').val();
+            }else{
+                type_value = $row.find('input[name=type_value]').val();
+            }
+            let compare = $row.find('select[name=compare]').val();
+            let operation = $row.find('select[name=operation]').val();
+
+            $conditions.push({
+                order: order,
+                type: type,
+                type_value: type_value,
+                compare: compare,
+                operation: operation
+            });
+        });
+
+
+        $('#execSelectTable tbody tr').each(function(){
+            let $row = $(this);
+            //let order = $row.find('td:eq(0)').text();
+            let media = $row.find('td:eq(0)').text();
+            let type = $row.find('td:eq(1)').text();
+            let id = $row.find('td:eq(2)').text();
+            let exec_type = $row.find('td:eq(5)').text();
+            let exec_value = $row.find('td:eq(6)').text();
+
+            $executions.push({
+                //order: order,
+                type: type,
+                id: id,
+                exec_type: exec_type,
+                exec_value: exec_value
+            });
+        });
+
+        let $subject = $('#detailTable input[name=subject]').val();
+        let $description = $('#detailTable textarea[name=description]').val();
+
         $data = {
             'schedule': {
                 'type_value': $type_value,
@@ -1432,10 +1532,15 @@ $('body').on('click', '#createAutomationBtn', function() {
                 'media': $target_media,
                 'id': $target_id,
             },
-            'condition': {
-                
-            },
+            'condition': $conditions,
+            'execution': $executions,
+            'detail': {
+                'subject': $subject,
+                'description': $description
+            }
         };
+
+
     };
 });
 //등록 부분 끝
