@@ -459,9 +459,6 @@ body {
   .ad-detail-info .col:nth-child(n+5) {
     margin-top: 15px;
   }
-  .btn-top span {
-    display: none;
-  }
 }
 @media screen and (max-width: 1200px) {
   .ad-list .row {
@@ -968,8 +965,7 @@ input:-internal-autofill-selected {
 
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
-    padding: 30px 30px 30px 30px;
-    margin-left: 40px;
+    padding: 30px 30px 30px 70px;
   }
   .title-area {
     flex-wrap: wrap;
@@ -1174,9 +1170,6 @@ div.dataTables_processing > div:last-child > div {
 }
 .table-default thead th:not(:last-child) {
   border-right: 1px dashed #dfdfdf;
-}
-.table-default tfoot td {
-  background-color: var(--bs-gray-400) !important;
 }
 .table-default tbody th {
   position: relative;
@@ -1892,15 +1885,8 @@ div.dataTables_processing > div:last-child > div {
   border-left: 2px dashed #dfdfdf;
 }
 .regi-content .step li {
-  position: relative; /*flex:1;*/
-  min-height: 15%;
-  max-height: 10rem;
-  overflow-y: scroll;
-  -ms-overflow-style: none; /* 익스플로러, 앳지 */
-  scrollbar-width: none; /* 파이어폭스 */
-}
-.regi-content .step li::-webkit-scrollbar {
-  display: none; /* 크롬, 사파리, 오페라 */
+  position: relative;
+  flex: 1;
 }
 .regi-content .step li:last-child {
   flex: none;
@@ -1912,55 +1898,43 @@ div.dataTables_processing > div:last-child > div {
   font-size: 20px;
   font-weight: 700;
   line-height: 32px;
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-}
-.regi-content .step li strong:after {
-  display: block;
-  content: "";
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  position: absolute;
 }
 .regi-content .step li p {
   margin: 5px 0 15px 40px;
   font-size: 13px;
   line-height: 1.4;
 }
-.regi-content .step li:nth-child(1) strong::after {
+.regi-content .step li:nth-child(1) strong {
   background: url("/img/ico_regi01.png") no-repeat 0 center;
 }
-.regi-content .step li:nth-child(2) strong::after {
-  background: url("/img/ico_regi02.png") no-repeat 0 center;
+.regi-content .step li:nth-child(2) strong {
+  background: url("/img/ico_regi02.png") no-repeat 6px center;
 }
-.regi-content .step li:nth-child(3) strong::after {
-  background: url("/img/ico_regi03.png") no-repeat 0 center;
+.regi-content .step li:nth-child(3) strong {
+  background: url("/img/ico_regi03.png") no-repeat 7px center;
 }
-.regi-content .step li:nth-child(4) strong::after {
-  background: url("/img/ico_regi04.png") no-repeat 0 center;
+.regi-content .step li:nth-child(4) strong {
+  background: url("/img/ico_regi04.png") no-repeat 6px center;
 }
-.regi-content .step li:nth-child(5) strong::after {
-  background: url("/img/ico_regi05.png") no-repeat 0 center;
+.regi-content .step li:nth-child(5) strong {
+  background: url("/img/ico_regi05.png") no-repeat 1px center;
 }
 .regi-content .step li.active strong {
   color: #0d6efd;
 }
-.regi-content .step li.active:nth-child(1) strong::after {
+.regi-content .step li.active:nth-child(1) strong {
   background: url("/img/ico_regi01_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(2) strong::after {
+.regi-content .step li.active:nth-child(2) strong {
   background: url("/img/ico_regi02_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(3) strong::after {
+.regi-content .step li.active:nth-child(3) strong {
   background: url("/img/ico_regi03_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(4) strong::after {
+.regi-content .step li.active:nth-child(4) strong {
   background: url("/img/ico_regi04_on.png") no-repeat 0 center;
 }
-.regi-content .step li.active:nth-child(5) strong::after {
+.regi-content .step li.active:nth-child(5) strong {
   background: url("/img/ico_regi05_on.png") no-repeat 0 center;
 }
 .regi-content .detail-wrap {

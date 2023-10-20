@@ -72,98 +72,22 @@ class AutomationModel extends Model
             $builder->orLike('id', $data['stx']);
             $builder->groupEnd();
         }
-        $builder->groupBy('id');
-        $builderNoLimit = clone $builder;
-        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        $builder->limit(20);
         $result = $builder->get()->getResultArray();
-        $resultNoLimit = $builderNoLimit->countAllResults();
 
-        return [
-            'data' => $result,
-            'allCount' => $resultNoLimit
-        ];
+        return $result;
     }
 
     public function getSearchCampaigns($data)
     {
-        if(!empty($data['adv'])){
-            list($media, $type, $id) = explode("_", $data['adv']);
-        }
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign');
+        $facebookBuilder->select('campaign_id AS id, "페이스북" AS media, "캠페인" AS type, campaign_name AS name, status');
 
-        $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign A');
-        $facebookBuilder->select('A.campaign_id AS id, "페이스북" AS media, "캠페인" AS type, A.campaign_name AS name, A.status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $facebookBuilder->join('z_facebook.fb_ad_account AS D', 'A.account_id = D.ad_account_id');
-                $facebookBuilder->join('zenith.company_adaccounts AS E', 'D.ad_account_id = E.ad_account_id');
-                $facebookBuilder->where('E.company_id', $id);
-            }else{
-                $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.campaign_id = B.campaign_id');
-                $facebookBuilder->join('z_facebook.fb_ad AS C', 'B.adset_id = C.adset_id');
+        $googleBuilder = $this->zenith->table('z_adwords.aw_campaign');
+        $googleBuilder->select('id, "구글" AS media, "캠페인" AS type, name, status');
 
-                if($media == '페이스북'){
-                    if($type == '캠페인'){
-                        $facebookBuilder->where('A.campaign_id', $id);
-                    }else if($type == '광고그룹'){
-                        $facebookBuilder->where('B.adset_id', $id);
-                    }else if($type == '광고'){
-                        $facebookBuilder->where('C.ad_id', $id);
-                    }
-                }else{
-                    $facebookBuilder->where('1 = 2');
-                }
-            }
-        }
-
-        $googleBuilder = $this->zenith->table('z_adwords.aw_campaign A');
-        $googleBuilder->select('A.id, "구글" AS media, "캠페인" AS type, A.name, A.status');
-        if(!empty($data['adv'])){ 
-            if($type == '광고주'){
-                $googleBuilder->join('z_adwords.aw_ad_account AS D', 'A.customerId = D.customerId');
-                $googleBuilder->join('zenith.company_adaccounts AS E', 'D.customerId = E.ad_account_id');
-                $googleBuilder->where('E.company_id', $id);
-            }else{
-                $googleBuilder->join('z_adwords.aw_adgroup AS B', 'A.id = B.campaignId');
-                $googleBuilder->join('z_adwords.aw_ad AS C', 'B.id = C.adgroupId');
-
-                if($media == '구글'){
-                    if($type == '캠페인'){
-                        $googleBuilder->where('A.id', $id);
-                    }else if($type == '광고그룹'){
-                        $googleBuilder->where('B.id', $id);
-                    }else if($type == '광고'){
-                        $googleBuilder->where('C.id', $id);
-                    }
-                }else{
-                    $googleBuilder->where('1 = 2');
-                }
-            }
-        }
-
-        $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "캠페인" AS type, A.name, A.config AS status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $kakaoBuilder->join('z_moment.mm_ad_account AS D', 'A.ad_account_id = D.id');
-                $kakaoBuilder->join('zenith.company_adaccounts AS E', 'D.id = E.ad_account_id');
-                $kakaoBuilder->where('E.company_id', $id);
-            }else{
-                $kakaoBuilder->join('z_moment.mm_adgroup AS B', 'A.id = B.campaign_id');
-                $kakaoBuilder->join('z_moment.mm_creative AS C', 'B.id = C.adgroup_id');
-
-                if($media == '카카오'){
-                    if($type == '캠페인'){
-                        $kakaoBuilder->where('A.id', $id);
-                    }else if($type == '광고그룹'){
-                        $kakaoBuilder->where('B.id', $id);
-                    }else if($type == '광고'){
-                        $kakaoBuilder->where('C.id', $id);
-                    }
-                }else{
-                    $kakaoBuilder->where('1 = 2');
-                }
-            }
-        }
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign');
+        $kakaoBuilder->select('id, "카카오" AS media, "캠페인" AS type, name, config AS status');
 
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
@@ -172,104 +96,25 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
         }
 
-        $resultQuery->groupBy('adv.id');
-        $builderNoLimit = clone $resultQuery;
-        if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
+        $resultQuery->limit(30);
         $result = $resultQuery->get()->getResultArray();
-        $resultNoLimit = $builderNoLimit->countAllResults();
-        return [
-            'data' => $result,
-            'allCount' => $resultNoLimit
-        ];
+
+        return $result;
     }
 
     public function getSearchAdsets($data)
     {
-        if(!empty($data['adv'])){
-            list($media, $type, $id) = explode("_", $data['adv']);
-        }
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_adset');
+        $facebookBuilder->select('adset_id AS id, "페이스북" AS media, "광고 세트" AS type, adset_name AS name, status');
 
-        $facebookBuilder = $this->zenith->table('z_facebook.fb_adset A');
-        $facebookBuilder->select('A.adset_id AS id, "페이스북" AS media, "광고그룹" AS type, A.adset_name AS name, A.status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $facebookBuilder->join('z_facebook.fb_campaign AS B', 'A.campaign_id = B.campaign_id');
-                $facebookBuilder->join('z_facebook.fb_ad_account AS D', 'B.account_id = D.ad_account_id');
-                $facebookBuilder->join('zenith.company_adaccounts AS E', 'D.ad_account_id = E.ad_account_id');
-                $facebookBuilder->where('E.company_id', $id);
-            }else{
-                $facebookBuilder->join('z_facebook.fb_campaign AS B', 'A.campaign_id = B.campaign_id');
-                $facebookBuilder->join('z_facebook.fb_ad AS C', 'A.adset_id = C.adset_id');
+        $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup');
+        $googleBuilder->select('id, "구글" AS media, "광고 세트" AS type, name, status');
 
-                if($media == '페이스북'){
-                    if($type == '캠페인'){
-                        $facebookBuilder->where('B.campaign_id', $id);
-                    }else if($type == '광고그룹'){
-                        $facebookBuilder->where('A.adset_id', $id);
-                    }else if($type == '광고'){
-                        $facebookBuilder->where('C.ad_id', $id);
-                    }
-                }else{
-                    $facebookBuilder->where('1 = 2');
-                }
-            }
-        }
-
-        $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup A');
-        $googleBuilder->select('A.id, "구글" AS media, "광고그룹" AS type, A.name, A.status');
-        if(!empty($data['adv'])){ 
-            if($type == '광고주'){
-                $googleBuilder->join('z_adwords.aw_campaign AS B', 'A.id = B.id');
-                $googleBuilder->join('z_adwords.aw_ad_account AS D', 'B.customerId = D.customerId');
-                $googleBuilder->join('zenith.company_adaccounts AS E', 'D.customerId = E.ad_account_id');
-                $googleBuilder->where('E.company_id', $id);
-            }else{
-                $googleBuilder->join('z_adwords.aw_campaign AS B', 'A.campaignId = B.id');
-                $googleBuilder->join('z_adwords.aw_ad AS C', 'A.id = C.adgroupId');
-
-                if($media == '구글'){
-                    if($type == '캠페인'){
-                        $googleBuilder->where('B.id', $id);
-                    }else if($type == '광고그룹'){
-                        $googleBuilder->where('A.id', $id);
-                    }else if($type == '광고'){
-                        $googleBuilder->where('C.id', $id);
-                    }
-                }else{
-                    $googleBuilder->where('1 = 2');
-                }
-            }
-        }
-
-        $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "광고그룹" AS type, A.name, A.config AS status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $kakaoBuilder->join('z_moment.mm_campaign AS B', 'A.campaign_id = B.id');
-                $kakaoBuilder->join('z_moment.mm_ad_account AS D', 'B.ad_account_id = D.id');
-                $kakaoBuilder->join('zenith.company_adaccounts AS E', 'D.id = E.ad_account_id');
-                $kakaoBuilder->where('E.company_id', $id);
-            }else{
-                $kakaoBuilder->join('z_moment.mm_campaign AS B', 'A.campaign_id = B.id');
-                $kakaoBuilder->join('z_moment.mm_creative AS C', 'A.id = C.adgroup_id');
-
-                if($media == '카카오'){
-                    if($type == '캠페인'){
-                        $kakaoBuilder->where('B.id', $id);
-                    }else if($type == '광고그룹'){
-                        $kakaoBuilder->where('A.id', $id);
-                    }else if($type == '광고'){
-                        $kakaoBuilder->where('C.id', $id);
-                    }
-                }else{
-                    $kakaoBuilder->where('1 = 2');
-                }
-            }
-        }
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup');
+        $kakaoBuilder->select('id, "카카오" AS media, "광고 세트" AS type, name, config AS status');
 
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
@@ -278,106 +123,25 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
         }
-        $resultQuery->groupBy('adv.id');
-        $builderNoLimit = clone $resultQuery;
-        if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
+
+        $resultQuery->limit(30);
         $result = $resultQuery->get()->getResultArray();
-        $resultNoLimit = $builderNoLimit->countAllResults();
-        return [
-            'data' => $result,
-            'allCount' => $resultNoLimit
-        ];
+
+        return $result;
     }
 
     public function getSearchAds($data)
     {
-        if(!empty($data['adv'])){
-            list($media, $type, $id) = explode("_", $data['adv']);
-        }
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_ad');
+        $facebookBuilder->select('ad_id AS id, "페이스북" AS media, "광고" AS type, ad_name AS name, status');
 
-        $facebookBuilder = $this->zenith->table('z_facebook.fb_ad A');
-        $facebookBuilder->select('A.ad_id AS id, "페이스북" AS media, "광고" AS type, A.ad_name AS name, A.status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.adset_id = B.adset_id');
-                $facebookBuilder->join('z_facebook.fb_campaign AS C', 'B.campaign_id = C.campaign_id');
-                $facebookBuilder->join('z_facebook.fb_ad_account AS D', 'C.account_id = D.ad_account_id');
-                $facebookBuilder->join('zenith.company_adaccounts AS E', 'D.ad_account_id = E.ad_account_id');
-                $facebookBuilder->where('E.company_id', $id);
-            }else{
-                $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.adset_id = C.adset_id');
-                $facebookBuilder->join('z_facebook.fb_campaign AS C', 'B.campaign_id = C.campaign_id');
-                
-                if($media == '페이스북'){
-                    if($type == '캠페인'){
-                        $facebookBuilder->where('C.campaign_id', $id);
-                    }else if($type == '광고그룹'){
-                        $facebookBuilder->where('B.adset_id', $id);
-                    }else if($type == '광고'){
-                        $facebookBuilder->where('A.ad_id', $id);
-                    }
-                }else{
-                    $facebookBuilder->where('1 = 2');
-                }
-            }
-        }
+        $googleBuilder = $this->zenith->table('z_adwords.aw_ad');
+        $googleBuilder->select('id, "구글" AS media, "광고" AS type, name, status');
 
-        $googleBuilder = $this->zenith->table('z_adwords.aw_ad A');
-        $googleBuilder->select('A.id, "구글" AS media, "광고" AS type, A.name, A.status');
-        if(!empty($data['adv'])){ 
-            if($type == '광고주'){
-                $googleBuilder->join('z_adwords.aw_adgroup AS B', 'A.adgroupId = B.id');
-                $googleBuilder->join('z_adwords.aw_campaign AS C', 'B.campaignId = C.id');
-                $googleBuilder->join('z_adwords.aw_ad_account AS D', 'C.customerId = D.customerId');
-                $googleBuilder->join('zenith.company_adaccounts AS E', 'D.customerId = E.ad_account_id');
-                $googleBuilder->where('E.company_id', $id);
-            }else{
-                $googleBuilder->join('z_adwords.aw_adgroup AS B', 'A.adgroupId = B.id');
-                $googleBuilder->join('z_adwords.aw_campaign AS C', 'B.campaignId = C.id');
-
-                if($media == '구글'){
-                    if($type == '캠페인'){
-                        $googleBuilder->where('C.id', $id);
-                    }else if($type == '광고그룹'){
-                        $googleBuilder->where('B.id', $id);
-                    }else if($type == '광고'){
-                        $googleBuilder->where('A.id', $id);
-                    }
-                }else{
-                    $googleBuilder->where('1 = 2');
-                }
-            }
-        }
-
-        $kakaoBuilder = $this->zenith->table('z_moment.mm_creative A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "광고" AS type, A.name, A.config AS status');
-        if(!empty($data['adv'])){
-            if($type == '광고주'){
-                $kakaoBuilder->join('z_moment.mm_adgroup AS B', 'A.adgroup_id = B.id');
-                $kakaoBuilder->join('z_moment.mm_campaign AS C', 'B.campaign_id = C.id');
-                $kakaoBuilder->join('z_moment.mm_ad_account AS D', 'C.ad_account_id = D.id');
-                $kakaoBuilder->join('zenith.company_adaccounts AS E', 'D.id = E.ad_account_id');
-                $kakaoBuilder->where('E.company_id', $id);
-            }else{
-                $kakaoBuilder->join('z_moment.mm_adgroup AS B', 'A.adgroup_id = B.id');
-                $kakaoBuilder->join('z_moment.mm_campaign AS C', 'B.campaign_id = C.id');
-
-                if($media == '카카오'){
-                    if($type == '캠페인'){
-                        $kakaoBuilder->where('C.id', $id);
-                    }else if($type == '광고그룹'){
-                        $kakaoBuilder->where('B.id', $id);
-                    }else if($type == '광고'){
-                        $kakaoBuilder->where('A.id', $id);
-                    }
-                }else{
-                    $kakaoBuilder->where('1 = 2');
-                }
-            }
-        }
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_creative');
+        $kakaoBuilder->select('id, "카카오" AS media, "광고" AS type, name, config AS status');
 
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
@@ -386,18 +150,13 @@ class AutomationModel extends Model
             $resultQuery->groupStart();
             $resultQuery->like('adv.name', $data['stx']);
             $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
             $resultQuery->groupEnd();
         }
-        $resultQuery->groupBy('adv.id');
-        $builderNoLimit = clone $resultQuery;
-        if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
+
+        $resultQuery->limit(30);
         $result = $resultQuery->get()->getResultArray();
-        $resultNoLimit = $builderNoLimit->countAllResults();
-        return [
-            'data' => $result,
-            'allCount' => $resultNoLimit
-        ];
+
+        return $result;
     }
 
     public function getAutomation($data)

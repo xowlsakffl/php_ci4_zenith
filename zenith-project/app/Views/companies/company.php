@@ -421,15 +421,10 @@ function getBelongUsers(){
         },
         "rowCallback": function(row, data, index) {
             var api = this.api();
-            var totalRecords = api.page.info().recordsTotal;
-            var pageSize = api.page.len();
-            var currentPage = api.page();
-            var totalPages = Math.ceil(totalRecords / pageSize);
-            
-            var seqNumber = totalRecords - (currentPage * pageSize) - index; // 계산된 순번 (내림차순)
-            
-            $('td:eq(0)', row).html(seqNumber);
-        },
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
     });
 }
 
@@ -496,15 +491,10 @@ function getCompanyAdAccounts(){
         },
         "rowCallback": function(row, data, index) {
             var api = this.api();
-            var totalRecords = api.page.info().recordsTotal;
-            var pageSize = api.page.len();
-            var currentPage = api.page();
-            var totalPages = Math.ceil(totalRecords / pageSize);
-            
-            var seqNumber = totalRecords - (currentPage * pageSize) - index; // 계산된 순번 (내림차순)
-            
-            $('td:eq(0)', row).html(seqNumber);
-        },
+            var startIndex = api.page() * api.page.len();
+            var seq = startIndex + index + 1;
+            $('td:eq(0)', row).html(seq);
+        }
     });
 }
 
