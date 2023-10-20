@@ -60,7 +60,7 @@
             <table class="table table-striped table-hover table-default" id="automation-table">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">이름</th>
+                        <th scope="col">제목</th>
                         <th scope="col">작성자</th>
                         <th scope="col">업데이트</th>
                         <th scope="col">마지막 실행</th>
@@ -276,7 +276,7 @@
                                         <th scope="col"  class="text-center">매체</th>
                                         <th scope="col"  class="text-center">분류</th>
                                         <th scope="col"  class="text-center">ID</th>
-                                        <th scope="col"  class="text-center">이름</th>
+                                        <th scope="col"  class="text-center">제목</th>
                                         <th scope="col"  class="text-center">상태</th>
                                     </tr>
                                 </thead>
@@ -398,7 +398,7 @@
                                         <th scope="col">매체</th>
                                         <th scope="col">분류</th>
                                         <th scope="col">ID</th>
-                                        <th scope="col">이름</th>
+                                        <th scope="col">제목</th>
                                         <th scope="col">상태</th>
                                     </tr>
                                 </thead>
@@ -458,7 +458,7 @@
                                     <col>
                                 </colgroup>
                                 <tr>
-                                    <th scope="row">이름*</th>
+                                    <th scope="row">제목*</th>
                                     <td>
                                         <input type="text" name="subject" class="form-control bg">
                                     </td>
@@ -498,7 +498,7 @@
                     </colgroup>
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">이름</th>
+                            <th scope="col">제목</th>
                             <th scope="col">작성자</th>
                             <th scope="col">업데이트</th>
                             <th scope="col">사용</th>
@@ -823,7 +823,7 @@ function scheduleText()
                 scheduleTextParts.push("매 "+type_value+"시간 마다");
                 break;
             case "day":
-                dayTextPart_1 = type_value == 1 ? '매일' : '매 '+type_value+'일 마다 ';
+                dayTextPart_1 = type_value == 1 ? '매일 ' : '매 '+type_value+'일 마다 ';
                 dayTextPart_2 = exec_time ? exec_time+'에' : '';
                 scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
                 break;
@@ -1002,8 +1002,11 @@ function validationData(){
 
     $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     $selectTarget = $('#targetSelectTable tbody tr').length;
+    $selectExec = $('#execSelectTable tbody tr').length;
 
-    /* if (!$type_value) {
+    $subject = $('#detailTable input[name=subject]').val();
+
+    if (!$type_value) {
         alert('시간값을 입력해주세요');
         $('#schedule-tab').trigger('click');
         $('#scheduleTable input[name=type_value]').focus();
@@ -1011,7 +1014,7 @@ function validationData(){
     }
 
     if ($exec_type === 'day' && !$exec_time) {
-        alert('시간을 입력해주세요.');
+        alert('시간을 선택해주세요.');
         $('#schedule-tab').trigger('click');
         $('#scheduleTable select[name=exec_time]').focus();
         return false;
@@ -1061,22 +1064,23 @@ function validationData(){
             $('#scheduleTable select[name=exec_time]').focus();
             return false;
         }
-    } */
+    }
 
-    /* if(!$selectTarget > 0){
+    if(!$selectTarget > 0){
         alert('대상을 추가해주세욧.');
         $('#target-tab').trigger('click');
         $('#showTargetAdv').focus();
         return false;
-    } */
+    }
 
     if(!$targetConditionDisabled){
+        var eachValid = true;
         $('tr[id^="condition-"]').each(function() {
             var $row = $(this);
             var $conditionOrder = $row.find('input[name=order]').val();
             var $conditionType = $row.find('select[name=type]').val();
             var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
-            var $conditionTypeValue = $row.find('input[name=conditionTypeValue]').val();
+            var $conditionTypeValue = $row.find('input[name=type_value]').val();
             var $conditionCompare = $row.find('select[name=compare]').val();
             var $conditionOperation = $row.find('select[name=operation]').val();
 
@@ -1084,9 +1088,69 @@ function validationData(){
                 alert('순서를 입력해주세요.');
                 $('#condition-tab').trigger('click');
                 $row.find('input[name=order]').focus();
+                eachValid = false;
+                return false;
+            }
+
+            if(!$conditionType){
+                alert('조건항목을 선택해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('select[name=type]').focus();
+                eachValid = false;
+                return false;
+            }
+
+            if($conditionType == 'status'){
+                if(!$conditionTypeValueStatus){
+                    alert('상태값을 선택해주세요.');
+                    $('#condition-tab').trigger('click');
+                    $row.find('select[name=type_value_status]').focus();
+                    eachValid = false;
+                    return false;
+                }
+            }else{
+                if(!$conditionTypeValue){
+                    alert('조건값을 입력해주세요.');
+                    $('#condition-tab').trigger('click');
+                    $row.find('input[name=type_value]').focus();
+                    eachValid = false;
+                    return false;
+                }
+            }
+
+            if(!$conditionCompare){
+                alert('일치여부를 선택해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('select[name=compare]').focus();
+                eachValid = false;
+                return false;
+            }
+
+            if(!$conditionOperation){
+                alert('연산조건을 선택해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('select[name=operation]').focus();
+                eachValid = false;
                 return false;
             }
         });
+
+        if(!eachValid){
+            return false;
+        }
+    }
+
+    if(!$selectExec > 0){
+        alert('실행항목을 추가해주세요.');
+        $('#preactice-tab').trigger('click');
+        $('#showExecAdv').focus();
+        return false;
+    }
+
+    if(!$subject){
+        alert('제목을 추가해주세요.');
+        $('#showExecAdv').focus();
+        return false;
     }
 
     return true;
@@ -1337,7 +1401,42 @@ $('body').on('focusout', '#detailTable textarea[name=description]', function() {
 });
 
 $('body').on('click', '#createAutomationBtn', function() {
-    validationData();
+    if(validationData()){
+        let $type_value = $('#scheduleTable input[name=type_value]').val();
+        let $exec_type = $('#scheduleTable select[name=exec_type]').val();
+        let $exec_week = $('#scheduleTable input[name=exec_week]').val();
+        let $month_type = $('#scheduleTable select[name=exemonth_typec_week]').val();
+        let $month_day = $('#scheduleTable select[name=month_day]').val();
+        let $month_week = $('#scheduleTable select[name=month_week]').val();
+        let $exec_time = $('#scheduleTable select[name=exec_time]').val();
+        let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
+        let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
+
+        let $target_media = $('#targetSelectTable tbody tr').eq(0).text();
+        let $target_type = $('#targetSelectTable tbody tr').eq(1).text();
+        let $target_id = $('#targetSelectTable tbody tr').eq(2).text();
+        $data = {
+            'schedule': {
+                'type_value': $type_value,
+                'exec_type': $exec_type,
+                'exec_week': $exec_week,
+                'month_type': $month_type,
+                'month_day': $month_day,
+                'month_week': $month_week,
+                'exec_time': $exec_time,
+                'ignore_start_time': $ignore_start_time,
+                'ignore_end_time': $ignore_end_time,
+            },
+            'target': {
+                'type': $target_type,
+                'media': $target_media,
+                'id': $target_id,
+            },
+            'condition': {
+                
+            },
+        };
+    };
 });
 //등록 부분 끝
 </script>
