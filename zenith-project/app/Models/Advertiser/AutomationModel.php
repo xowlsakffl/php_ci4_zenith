@@ -182,14 +182,16 @@ class AutomationModel extends Model
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq');
         $builder->join('aa_target aat', 'aat.idx = aa.seq');
         $builder->groupBy('aa.seq');
-        $automations = $builder->get()->getResultArray();
+        $result  = $builder->get()->getResultArray();
 
-        foreach ($automations as $d) {
-            aac.order as aac_order,
-            aac.type as aac_type,
-            aac.type_value as aac_type_value,
-            aac.compare as aac_compare,
-            aac.operation as aac_operation,
+        foreach ($result as &$row) {
+            $conditionsBuilder = $this->zenith->table('aa_conditions aac');
+            $conditionsBuilder->where('aac.idx', $row['aa_seq']);
+            $row['conditions'] = $conditionsBuilder->get()->getResultArray();
+
+            $executionsBuilder = $this->zenith->table('aa_executions aae');
+            $executionsBuilder->where('aae.idx', $row['aa_seq']);
+            $row['executions'] = $executionsBuilder->get()->getResultArray();
         }
 
         return $result;

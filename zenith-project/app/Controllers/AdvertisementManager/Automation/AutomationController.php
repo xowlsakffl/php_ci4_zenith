@@ -49,7 +49,6 @@ class AutomationController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
-
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

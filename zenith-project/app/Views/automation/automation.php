@@ -1166,6 +1166,10 @@ function onlyNumber(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 }
 
+function setModalData(){
+
+}
+
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#target-tab #disabledText, #condition-tab #disabledText').remove();
@@ -1238,6 +1242,19 @@ $('#automationModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     if ($btn.hasClass('updateBtn')) {
         var id = $btn.data('id');
+        $.ajax({
+            type: "GET",
+            url: "<?=base_url()?>/automation/get-automation",
+            data: {'id':id},
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                setModalData(data);
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
     }else{
         
     }
