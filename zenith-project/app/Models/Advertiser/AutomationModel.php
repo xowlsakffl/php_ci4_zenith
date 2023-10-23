@@ -19,7 +19,7 @@ class AutomationModel extends Model
         $builder->select('
         aa.seq as aa_seq, 
         aa.subject as aa_subject,
-        aa.description as aa_description,
+        aa.nickname as aa_nickname,
         aa.status as aa_status,
         aa.mod_datetime as aa_mod_datetime, 
         aar.exec_timestamp as aar_exec_timestamp
@@ -76,6 +76,7 @@ class AutomationModel extends Model
         if(!empty($seq)){
             $builder->where('id', $seq);
             $result = $builder->get()->getRowArray();
+            return $result;
         }
         $builderNoLimit = clone $builder;
         if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
@@ -88,7 +89,7 @@ class AutomationModel extends Model
         ];
     }
 
-    public function getSearchCampaigns($data)
+    public function getSearchCampaigns($data = null, $seq = null)
     {
         if(!empty($data['adv'])){
             list($media, $type, $id) = explode("_", $data['adv']);
@@ -185,6 +186,7 @@ class AutomationModel extends Model
         if(!empty($seq)){
             $resultQuery->where('adv.id', $seq);
             $result = $resultQuery->get()->getRowArray();
+            return $result;
         }
 
         $builderNoLimit = clone $resultQuery;
@@ -197,7 +199,7 @@ class AutomationModel extends Model
         ];
     }
 
-    public function getSearchAdsets($data)
+    public function getSearchAdsets($data = null, $seq = null)
     {
         if(!empty($data['adv'])){
             list($media, $type, $id) = explode("_", $data['adv']);
@@ -296,6 +298,7 @@ class AutomationModel extends Model
         if(!empty($seq)){
             $resultQuery->where('adv.id', $seq);
             $result = $resultQuery->get()->getRowArray();
+            return $result;
         }
 
         $builderNoLimit = clone $resultQuery;
@@ -308,7 +311,7 @@ class AutomationModel extends Model
         ];
     }
 
-    public function getSearchAds($data)
+    public function getSearchAds($data = null, $seq = null)
     {
         if(!empty($data['adv'])){
             list($media, $type, $id) = explode("_", $data['adv']);
@@ -410,8 +413,9 @@ class AutomationModel extends Model
         if(!empty($seq)){
             $resultQuery->where('adv.id', $seq);
             $result = $resultQuery->get()->getRowArray();
+            return $result;
         }
-        
+
         $builderNoLimit = clone $resultQuery;
         if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
         $result = $resultQuery->get()->getResultArray();
@@ -431,9 +435,9 @@ class AutomationModel extends Model
         aa.description as aa_description,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
-        aas.exec_time as aas_exec_time,
-        aas.ignore_start_time as aas_ignore_start_time,
-        aas.ignore_end_time as aas_ignore_end_time,
+        DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
+        DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time,
+        DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time,
         aas.exec_week as aas_exec_week,
         aas.month_type as aas_month_type,
         aas.month_day as aas_month_day,
@@ -444,8 +448,9 @@ class AutomationModel extends Model
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq');
         $builder->join('aa_target aat', 'aat.idx = aa.seq');
+        $builder->where('aa.seq', $data['id']);
         $builder->groupBy('aa.seq');
-        $result  = $builder->get()->getResultArray();
+        $result  = $builder->get()->getRowArray();
 
         switch ($result['aat_type']) {
             case 'advertiser':

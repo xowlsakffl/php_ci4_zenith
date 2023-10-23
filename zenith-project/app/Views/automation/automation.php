@@ -647,7 +647,7 @@ function getList(){
                 "width": "20%",
             },
             { 
-                "data": "aa_description", 
+                "data": "aa_nickname", 
                 "width": "20%",
             },
             { 
@@ -1166,7 +1166,6 @@ function onlyNumber(inputElement) {
 }
 
 function setModalData(data){
-    console.log(data);
     $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
     $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
     if(data.aas_exec_week){
@@ -1191,7 +1190,19 @@ function setModalData(data){
         $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
     }
 
-    //$('#targetSelectTable tbody')
+    var selectedData = '<tr><td>' + data.aat_media + '</td><td>' + data.aat_type + '</td><td>' 
+    + data.aat_id + '</td><td>' + data.aat_name + '</td><td>'
+    + data.aat_status  +'</td></tr>';
+    $('#targetSelectTable tbody').append(selectedData);
+    $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
+
+    //조건
+    //실행
+
+    $('#detailTable input[name=subject]').val(data.aa_subject);
+    if(data.aa_description){
+        $('#detailTable textarea[name=description]').val(data.aa_description); 
+    }
 }
 
 function reset(){

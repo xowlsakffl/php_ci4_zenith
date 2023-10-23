@@ -46,9 +46,49 @@ class AutomationController extends BaseController
 
     public function getAutomation()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
+            if($result['aat_status'] == 1 || $result['aat_status'] == 'ON' || $result['aat_status'] == 'ENABLED' || $result['aat_status'] == 'ACTIVE'){
+                $result['aat_status'] = '활성';
+            }else{
+                $result['aat_status'] = '비활성';
+            }
+
+            switch ($result['aat_type']) {
+                case 'advertiser':
+                    $result['aat_type'] = '광고주';
+                    break;
+                case 'campaign':
+                    $result['aat_type'] = '캠페인';
+                    break;
+                case 'adgroup':
+                    $result['aat_type'] = '광고그룹';
+                    break;
+                case 'ad':
+                    $result['aat_type'] = '광고';
+                    break;
+                default:
+                    break;
+            }
+
+            switch ($result['aat_media']) {
+                case 'company':
+                    $result['aat_media'] = '광고주';
+                    break;
+                case 'facebook':
+                    $result['aat_media'] = '페이스북';
+                    break;
+                case 'google':
+                    $result['aat_media'] = '구글';
+                    break;
+                case 'kakao':
+                    $result['aat_media'] = '카카오';
+                    break;
+                default:
+                    break;
+            }
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
