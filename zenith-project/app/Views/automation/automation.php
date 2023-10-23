@@ -880,7 +880,13 @@ function scheduleText()
     }
     $("#scheduleText").html(scheduleTextParts.join(", "));
 }
-
+//좌측 탭 대상 텍스트
+function targetText(){
+    var rowMedia = $('#targetSelectTable tbody tr').children('td').eq(0).text();
+    var rowType = $('#targetSelectTable tbody tr').children('td').eq(1).text();
+    var rowName = $('#targetSelectTable tbody tr').children('td').eq(3).text();
+    $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+}
 //좌측 탭 조건 텍스트
 function conditionText($this)
 {
@@ -1194,7 +1200,7 @@ function setModalData(data){
     + data.aat_status  +'</td></tr>';
     $('#targetSelectTable tbody').append(selectedData);
     $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
-    $('#targetText').html(data.aat_media+"<br>"+data.aat_type+"<br>"+data.aat_name);
+    targetText();
 
     //조건
     if (data.conditions) {
@@ -1417,12 +1423,8 @@ $('body').on('click', '#targetTable tbody tr', function(){
         $('#targetSelectTable tbody').empty();
 
         var targetId = $(this).data('id');
-        var rowMedia = $(this).children('td').eq(0).text();
-        var rowType = $(this).children('td').eq(1).text();
-        var rowName = $(this).children('td').eq(3).text();
-
         $('#advInfo').val(targetId);
-        $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+        targetText();
         $(this).closest('tr').clone().appendTo('#targetSelectTable');
     }
 });
