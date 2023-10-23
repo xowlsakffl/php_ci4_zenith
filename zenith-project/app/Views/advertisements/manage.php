@@ -162,13 +162,13 @@
     <div class="tab-wrap">
         <ul class="nav nav-tabs" id="tab-list" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab">캠페인</button>
+                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab">캠페인<div class="selected"><span>0</span>개 선택</div></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="adsets" type="button" id="set-tab">광고 세트</button>
+                <button class="nav-link tab-link" value="adsets" type="button" id="set-tab">광고 세트<div class="selected"><span>0</span>개 선택</div></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab">광고</button>
+                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab">광고<div class="selected"><span>0</span>개 선택</div></button>
             </li>
         </ul>
         <div class="tab-content">
@@ -418,6 +418,10 @@ function setDrawData() {
                     debug(`캠페인 ${txt} 삭제`);
                 }
             });
+            if(tableParam.searchData.data.campaigns.length)
+                $('#campaign-tab .selected span').text(tableParam.searchData.data.campaigns.length).parent().fadeIn();
+            else
+                $('#campaign-tab .selected').fadeOut();
         }
         if(tab == 'adsets' && tableParam.searchData.data.adsets){
             tableParam.searchData.data.adsets.map(function(txt){ 
@@ -427,6 +431,10 @@ function setDrawData() {
                     debug(`광고그룹 ${txt} 삭제`);
                 }
             });
+            if(tableParam.searchData.data.adsets.length)
+                $('#set-tab .selected span').text(tableParam.searchData.data.adsets.length).parent().fadeIn();
+            else
+                $('#set-tab .selected').fadeOut();
         }
         if(tab == 'ads' && tableParam.searchData.data.ads){
             tableParam.searchData.data.ads.map(function(txt){ 
@@ -436,6 +444,10 @@ function setDrawData() {
                     debug(`광고 ${txt} 삭제`);
                 }
             });
+            if(tableParam.searchData.data.ads.length)
+                $('#advertisement-tab .selected span').text(tableParam.searchData.data.ads.length).parent().fadeIn();
+            else
+                $('#advertisement-tab .selected').fadeOut();
         }
     }
     setSearchData();
@@ -1048,14 +1060,13 @@ $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
-
+//Row Selected
 $('.dataTable').on('click', 'tbody tr td:first-child', function(e) {
     $(this.parentNode).toggleClass('selected');
     var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
-    if($('.dataTable tbody tr.selected').length > 0) {
-        if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
-        tableParam.searchData.data[$('.tab-link.active').val()] = selected;
-    }
+    if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
+    tableParam.searchData.data[$('.tab-link.active').val()] = selected;
+    $('.tab-link.active .selected span').text(tableParam.searchData.data[$('.tab-link.active').val()].length).parent().fadeIn();
 })
 
 var prevVal;

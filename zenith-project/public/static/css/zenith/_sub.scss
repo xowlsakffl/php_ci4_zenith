@@ -111,7 +111,8 @@
         &.active{padding:19px 0 20px; border:1px solid #d7d7d7; border-bottom:0;
             &:before{position:absolute; top:0; left:0; width:100%; height:3px; content:''; background:$color-primary;}
         }
-    }
+        .selected{background-color: #99AAEE; padding: .25em 1.75em; border-radius: 14px; color: #fff; margin-left: 10px; display: none; font-size: 80%; transition: 0.5s;}
+    } 
 }
 .tab-content{position:relative; /*padding:16px 24px 50px;*/ padding:0.75rem 0.75rem 1.75rem; border-radius:0 0 10px 10px; border:1px solid #dbdbdb; border-top:0; background:#fff;
     .btn-wrap{margin:0 0 12px;

@@ -206,7 +206,7 @@ class ZenithKM
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개 계정의 캠페인 수신을 시작합니다.", "light_red");
         foreach ($accounts->getResultArray() as $account) {
             $campaignList = $this->getCampaigns($account['id']);
-            if (count($campaignList['content']) > 0) {
+            if (isset($campaignList['content']) && count($campaignList['content']) > 0) {
                 $step = 1;
                 $total = count($campaignList['content']);
                 $i = 0;

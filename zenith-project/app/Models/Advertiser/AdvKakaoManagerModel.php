@@ -199,6 +199,7 @@ class AdvKakaoManagerModel extends Model
         G.id AS company_id,
 		G.name AS company_name,
         "kakao" AS media, 
+        D.id AS campaign_id,
         C.id AS adset_id,
         B.id AS id, 
         B.name AS name, 

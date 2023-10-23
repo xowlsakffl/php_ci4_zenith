@@ -896,6 +896,16 @@ body {
   content: "";
   background: #ce1922;
 }
+.nav-tabs .nav-link .selected {
+  background-color: #99AAEE;
+  padding: 0.25em 1.75em;
+  border-radius: 14px;
+  color: #fff;
+  margin-left: 10px;
+  display: none;
+  font-size: 80%;
+  transition: 0.5s;
+}
 
 .tab-content {
   position: relative; /*padding:16px 24px 50px;*/

@@ -150,9 +150,15 @@ class AdvManagerModel extends Model
                 if($type == 'getAdsets' && (isset($data['searchData']['data']['campaigns']) && count($data['searchData']['data']['campaigns']))) {
                     $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['campaigns']);
                     $resultQuery->whereIn('campaign_id', $ids);
-                } else if($type == 'getAds' && (isset($data['searchData']['data']['adsets']) && count($data['searchData']['data']['adsets']))) {
-                    $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['adsets']);
-                    $resultQuery->whereIn('adset_id', $ids);
+                } else if($type == 'getAds') {
+                    if(isset($data['searchData']['data']['campaigns']) && count($data['searchData']['data']['campaigns'])) {
+                        $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['campaigns']);
+                        $resultQuery->whereIn('campaign_id', $ids);
+                    }
+                    if(isset($data['searchData']['data']['adsets']) && count($data['searchData']['data']['adsets'])) {
+                        $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['adsets']);
+                        $resultQuery->whereIn('adset_id', $ids);
+                    }
                 }
             }
             /* if($type == 'getCampaigns' || $type == 'getAdsets' || $type == 'getAds'){   
