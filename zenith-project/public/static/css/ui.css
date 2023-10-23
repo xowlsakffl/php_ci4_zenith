@@ -108,7 +108,9 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 input[type=submit], button {
@@ -147,7 +149,9 @@ textarea:focus {
 }
 
 select {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 select:focus {
@@ -345,7 +349,6 @@ body {
 .main-contents-wrap {
   flex: 1;
   padding: 80px 6.7708vw;
-  margin-left: 9.25vw;
 }
 
 .ad-list .row {
@@ -455,6 +458,9 @@ body {
   .ad-detail-info .col:nth-child(n+5) {
     margin-top: 15px;
   }
+  .btn-top span {
+    display: none;
+  }
 }
 @media screen and (max-width: 1200px) {
   .ad-list .row {
@@ -486,7 +492,6 @@ body {
   }
   .main-contents-wrap {
     padding: 30px 30px 30px 70px;
-    margin-left: 1vw;
   }
   .left-side {
     position: fixed;
@@ -680,6 +685,12 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
+.search-wrap .search .input input[type=text]:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
+}
 .search-wrap .search .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -866,8 +877,6 @@ body {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   background: #d7d7d7;
-  display: flex;
-  justify-content: center;
 }
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover, .nav-tabs .nav-link:active {
   border: 0;
@@ -885,20 +894,6 @@ body {
   height: 3px;
   content: "";
   background: #ce1922;
-}
-.nav-tabs .nav-link.active .selected {
-  display: block;
-}
-.nav-tabs .nav-link .selected {
-  background-color: #99AAEE;
-  padding: 0.25em 1.75em;
-  display: block;
-  border-radius: 14px;
-  color: #fff;
-  margin-left: 10px;
-  display: none;
-  font-size: 80%;
-  transition: 0.5s;
 }
 
 .tab-content {
@@ -942,6 +937,12 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
+.form-control:focus::-moz-placeholder, .form-select:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.5rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
+}
 .form-control:focus::placeholder, .form-select:focus::placeholder {
   color: red;
   text-indent: 0.5rem;
@@ -951,6 +952,9 @@ body {
 .account-container input.form-control:focus {
   box-shadow: 0 0 0 0.25rem #C0DBEA;
   caret-color: #7286D3;
+  color: #7286D3;
+}
+.account-container input.form-control:focus::-moz-placeholder {
   color: #7286D3;
 }
 .account-container input.form-control:focus::placeholder {
@@ -963,7 +967,8 @@ input:-internal-autofill-selected {
 
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
-    padding: 30px 30px 30px 70px;
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
   }
   .title-area {
     flex-wrap: wrap;
@@ -1003,9 +1008,6 @@ input:-internal-autofill-selected {
   }
 }
 @media screen and (max-width: 1024px) {
-  .sub-contents-wrap {
-    margin-left: 0;
-  }
   .search-wrap {
     margin: 0 0 20px;
   }
@@ -1111,8 +1113,8 @@ div.dataTables_processing > div:last-child > div {
 }
 
 .table {
-  table-layout: fixed; /*width:auto;*/
-  width: 100%;
+  table-layout: fixed;
+  width: auto;
 }
 .table .none {
   padding: 50px 0;
@@ -1171,6 +1173,9 @@ div.dataTables_processing > div:last-child > div {
 }
 .table-default thead th:not(:last-child) {
   border-right: 1px dashed #dfdfdf;
+}
+.table-default tfoot td {
+  background-color: var(--bs-gray-400) !important;
 }
 .table-default tbody th {
   position: relative;
@@ -2704,7 +2709,9 @@ div.dt-button-collection h3 {
 }
 
 .none {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -2738,7 +2745,9 @@ div.dt-button-collection h3 {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -2846,6 +2855,7 @@ div.dt-button-collection h3 {
   background-color: #ededed;
 }
 .account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
+  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 .account-container form .form-check .form-check-input {
@@ -3101,6 +3111,4 @@ div.dt-button-collection h3 {
     padding: 0.6rem 0.7rem;
     font-size: 90%;
   }
-}
-
-/*# sourceMappingURL=ui.css.map */
+}/*# sourceMappingURL=ui.css.map */

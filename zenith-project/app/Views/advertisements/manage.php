@@ -162,7 +162,7 @@
     <div class="tab-wrap">
         <ul class="nav nav-tabs" id="tab-list" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab">캠페인<span class="selected">1개</span></button>
+                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab">캠페인</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link tab-link" value="adsets" type="button" id="set-tab">광고 세트</button>
@@ -1048,8 +1048,13 @@ $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
+<<<<<<< HEAD
 $('.dataTable').on('click', 'tbody tr td:first-child', function(e) {
     $(this.parentNode).toggleClass('selected');
+=======
+$('.dataTable').on('click', 'tbody tr', function(e) {
+    $(this).toggleClass('selected');
+>>>>>>> parent of 734e0d6 (Merge branch 'master' of https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/zenith)
     var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
     if($('.dataTable tbody tr.selected').length > 0) {
         if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};

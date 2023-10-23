@@ -771,6 +771,7 @@ function setAutomationStatus(data)
 function chkSchedule()
 {
     var selectedValue = $('#execType').val();
+    console.log(selectedValue);
     $('#weekdayRow, #nextDateRow, #timeRow').show();
 
     if (selectedValue === "minute" || selectedValue === "hour") {
@@ -917,7 +918,6 @@ function conditionText($this)
     }
 }
 
-//대상 자동완성
 function getTargetAdvs(data){
     targetTable = $('#targetTable').DataTable({
         "destroy": true,
@@ -957,7 +957,6 @@ function getTargetAdvs(data){
     });
 }
 
-//실행 자동완성
 function getExecAdvs(data){
     execTable = $('#execTable').DataTable({
         "destroy": true,
@@ -1166,8 +1165,33 @@ function onlyNumber(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 }
 
-function setModalData(){
+function setModalData(data){
+    console.log(data);
+    $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
+    $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
+    if(data.aas_exec_week){
+        $('#scheduleTable input[name=exec_week][value="' + data.aas_exec_week + '"]').prop('checked', true);
+    }
+    if(data.aas_month_type){
+        $('#scheduleTable select[name=month_type]').val(data.aas_month_type);
+    }
+    if(data.aas_month_day){
+        $('#scheduleTable select[name=month_day]').val(data.aas_month_day);
+    }
+    if(data.aas_month_week){
+        $('#scheduleTable select[name=month_week]').val(data.aas_month_week);
+    }
+    if(data.aas_exec_time){
+        $('#scheduleTable select[name=exec_time]').val(data.aas_exec_time);
+    }
+    if(data.aas_ignore_start_time){
+        $('#scheduleTable select[name=ignore_start_time]').val(data.aas_ignore_start_time);
+    }
+    if(data.aas_ignore_end_time){
+        $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
+    }
 
+    //$('#targetSelectTable tbody')
 }
 
 function reset(){
@@ -1209,6 +1233,7 @@ function reset(){
     }
 
     $('#targetTable tbody tr, #execTable tbody tr').remove();
+    $('#schedule-tab').trigger('click');
 }
 //검색
 $('form[name="search-form"]').bind('submit', function() {
@@ -1250,16 +1275,20 @@ $('#automationModal').on('show.bs.modal', function(e) {
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
                 setModalData(data);
+                chkSchedule();
+                if(data.aas_month_type){
+                    chkScheduleMonthType()
+                }
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
             }
         });
     }else{
-        
+        chkSchedule();
     }
 
-    //chkSchedule();
+    
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
     reset();
