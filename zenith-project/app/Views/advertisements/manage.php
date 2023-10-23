@@ -1048,13 +1048,9 @@ $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
     return false;
 });
-<<<<<<< HEAD
+
 $('.dataTable').on('click', 'tbody tr td:first-child', function(e) {
     $(this.parentNode).toggleClass('selected');
-=======
-$('.dataTable').on('click', 'tbody tr', function(e) {
-    $(this).toggleClass('selected');
->>>>>>> parent of 734e0d6 (Merge branch 'master' of https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/zenith)
     var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
     if($('.dataTable tbody tr.selected').length > 0) {
         if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
