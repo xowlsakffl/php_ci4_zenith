@@ -62,7 +62,7 @@ class AutomationModel extends Model
         ];
     }
 
-    public function getSearchCompanies($data)
+    public function getSearchCompanies($data = null, $seq = null)
     {
         $builder = $this->zenith->table('companies c');
         $builder->select('id, "광고주" AS media, type, name, status');
@@ -73,6 +73,10 @@ class AutomationModel extends Model
             $builder->groupEnd();
         }
         $builder->groupBy('id');
+        if(!empty($seq)){
+            $builder->where('id', $seq);
+            $result = $builder->get()->getRowArray();
+        }
         $builderNoLimit = clone $builder;
         if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
         $result = $builder->get()->getResultArray();
@@ -177,6 +181,12 @@ class AutomationModel extends Model
         }
 
         $resultQuery->groupBy('adv.id');
+
+        if(!empty($seq)){
+            $resultQuery->where('adv.id', $seq);
+            $result = $resultQuery->get()->getRowArray();
+        }
+
         $builderNoLimit = clone $resultQuery;
         if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
         $result = $resultQuery->get()->getResultArray();
@@ -282,6 +292,12 @@ class AutomationModel extends Model
             $resultQuery->groupEnd();
         }
         $resultQuery->groupBy('adv.id');
+
+        if(!empty($seq)){
+            $resultQuery->where('adv.id', $seq);
+            $result = $resultQuery->get()->getRowArray();
+        }
+
         $builderNoLimit = clone $resultQuery;
         if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
         $result = $resultQuery->get()->getResultArray();
@@ -390,6 +406,12 @@ class AutomationModel extends Model
             $resultQuery->groupEnd();
         }
         $resultQuery->groupBy('adv.id');
+
+        if(!empty($seq)){
+            $resultQuery->where('adv.id', $seq);
+            $result = $resultQuery->get()->getRowArray();
+        }
+        
         $builderNoLimit = clone $resultQuery;
         if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
         $result = $resultQuery->get()->getResultArray();
@@ -425,15 +447,38 @@ class AutomationModel extends Model
         $builder->groupBy('aa.seq');
         $result  = $builder->get()->getResultArray();
 
-        foreach ($result as &$row) {
-            $conditionsBuilder = $this->zenith->table('aa_conditions aac');
-            $conditionsBuilder->where('aac.idx', $row['aa_seq']);
-            $row['conditions'] = $conditionsBuilder->get()->getResultArray();
-
-            $executionsBuilder = $this->zenith->table('aa_executions aae');
-            $executionsBuilder->where('aae.idx', $row['aa_seq']);
-            $row['executions'] = $executionsBuilder->get()->getResultArray();
+        switch ($result['aat_type']) {
+            case 'advertiser':
+                $target = $this->getSearchCompanies(null, $result['aat_id']);    
+                $result['aat_name'] = $target['name'];
+                $result['aat_status'] = $target['status'];
+                break;
+            case 'campaign':
+                $target = $this->getSearchCampaigns(null, $result['aat_id']);
+                $result['aat_name'] = $target['name'];
+                $result['aat_status'] = $target['status'];
+                break;
+            case 'adset':
+                $target = $this->getSearchAdsets(null, $result['aat_id']);
+                $result['aat_name'] = $target['name'];
+                $result['aat_status'] = $target['status'];
+                break;
+            case 'ad':
+                $target = $this->getSearchAds(null, $result['aat_id']);
+                $result['aat_name'] = $target['name'];
+                $result['aat_status'] = $target['status'];
+                break;
+            default:
+                break;
         }
+
+        $conditionsBuilder = $this->zenith->table('aa_conditions aac');
+        $conditionsBuilder->where('aac.idx', $result['aa_seq']);
+        $result['conditions'] = $conditionsBuilder->get()->getResultArray();
+
+        $executionsBuilder = $this->zenith->table('aa_executions aae');
+        $executionsBuilder->where('aae.idx', $result['aa_seq']);
+        $result['executions'] = $executionsBuilder->get()->getResultArray();
 
         return $result;
     }

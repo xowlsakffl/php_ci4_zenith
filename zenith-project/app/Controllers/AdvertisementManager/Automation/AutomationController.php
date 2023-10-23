@@ -78,16 +78,16 @@ class AutomationController extends BaseController
 
             switch ($arg['tab']) {
                 case 'advertiser':
-                    $result = $this->automation->getSearchCompanies($arg);                
+                    $result = $this->automation->getSearchCompanies($arg, null);                
                     break;
                 case 'campaign':
-                    $result = $this->automation->getSearchCampaigns($arg);
+                    $result = $this->automation->getSearchCampaigns($arg, null);
                     break;
                 case 'adset':
-                    $result = $this->automation->getSearchAdsets($arg);
+                    $result = $this->automation->getSearchAdsets($arg, null);
                     break;
                 case 'ad':
-                    $result = $this->automation->getSearchAds($arg);
+                    $result = $this->automation->getSearchAds($arg, null);
                     break;
                 default:
                     return $this->fail("잘못된 요청");
