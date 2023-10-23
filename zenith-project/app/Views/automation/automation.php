@@ -915,7 +915,7 @@ function conditionText($this)
 function addConditionRow(uniqueId){
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" ><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" ><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`;
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span><span class="operationText"></span></p>`;
     $('#conditionTable tbody').append(row);
@@ -1214,7 +1214,7 @@ function setModalData(data){
                 }else{
                     $('#condition-1 .conditionTypeValueStatus').hide();
                     $('#condition-1 .conditionTypeValue').val(condition.type_value).show();
-                    var conditionTypeValueText = $('#condition-1 .conditionTypeValueStatus').val();
+                    var conditionTypeValueText = $('#condition-1 .conditionTypeValue').val();
                 }
                 
                 $('#condition-1 .conditionCompare').val(condition.compare);
@@ -1235,7 +1235,7 @@ function setModalData(data){
                 }else{
                     $(`#${uniqueId} .conditionTypeValueStatus`).hide();
                     $(`#${uniqueId} .conditionTypeValue`).val(condition.type_value).show();
-                    var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValueStatus").val();
+                    var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
                 }
                 $(`#${uniqueId} .conditionCompare`).val(condition.compare);
                 $(`#${uniqueId} .conditionOperation`).val(condition.operation);
@@ -1277,6 +1277,12 @@ function setModalData(data){
 
     $('#detailText #subjectText').text(data.aa_subject);
     $('#detailText #descriptionText').text(data.aa_description);
+
+    chkSchedule();
+    if(data.aas_month_type){
+        chkScheduleMonthType()
+    }
+    scheduleText();
 }
 
 function reset(){
@@ -1360,11 +1366,6 @@ $('#automationModal').on('show.bs.modal', function(e) {
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
                 setModalData(data);
-                chkSchedule();
-                if(data.aas_month_type){
-                    chkScheduleMonthType()
-                }
-                scheduleText();
             },
             error: function(error, status, msg){
                 alert("상태코드 " + status + "에러메시지" + msg );
@@ -1373,8 +1374,6 @@ $('#automationModal').on('show.bs.modal', function(e) {
     }else{
         chkSchedule();
     }
-
-    
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
     reset();
