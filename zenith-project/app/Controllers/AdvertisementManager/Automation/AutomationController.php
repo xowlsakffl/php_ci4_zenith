@@ -88,6 +88,48 @@ class AutomationController extends BaseController
                 default:
                     break;
             }
+
+            foreach ($result['executions'] as &$execution) {
+                switch ($execution['media']) {
+                    case 'facebook':
+                        $execution['media'] = '페이스북';
+                        break;
+                    case 'google':
+                        $execution['media'] = '구글';
+                        break;
+                    case 'kakao':
+                        $execution['media'] = '카카오';
+                        break;
+                    default:
+                        break;
+                }
+
+                switch ($execution['type']) {
+                    case 'campaign':
+                        $execution['type'] = '캠페인';
+                        break;
+                    case 'adgroup':
+                        $execution['type'] = '광고그룹';
+                        break;
+                    case 'ad':
+                        $execution['type'] = '광고';
+                        break;
+                    default:
+                        break;
+                }
+
+                if($execution['status'] == 1 || $execution['status'] == 'ON' || $execution['status'] == 'ENABLED' || $execution['status'] == 'ACTIVE'){
+                    $execution['status'] = '활성';
+                }else{
+                    $execution['status'] = '비활성';
+                }
+
+                if($execution['exec_type'] == 'status'){
+                    $execution['exec_type'] = '상태';
+                }else if($execution['exec_type'] == 'budget'){
+                    $execution['exec_type'] = '예산';
+                }
+            }
             
             return $this->respond($result);
         }else{

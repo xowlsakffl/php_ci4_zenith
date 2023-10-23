@@ -433,6 +433,7 @@ class AutomationModel extends Model
         aa.seq as aa_seq, 
         aa.subject as aa_subject,
         aa.description as aa_description,
+        aa.target_condition_disabled as aa_target_condition_disabled,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
         DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
@@ -484,6 +485,29 @@ class AutomationModel extends Model
         $executionsBuilder = $this->zenith->table('aa_executions aae');
         $executionsBuilder->where('aae.idx', $result['aa_seq']);
         $result['executions'] = $executionsBuilder->get()->getResultArray();
+        if(!empty($result['executions'])){
+            foreach ($result['executions'] as &$execution) {
+                switch ($execution['type']) {
+                    case 'campaign':
+                        $executionResult = $this->getSearchCampaigns(null, $execution['id']);
+                        $execution['name'] = $executionResult['name'];
+                        $execution['status'] = $executionResult['status'];
+                        break;
+                    case 'adset':
+                        $executionResult = $this->getSearchAdsets(null, $execution['id']);
+                        $execution['name'] = $executionResult['name'];
+                        $execution['status'] = $executionResult['status'];
+                        break;
+                    case 'ad':
+                        $executionResult = $this->getSearchAds(null, $execution['id']);
+                        $execution['name'] = $executionResult['name'];
+                        $execution['status'] = $executionResult['status'];
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
         return $result;
     }
