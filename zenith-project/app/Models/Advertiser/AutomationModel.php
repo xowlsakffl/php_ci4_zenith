@@ -852,81 +852,42 @@ class AutomationModel extends Model
 
     public function createAutomation($data)
     {
+        dd($data);
+        $aaData = [
+            'subject' => $data['detail']['subject'],
+            'description' => $data['detail']['description'],
+            'nickname' => auth()->user()->nickname,
+            'status' => 1,
+            'target_condition_disabled' => $data['detail']['targetConditionDisabled'] === "1" ? 1 : 0,
+            'mod_datetime' => date('Y-m-d H:i:s'),
+        ];
+
         $this->zenith->transStart();
-        $builder = $this->zenith->table('admanager_automation');
-        $builder->insert($data);
+        $aaBuilder = $this->zenith->table('admanager_automation');
+        $result = $aaBuilder->insert($aaData);
         $seq = $this->zenith->insertID();
-
         
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
+        $data['schedule']['idx'] = $seq;
+        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder->insert($data['schedule']);
 
-    public function createAutomationSchedule($data)
-    {
-        //$this->zenith->transStart();
-        $builder = $this->zenith->table('aa_schedule');
-        $result = $builder->insert($data);
-        //$result = $this->zenith->transComplete();
-        return $result;
-    }
+        $data['target']['idx'] = $seq;
+        $aatBuilder = $this->zenith->table('aa_target');
+        $aatBuilder->insert($data['target']);
 
-    public function createAutomationTarget($data)
-    {
-        $this->zenith->transStart();
-        $builder = $this->zenith->table('aa_target');
-        $builder->insert($data);
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
-
-    public function createAutomationCondition($args)
-    {
-        $this->zenith->transStart();
-        foreach ($args['data'] as $d) {
-            $data = [
-                'idx' => $args['idx'],
-                'order' => $d['order'],
-                'type' => $d['type'],
-                'type_value' => $d['type_value'],
-                'compare' => $d['compare'],
-                'operation' => $d['operation'],
-            ];
-
-            $builder = $this->zenith->table('aa_conditions');
-            $result = $builder->insert($data);
-
-            if($result == false){
-                return $result;
-            }
+        foreach ($data['condition'] as $condition) {
+            $condition['idx'] = $seq;
+            $aacBuilder = $this->zenith->table('aa_conditions');
+            $aacBuilder->insert($condition);
         }
-        $result = $this->zenith->transComplete();
-        
-        return $result;
-    }
 
-    public function createAutomationExecution($args)
-    {
-        $this->zenith->transStart();
-        foreach ($args['data'] as $d) {
-            $data = [
-                'idx' => $args['idx'],
-                'order' => $d['order'],
-                'media' => $d['media'],
-                'type' => $d['type'],
-                'id' => $d['id'],
-                'exec_type' => $d['exec_type'],
-                'exec_value' => $d['exec_value'],
-            ];
-
-            $builder = $this->zenith->table('aa_executions');
-            $result = $builder->insert($data);
-            if($result == false){
-                return $result;
-            }
+        foreach ($data['execution'] as $execution) {
+            $execution['idx'] = $seq;
+            $aaeBuilder = $this->zenith->table('aa_executions');
+            $aaeBuilder->insert($execution);
         }
-        $result = $this->zenith->transComplete();
 
+        $result = $this->zenith->transComplete();
         return $result;
     }
 
