@@ -14,7 +14,6 @@ class AutomationModel extends Model
 
     public function getAutomationList($data)
     {
-        $srch = $data['searchData'];
         $builder = $this->zenith->table('admanager_automation aa');
         $builder->select('
         aa.seq as aa_seq, 
@@ -26,15 +25,15 @@ class AutomationModel extends Model
         ');
         $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
 
-        if(!empty($srch['sdate']) && !empty($srch['edate'])){
-            $builder->where('DATE(aa.mod_datetime) >=', $srch['sdate']);
-            $builder->where('DATE(aa.mod_datetime) <=', $srch['edate']);
+        if(!empty($data['sdate']) && !empty($data['edate'])){
+            $builder->where('DATE(aa.mod_datetime) >=', $data['sdate']);
+            $builder->where('DATE(aa.mod_datetime) <=', $data['edate']);
         }
 
-        if(!empty($srch['stx'])){
+        if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('aa.subject', $srch['stx']);
-            $builder->orLike('aa.description', $srch['stx']);
+            $builder->like('aa.subject', $data['stx']);
+            $builder->orLike('aa.description', $data['stx']);
             $builder->groupEnd();
         }
 

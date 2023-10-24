@@ -111,6 +111,7 @@
                         </ol>
                     </div>
                     <div class="detail-wrap">
+                        <input type="hidden" name="seq">
                         <div class="detail show active" id="schedule" role="tabpanel" aria-labelledby="schedule-tab" tabindex="0"> 
                             <table class="table tbl-side" id="scheduleTable">
                                 <colgroup>
@@ -461,6 +462,7 @@
                             </table>
                             <duv class="btn-area">
                                 <button type="button" id="createAutomationBtn" class="btn-special">저장</button>
+                                <button type="button" id="updateAutomationBtn" class="btn-special" style="display: none;">수정</button>
                             </duv>
                         </div>
                     </div>
@@ -634,6 +636,10 @@ function getList(){
             { 
                 "data": "aa_subject",
                 "width": "20%",
+                "render": function(data){
+                    subject = '<button type="button" data-bs-toggle="modal" data-bs-target="#automationModal" class="updateBtn">'+data+'</button>';
+                    return subject;
+                }
             },
             { 
                 "data": "aa_nickname", 
@@ -679,9 +685,6 @@ function getList(){
         ],
         "createdRow": function(row, data, dataIndex) {
             $(row).attr("data-id", data.aa_seq);
-            $(row).addClass("updateBtn");
-            $(row).attr("data-bs-toggle", "modal");
-            $(row).attr("data-bs-target", "#automationModal");
         },
         "language": {
             "url": '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
@@ -797,8 +800,7 @@ function chkScheduleMonthType()
 }
 
 //좌측 탭 일정 텍스트
-function scheduleText()
-{
+function scheduleText(){
     var type_value = $('input[name="type_value"]').val();
     var exec_type = $('#execType').val();
     var exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
@@ -806,8 +808,6 @@ function scheduleText()
     var month_day = $('#monthDay').val();
     var month_week = $('#monthWeek option:selected').text();
     var exec_time = $('#execTime').val();
-    var ignore_start_time = $('select[name="ignore_start_time"] option:selected').text();
-    var ignore_end_time = $('select[name="ignore_end_time"] option:selected').text();
     let scheduleTextParts= [];
     if(type_value) {
         switch(exec_type){
@@ -818,14 +818,14 @@ function scheduleText()
                 scheduleTextParts.push("매 "+type_value+"시간 마다");
                 break;
             case "day":
-                dayTextPart_1 = type_value == 1 ? '매일 ' : '매 '+type_value+'일 마다 ';
-                dayTextPart_2 = exec_time ? exec_time+'에' : '';
+                let dayTextPart_1 = type_value == 1 ? '매일 ' : '매 '+type_value+'일 마다 ';
+                let dayTextPart_2 = exec_time ? exec_time+'에' : '';
                 scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
                 break;
             case "week":
-                weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
-                weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
-                weekTextPart_3 = exec_time ? exec_time+'에' : '';
+                let weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
+                let weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
+                let weekTextPart_3 = exec_time ? exec_time+'에' : '';
                 if(exec_week){
                     scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
                 }
@@ -868,11 +868,8 @@ function scheduleText()
         }
     }
     $("#scheduleText").html(scheduleTextParts.join(", "));
-}
-//좌측 탭 대상 텍스트
-function targetText(){
-    
-}
+} 
+
 //좌측 탭 조건 텍스트
 function conditionText($this)
 {
@@ -996,7 +993,7 @@ function getExecAdvs(data){
         },
     });
 }
-
+//유효성 검사
 function validationData(){
     $type_value = $('#scheduleTable input[name=type_value]').val();
     $exec_type = $('#scheduleTable select[name=exec_type]').val();
@@ -1165,8 +1162,11 @@ function validationData(){
 function onlyNumber(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
 }
-
+//모달 수정 세팅
 function setModalData(data){
+    $('#createAutomationBtn').hide();
+    $('#updateAutomationBtn').show();
+    $('#automationModal input[name=seq]').val(data.aa_seq);
     $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
     $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
     if(data.aas_exec_week){
@@ -1266,6 +1266,12 @@ function setModalData(data){
 
     if(data.aa_target_condition_disabled == 1){
         $('#targetConditionDisabled').prop('checked', true);
+        var disabledText = '<p id="disabledText">미적용</p>';
+        $('#showTargetAdv').prop('disabled', true);
+        $('#targetText').hide();
+
+        $('#condition-tab p').hide();
+        $('#condition-tab, #target-tab').append(disabledText);
     }else{
         $('#targetConditionDisabled').prop('checked', false);
     }
@@ -1285,6 +1291,7 @@ function setModalData(data){
     scheduleText();
 }
 
+//모달 초기화
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#target-tab #disabledText, #condition-tab #disabledText').remove();
@@ -1326,6 +1333,96 @@ function reset(){
     $('#targetTable tbody tr, #execTable tbody tr').remove();
     $('#schedule-tab').trigger('click');
 }
+
+function setProcData(){
+    let $type_value = $('#scheduleTable input[name=type_value]').val();
+    let $exec_type = $('#scheduleTable select[name=exec_type]').val();
+    let $exec_week = $('#scheduleTable input[name=exec_week]').val();
+    let $month_type = $('#scheduleTable select[name=exemonth_typec_week]').val();
+    let $month_day = $('#scheduleTable select[name=month_day]').val();
+    let $month_week = $('#scheduleTable select[name=month_week]').val();
+    let $exec_time = $('#scheduleTable select[name=exec_time]').val();
+    let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
+    let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
+
+    let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
+    let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
+    let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
+
+    let $conditions = [];
+    let $executions = [];
+    $('#conditionTable tbody tr[id^="condition-"]').each(function(){
+        let $row = $(this);
+        let order = $row.find('input[name=order]').val();
+        let type = $row.find('select[name=type]').val();
+        let type_value = '';
+        if(type == 'status'){
+            type_value = $row.find('select[name=type_value_status]').val();
+        }else{
+            type_value = $row.find('input[name=type_value]').val();
+        }
+        let compare = $row.find('select[name=compare]').val();
+        let operation = $row.find('select[name=operation]').val();
+
+        $conditions.push({
+            order: order,
+            type: type,
+            type_value: type_value,
+            compare: compare,
+            operation: operation
+        });
+    });
+
+
+    $('#execSelectTable tbody tr').each(function(){
+        let $row = $(this);
+        //let order = $row.find('td:eq(0)').text();
+        let media = $row.find('td:eq(0)').text();
+        let type = $row.find('td:eq(1)').text();
+        let id = $row.find('td:eq(2)').text();
+        let exec_type = $row.find('td:eq(5)').text();
+        let exec_value = $row.find('td:eq(6)').text();
+
+        $executions.push({
+            //order: order,
+            type: type,
+            id: id,
+            exec_type: exec_type,
+            exec_value: exec_value
+        });
+    });
+
+    let $subject = $('#detailTable input[name=subject]').val();
+    let $description = $('#detailTable textarea[name=description]').val();
+
+    let $data = {
+        'schedule': {
+            'type_value': $type_value,
+            'exec_type': $exec_type,
+            'exec_week': $exec_week,
+            'month_type': $month_type,
+            'month_day': $month_day,
+            'month_week': $month_week,
+            'exec_time': $exec_time,
+            'ignore_start_time': $ignore_start_time,
+            'ignore_end_time': $ignore_end_time,
+        },
+        'target': {
+            'type': $target_type,
+            'media': $target_media,
+            'id': $target_id,
+        },
+        'condition': $conditions,
+        'execution': $executions,
+        'detail': {
+            'subject': $subject,
+            'description': $description,
+            'targetConditionDisabled': $('#targetConditionDisabled').is(':checked') ? 1 : 0,
+        }
+    };
+
+    return $data;
+}
 //검색
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
@@ -1357,7 +1454,7 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
 $('#automationModal').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     if ($btn.hasClass('updateBtn')) {
-        var id = $btn.data('id');
+        var id = $btn.closest('tr').data('id');
         $.ajax({
             type: "GET",
             url: "<?=base_url()?>/automation/get-automation",
@@ -1371,8 +1468,10 @@ $('#automationModal').on('show.bs.modal', function(e) {
                 alert("상태코드 " + status + "에러메시지" + msg );
             }
         });
-    }else{
+    }else{      
         chkSchedule();
+        $('#createAutomationBtn').show();
+        $('#updateAutomationBtn').hide();
     }
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
@@ -1582,92 +1681,46 @@ $('body').on('focusout', '#detailTable textarea[name=description]', function() {
 
 $('body').on('click', '#createAutomationBtn', function() {
     if(validationData()){
-        let $type_value = $('#scheduleTable input[name=type_value]').val();
-        let $exec_type = $('#scheduleTable select[name=exec_type]').val();
-        let $exec_week = $('#scheduleTable input[name=exec_week]').val();
-        let $month_type = $('#scheduleTable select[name=exemonth_typec_week]').val();
-        let $month_day = $('#scheduleTable select[name=month_day]').val();
-        let $month_week = $('#scheduleTable select[name=month_week]').val();
-        let $exec_time = $('#scheduleTable select[name=exec_time]').val();
-        let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
-        let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-
-        let $target_media = $('#targetSelectTable tbody tr').eq(0).text();
-        let $target_type = $('#targetSelectTable tbody tr').eq(1).text();
-        let $target_id = $('#targetSelectTable tbody tr').eq(2).text();
-
-        let $conditions = [];
-        let $executions = [];
-        $('#conditionTable tbody tr[id^="condition-"]').each(function(){
-            let $row = $(this);
-            let order = $row.find('input[name=order]').val();
-            let type = $row.find('select[name=type]').val();
-            let type_value = '';
-            if(type = 'status'){
-                type_value = $row.find('select[name=type_value_status]').val();
-            }else{
-                type_value = $row.find('input[name=type_value]').val();
-            }
-            let compare = $row.find('select[name=compare]').val();
-            let operation = $row.find('select[name=operation]').val();
-
-            $conditions.push({
-                order: order,
-                type: type,
-                type_value: type_value,
-                compare: compare,
-                operation: operation
-            });
-        });
-
-
-        $('#execSelectTable tbody tr').each(function(){
-            let $row = $(this);
-            //let order = $row.find('td:eq(0)').text();
-            let media = $row.find('td:eq(0)').text();
-            let type = $row.find('td:eq(1)').text();
-            let id = $row.find('td:eq(2)').text();
-            let exec_type = $row.find('td:eq(5)').text();
-            let exec_value = $row.find('td:eq(6)').text();
-
-            $executions.push({
-                //order: order,
-                type: type,
-                id: id,
-                exec_type: exec_type,
-                exec_value: exec_value
-            });
-        });
-
-        let $subject = $('#detailTable input[name=subject]').val();
-        let $description = $('#detailTable textarea[name=description]').val();
-
-        $data = {
-            'schedule': {
-                'type_value': $type_value,
-                'exec_type': $exec_type,
-                'exec_week': $exec_week,
-                'month_type': $month_type,
-                'month_day': $month_day,
-                'month_week': $month_week,
-                'exec_time': $exec_time,
-                'ignore_start_time': $ignore_start_time,
-                'ignore_end_time': $ignore_end_time,
+        let procData = setProcData();
+        $.ajax({
+            type: "GET",
+            url: "<?=base_url()?>/automation/create",
+            data: procData,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                if(data == true){
+                    dataTable.draw();
+                    $('#automationModal').modal('hide');
+                }
             },
-            'target': {
-                'type': $target_type,
-                'media': $target_media,
-                'id': $target_id,
-            },
-            'condition': $conditions,
-            'execution': $executions,
-            'detail': {
-                'subject': $subject,
-                'description': $description
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
             }
-        };
+        });
+    };
+});
 
-
+$('body').on('click', '#updateAutomationBtn', function() {
+    if(validationData()){
+        let procData = setProcData();
+        procData.seq = $('input[name=seq]').val();
+        $.ajax({
+            type: "PUT",
+            url: "<?=base_url()?>/automation/update",
+            data: procData,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){  
+                if(data == true){
+                    dataTable.draw();
+                    $('#automationModal').modal('hide');
+                }
+            },
+            error: function(error, status, msg){
+                alert("상태코드 " + status + "에러메시지" + msg );
+            }
+        });
     };
 });
 //등록 부분 끝
