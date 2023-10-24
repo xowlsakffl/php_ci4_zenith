@@ -5,7 +5,7 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
     button.active{color:var(--bs-red);}
 }
 .dt-buttons .dt-button-down-arrow {display:none;}
-.table{table-layout:fixed; width:auto;
+.table{table-layout:fixed; width:100%;
     .none{padding:50px 0; text-align:center;}
     .ico{display:inline-block; width:8px; height:8px; border-radius:50%;
         &.green{background:var(--bs-success);}
@@ -86,6 +86,8 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
     * + .btn{margin-left:10px;}
 }
 .table-sm{min-width:1000px;}
+
+table.dataTable{border-right: 1px dashed var(--bs-border-color);}
 
 @include x-large{
 

@@ -162,13 +162,13 @@
     <div class="tab-wrap">
         <ul class="nav nav-tabs" id="tab-list" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab">캠페인<div class="selected"><span>0</span>개 선택</div></button>
+                <button class="nav-link tab-link" value="campaigns" type="button" id="campaign-tab"><span>캠페인</span><div class="selected"><span>0</span>개 선택</div></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="adsets" type="button" id="set-tab">광고 세트<div class="selected"><span>0</span>개 선택</div></button>
+                <button class="nav-link tab-link" value="adsets" type="button" id="set-tab"><span>광고 세트</span><div class="selected"><span>0</span>개 선택</div></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab">광고<div class="selected"><span>0</span>개 선택</div></button>
+                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab"><span>광고</span><div class="selected"><span>0</span>개 선택</div></button>
             </li>
         </ul>
         <div class="tab-content">
@@ -1067,6 +1067,8 @@ $('.dataTable').on('click', 'tbody tr td:first-child', function(e) {
     if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
     tableParam.searchData.data[$('.tab-link.active').val()] = selected;
     $('.tab-link.active .selected span').text(tableParam.searchData.data[$('.tab-link.active').val()].length).parent().fadeIn();
+    if(tableParam.searchData.data[$('.tab-link.active').val()].length < 1)
+    $('.tab-link.active .selected').fadeOut();
 })
 
 var prevVal;

@@ -867,6 +867,9 @@ body {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   background: #d7d7d7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover, .nav-tabs .nav-link:active {
   border: 0;
@@ -886,16 +889,14 @@ body {
   background: #ce1922;
 }
 .nav-tabs .nav-link .selected {
-  position: absolute;
-  top: 50%;
-  right: 14%;
-  transform: translateY(-50%);
   background-color: #99AAEE;
   padding: 0.25em 1.75em;
   border-radius: 14px;
   color: #fff;
-  display: none;
   font-size: 80%;
+  transition: 0.5s;
+  margin: 0 0 0 0.75em;
+  display: none;
   transition: 0.5s;
 }
 
@@ -1057,6 +1058,9 @@ input:-internal-autofill-selected {
   }
   .nav-tabs .nav-link {
     padding: 10px 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100%;
   }
   .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover, .nav-tabs .nav-link:active {
     border: 0;
@@ -1074,6 +1078,14 @@ input:-internal-autofill-selected {
     height: 3px;
     content: "";
     background: #ce1922;
+  }
+  .nav-tabs .nav-link > span {
+    display: block;
+  }
+  .nav-tabs .nav-link .selected {
+    margin: 0.75em auto 0;
+    padding: 0.25em 1.25em;
+    font-size: 0.75em;
   }
 }
 div.dataTables_processing {
@@ -1108,7 +1120,7 @@ div.dataTables_processing > div:last-child > div {
 
 .table {
   table-layout: fixed;
-  width: auto;
+  width: 100%;
 }
 .table .none {
   padding: 50px 0;
@@ -1288,6 +1300,10 @@ div.dataTables_processing > div:last-child > div {
 
 .table-sm {
   min-width: 1000px;
+}
+
+table.dataTable {
+  border-right: 1px dashed var(--bs-border-color);
 }
 
 @media screen and (max-width: 1024px) {

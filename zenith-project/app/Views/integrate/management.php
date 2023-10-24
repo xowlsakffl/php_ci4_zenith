@@ -307,9 +307,9 @@ function getList(data = []) { //리스트 세팅
             { "data": "reg_date", "width": "70px" },
             { "data": "memo_cnt", "width": "30px", "className": "memo",
               "render" : function(data) { // data-bs-toggle="modal"
-                var html = '<a href="#" class="btn_memo text-dark position-relative" data-bs-target="#modal-integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
+                var html = '<button class="btn_memo text-dark position-relative" data-bs-target="#modal-integrate-memo"><i class="bi bi-chat-square-text h4"></i>';
                 html += '<span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-'+data+'">'+data+'</span>';
-                html += '</a>';
+                html += '</button>';
                     return html;
                 }
             },
