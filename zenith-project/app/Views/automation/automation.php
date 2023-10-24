@@ -1696,7 +1696,9 @@ $('body').on('click', '#createAutomationBtn', function() {
                 }
             },
             error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
+                var errorMessages = error.responseJSON.messages.msg;
+                var firstErrorMessage = Object.values(errorMessages)[0];
+                alert(firstErrorMessage);
             }
         });
     };
@@ -1719,7 +1721,9 @@ $('body').on('click', '#updateAutomationBtn', function() {
                 }
             },
             error: function(error, status, msg){
-                alert("상태코드 " + status + "에러메시지" + msg );
+                var errorMessages = error.responseJSON.messages.msg;
+                var firstErrorMessage = Object.values(errorMessages)[0];
+                alert(firstErrorMessage);
             }
         });
     };
