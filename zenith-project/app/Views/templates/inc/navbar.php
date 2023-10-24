@@ -51,6 +51,9 @@ $uri = current_url(true)->getPath();
                     </ul>
                 </div>
             </li>
+            <li>
+                <a href="/automation" class="<?php if($uri === '/automation'){ echo "active";}?>"><button><i class="bi bi-person-vcard-fill"></i>자동화 관리</button></a>  
+            </li>
         </ul>
     </div>
     <div class="user-nav">
