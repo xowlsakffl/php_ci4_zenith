@@ -855,7 +855,9 @@ class AutomationModel extends Model
         $this->zenith->transStart();
         $builder = $this->zenith->table('admanager_automation');
         $builder->insert($data);
-        //$insertId = $this->zenith->insertID();
+        $seq = $this->zenith->insertID();
+
+        
         $result = $this->zenith->transComplete();
         return $result;
     }

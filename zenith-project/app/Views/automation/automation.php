@@ -909,7 +909,7 @@ function conditionText($this)
 function addConditionRow(uniqueId){
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" ><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue"placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`;
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span><span class="operationText"></span></p>`;
     $('#conditionTable tbody').append(row);
@@ -995,7 +995,7 @@ function getExecAdvs(data){
 }
 //유효성 검사
 function validationData(){
-    $type_value = $('#scheduleTable input[name=type_value]').val();
+    /* $type_value = $('#scheduleTable input[name=type_value]').val();
     $exec_type = $('#scheduleTable select[name=exec_type]').val();
     $exec_time = $('#scheduleTable select[name=exec_time]').val();
     $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
@@ -1010,7 +1010,7 @@ function validationData(){
     $subject = $('#detailTable input[name=subject]').val();
 
     if (!$type_value) {
-        alert('시간값을 입력해주세요');
+        alert('시간 조건값을 입력해주세요');
         $('#schedule-tab').trigger('click');
         $('#scheduleTable input[name=type_value]').focus();
         return false;
@@ -1154,7 +1154,7 @@ function validationData(){
         alert('제목을 추가해주세요.');
         $('#detailTable input[name=subject]').focus();
         return false;
-    }
+    } */
 
     return true;
 }
@@ -1295,8 +1295,9 @@ function setModalData(data){
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#target-tab #disabledText, #condition-tab #disabledText').remove();
-    $('#targetSelectTable tbody tr, #execSelectTable tbody tr').empty();
-
+    $('#targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
+    $('#condition-1 input[name=type_value]').show();
+    $('#condition-1 select[name=type_value_status]').hide();
     $('#myTab li').each(function(index){
         let $pTags = $(this).find('p');
         if (index === 2 || index === 4) {
@@ -1337,8 +1338,8 @@ function reset(){
 function setProcData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
     let $exec_type = $('#scheduleTable select[name=exec_type]').val();
-    let $exec_week = $('#scheduleTable input[name=exec_week]').val();
-    let $month_type = $('#scheduleTable select[name=exemonth_typec_week]').val();
+    let $exec_week = $('#scheduleTable input[name=exec_week]:checked').val();
+    let $month_type = $('#scheduleTable select[name=month_type]').val();
     let $month_day = $('#scheduleTable select[name=month_day]').val();
     let $month_week = $('#scheduleTable select[name=month_week]').val();
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();

@@ -201,13 +201,11 @@ class AutomationController extends BaseController
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             //$arg = $this->request->getPost();
-            $arg = $this->request->getGet();
-            $data = [
-                'subject' => $arg['subject'],
-				'description' => $arg['description'],
-            ];
-            $this->validationData($data);
-
+            $data = $this->request->getGet();
+            $validationResult = $this->validationData($data);
+            if($validationResult['result'] != true){
+                return $this->failValidationErrors($validationResult);
+            }
             $result = $this->automation->createAutomation($data);
             return $this->respond($result);
         }else{
@@ -267,25 +265,131 @@ class AutomationController extends BaseController
     {
         $validation = \Config\Services::validation();
         $validationRules      = [
-            'subject' => 'required',
-            'description' => 'required'
+            'schedule.type_value' => 'required',
         ];
         $validationMessages   = [
-            'subject' => [
-                'required' => '제목은 필수 입력 사항입니다.',
-            ],
-            'description' => [
-                'required' => '설명은 필수 입력 사항입니다.',
+            'schedule.type_value' => [
+                'required' => '시간 조건값은 필수 항목입니다.',
             ],
         ];
+
+        if($data['schedule']['exec_type'] == 'day' || $data['schedule']['exec_type'] == 'week'){
+            $validationRules['schedule.exec_time'] = 'required';
+            $validationMessages['schedule.exec_time'] = ['required' => '시간은 필수 항목입니다.'];
+        }
+    
+        if($data['schedule']['exec_type'] == 'week'){
+            $validationRules['schedule.exec_week'] = ['required'];
+            $validationMessages['schedule.exec_week'] = ['required' => "요일은 필수 항목입니다."];
+        }
+
+        if($data['schedule']['exec_type'] == 'month'){
+            $validationRules['schedule.month_type'] = ['required'];
+            $validationMessages['schedule.month_type'] = ['required' => "월 조건값은 필수 항목입니다."];
+
+            if(isset($data['schedule']['month_type'])){
+                if($data['schedule']['month_type'] == 'start_day' || $data['schedule']['month_type'] == 'end_day'){
+                    $validationRules['schedule.exec_time'] = 'required';
+                    $validationMessages['schedule.exec_time'] = ['required' => '시간은 필수 항목입니다.'];
+                }
+    
+                if($data['schedule']['month_type'] == 'first' || $data['schedule']['month_type'] == 'last'){
+                    $validationRules['schedule.month_week'] = 'required';
+                    $validationMessages['schedule.month_week'] = ['required' => '월 조건 요일은 필수 항목입니다.'];
+                }
+    
+                if($data['schedule']['month_type'] == 'day'){
+                    $validationRules['schedule.month_day'] = 'required';
+                    $validationMessages['schedule.month_day'] = ['required' => '월 조건 일자는 필수 항목입니다.'];
+                }
+            }
+        }
+
+        if($data['detail']['targetConditionDisabled'] != "1"){
+            $validationRules['target.id'] = 'required';
+            $validationMessages['target.id'] = ['required' => '대상항목을 추가해주세요.'];
+        }
+
         $validation->setRules($validationRules, $validationMessages);
         if (!$validation->run($data)) {
-            return $validation->getErrors();
+            $result = [
+                'result' => false,
+                'msg' => $validation->getErrors(),
+            ];
+            return $result;
         }
 
         $validation->reset();
-        
-        return true;
+
+        if($data['detail']['targetConditionDisabled'] != "1"){
+            foreach ($data['condition'] as $condition) {
+                $validationRules      = [
+                    'order' => 'required',
+                    'type' => 'required',
+                    'type_value' => 'required',
+                    'compare' => 'required',
+                    'operation' => 'required',
+                ];
+                $validationMessages   = [
+                    'order' => ['required' => '순서는 필수 항목입니다.'],
+                    'type' => ['required' => '조건 항목은 필수 항목입니다.'],
+                    'type_value' => ['required' => '조건 값은 필수 항목입니다.'],
+                    'compare' => ['required' => '일치여부는 필수 항목입니다.'],
+                    'operation' => ['required' => '연산조건은 필수 항목입니다.'],
+                ];
+
+                $validation->setRules($validationRules, $validationMessages);
+                if (!$validation->run($condition)) {
+                    $result = [
+                        'result' => false,
+                        'msg' => $validation->getErrors(),
+                    ];
+                    return $result;
+                }
+            }
+        }
+
+        $validation->reset();
+
+        if(empty($data['execution'])){
+            $validationRules['execution'] = 'required';
+            $validationMessages['execution'] = ['required' => '실행항목을 추가해주세요.'];
+        }else{
+            foreach ($data['execution'] as $execution) {
+                $validationRules      = [
+                    'exec_type' => 'required',
+                    'exec_value' => 'required',
+                ];
+                $validationMessages   = [
+                    'exec_type' => ['required' => '실행항목은 필수 항목입니다.'],
+                    'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
+                ];
+    
+                $validation->setRules($validationRules, $validationMessages);
+                if (!$validation->run($execution)) {
+                    $result = [
+                        'result' => false,
+                        'msg' => $validation->getErrors(),
+                    ];
+                    return $result;
+                }
+            }
+        }
+
+        $validation->reset();
+
+        $validationRules      = ['detail.subject' => 'required'];
+        $validationMessages   = ['detail.subject' => ['required' => '제목은 필수 항목입니다.']];
+        $validation->setRules($validationRules, $validationMessages);
+        if (!$validation->run($data)) {
+            $result = [
+                'result' => false,
+                'msg' => $validation->getErrors(),
+            ];
+            return $result;
+        }
+
+        return ['result' => true];
     }
     
     public function checkAutomationSchedule()
