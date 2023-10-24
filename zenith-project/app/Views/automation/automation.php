@@ -995,7 +995,7 @@ function getExecAdvs(data){
 }
 //유효성 검사
 function validationData(){
-    /* $type_value = $('#scheduleTable input[name=type_value]').val();
+    $type_value = $('#scheduleTable input[name=type_value]').val();
     $exec_type = $('#scheduleTable select[name=exec_type]').val();
     $exec_time = $('#scheduleTable select[name=exec_time]').val();
     $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
@@ -1154,7 +1154,7 @@ function validationData(){
         alert('제목을 추가해주세요.');
         $('#detailTable input[name=subject]').focus();
         return false;
-    } */
+    }
 
     return true;
 }
