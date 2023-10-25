@@ -206,6 +206,8 @@ class AutomationController extends BaseController
             if($validationResult['result'] != true){
                 return $this->failValidationErrors($validationResult);
             }
+
+            
             $result = $this->automation->createAutomation($data);
             return $this->respond($result);
         }else{

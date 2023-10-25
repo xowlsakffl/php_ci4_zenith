@@ -1493,11 +1493,17 @@ $('body').on('change', '#scheduleTable input, #scheduleTable select', function()
 });
 
 $('form[name="search-target-form"]').bind('submit', function() {
-    var data = {
-        'tab': $('#targetTab li.active').data('tab'),
-        'stx': $('#showTargetAdv').val(),
+    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
+
+    if(targetConditionDisabled){
+        alert('대상, 조건 미적용 체크를 해제해주세요.');
+    }else{
+        var data = {
+            'tab': $('#targetTab li.active').data('tab'),
+            'stx': $('#showTargetAdv').val(),
+        }
+        getTargetAdvs(data);
     }
-    getTargetAdvs(data);
     return false;
 });
 
@@ -1573,10 +1579,24 @@ $('body').on('change', '#targetConditionDisabled', function(){
     }
 })
 
+$('body').on('click', '#showTargetAdv', function(){
+    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
+
+    if(targetConditionDisabled){
+        alert('대상, 조건 미적용 체크를 해제해주세요.');
+    }
+})
+
 $('body').on('click', '#conditionTable .btn-add', function(){
-    var currentRowCount = $('#conditionTable tbody tr').length;
-    var uniqueId = 'condition-' + (currentRowCount + 1);
-    addConditionRow(uniqueId);
+    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
+
+    if(!targetConditionDisabled){
+        var currentRowCount = $('#conditionTable tbody tr').length;
+        var uniqueId = 'condition-' + (currentRowCount + 1);
+        addConditionRow(uniqueId);
+    }else{
+        alert('대상, 조건 미적용 체크를 해제해주세요.');
+    }
 })
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
