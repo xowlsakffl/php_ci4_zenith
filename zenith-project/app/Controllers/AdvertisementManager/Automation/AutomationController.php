@@ -207,6 +207,91 @@ class AutomationController extends BaseController
                 return $this->failValidationErrors($validationResult);
             }
 
+            if(!empty($data['target'])){
+                switch ($data['target']['media']) {
+                    case '광고주':
+                        $data['target']['media'] = 'company';
+                        break;
+                    case '페이스북':
+                        $data['target']['media'] = 'facebook';
+                        break;
+                    case '구글':
+                        $data['target']['media'] = 'google';
+                        break;
+                    case '카카오':
+                        $data['target']['media'] = 'kakao';
+                        break;
+                    default:
+                        break;
+                }
+
+                switch ($data['target']['type']) {
+                    case '광고주':
+                        $data['target']['type'] = 'advertiser';
+                        break;
+                    case '캠페인':
+                        $data['target']['type'] = 'campaign';
+                        break;
+                    case '광고그룹':
+                        $data['target']['type'] = 'adgroup';
+                        break;
+                    case '광고':
+                        $data['target']['type'] = 'ad';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if(!empty($data['execution'])){
+                foreach ($data['execution'] as &$execution) {
+                    switch ($execution['media']) {
+                        case '광고주':
+                            $execution['media'] = 'company';
+                            break;
+                        case '페이스북':
+                            $execution['media'] = 'facebook';
+                            break;
+                        case '구글':
+                            $execution['media'] = 'google';
+                            break;
+                        case '카카오':
+                            $execution['media'] = 'kakao';
+                            break;
+                        default:
+                            break;
+                    }
+    
+                    switch ($execution['type']) {
+                        case '광고주':
+                            $execution['type'] = 'advertiser';
+                            break;
+                        case '캠페인':
+                            $execution['type'] = 'campaign';
+                            break;
+                        case '광고그룹':
+                            $execution['type'] = 'adgroup';
+                            break;
+                        case '광고':
+                            $execution['type'] = 'ad';
+                            break;
+                        default:
+                            break;
+                    }
+
+                    switch ($execution['exec_type']) {
+                        case '상태':
+                            $execution['exec_type'] = 'status';
+                            break;
+                        case '예산':
+                            $execution['exec_type'] = 'budget';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
             
             $result = $this->automation->createAutomation($data);
             return $this->respond($result);

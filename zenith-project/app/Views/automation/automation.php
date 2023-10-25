@@ -95,7 +95,6 @@
                                     <span class="typeText"></span>
                                     <span class="typeValueText"></span>
                                     <span class="compareText"></span>
-                                    <span class="operationText"></span>
                                 </p>
                             </li>
                             <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="preactice" aria-selected="false">
@@ -258,8 +257,9 @@
                                     <col style="width:10%">
                                     <col style="width:10%">
                                     <col style="width:30%">
-                                    <col style="width:40%">
-                                    <col style="width:10%">
+                                    <col style="width:35%">
+                                    <col style="width:8%">
+                                    <col style="width:7%">
                                 </colgroup>
                                 <thead>
                                     <tr>
@@ -268,6 +268,7 @@
                                         <th scope="col"  class="text-center">ID</th>
                                         <th scope="col"  class="text-center">제목</th>
                                         <th scope="col"  class="text-center">상태</th>
+                                        <th scope="col"  class="text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -292,6 +293,20 @@
                             </table>
                         </div>
                         <div class="detail" id="condition" role="tabpanel" aria-labelledby="condition-tab" tabindex="2">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="operation" value="and" id="operationAnd">
+                                    <label class="form-check-label" for="operationAnd">
+                                        모두 일치
+                                    </label>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="operation" value="or" id="operationOr">
+                                    <label class="form-check-label" for="operationOr">
+                                        하나만 일치
+                                    </label>
+                                </div>
+                            </div>
                             <table class="table tbl-header" id="conditionTable">
                                 <colgroup>
                                     <col>
@@ -345,11 +360,6 @@
                                                 <option value="less_equal">보다 작거나 같음</option>
                                                 <option value="equal">같음</option>
                                                 <option value="not_equal">같지않음</option>
-                                            </select>
-                                            <select name="operation" class="form-select no-flex conditionOperation">
-                                                <option value="">AND / OR</option>
-                                                <option value="and">AND</option>
-                                                <option value="or">OR</option>
                                             </select>
                                             </div>
                                         </td>
@@ -594,6 +604,7 @@
 
 let data = {};
 let dataTable;
+var saveTarget = null;
 
 setDate();
 getList();
@@ -675,7 +686,6 @@ function getList(){
                 "data": "aa_status", 
                 "width": "20%",
                 "render": function(data, type, row){
-                    console.log();
                     checked = data == 1 ? 'checked' : '';
                     var status = '<div class="td-inner"><div class="ui-toggle"><input type="checkbox" name="status" id="status_' + row.aa_seq + '" ' + checked + ' value="'+row.aa_seq+'"><label for="status_' + row.aa_seq + '">사용</label></div><div class="more-action"><button type="button" class="btn-more" data-seq="' + row.aa_seq + '"><span>더보기</span></button><ul class="action-list z-1"><li><a href="#">복제하기</a></li><li><a href="#">제거하기</a></li></ul></div></div>';
 
@@ -898,25 +908,19 @@ function conditionText($this)
         value = $this.find('option:selected').text();
         $("#text-"+trId+" .compareText").html(value);
     }
-
-    if(name == 'operation'){
-        $("#text-"+trId+" .operationText").text('');
-        value = $this.find('option:selected').text();
-        $("#text-"+trId+" .operationText").html("<br>"+value);
-    }
 }
 
 function addConditionRow(uniqueId){
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><select name="operation" class="form-select no-flex conditionOperation"><option value="">AND / OR</option><option value="and">AND</option><option value="or">OR</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`;
-    var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span><span class="operationText"></span></p>`;
+    var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span></p>`;
     $('#conditionTable tbody').append(row);
     $('#condition-tab').append(rowText);
 }
 
-function getTargetAdvs(data){
+function getTargetAdvs(searchData){
     targetTable = $('#targetTable').DataTable({
         "destroy": true,
         "autoWidth": true,
@@ -931,7 +935,7 @@ function getTargetAdvs(data){
         "info": false,
         "ajax": {
             "url": "<?=base_url()?>/automation/adv",
-            "data": data,
+            "data": searchData,
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
@@ -943,8 +947,16 @@ function getTargetAdvs(data){
             { "data": "media", "width": "10%"},
             { "data": "type", "width": "10%"},
             { "data": "id", "width": "30%"},
-            { "data": "name", "width": "40%"},
-            { "data": "status", "width": "10%"},
+            { "data": "name", "width": "35%"},
+            { "data": "status", "width": "8%",},
+            { 
+                "data": null, 
+                "width": "7%",
+                "render": function(){
+                    let button = '<button class="target-btn">적용</button></div>';
+                    return button;
+                }
+            },
         ],
         "createdRow": function(row, data, dataIndex) {
             $(row).attr("data-id", data.media+"_"+data.type+"_"+data.id);
@@ -952,6 +964,12 @@ function getTargetAdvs(data){
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
+        "drawCallback": function(settings) {
+            if(saveTarget){
+                console.log(saveTarget);
+                $('#targetTable tr[data-id="'+saveTarget+'"]').addClass('selected')
+            }
+        }
     });
 }
 
@@ -1003,6 +1021,7 @@ function validationData(){
     $month_week = $('#scheduleTable select[name=month_week]').val();
     $month_day = $('#scheduleTable select[name=month_day]').val();
 
+    $operation = $('input[name=operation]:checked').length;
     $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     $selectTarget = $('#targetSelectTable tbody tr').length;
     $selectExec = $('#execSelectTable tbody tr').length;
@@ -1071,9 +1090,16 @@ function validationData(){
 
     if(!$targetConditionDisabled){
         if(!$selectTarget > 0){
-            alert('대상을 추가해주세욧.');
+            alert('대상을 추가해주세요.');
             $('#target-tab').trigger('click');
             $('#showTargetAdv').focus();
+            return false;
+        }
+
+        if(!$operation){
+            alert('일치조건을 선택해주세요.');
+            $('#condition-tab').trigger('click');
+            $('input[name=operation]').focus();
             return false;
         }
 
@@ -1085,7 +1111,6 @@ function validationData(){
             var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
             var $conditionTypeValue = $row.find('input[name=type_value]').val();
             var $conditionCompare = $row.find('select[name=compare]').val();
-            var $conditionOperation = $row.find('select[name=operation]').val();
 
             if(!$conditionOrder){
                 alert('순서를 입력해주세요.');
@@ -1125,14 +1150,6 @@ function validationData(){
                 alert('일치여부를 선택해주세요.');
                 $('#condition-tab').trigger('click');
                 $row.find('select[name=compare]').focus();
-                eachValid = false;
-                return false;
-            }
-
-            if(!$conditionOperation){
-                alert('연산조건을 선택해주세요.');
-                $('#condition-tab').trigger('click');
-                $row.find('select[name=operation]').focus();
                 eachValid = false;
                 return false;
             }
@@ -1205,6 +1222,12 @@ function setModalData(data){
     if (data.conditions) {
         data.conditions.forEach(function(condition, index) {
             if(index === 0) {
+                if(condition.operation == 'and'){
+                    $('input[type="radio"][value="and"]').prop('checked', true);
+                }else{
+                    $('input[type="radio"][value="or"]').prop('checked', true);
+                }
+                $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionType').val(condition.type);
                 if(condition.type == 'status'){
@@ -1218,11 +1241,9 @@ function setModalData(data){
                 }
                 
                 $('#condition-1 .conditionCompare').val(condition.compare);
-                $('#condition-1 .conditionOperation').val(condition.operation);
                 $("#text-condition-1 .typeText").html($('#condition-1 .conditionType option:selected').text());
                 $("#text-condition-1 .typeValueText").html(conditionTypeValueText);
                 $("#text-condition-1 .compareText").html($('#condition-1 .conditionCompare option:selected').text());
-                $("#text-condition-1 .operationText").html("<br>"+$('#condition-1 .conditionOperation option:selected').text());
             } else { // 그 외의 항목일 경우
                 var uniqueId = 'condition-' + (index + 1);
                 addConditionRow(uniqueId);
@@ -1238,13 +1259,9 @@ function setModalData(data){
                     var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
                 }
                 $(`#${uniqueId} .conditionCompare`).val(condition.compare);
-                $(`#${uniqueId} .conditionOperation`).val(condition.operation);
-
-                console.log($("#condition-"+uniqueId+" .conditionType option:selected"));
                 $("#text-"+uniqueId+" .typeText").html($("#"+uniqueId+" .conditionType option:selected").text());
                 $("#text-"+uniqueId+" .typeValueText").html(conditionTypeValueText);
                 $("#text-"+uniqueId+" .compareText").html($("#"+uniqueId+" .conditionCompare option:selected").text());
-                $("#text-"+uniqueId+" .operationText").html("<br>"+$("#"+uniqueId+" .conditionOperation option:selected").text());
             }
         });
     }
@@ -1316,6 +1333,7 @@ function reset(){
         $(this).val('');
     }); 
     
+    $('input[name=operation]').prop('checked', false);
     $('#targetConditionDisabled').prop('checked', false);
     $('#showTargetAdv').prop('disabled', false);
     
@@ -1349,7 +1367,7 @@ function setProcData(){
     let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
     let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
     let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
-
+    let operation = $('input[name=operation]:checked').val();
     let $conditions = [];
     let $executions = [];
     $('#conditionTable tbody tr[id^="condition-"]').each(function(){
@@ -1363,8 +1381,7 @@ function setProcData(){
             type_value = $row.find('input[name=type_value]').val();
         }
         let compare = $row.find('select[name=compare]').val();
-        let operation = $row.find('select[name=operation]').val();
-
+        
         $conditions.push({
             order: order,
             type: type,
@@ -1386,6 +1403,7 @@ function setProcData(){
 
         $executions.push({
             //order: order,
+            media: media,
             type: type,
             id: id,
             exec_type: exec_type,
@@ -1476,6 +1494,7 @@ $('#automationModal').on('show.bs.modal', function(e) {
     }
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
+    saveTarget = null;
     reset();
 });
 
@@ -1514,7 +1533,7 @@ $('form[name="search-exec-form"]').bind('submit', function() {
         'stx': $('#showExecAdv').val(),
         'adv': disableChecked ? null : $('input[name=adv_info]').val(),
     }
-    console.log(data);
+
     getExecAdvs(data);
     return false;
 });
@@ -1522,23 +1541,25 @@ $('form[name="search-exec-form"]').bind('submit', function() {
 $('body').on('click', '#targetTable tbody tr', function(){
     if ($(this).hasClass('selected')) {
          $(this).removeClass('selected');
-         $('#targetSelectTable input[name=adv_info]').val('');
-         $('#targetSelectTable tbody').empty();
-         $('#targetText').html('');
-    }
-    else {
+    }else {
         $('#targetTable tr.selected').removeClass('selected');
         $(this).addClass('selected');
-        $('#targetSelectTable tbody').empty();
-
-        var targetId = $(this).data('id');
-        $('#targetSelectTable input[name=adv_info]').val(targetId);
-        var rowMedia = $(this).children('td').eq(0).text();
-        var rowType = $(this).children('td').eq(1).text();
-        var rowName = $(this).children('td').eq(3).text();
-        $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
-        $(this).closest('tr').clone().appendTo('#targetSelectTable');
+        saveTarget = $(this).data('id');
     }
+});
+
+$('body').on('click', '.target-btn', function(e){
+    e.stopPropagation();
+    $('#targetSelectTable tbody').empty();
+    let targetId = $(this).closest('tr').data('id');
+    let rowMedia = $(this).closest('tr').children('td').eq(0).text();
+    let rowType = $(this).closest('tr').children('td').eq(1).text();
+    let rowName = $(this).closest('tr').children('td').eq(3).text();
+    let clonedRow = $(this).closest('tr').clone();
+    $('#targetSelectTable input[name=adv_info]').val(targetId);
+    $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+    clonedRow.children('td:last').remove();
+    clonedRow.appendTo('#targetSelectTable');
 });
 
 $('body').on('click', '#execTable tbody tr', function(){
@@ -1552,8 +1573,17 @@ $('body').on('click', '#execTable tbody tr', function(){
 });
 
 $('body').on('click', '#targetTab li', function(){
+    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     $('#targetTab li').removeClass('active');
     $(this).addClass('active');
+    if(!targetConditionDisabled && ($('#targetTable tr.selected').length > 0 || saveTarget)){
+        let data = {
+            'tab': $('#targetTab li.active').data('tab'),
+            'adv': saveTarget ? saveTarget : $('#targetTable tr.selected').data('id')
+        }
+        saveTarget = data.adv;
+        getTargetAdvs(data);
+    }
 })
 
 $('body').on('click', '#execTab li', function(){

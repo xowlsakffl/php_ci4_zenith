@@ -63,20 +63,76 @@ class AutomationModel extends Model
 
     public function getSearchCompanies($data = null, $seq = null)
     {
-        $builder = $this->zenith->table('companies c');
-        $builder->select('id, "광고주" AS media, type, name, status');
+        if(!empty($data['adv'])){
+            list($media, $type, $id) = explode("_", $data['adv']);
+        }
+
+        $builder = $this->zenith->table('companies A');
+        $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status');
+
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('name', $data['stx']);
-            $builder->orLike('id', $data['stx']);
+            $builder->like('A.name', $data['stx']);
+            $builder->orLike('A.id', $data['stx']);
             $builder->groupEnd();
         }
-        $builder->groupBy('id');
+
+        if(!empty($data['adv'])){
+            if($media == '광고주'){
+                $builder->where('A.id', $id);
+            }else{
+                $builder->join('company_adaccounts AS B', 'A.id = B.company_id');
+                if($media == '페이스북'){
+                    $builder->join('z_facebook.fb_ad_account AS C', 'B.ad_account_id = C.ad_account_id');
+                    $builder->join('z_facebook.fb_campaign AS D', 'C.ad_account_id = D.account_id');
+                    $builder->join('z_facebook.fb_adset AS E', 'D.campaign_id = E.campaign_id');
+                    $builder->join('z_facebook.fb_ad AS F', 'E.adset_id = F.adset_id');
+                    if($type == '캠페인'){
+                        $builder->where('D.campaign_id', $id);
+                    }else if($type == '광고그룹'){
+                        $builder->where('E.adset_id', $id);
+                    }else if($type == '광고'){
+                        $builder->where('F.ad_id', $id);
+                    }
+                }
+                
+                if($media == '구글'){
+                    $builder->join('z_adwords.aw_ad_account AS C', 'B.ad_account_id = C.customerId');
+                    $builder->join('z_adwords.aw_campaign AS D', 'C.customerId = D.customerId');
+                    $builder->join('z_adwords.aw_adgroup AS E', 'D.id = E.campaignId');
+                    $builder->join('z_adwords.aw_ad AS F', 'E.id = F.adgroupId');
+                    if($type == '캠페인'){
+                        $builder->where('D.id', $id);
+                    }else if($type == '광고그룹'){
+                        $builder->where('E.id', $id);
+                    }else if($type == '광고'){
+                        $builder->where('F.id', $id);
+                    }
+                }
+
+                if($media == '카카오'){
+                    $builder->join('z_moment.mm_ad_account AS C', 'B.ad_account_id = C.id');
+                    $builder->join('z_moment.mm_campaign AS D', 'C.id = D.ad_account_id');
+                    $builder->join('z_moment.mm_adgroup AS E', 'D.id = E.campaign_id');
+                    $builder->join('z_moment.mm_creative AS F', 'E.id = F.adgroup_id');
+                    if($type == '캠페인'){
+                        $builder->where('D.id', $id);
+                    }else if($type == '광고그룹'){
+                        $builder->where('E.id', $id);
+                    }else if($type == '광고'){
+                        $builder->where('F.id', $id);
+                    }
+                }
+            }
+        }
+        
+        $builder->groupBy('A.id');
         if(!empty($seq)){
-            $builder->where('id', $seq);
+            $builder->where('A.id', $seq);
             $result = $builder->get()->getRowArray();
             return $result;
         }
+
         $builderNoLimit = clone $builder;
         if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
         $result = $builder->get()->getResultArray();
@@ -234,7 +290,7 @@ class AutomationModel extends Model
         $googleBuilder->select('A.id, "구글" AS media, "광고그룹" AS type, A.name, A.status');
         if(!empty($data['adv'])){ 
             if($type == '광고주'){
-                $googleBuilder->join('z_adwords.aw_campaign AS B', 'A.id = B.id');
+                $googleBuilder->join('z_adwords.aw_campaign AS B', 'A.campaignId = B.id');
                 $googleBuilder->join('z_adwords.aw_ad_account AS D', 'B.customerId = D.customerId');
                 $googleBuilder->join('zenith.company_adaccounts AS E', 'D.customerId = E.ad_account_id');
                 $googleBuilder->where('E.company_id', $id);
@@ -326,7 +382,7 @@ class AutomationModel extends Model
                 $facebookBuilder->join('zenith.company_adaccounts AS E', 'D.ad_account_id = E.ad_account_id');
                 $facebookBuilder->where('E.company_id', $id);
             }else{
-                $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.adset_id = C.adset_id');
+                $facebookBuilder->join('z_facebook.fb_adset AS B', 'A.adset_id = B.adset_id');
                 $facebookBuilder->join('z_facebook.fb_campaign AS C', 'B.campaign_id = C.campaign_id');
                 
                 if($media == '페이스북'){
@@ -852,7 +908,6 @@ class AutomationModel extends Model
 
     public function createAutomation($data)
     {
-        dd($data);
         $aaData = [
             'subject' => $data['detail']['subject'],
             'description' => $data['detail']['description'],
@@ -867,21 +922,25 @@ class AutomationModel extends Model
         $result = $aaBuilder->insert($aaData);
         $seq = $this->zenith->insertID();
         
+        $data['schedule'] = array_filter($data['schedule']);
         $data['schedule']['idx'] = $seq;
         $aasBuilder = $this->zenith->table('aa_schedule');
         $aasBuilder->insert($data['schedule']);
 
+        $data['target'] = array_filter($data['target']);
         $data['target']['idx'] = $seq;
         $aatBuilder = $this->zenith->table('aa_target');
         $aatBuilder->insert($data['target']);
 
         foreach ($data['condition'] as $condition) {
+            $data['condition'] = array_filter($data['condition']);
             $condition['idx'] = $seq;
             $aacBuilder = $this->zenith->table('aa_conditions');
             $aacBuilder->insert($condition);
         }
 
         foreach ($data['execution'] as $execution) {
+            $data['execution'] = array_filter($data['execution']);
             $execution['idx'] = $seq;
             $aaeBuilder = $this->zenith->table('aa_executions');
             $aaeBuilder->insert($execution);
