@@ -7,7 +7,13 @@ $uri = current_url(true)->getPath();
     <div class="nav-wrap">
         <ul class="nav flex-column">
             <li>
-                <a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>"><button><i class="bi bi-graph-up-arrow"></i>통합 광고관리</button></a>
+                <button data-bs-toggle="collapse" data-bs-target="#advertisements" aria-expanded="false"><i class="bi bi-graph-up-arrow"></i>통합 광고관리</button>
+                <div class="collapse" id="advertisements">
+                    <ul class="btn-toggle-nav">
+                        <li><a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>">통합 광고관리</a></li>
+                        <li><a href="/automation" class="<?php if($uri === '/automation'){ echo "active";}?>">자동화 관리</a></li>
+                    </ul>
+                </div>
             </li>
             <li>
                 <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>통합 DB관리</button></a>
@@ -50,9 +56,6 @@ $uri = current_url(true)->getPath();
                         <?php }?>
                     </ul>
                 </div>
-            </li>
-            <li>
-                <a href="/automation" class="<?php if($uri === '/automation'){ echo "active";}?>"><button><i class="bi bi-person-vcard-fill"></i>자동화 관리</button></a>  
             </li>
         </ul>
     </div>
