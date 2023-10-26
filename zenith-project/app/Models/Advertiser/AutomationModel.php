@@ -25,15 +25,15 @@ class AutomationModel extends Model
         ');
         $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
 
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(aa.mod_datetime) >=', $data['sdate']);
-            $builder->where('DATE(aa.mod_datetime) <=', $data['edate']);
+        if(!empty($data['searchData']['sdate']) && !empty($data['searchData']['edate'])){
+            $builder->where('DATE(aa.mod_datetime) >=', $data['searchData']['sdate']);
+            $builder->where('DATE(aa.mod_datetime) <=', $data['searchData']['edate']);
         }
 
-        if(!empty($data['stx'])){
+        if(!empty($data['searchData']['stx'])){
             $builder->groupStart();
-            $builder->like('aa.subject', $data['stx']);
-            $builder->orLike('aa.description', $data['stx']);
+            $builder->like('aa.subject', $data['searchData']['stx']);
+            $builder->orLike('aa.description', $data['searchData']['stx']);
             $builder->groupEnd();
         }
 
