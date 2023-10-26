@@ -575,6 +575,7 @@ class AutomationModel extends Model
         $builder = $this->zenith->table('admanager_automation aa');
         $builder->select('
         aa.seq as aa_seq, 
+        aa.target_condition_disabled as aa_target_condition_disabled,
         aas.idx as aas_idx, 
         aas.exec_type as aas_exec_type, 
         aas.type_value as aas_type_value, 
@@ -590,6 +591,7 @@ class AutomationModel extends Model
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
         $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+        $builder->where('aa.status', 1);
         //가장 최근 날짜 reg_datetime
         $builder->groupBy('aa.seq');
         $result = $builder->get()->getResultArray();
@@ -597,7 +599,7 @@ class AutomationModel extends Model
         return $result;
     }
 
-    public function getTargets($aaSeqs)
+    public function getTarget($data)
     {   
         $builder = $this->zenith->table('aa_target as aat');
         $builder->select('
@@ -608,8 +610,8 @@ class AutomationModel extends Model
         aat.id as aat_id
         ');
         $builder->join('admanager_automation aa', 'aat.idx = aa.seq');
-        $builder->whereIn('aat.idx', $aaSeqs);
-        $result = $builder->get()->getResultArray();
+        $builder->where('aat.idx', $data['aa_seq']);
+        $result = $builder->get()->getRowArray();
 
         return $result;
     }

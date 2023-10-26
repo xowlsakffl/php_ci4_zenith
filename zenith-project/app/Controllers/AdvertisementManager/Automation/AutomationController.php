@@ -549,134 +549,215 @@ class AutomationController extends BaseController
         return ['result' => true];
     }
     
-    public function checkAutomationSchedule()
+    public function execAutomation()
     {
         $automations = $this->automation->getAutomations();
-        $matchedArray = [];
         foreach ($automations as $automation) {
-            if(empty($automation['aas_idx'])){continue;}
-            $lastExecTime = $automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime'];
-            $lastExecTime = Time::parse($lastExecTime);
-
-            $ignoreStartTime = $automation['aas_ignore_start_time'] ?? null;
-            $ignoreEndTime = $automation['aas_ignore_end_time'] ?? null;
-            
-
-            $currentDate = new Time('now');
-            $currentTime = $currentDate->format('H:i');
-            
-            //제외시간
-            if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
-                $ignoreStartTime = Time::parse($ignoreStartTime);
-                $ignoreEndTime = Time::parse($ignoreEndTime);
-                if ($currentDate->isAfter($ignoreStartTime) && $currentDate->isBefore($ignoreEndTime)) {
-                    continue;
-                }
-            }else{
-                //매n시간 매n분
-                if($automation['aas_exec_type'] === 'hour' || $automation['aas_exec_type'] === 'minute'){
-                    $diffTime = $lastExecTime->difference($currentDate);
-                    if($automation['aas_exec_type'] === 'hour'){
-                        $diffTime = $diffTime->getHours();
-                    }else{
-                        $diffTime = $diffTime->getMinutes();
-                    }
-                    if($diffTime >= $automation['aas_type_value']){
-                        $matchedArray[] = $automation['aa_seq'];
-                        continue;
-                    }
-                }
-
-                //매n일
-                if($automation['aas_exec_type'] === 'day'){
-                    $diffTime = $lastExecTime->difference($currentDate);
-                    $diffTime = $diffTime->getDays();
-                    if($diffTime >= $automation['aas_type_value'] && $currentTime === $automation['aas_exec_time']){
-                        $matchedArray[] = $automation['aa_seq'];
-                        continue;
-                    }
-                }
-
-                //매n주
-                if($automation['aas_exec_type'] === 'week'){
-                    $diffTime = $lastExecTime->difference($currentDate);
-                    $diffTime = $diffTime->getWeeks();
-                    $currentDoW = $currentDate->dayOfWeek;
-                    if($diffTime >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $currentTime === $automation['aas_exec_time']){
-                        $matchedArray[] = $automation['aa_seq'];
-                        continue;
-                    }
-                }
-
-                //매n월
-                if($automation['aas_exec_type'] === 'month'){
-                    $diffTime = $lastExecTime->difference($currentDate);
-                    $diffTime = $diffTime->getMonths();
-                    $currentDoW = $currentDate->dayOfWeek;
-                    $currentDay = $currentDate->getDay();
-                    if($automation['aas_month_type'] === 'start_day'){
-                        if($diffTime >= $automation['aas_type_value'] && $currentDay === '1' && $currentTime === $automation['aas_exec_time']){
-                            $matchedArray[] = $automation['aa_seq'];
-                            continue;
-                        }
-                    }else if($automation['aas_month_type'] === 'end_day'){
-                        $currentMonthLastDay = $currentDate->format('t');      
-                        if($diffTime >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $currentTime === $automation['aas_exec_time']){
-                            $matchedArray[] = $automation['aa_seq'];
-                            continue;
-                        }
-                    }else if($automation['aas_month_type'] === 'first'){
-                        $firstDayMonth = $currentDate->setDay(1);
-                        while ($firstDayMonth->dayOfWeek != $automation['aas_month_week']) {
-                            $firstDayMonth = $firstDayMonth->addDays(1);
-                        }
-                        if($diffTime >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                            $matchedArray[] = $automation['aa_seq'];
-                            continue;
-                        }
-                    }else if($automation['aas_month_type'] === 'last'){
-                        $lastDayMonth = $currentDate->setDay($currentDate->format('t'));
-                        while ($lastDayMonth->dayOfWeek != $automation['aas_month_week']) {
-                            $lastDayMonth = $lastDayMonth->subDays(1);
-                        }
-                        if($diffTime >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                            $matchedArray[] = $automation['aa_seq'];
-                            continue;
-                        }
-                    }else if($automation['aas_month_type'] === 'day'){
-                        if($diffTime >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $currentTime === $automation['aas_exec_time']){
-                            $matchedArray[] = $automation['aa_seq'];
-                            continue;
-                        }
-                    }
+            $schedulePassData = $this->checkAutomationSchedule($automation);
+            if(!empty($schedulePassData)){
+                if(!empty($schedulePassData['aa_target_condition_disabled'])){
+                    $targetData = $this->getAutomationTarget($schedulePassData);
+                    $seqs = $this->checkAutomationCondition($targetDatas);
                 }
             }
         }
+        
 
-        return $matchedArray;
+        if(!empty($seqs)){
+            $targetDatas = $this->getAutomationTarget($seqs);
+        }
+        
+        if(!empty($targetDatas)){
+            $seqs = $this->checkAutomationCondition($targetDatas);
+        }
+
+        $executions = $this->automation->getExecutions($seqs);
+        
+        //순서 재정렬
+        usort($executions, function($a, $b) {
+            return $a['aae_order'] - $b['aae_order'];
+        });
+
+        foreach ($executions as $execution) {
+            switch ($execution['aae_media']) {
+                case 'facebook':
+                    switch ($execution['aae_type']) {
+                        case 'campaign':
+                            switch ($execution['aae_exec_type']) {
+                                case 'status':                              
+                                    if($execution['aae_exec_value'] === "ON"){
+                                        $status = 'ACTIVE';
+                                    }else{
+                                        $status = 'PAUSED';
+                                    }
+                                    $zenith = new ZenithFB();
+                                    $result = $zenith->setCampaignStatus($execution['aae_id'], $status);
+                                    break;
+                                case 'budget':
+                                    # code...
+                                    break;
+                                default:
+                                    # code...
+                                    break;
+                            }
+                            break;
+                        case 'adgroup':
+                            switch ($execution['aae_exec_type']) {
+                                case 'status':
+                                    # code...
+                                    break;
+                                case 'budget':
+                                    # code...
+                                    break;
+                                default:
+                                    # code...
+                                    break;
+                            }
+                            break;
+                        case 'ad':
+                            switch ($execution['aae_exec_type']) {
+                                case 'status':
+                                    # code...
+                                    break;
+                                case 'budget':
+                                    # code...
+                                    break;
+                                default:
+                                    # code...
+                                    break;
+                            }
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                    break;
+                case 'google':
+                
+                    break;
+                case 'kakao':
+            
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    public function getAutomationTarget($aaSeqs)
+    public function checkAutomationSchedule($automation)
     {
-        if(empty($aaSeqs)){return false;}
-        //aa_seq만 가져오기
-        $targets = $this->automation->getTargets($aaSeqs);
-        $matchedArray = [];
-        $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
-        $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
-        foreach ($targets as $automation) {
-            //값 별로 메소드 매칭
-            if (in_array($automation['aat_type'], $types) && in_array($automation['aat_media'], $mediaTypes)) {
-                $methodName = "getTarget" . ucfirst($automation['aat_media']);
-                if (method_exists($this->automation, $methodName)) {
-                    $data = $this->automation->$methodName($automation);
-                    $data = $this->setData($data);
-                    $data['aa_seq'] = $automation['aa_seq'];
-                    $matchedArray[] = $data;
+        if(empty($automation['aas_idx'])){return false;}
+        $lastExecTime = $automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime'];
+        $lastExecTime = Time::parse($lastExecTime);
+
+        $ignoreStartTime = $automation['aas_ignore_start_time'] ?? null;
+        $ignoreEndTime = $automation['aas_ignore_end_time'] ?? null;
+        
+        $currentDate = new Time('now');
+        $currentTime = $currentDate->format('H:i');
+        
+        //제외시간
+        if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
+            $ignoreStartTime = Time::parse($ignoreStartTime);
+            $ignoreEndTime = Time::parse($ignoreEndTime);
+            if ($currentDate->isAfter($ignoreStartTime) && $currentDate->isBefore($ignoreEndTime)) {
+                return false;
+            }
+        }
+
+        //매n시간 매n분
+        if($automation['aas_exec_type'] === 'hour' || $automation['aas_exec_type'] === 'minute'){
+            $diffTime = $lastExecTime->difference($currentDate);
+            if($automation['aas_exec_type'] === 'hour'){
+                $diffTime = $diffTime->getHours();                  
+            }else{
+                $diffTime = $diffTime->getMinutes();
+            }
+            if($diffTime >= $automation['aas_type_value']){
+                return $automation;
+            }
+        }
+
+        //매n일
+        if($automation['aas_exec_type'] === 'day'){
+            $diffTime = $lastExecTime->difference($currentDate);
+            $diffTime = $diffTime->getDays();
+            if($diffTime >= $automation['aas_type_value'] && $currentTime === $automation['aas_exec_time']){
+                return $automation;
+            }
+        }
+
+        //매n주
+        if($automation['aas_exec_type'] === 'week'){
+            $diffTime = $lastExecTime->difference($currentDate);
+            $diffTime = $diffTime->getWeeks();
+            $currentDoW = $currentDate->dayOfWeek;
+            if($diffTime >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $currentTime === $automation['aas_exec_time']){
+                return $automation;
+            }
+        }
+
+        //매n월
+        if($automation['aas_exec_type'] === 'month'){
+            $diffTime = $lastExecTime->difference($currentDate);
+            $diffTime = $diffTime->getMonths();
+            $currentDoW = $currentDate->dayOfWeek;
+            $currentDay = $currentDate->getDay();
+            if($automation['aas_month_type'] === 'start_day'){
+                if($diffTime >= $automation['aas_type_value'] && $currentDay === '1' && $currentTime === $automation['aas_exec_time']){
+                    return $automation;
+                }
+            }else if($automation['aas_month_type'] === 'end_day'){
+                $currentMonthLastDay = $currentDate->format('t');   
+                if($diffTime >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $currentTime === $automation['aas_exec_time']){
+                    return $automation;
+                }
+            }else if($automation['aas_month_type'] === 'first'){
+                $firstDayMonth = $currentDate->setDay(1);
+                while ($firstDayMonth->dayOfWeek != $automation['aas_month_week']) {
+                    $firstDayMonth = $firstDayMonth->addDays(1);
+                }
+                if($diffTime >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
+                    return $automation;
+                }
+            }else if($automation['aas_month_type'] === 'last'){
+                $lastDayMonth = $currentDate->setDay($currentDate->format('t'));
+                while ($lastDayMonth->dayOfWeek != $automation['aas_month_week']) {
+                    $lastDayMonth = $lastDayMonth->subDays(1);
+                }
+                if($diffTime >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
+                    return $automation;
+                }
+            }else if($automation['aas_month_type'] === 'day'){
+                if($diffTime >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $currentTime === $automation['aas_exec_time']){
+                    return $automation;
                 }
             }
         }
-        return $matchedArray;
+
+        return false;
+    }
+
+    public function getAutomationTarget($automation)
+    {
+        if(empty($automation)){return false;}
+        $target = $this->automation->getTarget($automation);
+        $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
+        $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
+        //값 별로 메소드 매칭
+        if (in_array($target['aat_type'], $types) && in_array($target['aat_media'], $mediaTypes)) {
+            $methodName = "getTarget" . ucfirst($target['aat_media']);
+            if (method_exists($this->automation, $methodName)) {
+                $data = $this->automation->$methodName($target);
+                if(empty($data)){
+                    return false;
+                }
+                $data = $this->setData($data);
+                return $data;
+            }
+        }else{
+            return false;
+        }
     }
 
     public function checkAutomationCondition($targetDatas)
@@ -684,7 +765,6 @@ class AutomationController extends BaseController
         if(empty($targetDatas)){return false;}
         $matchedArray = [];
         $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
-        d($targetDatas);
         foreach ($targetDatas as $target) {
             $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
             if(!$conditions){continue;}
@@ -789,86 +869,7 @@ class AutomationController extends BaseController
                 ];
             }
         }
-        dd($matchedArray);
         return $matchedArray;
-    }
-
-    public function execAutomation()
-    {
-        $checkScheduleSeq = $this->checkAutomationSchedule();
-        $targetDatas = $this->getAutomationTarget($checkScheduleSeq);
-        $checkConditionSeq = $this->checkAutomationCondition($targetDatas);
-        $executions = $this->automation->getExecutions($checkConditionSeq);
-        
-        //순서 재정렬
-        usort($executions, function($a, $b) {
-            return $a['aae_order'] - $b['aae_order'];
-        });
-
-        foreach ($executions as $execution) {
-            switch ($execution['aae_media']) {
-                case 'facebook':
-                    switch ($execution['aae_type']) {
-                        case 'campaign':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':                              
-                                    if($execution['aae_exec_value'] === "ON"){
-                                        $status = 'ACTIVE';
-                                    }else{
-                                        $status = 'PAUSED';
-                                    }
-                                    $zenith = new ZenithFB();
-                                    $result = $zenith->setCampaignStatus($execution['aae_id'], $status);
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
-                            break;
-                        case 'adgroup':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':
-                                    # code...
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
-                            break;
-                        case 'ad':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':
-                                    # code...
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
-                            break;
-                        default:
-                            # code...
-                            break;
-                    }
-                    break;
-                case 'google':
-                
-                    break;
-                case 'kakao':
-            
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     private function setData($data)
