@@ -46,49 +46,51 @@ class AutomationController extends BaseController
 
     public function getAutomation()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
-            if($result['aat_status'] == 1 || $result['aat_status'] == 'ON' || $result['aat_status'] == 'ENABLED' || $result['aat_status'] == 'ACTIVE'){
-                $result['aat_status'] = '활성';
-            }else{
-                $result['aat_status'] = '비활성';
+            if(!empty($result['aat_id'])){
+                if($result['aat_status'] == 1 || $result['aat_status'] == 'ON' || $result['aat_status'] == 'ENABLED' || $result['aat_status'] == 'ACTIVE'){
+                    $result['aat_status'] = '활성';
+                }else{
+                    $result['aat_status'] = '비활성';
+                }
+    
+                switch ($result['aat_type']) {
+                    case 'advertiser':
+                        $result['aat_type'] = '광고주';
+                        break;
+                    case 'campaign':
+                        $result['aat_type'] = '캠페인';
+                        break;
+                    case 'adgroup':
+                        $result['aat_type'] = '광고그룹';
+                        break;
+                    case 'ad':
+                        $result['aat_type'] = '광고';
+                        break;
+                    default:
+                        break;
+                }
+    
+                switch ($result['aat_media']) {
+                    case 'company':
+                        $result['aat_media'] = '광고주';
+                        break;
+                    case 'facebook':
+                        $result['aat_media'] = '페이스북';
+                        break;
+                    case 'google':
+                        $result['aat_media'] = '구글';
+                        break;
+                    case 'kakao':
+                        $result['aat_media'] = '카카오';
+                        break;
+                    default:
+                        break;
+                }
             }
-
-            switch ($result['aat_type']) {
-                case 'advertiser':
-                    $result['aat_type'] = '광고주';
-                    break;
-                case 'campaign':
-                    $result['aat_type'] = '캠페인';
-                    break;
-                case 'adgroup':
-                    $result['aat_type'] = '광고그룹';
-                    break;
-                case 'ad':
-                    $result['aat_type'] = '광고';
-                    break;
-                default:
-                    break;
-            }
-
-            switch ($result['aat_media']) {
-                case 'company':
-                    $result['aat_media'] = '광고주';
-                    break;
-                case 'facebook':
-                    $result['aat_media'] = '페이스북';
-                    break;
-                case 'google':
-                    $result['aat_media'] = '구글';
-                    break;
-                case 'kakao':
-                    $result['aat_media'] = '카카오';
-                    break;
-                default:
-                    break;
-            }
-
+            
             foreach ($result['executions'] as &$execution) {
                 switch ($execution['media']) {
                     case 'facebook':
@@ -165,7 +167,7 @@ class AutomationController extends BaseController
                 case 'campaign':
                     $result = $this->automation->getSearchCampaigns($arg, null);
                     break;
-                case 'adset':
+                case 'adgroup':
                     $result = $this->automation->getSearchAdsets($arg, null);
                     break;
                 case 'ad':
@@ -199,9 +201,8 @@ class AutomationController extends BaseController
 
     public function createAutomation()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
-            //$arg = $this->request->getPost();
-            $data = $this->request->getGet();
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $data = $this->request->getRawInput();
             $validationResult = $this->validationData($data);
             if($validationResult['result'] != true){
                 return $this->failValidationErrors($validationResult);
@@ -302,34 +303,103 @@ class AutomationController extends BaseController
 
     public function updateAutomation()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'put'){
-            $arg = $this->request->getRawInput();
-            $seq = $arg['seq'];
-            $data = [
-                'subject' => $arg['subject'],
-				'description' => $arg['description'],
-            ];
-
-            $validation = \Config\Services::validation();
-            $validationRules      = [
-                'subject' => 'required',
-                'description' => 'required'
-            ];
-            $validationMessages   = [
-                'subject' => [
-                    'required' => '이름은 필수 입력 사항입니다.',
-                ],
-                'description' => [
-                    'required' => '설명은 필수 입력 사항입니다.',
-                ],
-            ];
-            $validation->setRules($validationRules, $validationMessages);
-            if (!$validation->run($data)) {
-                $errors = $validation->getErrors();
-                return $this->failValidationErrors($errors);
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $data = $this->request->getRawInput();
+            if(empty($data['seq'])){
+                return $this->fail("잘못된 요청");
+            }
+            $validationResult = $this->validationData($data);
+            if($validationResult['result'] != true){
+                return $this->failValidationErrors($validationResult);
             }
             
-            $result = $this->automation->updateAutomation($data, $seq);
+            if(!empty($data['target'])){
+                switch ($data['target']['media']) {
+                    case '광고주':
+                        $data['target']['media'] = 'company';
+                        break;
+                    case '페이스북':
+                        $data['target']['media'] = 'facebook';
+                        break;
+                    case '구글':
+                        $data['target']['media'] = 'google';
+                        break;
+                    case '카카오':
+                        $data['target']['media'] = 'kakao';
+                        break;
+                    default:
+                        break;
+                }
+
+                switch ($data['target']['type']) {
+                    case '광고주':
+                        $data['target']['type'] = 'advertiser';
+                        break;
+                    case '캠페인':
+                        $data['target']['type'] = 'campaign';
+                        break;
+                    case '광고그룹':
+                        $data['target']['type'] = 'adgroup';
+                        break;
+                    case '광고':
+                        $data['target']['type'] = 'ad';
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if(!empty($data['execution'])){
+                foreach ($data['execution'] as &$execution) {
+                    switch ($execution['media']) {
+                        case '광고주':
+                            $execution['media'] = 'company';
+                            break;
+                        case '페이스북':
+                            $execution['media'] = 'facebook';
+                            break;
+                        case '구글':
+                            $execution['media'] = 'google';
+                            break;
+                        case '카카오':
+                            $execution['media'] = 'kakao';
+                            break;
+                        default:
+                            break;
+                    }
+    
+                    switch ($execution['type']) {
+                        case '광고주':
+                            $execution['type'] = 'advertiser';
+                            break;
+                        case '캠페인':
+                            $execution['type'] = 'campaign';
+                            break;
+                        case '광고그룹':
+                            $execution['type'] = 'adgroup';
+                            break;
+                        case '광고':
+                            $execution['type'] = 'ad';
+                            break;
+                        default:
+                            break;
+                    }
+
+                    switch ($execution['exec_type']) {
+                        case '상태':
+                            $execution['exec_type'] = 'status';
+                            break;
+                        case '예산':
+                            $execution['exec_type'] = 'budget';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
+
+            $result = $this->automation->updateAutomation($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

@@ -502,37 +502,39 @@ class AutomationModel extends Model
         aat.media as aat_media,
         aat.id as aat_id,
         ');
-        $builder->join('aa_schedule aas', 'aas.idx = aa.seq');
-        $builder->join('aa_target aat', 'aat.idx = aa.seq');
+        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
         $builder->where('aa.seq', $data['id']);
         $builder->groupBy('aa.seq');
         $result  = $builder->get()->getRowArray();
 
-        switch ($result['aat_type']) {
-            case 'advertiser':
-                $target = $this->getSearchCompanies(null, $result['aat_id']);    
-                $result['aat_name'] = $target['name'];
-                $result['aat_status'] = $target['status'];
-                break;
-            case 'campaign':
-                $target = $this->getSearchCampaigns(null, $result['aat_id']);
-                $result['aat_name'] = $target['name'];
-                $result['aat_status'] = $target['status'];
-                break;
-            case 'adset':
-                $target = $this->getSearchAdsets(null, $result['aat_id']);
-                $result['aat_name'] = $target['name'];
-                $result['aat_status'] = $target['status'];
-                break;
-            case 'ad':
-                $target = $this->getSearchAds(null, $result['aat_id']);
-                $result['aat_name'] = $target['name'];
-                $result['aat_status'] = $target['status'];
-                break;
-            default:
-                break;
+        if(!empty($result['aat_id'])){
+            switch ($result['aat_type']) {
+                case 'advertiser':
+                    $target = $this->getSearchCompanies(null, $result['aat_id']);    
+                    $result['aat_name'] = $target['name'];
+                    $result['aat_status'] = $target['status'];
+                    break;
+                case 'campaign':
+                    $target = $this->getSearchCampaigns(null, $result['aat_id']);
+                    $result['aat_name'] = $target['name'];
+                    $result['aat_status'] = $target['status'];
+                    break;
+                case 'adgroup':
+                    $target = $this->getSearchAdsets(null, $result['aat_id']);
+                    $result['aat_name'] = $target['name'];
+                    $result['aat_status'] = $target['status'];
+                    break;
+                case 'ad':
+                    $target = $this->getSearchAds(null, $result['aat_id']);
+                    $result['aat_name'] = $target['name'];
+                    $result['aat_status'] = $target['status'];
+                    break;
+                default:
+                    break;
+            }
         }
-
+        
         $conditionsBuilder = $this->zenith->table('aa_conditions aac');
         $conditionsBuilder->where('aac.idx', $result['aa_seq']);
         $result['conditions'] = $conditionsBuilder->get()->getResultArray();
@@ -540,6 +542,7 @@ class AutomationModel extends Model
         $executionsBuilder = $this->zenith->table('aa_executions aae');
         $executionsBuilder->where('aae.idx', $result['aa_seq']);
         $result['executions'] = $executionsBuilder->get()->getResultArray();
+
         if(!empty($result['executions'])){
             foreach ($result['executions'] as &$execution) {
                 switch ($execution['type']) {
@@ -548,7 +551,7 @@ class AutomationModel extends Model
                         $execution['name'] = $executionResult['name'];
                         $execution['status'] = $executionResult['status'];
                         break;
-                    case 'adset':
+                    case 'adgroup':
                         $executionResult = $this->getSearchAdsets(null, $execution['id']);
                         $execution['name'] = $executionResult['name'];
                         $execution['status'] = $executionResult['status'];
@@ -913,7 +916,7 @@ class AutomationModel extends Model
             'description' => $data['detail']['description'],
             'nickname' => auth()->user()->nickname,
             'status' => 1,
-            'target_condition_disabled' => $data['detail']['targetConditionDisabled'] === "1" ? 1 : 0,
+            'target_condition_disabled' => !empty($data['detail']['targetConditionDisabled']) ? 1 : 0,
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
@@ -927,16 +930,20 @@ class AutomationModel extends Model
         $aasBuilder = $this->zenith->table('aa_schedule');
         $aasBuilder->insert($data['schedule']);
 
-        $data['target'] = array_filter($data['target']);
-        $data['target']['idx'] = $seq;
-        $aatBuilder = $this->zenith->table('aa_target');
-        $aatBuilder->insert($data['target']);
-
-        foreach ($data['condition'] as $condition) {
-            $data['condition'] = array_filter($data['condition']);
-            $condition['idx'] = $seq;
-            $aacBuilder = $this->zenith->table('aa_conditions');
-            $aacBuilder->insert($condition);
+        if(!empty($data['target'])){
+            $data['target'] = array_filter($data['target']);
+            $data['target']['idx'] = $seq;
+            $aatBuilder = $this->zenith->table('aa_target');
+            $aatBuilder->insert($data['target']);
+        }
+        
+        if(!empty($data['condition'])){
+            foreach ($data['condition'] as $condition) {
+                $data['condition'] = array_filter($data['condition']);
+                $condition['idx'] = $seq;
+                $aacBuilder = $this->zenith->table('aa_conditions');
+                $aacBuilder->insert($condition);
+            }
         }
 
         foreach ($data['execution'] as $execution) {
@@ -950,13 +957,53 @@ class AutomationModel extends Model
         return $result;
     }
 
-    public function updateAutomation($data, $seq)
+    public function updateAutomation($data)
     {
+        $aaData = [
+            'subject' => $data['detail']['subject'],
+            'description' => $data['detail']['description'],
+            'target_condition_disabled' => !empty($data['detail']['targetConditionDisabled']) ? 1 : 0,
+            'mod_datetime' => date('Y-m-d H:i:s'),
+        ];
+
         $this->zenith->transStart();
-        $builder = $this->zenith->table('admanager_automation');
-        $builder->where('seq', $seq);
-        $builder->update($data);
-        //$insertId = $this->zenith->insertID();
+        $aaBuilder = $this->zenith->table('admanager_automation');
+        $aaBuilder->where('seq', $data['seq']);
+        $result = $aaBuilder->update($aaData);
+        
+        $data['schedule'] = array_filter($data['schedule']);
+        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder->where('idx', $data['seq']);
+        $aasBuilder->update($data['schedule']);
+
+        if(!empty($data['target'])){
+            $data['target'] = array_filter($data['target']);
+            $aatBuilder = $this->zenith->table('aa_target');
+            $aatBuilder->where('idx', $data['seq']);
+            $aatBuilder->update($data['target']);
+        }
+        
+        if(!empty($data['condition'])){
+            $aacBuilder = $this->zenith->table('aa_conditions');
+            $aacBuilder->where('idx', $data['seq']);
+            $aacBuilder->delete();
+            foreach ($data['condition'] as $condition) {
+                $data['condition'] = array_filter($data['condition']);
+                $condition['idx'] = $data['seq'];
+                $aacBuilder->insert($condition);
+            }
+        }
+
+        if(!empty($data['execution'])){
+            $aaeBuilder = $this->zenith->table('aa_executions');
+            $aaeBuilder->where('idx', $data['seq']);
+            $aaeBuilder->delete();
+            foreach ($data['execution'] as $execution) {
+                $data['execution'] = array_filter($data['execution']);
+                $execution['idx'] = $data['seq'];
+                $aaeBuilder->insert($execution);
+            }
+        }
         $result = $this->zenith->transComplete();
         return $result;
     }

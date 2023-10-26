@@ -243,7 +243,7 @@
                             <ul class="tab" id="targetTab">
                                 <li class="active" data-tab="advertiser"><a href="#">광고주</a></li>
                                 <li data-tab="campaign"><a href="#">캠페인</a></li>
-                                <li data-tab="adset"><a href="#">광고그룹</a></li>
+                                <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
                             <div class="search w-100">
@@ -370,7 +370,7 @@
                         <div class="detail" id="preactice" role="tabpanel" aria-labelledby="preactice-tab" tabindex="3">
                             <ul class="tab" id="execTab">
                                 <li class="active" data-tab="campaign"><a href="#">캠페인</a></li>
-                                <li data-tab="adset"><a href="#">광고그룹</a></li>
+                                <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
                             <div class="search">
@@ -1208,15 +1208,17 @@ function setModalData(data){
         $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
     }
 
-    var selectedData = '<tr><td>' + data.aat_media + '</td><td>' + data.aat_type + '</td><td>' 
-    + data.aat_id + '</td><td>' + data.aat_name + '</td><td>'
-    + data.aat_status  +'</td></tr>';
-    $('#targetSelectTable tbody').append(selectedData);
-    $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
-    var rowMedia = $('#targetSelectTable tbody tr').children('td').eq(0).text();
-    var rowType = $('#targetSelectTable tbody tr').children('td').eq(1).text();
-    var rowName = $('#targetSelectTable tbody tr').children('td').eq(3).text();
-    $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+    if(data.aat_id){
+        var selectedData = '<tr><td>' + data.aat_media + '</td><td>' + data.aat_type + '</td><td>' 
+        + data.aat_id + '</td><td>' + data.aat_name + '</td><td>'
+        + data.aat_status  +'</td></tr>';
+        $('#targetSelectTable tbody').append(selectedData);
+        $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
+        var rowMedia = $('#targetSelectTable tbody tr').children('td').eq(0).text();
+        var rowType = $('#targetSelectTable tbody tr').children('td').eq(1).text();
+        var rowName = $('#targetSelectTable tbody tr').children('td').eq(3).text();
+        $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+    }
 
     //조건
     if (data.conditions) {
@@ -1363,34 +1365,36 @@ function setProcData(){
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
     let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-
+    let $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
     let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
     let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
     let operation = $('input[name=operation]:checked').val();
+
     let $conditions = [];
     let $executions = [];
-    $('#conditionTable tbody tr[id^="condition-"]').each(function(){
-        let $row = $(this);
-        let order = $row.find('input[name=order]').val();
-        let type = $row.find('select[name=type]').val();
-        let type_value = '';
-        if(type == 'status'){
-            type_value = $row.find('select[name=type_value_status]').val();
-        }else{
-            type_value = $row.find('input[name=type_value]').val();
-        }
-        let compare = $row.find('select[name=compare]').val();
-        
-        $conditions.push({
-            order: order,
-            type: type,
-            type_value: type_value,
-            compare: compare,
-            operation: operation
+    if(!$targetConditionDisabled){
+        $('#conditionTable tbody tr[id^="condition-"]').each(function(){
+            let $row = $(this);
+            let order = $row.find('input[name=order]').val();
+            let type = $row.find('select[name=type]').val();
+            let type_value = '';
+            if(type == 'status'){
+                type_value = $row.find('select[name=type_value_status]').val();
+            }else{
+                type_value = $row.find('input[name=type_value]').val();
+            }
+            let compare = $row.find('select[name=compare]').val();
+            
+            $conditions.push({
+                order: order,
+                type: type,
+                type_value: type_value,
+                compare: compare,
+                operation: operation
+            });
         });
-    });
-
+    }
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
@@ -1426,19 +1430,23 @@ function setProcData(){
             'ignore_start_time': $ignore_start_time,
             'ignore_end_time': $ignore_end_time,
         },
-        'target': {
-            'type': $target_type,
-            'media': $target_media,
-            'id': $target_id,
-        },
-        'condition': $conditions,
         'execution': $executions,
         'detail': {
             'subject': $subject,
             'description': $description,
-            'targetConditionDisabled': $('#targetConditionDisabled').is(':checked') ? 1 : 0,
+            'targetConditionDisabled': $targetConditionDisabled ? 1 : 0,
         }
     };
+
+    if (!$targetConditionDisabled) {
+        $data['target'] = {
+            'type': $target_type,
+            'media': $target_media,
+            'id': $target_id,
+        };
+        $data['condition'] = $conditions;
+    }
+
 
     return $data;
 }
@@ -1734,7 +1742,7 @@ $('body').on('click', '#createAutomationBtn', function() {
     if(validationData()){
         let procData = setProcData();
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "<?=base_url()?>/automation/create",
             data: procData,
             dataType: "json",
