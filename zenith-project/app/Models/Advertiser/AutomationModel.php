@@ -962,8 +962,8 @@ class AutomationModel extends Model
     public function copyAutomation($data)
     {
         $this->zenith->transStart();
-        $builder = $this->zenith->table('admanager_automation');
-        $builder->select('
+        $aaGetBuilder = $this->zenith->table('admanager_automation aa');
+        $aaGetBuilder->select('
         aa.seq as aa_seq, 
         aa.subject as aa_subject,
         aa.description as aa_description,
@@ -980,66 +980,92 @@ class AutomationModel extends Model
         aas.month_week as aas_month_week,
         aat.type as aat_type,
         aat.media as aat_media,
-        aat.id as aat_id,
+        aat.id as aat_id
         ');
-        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
-        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
-        $builder->where('aa.seq', $data['seq']);
-        $builder->groupBy('aa.seq');
-        $result  = $builder->get()->getRowArray();
+        $aaGetBuilder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $aaGetBuilder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
+        $aaGetBuilder->where('aa.seq', $data['seq']);
+        $aaGetResult  = $aaGetBuilder->get()->getRowArray();
+
+        $aacGetBuilder = $this->zenith->table('aa_conditions');
+        $aacGetBuilder->select('order, type, type_value, compare, operation');
+        $aacGetBuilder->where('idx', $data['seq']);
+        $aacGetResult  = $aacGetBuilder->get()->getResultArray();
+
+        $aaeGetBuilder = $this->zenith->table('aa_executions');
+        $aaeGetBuilder->select('order, media, type, id, exec_type, exec_value');
+        $aaeGetBuilder->where('idx', $data['seq']);
+        $aaeGetResult  = $aaeGetBuilder->get()->getResultArray();
 
         $aaData = [
-            'subject' => $result['aa_subject'],
-            'description' => $result['aa_description'] ?? null,
+            'subject' => $aaGetResult['aa_subject']." - 복제",
+            'description' => $aaGetResult['aa_description'] ?? null,
             'nickname' => auth()->user()->nickname,
-            'status' => $result['aa_status'],
-            'target_condition_disabled' => $result['aa_target_condition_disabled'] ?? 0,
+            'status' => $aaGetResult['aa_status'],
+            'target_condition_disabled' => $aaGetResult['aa_target_condition_disabled'] ?? 0,
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
         $aaBuilder = $this->zenith->table('admanager_automation');
-        $result = $aaBuilder->insert($aaData);
+        $aaBuilder->insert($aaData);
         $seq = $this->zenith->insertID();
         
         $aasData = [
             'idx' => $seq,
-            'exec_type' => $result['aas_exec_type'],
-            'type_value' => $result['aas_type_value'],
-            'exec_time' => $result['aas_exec_time'] ?? null,
-            'ignore_start_time' => $result['aas_ignore_start_time'] ?? null,
-            'ignore_end_time' => $result['aas_ignore_end_time'] ?? null,
-            'exec_week' => $result['aas_exec_week'] ?? null,
-            'month_type' => $result['aas_month_type'] ?? null,
-            'month_day' => $result['aas_month_day'] ?? null,
-            'month_week' => $result['aas_month_week'] ?? null,
+            'exec_type' => $aaGetResult['aas_exec_type'],
+            'type_value' => $aaGetResult['aas_type_value'],
+            'exec_time' => $aaGetResult['aas_exec_time'] ?? null,
+            'ignore_start_time' => $aaGetResult['aas_ignore_start_time'] ?? null,
+            'ignore_end_time' => $aaGetResult['aas_ignore_end_time'] ?? null,
+            'exec_week' => $aaGetResult['aas_exec_week'] ?? null,
+            'month_type' => $aaGetResult['aas_month_type'] ?? null,
+            'month_day' => $aaGetResult['aas_month_day'] ?? null,
+            'month_week' => $aaGetResult['aas_month_week'] ?? null,
         ];
         $aasData = array_filter($aasData);
         $aasBuilder = $this->zenith->table('aa_schedule');
         $aasBuilder->insert($aasData);
 
-        if(!empty($result['aat_id'])){
+        if(!empty($aaGetResult['aat_id'])){
             $aatData = [
                 'idx' => $seq,
-
+                'type' => $aaGetResult['aat_type'],
+                'media' => $aaGetResult['aat_media'],
+                'id' => $aaGetResult['aat_id'],
             ];
             $aatData = array_filter($aatData);
             $aatBuilder = $this->zenith->table('aa_target');
             $aatBuilder->insert($aatData);
         }
         
-        if(!empty($data['condition'])){
-            foreach ($data['condition'] as $condition) {
-                $data['condition'] = array_filter($data['condition']);
-                $condition['idx'] = $seq;
+        if(!empty($aacGetResult)){
+            foreach ($aacGetResult as $condition) {
+                $aacData = [
+                    'idx' => $seq,
+                    'order' => $condition['order'],
+                    'type' => $condition['type'],
+                    'type_value' => $condition['type_value'],
+                    'compare' => $condition['compare'],
+                    'operation' => $condition['operation'],
+                ];
+                $aacData = array_filter($aacData);
                 $aacBuilder = $this->zenith->table('aa_conditions');
-                $aacBuilder->insert($condition);
+                $aacBuilder->insert($aacData);
             }
         }
 
-        foreach ($data['execution'] as $execution) {
-            $data['execution'] = array_filter($data['execution']);
-            $execution['idx'] = $seq;
+        foreach ($aaeGetResult as $execution) {
+            $aaeData = [
+                'idx' => $seq,
+                'order' => $execution['order'] ?? 0,
+                'media' => $execution['media'],
+                'type' => $execution['type'],
+                'id' => $execution['id'],
+                'exec_type' => $execution['exec_type'],
+                'exec_value' => $execution['exec_value'],
+            ];
+            $aaeData = array_filter($aaeData);
             $aaeBuilder = $this->zenith->table('aa_executions');
-            $aaeBuilder->insert($execution);
+            $aaeBuilder->insert($aaeData);
         }
 
         $result = $this->zenith->transComplete();
@@ -1168,11 +1194,11 @@ class AutomationModel extends Model
         return $result;
     }
 
-    public function deleteAutomation($seq)
+    public function deleteAutomation($data)
     {
         $this->zenith->transStart();
         $builder = $this->zenith->table('admanager_automation');
-        $builder->where('seq', $seq);
+        $builder->where('seq', $data['seq']);
         $builder->delete();
         $result = $this->zenith->transComplete();
         return $result;

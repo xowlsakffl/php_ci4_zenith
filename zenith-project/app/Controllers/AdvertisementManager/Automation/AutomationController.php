@@ -305,7 +305,6 @@ class AutomationController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $data = $this->request->getRawInput();
-
             $result = $this->automation->copyAutomation($data);
             return $this->respond($result);
         }else{
@@ -420,10 +419,10 @@ class AutomationController extends BaseController
 
     public function deleteAutomation()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'delete'){
-            $seq = $this->request->getRawInput('seq');
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete'){
+            $data = $this->request->getRawInput();
             
-            $result = $this->automation->deleteAutomation($seq);
+            $result = $this->automation->deleteAutomation($data);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

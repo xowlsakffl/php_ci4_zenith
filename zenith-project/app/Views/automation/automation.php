@@ -1789,7 +1789,7 @@ $('body').on('click', '#updateAutomationBtn', function() {
 //등록 부분 끝
 //복제하기
 $('body').on('click', '.copy-btn', function() {
-    let seq = $(this).data('id');
+    let seq = $(this).data('seq');
     $.ajax({
         type: "POST",
         url: "<?=base_url()?>/automation/copy",
@@ -1808,6 +1808,25 @@ $('body').on('click', '.copy-btn', function() {
     });
 });
 //삭제하기
+$('body').on('click', '.delete-btn', function() {
+    let seq = $(this).data('seq');
+    $.ajax({
+        type: "DELETE",
+        url: "<?=base_url()?>/automation/delete",
+        data: {'seq': seq},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            if(data == true){
+                dataTable.draw();
+                $('#automationModal').modal('hide');
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
 </script>
 <?=$this->endSection();?>
 
