@@ -246,7 +246,7 @@
                                 <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
-                            <div class="search w-100">
+                            <div class="search">
                                 <form name="search-target-form" class="search d-flex justify-content-center w-100">
                                     <input type="text" placeholder="검색어를 입력하세요" id="showTargetAdv" class="w-100">
                                     <button class="btn-primary" id="search_target_btn" type="submit">조회</button>
@@ -257,18 +257,18 @@
                                     <col style="width:10%">
                                     <col style="width:10%">
                                     <col style="width:30%">
-                                    <col style="width:35%">
+                                    <col style="width:32%">
+                                    <col style="width:10%">
                                     <col style="width:8%">
-                                    <col style="width:7%">
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col"  class="text-center">매체</th>
-                                        <th scope="col"  class="text-center">분류</th>
-                                        <th scope="col"  class="text-center">ID</th>
-                                        <th scope="col"  class="text-center">제목</th>
-                                        <th scope="col"  class="text-center">상태</th>
-                                        <th scope="col"  class="text-center"></th>
+                                        <th scope="col" class="text-center">매체</th>
+                                        <th scope="col" class="text-center">분류</th>
+                                        <th scope="col" class="text-center">ID</th>
+                                        <th scope="col" class="text-center">제목</th>
+                                        <th scope="col" class="text-center">상태</th>
+                                        <th scope="col" class="text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody>

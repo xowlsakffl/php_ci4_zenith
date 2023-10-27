@@ -345,6 +345,7 @@ body {
 .main-contents-wrap {
   flex: 1;
   padding: 80px 6.7708vw;
+  margin-left: 200px;
 }
 
 .ad-list .row {
@@ -488,6 +489,7 @@ body {
   }
   .main-contents-wrap {
     padding: 30px 30px 30px 70px;
+    margin-left: 1em;
   }
   .left-side {
     position: fixed;
@@ -1306,6 +1308,10 @@ table.dataTable {
   border-right: 1px dashed var(--bs-border-color);
 }
 
+div.dataTables_scrollBody > table {
+  padding-bottom: 3rem;
+}
+
 @media screen and (max-width: 1024px) {
   .table-data {
     text-align: center;
@@ -1711,6 +1717,15 @@ table.dataTable {
   margin-left: 5px;
 }
 
+.search button.btn-primary {
+  width: 90px;
+  font-weight: 700;
+  font-size: 80%;
+  color: #fff;
+  border-radius: 7px;
+  background: #ce1922;
+}
+
 .num-line {
   display: flex;
   align-items: center;
@@ -2033,6 +2048,7 @@ table.dataTable {
 }
 .regi-content .detail-wrap .tbl-header td {
   min-height: 42px;
+  vertical-align: middle;
 }
 .regi-content .detail-wrap .tbl-header td:not(:first-child) {
   border-left: 1px dashed #c3c3c3;
@@ -2146,6 +2162,12 @@ table.dataTable {
   color: #fff;
   border-radius: 7px;
   background: var(--bs-blue);
+}
+.regi-content .detail-wrap .target-btn:hover {
+  color: var(--bs-blue);
+}
+.regi-content .detail-wrap .target-btn:active {
+  color: red;
 }
 
 .week-radio {

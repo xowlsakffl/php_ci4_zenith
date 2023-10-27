@@ -1,5 +1,10 @@
 
 .btn-primary + .btn-special{margin-left:5px;}
+.search{
+    button.btn-primary{ width: 90px; font-weight: 700; font-size: 80%;color: #fff; border-radius: 7px; background: #ce1922;}
+   
+}
+
 .num-line{display:flex; align-items:center; margin:0 0 12px; font-size:15px;
     span{display:inline-block; margin:0 0 0 4px; padding:2px 12px; border:1px dashed #acaeaf; border-radius:4px; background:#fff;}
 }
@@ -105,7 +110,7 @@
             tr:not(:last-child){
                 td{border-bottom:1px solid #c3c3c3;}
             }
-            td{min-height:42px;
+            td{min-height:42px; vertical-align: middle;
                 &:not(:first-child){border-left:1px dashed #c3c3c3;}
                 .em{color:var(--bs-blue);}
             }
@@ -117,7 +122,7 @@
             .form-flex{gap:5px;
                 .form-select{margin:0; font-size:15px;}
                 .no-flex{flex:none; width:120px;}
-            }
+            }           
         }
         .short{display:inline-block; width:25%;}
         .middle{width:50%;}
@@ -137,6 +142,10 @@
             input[type="text"]{height:44px; padding:0 0 0 42px; border:1px solid #929292; border-radius:22px; background:url(/images/ico_search.png) no-repeat 20px center;}
         }
         .btn-special{float:right; width:115px; height:52px; font-weight:700; color:#fff; border-radius:7px; background:var(--bs-blue);}
+        .target-btn{
+            &:hover{color:var(--bs-blue);}
+            &:active{color:red;}
+        }
     }
 }
 
