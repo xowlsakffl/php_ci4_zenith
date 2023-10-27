@@ -473,11 +473,6 @@ class AutomationController extends BaseController
             }
         }
 
-        if($data['detail']['targetConditionDisabled'] != "1"){
-            $validationRules['target.id'] = 'required';
-            $validationMessages['target.id'] = ['required' => '대상항목을 추가해주세요.'];
-        }
-
         $validation->setRules($validationRules, $validationMessages);
         if (!$validation->run($data)) {
             $result = [
@@ -489,7 +484,7 @@ class AutomationController extends BaseController
 
         $validation->reset();
 
-        if($data['detail']['targetConditionDisabled'] != "1"){
+        if(!empty($data['target'])){
             foreach ($data['condition'] as $condition) {
                 $validationRules      = [
                     'order' => 'required',
@@ -515,9 +510,8 @@ class AutomationController extends BaseController
                     return $result;
                 }
             }
+            $validation->reset();
         }
-
-        $validation->reset();
 
         if(empty($data['execution'])){
             $validationRules['execution'] = 'required';
@@ -566,20 +560,13 @@ class AutomationController extends BaseController
         foreach ($automations as $automation) {
             $schedulePassData = $this->checkAutomationSchedule($automation);
             if(!empty($schedulePassData)){
-                if(!empty($schedulePassData['aa_target_condition_disabled'])){
-                    $targetData = $this->getAutomationTarget($schedulePassData);
-                    $seqs = $this->checkAutomationCondition($targetDatas);
+                $targetData = $this->getAutomationTarget($automation);
+                dd($targetData);
+                if(!empty($targetData)){
+                    $seqs = $this->checkAutomationCondition($targetData);
                 }
+                
             }
-        }
-        
-
-        if(!empty($seqs)){
-            $targetDatas = $this->getAutomationTarget($seqs);
-        }
-        
-        if(!empty($targetDatas)){
-            $seqs = $this->checkAutomationCondition($targetDatas);
         }
 
         $executions = $this->automation->getExecutions($seqs);
@@ -751,8 +738,8 @@ class AutomationController extends BaseController
 
     public function getAutomationTarget($automation)
     {
-        if(empty($automation)){return false;}
         $target = $this->automation->getTarget($automation);
+        if(empty($target)){return false;}
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         //값 별로 메소드 매칭
@@ -764,6 +751,7 @@ class AutomationController extends BaseController
                     return false;
                 }
                 $data = $this->setData($data);
+                $data['aa_seq'] = $automation['aa_seq'];
                 return $data;
             }
         }else{

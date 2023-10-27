@@ -488,7 +488,6 @@ class AutomationModel extends Model
         aa.seq as aa_seq, 
         aa.subject as aa_subject,
         aa.description as aa_description,
-        aa.target_condition_disabled as aa_target_condition_disabled,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
         DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
@@ -575,7 +574,6 @@ class AutomationModel extends Model
         $builder = $this->zenith->table('admanager_automation aa');
         $builder->select('
         aa.seq as aa_seq, 
-        aa.target_condition_disabled as aa_target_condition_disabled,
         aas.idx as aas_idx, 
         aas.exec_type as aas_exec_type, 
         aas.type_value as aas_type_value, 
@@ -587,7 +585,7 @@ class AutomationModel extends Model
         aas.month_day as aas_month_day, 
         aas.month_week as aas_month_week, 
         aas.reg_datetime as aas_reg_datetime, 
-        aar.exec_timestamp as aar_exec_timestamp
+        aar.exec_timestamp as aar_exec_timestamp,
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
         $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
@@ -918,7 +916,6 @@ class AutomationModel extends Model
             'description' => $data['detail']['description'],
             'nickname' => auth()->user()->nickname,
             'status' => 1,
-            'target_condition_disabled' => !empty($data['detail']['targetConditionDisabled']) ? 1 : 0,
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
@@ -968,7 +965,6 @@ class AutomationModel extends Model
         aa.subject as aa_subject,
         aa.description as aa_description,
         aa.status as aa_status,
-        aa.target_condition_disabled as aa_target_condition_disabled,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
         aas.exec_time as aas_exec_time,
@@ -1002,7 +998,6 @@ class AutomationModel extends Model
             'description' => $aaGetResult['aa_description'] ?? null,
             'nickname' => auth()->user()->nickname,
             'status' => $aaGetResult['aa_status'],
-            'target_condition_disabled' => $aaGetResult['aa_target_condition_disabled'] ?? 0,
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
         $aaBuilder = $this->zenith->table('admanager_automation');
@@ -1077,7 +1072,6 @@ class AutomationModel extends Model
         $aaData = [
             'subject' => $data['detail']['subject'],
             'description' => $data['detail']['description'],
-            'target_condition_disabled' => !empty($data['detail']['targetConditionDisabled']) ? 1 : 0,
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
@@ -1119,77 +1113,6 @@ class AutomationModel extends Model
                 $aaeBuilder->insert($execution);
             }
         }
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
-
-    public function updateAutomationSchedule($data, $idx)
-    {
-        $this->zenith->transStart();
-        $builder = $this->zenith->table('aa_schedule');
-        $builder->where('idx', $idx);
-        $builder->update($data);
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
-
-    public function updateAutomationTarget($data, $idx)
-    {
-        $this->zenith->transStart();
-        $builder = $this->zenith->table('aa_target');
-        $builder->where('idx', $idx);
-        $builder->update($data);
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
-
-    public function updateAutomationCondition($args, $idx)
-    {
-        $this->zenith->transStart();
-
-        $builder = $this->zenith->table('aa_conditions');
-        $builder->where('idx', $idx);
-        $builder->delete();
-
-        foreach ($args['data'] as $d) {
-            $data = [
-                'idx' => $idx,
-                'order' => $d['order'],
-                'type' => $d['type'],
-                'type_value' => $d['type_value'],
-                'compare' => $d['compare'],
-                'operation' => $d['operation'],
-            ];
-            $builder = $this->zenith->table('aa_conditions');
-            $builder->insert($data);
-        }
-
-        $result = $this->zenith->transComplete();
-        return $result;
-    }
-
-    public function updateAutomationExecution($args, $idx)
-    {
-        $this->zenith->transStart();
-
-        $builder = $this->zenith->table('aa_executions');
-        $builder->where('idx', $idx);
-        $builder->delete();
-
-        foreach ($args['data'] as $d) {
-            $data = [
-                'idx' => $idx,
-                'order' => $d['order'],
-                'media' => $d['media'],
-                'type' => $d['type'],
-                'id' => $d['id'],
-                'exec_type' => $d['exec_type'],
-                'exec_value' => $d['exec_value'],
-            ];
-            $builder = $this->zenith->table('aa_executions');
-            $builder->insert($data);
-        }
-
         $result = $this->zenith->transComplete();
         return $result;
     }

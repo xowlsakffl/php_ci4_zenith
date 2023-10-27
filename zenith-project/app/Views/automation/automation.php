@@ -375,9 +375,9 @@
                             </ul>
                             <div class="search">
                                 <div class="d-flex align-items-center">
-                                    <input class="form-check-input" type="checkbox" value="1" id="targetConditionDisabled">
-                                    <label class="form-check-label" for="targetConditionDisabled">
-                                        대상, 조건 미적용
+                                    <input class="form-check-input" type="checkbox" value="1" id="searchAll">
+                                    <label class="form-check-label" for="searchAll">
+                                        전체검색
                                     </label>
                                 </div>
                                 <form name="search-exec-form" class="search d-flex justify-content-center w-100">
@@ -966,7 +966,6 @@ function getTargetAdvs(searchData){
         },
         "drawCallback": function(settings) {
             if(saveTarget){
-                console.log(saveTarget);
                 $('#targetTable tr[data-id="'+saveTarget+'"]').addClass('selected')
             }
         }
@@ -1013,20 +1012,19 @@ function getExecAdvs(data){
 }
 //유효성 검사
 function validationData(){
-    $type_value = $('#scheduleTable input[name=type_value]').val();
-    $exec_type = $('#scheduleTable select[name=exec_type]').val();
-    $exec_time = $('#scheduleTable select[name=exec_time]').val();
-    $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
-    $month_type = $('#scheduleTable select[name=month_type]').val();
-    $month_week = $('#scheduleTable select[name=month_week]').val();
-    $month_day = $('#scheduleTable select[name=month_day]').val();
+    let $type_value = $('#scheduleTable input[name=type_value]').val();
+    let $exec_type = $('#scheduleTable select[name=exec_type]').val();
+    let $exec_time = $('#scheduleTable select[name=exec_time]').val();
+    let $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
+    let $month_type = $('#scheduleTable select[name=month_type]').val();
+    let $month_week = $('#scheduleTable select[name=month_week]').val();
+    let $month_day = $('#scheduleTable select[name=month_day]').val();
 
-    $operation = $('input[name=operation]:checked').length;
-    $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
-    $selectTarget = $('#targetSelectTable tbody tr').length;
-    $selectExec = $('#execSelectTable tbody tr').length;
+    let $operation = $('input[name=operation]:checked').length;
+    let $selectTarget = $('#targetSelectTable tbody tr').length;
+    let $selectExec = $('#execSelectTable tbody tr').length;
 
-    $subject = $('#detailTable input[name=subject]').val();
+    let $subject = $('#detailTable input[name=subject]').val();
 
     if (!$type_value) {
         alert('시간 조건값을 입력해주세요');
@@ -1087,15 +1085,8 @@ function validationData(){
             return false;
         }
     }
-
-    if(!$targetConditionDisabled){
-        if(!$selectTarget > 0){
-            alert('대상을 추가해주세요.');
-            $('#target-tab').trigger('click');
-            $('#showTargetAdv').focus();
-            return false;
-        }
-
+    //대상 선택항목이 있을경우
+    if($selectTarget > 0){
         if(!$operation){
             alert('일치조건을 선택해주세요.');
             $('#condition-tab').trigger('click');
@@ -1156,6 +1147,20 @@ function validationData(){
         });
 
         if(!eachValid){
+            return false;
+        }
+    }else{
+        var hasValue = false;
+        $('tr[id^="condition-"]').find('input, select').each(function() {
+            if($(this).val()){
+                hasValue = true;
+                return false;
+            }
+        });
+
+        if(hasValue){
+            alert('대상이 존재하지 않는데 조건값이 설정되어 있습니다.');
+            $('#condition-tab').trigger('click');
             return false;
         }
     }
@@ -1283,18 +1288,6 @@ function setModalData(data){
         });
     }
 
-    if(data.aa_target_condition_disabled == 1){
-        $('#targetConditionDisabled').prop('checked', true);
-        var disabledText = '<p id="disabledText">미적용</p>';
-        $('#showTargetAdv').prop('disabled', true);
-        $('#targetText').hide();
-
-        $('#condition-tab p').hide();
-        $('#condition-tab, #target-tab').append(disabledText);
-    }else{
-        $('#targetConditionDisabled').prop('checked', false);
-    }
-
     $('#detailTable input[name=subject]').val(data.aa_subject);
     if(data.aa_description){
         $('#detailTable textarea[name=description]').val(data.aa_description); 
@@ -1313,7 +1306,6 @@ function setModalData(data){
 //모달 초기화
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
-    $('#target-tab #disabledText, #condition-tab #disabledText').remove();
     $('#targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
     $('#condition-1 input[name=type_value]').show();
     $('#condition-1 select[name=type_value_status]').hide();
@@ -1336,7 +1328,7 @@ function reset(){
     }); 
     
     $('input[name=operation]').prop('checked', false);
-    $('#targetConditionDisabled').prop('checked', false);
+    $('#searchAll').prop('checked', false);
     $('#showTargetAdv').prop('disabled', false);
     
     $('#targetText').show();
@@ -1365,7 +1357,6 @@ function setProcData(){
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
     let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-    let $targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
     let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
     let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
@@ -1373,19 +1364,20 @@ function setProcData(){
 
     let $conditions = [];
     let $executions = [];
-    if(!$targetConditionDisabled){
-        $('#conditionTable tbody tr[id^="condition-"]').each(function(){
-            let $row = $(this);
-            let order = $row.find('input[name=order]').val();
-            let type = $row.find('select[name=type]').val();
-            let type_value = '';
-            if(type == 'status'){
-                type_value = $row.find('select[name=type_value_status]').val();
-            }else{
-                type_value = $row.find('input[name=type_value]').val();
-            }
-            let compare = $row.find('select[name=compare]').val();
-            
+
+    $('#conditionTable tbody tr[id^="condition-"]').each(function(){
+        let $row = $(this);
+        let order = $row.find('input[name=order]').val();
+        let type = $row.find('select[name=type]').val();
+        let type_value = '';
+        if(type == 'status'){
+            type_value = $row.find('select[name=type_value_status]').val();
+        }else{
+            type_value = $row.find('input[name=type_value]').val();
+        }
+        let compare = $row.find('select[name=compare]').val();
+        
+        if(type){
             $conditions.push({
                 order: order,
                 type: type,
@@ -1393,8 +1385,8 @@ function setProcData(){
                 compare: compare,
                 operation: operation
             });
-        });
-    }
+        }
+    });
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
@@ -1434,11 +1426,10 @@ function setProcData(){
         'detail': {
             'subject': $subject,
             'description': $description,
-            'targetConditionDisabled': $targetConditionDisabled ? 1 : 0,
         }
     };
 
-    if (!$targetConditionDisabled) {
+    if ($('#targetSelectTable tbody tr').length > 0) {
         $data['target'] = {
             'type': $target_type,
             'media': $target_media,
@@ -1446,7 +1437,6 @@ function setProcData(){
         };
         $data['condition'] = $conditions;
     }
-
 
     return $data;
 }
@@ -1520,26 +1510,29 @@ $('body').on('change', '#scheduleTable input, #scheduleTable select', function()
 });
 
 $('form[name="search-target-form"]').bind('submit', function() {
-    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
-
-    if(targetConditionDisabled){
-        alert('대상, 조건 미적용 체크를 해제해주세요.');
-    }else{
-        var data = {
-            'tab': $('#targetTab li.active').data('tab'),
-            'stx': $('#showTargetAdv').val(),
-        }
-        getTargetAdvs(data);
+    var data = {
+        'tab': $('#targetTab li.active').data('tab'),
+        'stx': $('#showTargetAdv').val(),
     }
+    getTargetAdvs(data);
+    
     return false;
 });
 
 $('form[name="search-exec-form"]').bind('submit', function() {
-    var disableChecked = $('#targetConditionDisabled').is(':checked');
+    var searchAll = $('#searchAll').is(':checked');
+    var advInfo = $('input[name=adv_info]').val();
+
+    if (!searchAll && !advInfo) {
+        alert('대상이 없을 경우 전체검색을 체크해주세요.');
+        $('#searchAll').focus();
+        return false;
+    }
+
     var data = {
         'tab': $('#execTab li.active').data('tab'),
         'stx': $('#showExecAdv').val(),
-        'adv': disableChecked ? null : $('input[name=adv_info]').val(),
+        'adv': searchAll ? null : advInfo,
     }
 
     getExecAdvs(data);
@@ -1581,10 +1574,9 @@ $('body').on('click', '#execTable tbody tr', function(){
 });
 
 $('body').on('click', '#targetTab li', function(){
-    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
     $('#targetTab li').removeClass('active');
     $(this).addClass('active');
-    if(!targetConditionDisabled && ($('#targetTable tr.selected').length > 0 || saveTarget)){
+    if(($('#targetTable tr.selected').length > 0 || saveTarget)){
         let data = {
             'tab': $('#targetTab li.active').data('tab'),
             'adv': saveTarget ? saveTarget : $('#targetTable tr.selected').data('id')
@@ -1599,42 +1591,10 @@ $('body').on('click', '#execTab li', function(){
     $(this).addClass('active');
 })
 
-//미적용 체크
-$('body').on('change', '#targetConditionDisabled', function(){
-    if($(this).is(':checked')) {  
-        var disabledText = '<p id="disabledText">미적용</p>';
-        $('#showTargetAdv').prop('disabled', true);
-        $('#targetText').hide();
-
-        $('#condition-tab p').hide();
-        $('#condition-tab, #target-tab').append(disabledText);
-    }else{
-        $('#showTargetAdv').prop('disabled', false);
-
-        $('#target-tab #disabledText, #condition-tab #disabledText').remove();
-        $('#targetText').show();
-        $('#condition-tab p').show();
-    }
-})
-
-$('body').on('click', '#showTargetAdv', function(){
-    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
-
-    if(targetConditionDisabled){
-        alert('대상, 조건 미적용 체크를 해제해주세요.');
-    }
-})
-
 $('body').on('click', '#conditionTable .btn-add', function(){
-    var targetConditionDisabled = $('#targetConditionDisabled').is(':checked');
-
-    if(!targetConditionDisabled){
-        var currentRowCount = $('#conditionTable tbody tr').length;
-        var uniqueId = 'condition-' + (currentRowCount + 1);
-        addConditionRow(uniqueId);
-    }else{
-        alert('대상, 조건 미적용 체크를 해제해주세요.');
-    }
+    var currentRowCount = $('#conditionTable tbody tr').length;
+    var uniqueId = 'condition-' + (currentRowCount + 1);
+    addConditionRow(uniqueId);
 })
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
