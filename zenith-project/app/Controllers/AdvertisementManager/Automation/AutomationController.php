@@ -301,6 +301,18 @@ class AutomationController extends BaseController
         }
     }
 
+    public function copyAutomation()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            $data = $this->request->getRawInput();
+
+            $result = $this->automation->copyAutomation($data);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function updateAutomation()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){

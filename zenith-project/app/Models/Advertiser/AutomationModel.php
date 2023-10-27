@@ -959,6 +959,93 @@ class AutomationModel extends Model
         return $result;
     }
 
+    public function copyAutomation($data)
+    {
+        $this->zenith->transStart();
+        $builder = $this->zenith->table('admanager_automation');
+        $builder->select('
+        aa.seq as aa_seq, 
+        aa.subject as aa_subject,
+        aa.description as aa_description,
+        aa.status as aa_status,
+        aa.target_condition_disabled as aa_target_condition_disabled,
+        aas.exec_type as aas_exec_type,
+        aas.type_value as aas_type_value,
+        aas.exec_time as aas_exec_time,
+        aas.ignore_start_time as aas_ignore_start_time,
+        aas.ignore_end_time as aas_ignore_end_time,
+        aas.exec_week as aas_exec_week,
+        aas.month_type as aas_month_type,
+        aas.month_day as aas_month_day,
+        aas.month_week as aas_month_week,
+        aat.type as aat_type,
+        aat.media as aat_media,
+        aat.id as aat_id,
+        ');
+        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
+        $builder->where('aa.seq', $data['seq']);
+        $builder->groupBy('aa.seq');
+        $result  = $builder->get()->getRowArray();
+
+        $aaData = [
+            'subject' => $result['aa_subject'],
+            'description' => $result['aa_description'] ?? null,
+            'nickname' => auth()->user()->nickname,
+            'status' => $result['aa_status'],
+            'target_condition_disabled' => $result['aa_target_condition_disabled'] ?? 0,
+            'mod_datetime' => date('Y-m-d H:i:s'),
+        ];
+        $aaBuilder = $this->zenith->table('admanager_automation');
+        $result = $aaBuilder->insert($aaData);
+        $seq = $this->zenith->insertID();
+        
+        $aasData = [
+            'idx' => $seq,
+            'exec_type' => $result['aas_exec_type'],
+            'type_value' => $result['aas_type_value'],
+            'exec_time' => $result['aas_exec_time'] ?? null,
+            'ignore_start_time' => $result['aas_ignore_start_time'] ?? null,
+            'ignore_end_time' => $result['aas_ignore_end_time'] ?? null,
+            'exec_week' => $result['aas_exec_week'] ?? null,
+            'month_type' => $result['aas_month_type'] ?? null,
+            'month_day' => $result['aas_month_day'] ?? null,
+            'month_week' => $result['aas_month_week'] ?? null,
+        ];
+        $aasData = array_filter($aasData);
+        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder->insert($aasData);
+
+        if(!empty($result['aat_id'])){
+            $aatData = [
+                'idx' => $seq,
+
+            ];
+            $aatData = array_filter($aatData);
+            $aatBuilder = $this->zenith->table('aa_target');
+            $aatBuilder->insert($aatData);
+        }
+        
+        if(!empty($data['condition'])){
+            foreach ($data['condition'] as $condition) {
+                $data['condition'] = array_filter($data['condition']);
+                $condition['idx'] = $seq;
+                $aacBuilder = $this->zenith->table('aa_conditions');
+                $aacBuilder->insert($condition);
+            }
+        }
+
+        foreach ($data['execution'] as $execution) {
+            $data['execution'] = array_filter($data['execution']);
+            $execution['idx'] = $seq;
+            $aaeBuilder = $this->zenith->table('aa_executions');
+            $aaeBuilder->insert($execution);
+        }
+
+        $result = $this->zenith->transComplete();
+        return $result;
+    }
+
     public function updateAutomation($data)
     {
         $aaData = [

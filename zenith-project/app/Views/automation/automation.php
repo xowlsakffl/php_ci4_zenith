@@ -687,7 +687,7 @@ function getList(){
                 "width": "20%",
                 "render": function(data, type, row){
                     checked = data == 1 ? 'checked' : '';
-                    var status = '<div class="td-inner"><div class="ui-toggle"><input type="checkbox" name="status" id="status_' + row.aa_seq + '" ' + checked + ' value="'+row.aa_seq+'"><label for="status_' + row.aa_seq + '">사용</label></div><div class="more-action"><button type="button" class="btn-more" data-seq="' + row.aa_seq + '"><span>더보기</span></button><ul class="action-list z-1"><li><a href="#">복제하기</a></li><li><a href="#">제거하기</a></li></ul></div></div>';
+                    var status = '<div class="td-inner"><div class="ui-toggle"><input type="checkbox" name="status" id="status_' + row.aa_seq + '" ' + checked + ' value="'+row.aa_seq+'"><label for="status_' + row.aa_seq + '">사용</label></div><div class="more-action"><button type="button" class="btn-more"><span>더보기</span></button><ul class="action-list z-1"><li><a href="#" data-seq="' + row.aa_seq + '" class="copy-btn">복제하기</a></li><li><a href="#" data-seq="' + row.aa_seq + '" class="delete-btn">제거하기</a></li></ul></div></div>';
 
                     return status;
                 }
@@ -1787,6 +1787,27 @@ $('body').on('click', '#updateAutomationBtn', function() {
     };
 });
 //등록 부분 끝
+//복제하기
+$('body').on('click', '.copy-btn', function() {
+    let seq = $(this).data('id');
+    $.ajax({
+        type: "POST",
+        url: "<?=base_url()?>/automation/copy",
+        data: {'seq': seq},
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            if(data == true){
+                dataTable.draw();
+                $('#automationModal').modal('hide');
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
+//삭제하기
 </script>
 <?=$this->endSection();?>
 
