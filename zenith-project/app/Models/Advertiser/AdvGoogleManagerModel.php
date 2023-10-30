@@ -511,4 +511,26 @@ class AdvGoogleManagerModel extends Model
 
 		return $result;
 	}
+
+	public function getCustomerById($id, $type) {
+		if(empty($type)){return false;}
+        $builder = $this->db->table('z_adwords.aw_ad_account A');  
+		$builder->select('A.customerId');
+		$builder->join('z_adwords.aw_campaign B', 'A.customerId = B.customerId');
+		$builder->join('z_adwords.aw_adgroup C', 'B.id = C.campaignId');
+		$builder->join('z_adwords.aw_ad D', 'C.id = D.adgroupId');
+		
+		if($type == 'campaign'){
+			$builder->where('B.id', $id);
+		}else if($type == 'adgroup'){
+			$builder->where('C.id', $id);
+		}else if($type == 'ad'){
+			$builder->where('D.id', $id);
+		}
+		
+		$builder->groupBy('A.customerId');
+		$result = $builder->get()->getRowArray();
+
+		return $result;
+	}
 }

@@ -597,7 +597,7 @@ class AutomationModel extends Model
         return $result;
     }
 
-    public function getTarget($data)
+    public function getTarget($seq)
     {   
         $builder = $this->zenith->table('aa_target as aat');
         $builder->select('
@@ -608,7 +608,7 @@ class AutomationModel extends Model
         aat.id as aat_id
         ');
         $builder->join('admanager_automation aa', 'aat.idx = aa.seq');
-        $builder->where('aat.idx', $data['aa_seq']);
+        $builder->where('aat.idx', $seq);
         $result = $builder->get()->getRowArray();
 
         return $result;
@@ -890,20 +890,11 @@ class AutomationModel extends Model
         return $result;
     }
     
-    public function getExecutions($aaSeqs)
+    public function getExecution($seq)
     {   
-        $builder = $this->zenith->table('aa_executions as aae');
-        $builder->select('
-        aa.seq as aa_seq,
-        aae.order as aae_order,
-        aae.media as aae_media,
-        aae.type as aae_type,
-        aae.id as aae_id,
-        aae.exec_type as aae_exec_type,
-        aae.exec_value as aae_exec_value,
-        ');
-        $builder->join('admanager_automation aa', 'aae.idx = aa.seq');
-        $builder->whereIn('aae.idx', $aaSeqs);
+        $builder = $this->zenith->table('aa_executions');
+        $builder->select('order, media, type, id, exec_type, exec_value');
+        $builder->where('idx', $seq);
         $result = $builder->get()->getResultArray();
 
         return $result;
@@ -1135,6 +1126,22 @@ class AutomationModel extends Model
         $builder->where('seq', $data['seq']);
         $builder->update();
         $result = $this->zenith->transComplete();
+        return $result;
+    }
+
+    public function recodeResult($data)
+    {
+        $builder = $this->zenith->table('aa_result');
+        $result = $builder->insert($data);
+
+        return $result;
+    }
+
+    public function recodeLog($data)
+    {
+        $builder = $this->zenith->table('aa_result_logs');
+        $result = $builder->insert($data);
+
         return $result;
     }
 }

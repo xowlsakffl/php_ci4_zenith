@@ -3,8 +3,11 @@
 namespace App\Controllers\AdvertisementManager\Automation;
 
 use App\Controllers\BaseController;
+use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AutomationModel;
 use App\ThirdParty\facebook_api\ZenithFB;
+use App\ThirdParty\googleads_api\ZenithGG;
+use App\ThirdParty\moment_api\ZenithKM;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\I18n\Time;
 use DateTime;
@@ -14,11 +17,12 @@ class AutomationController extends BaseController
 {
     use ResponseTrait;
     
-    protected $automation;
+    protected $automation, $google;
 
     public function __construct() 
     {
         $this->automation = model(AutomationModel::class);
+        $this->google = model(AdvGoogleManagerModel::class);
     }
 
     public function index()
@@ -558,86 +562,170 @@ class AutomationController extends BaseController
     {
         $automations = $this->automation->getAutomations();
         foreach ($automations as $automation) {
+            $result = [];
             $schedulePassData = $this->checkAutomationSchedule($automation);
-            if(!empty($schedulePassData)){
-                $targetData = $this->getAutomationTarget($automation);
-                dd($targetData);
+            if($schedulePassData['result'] == false){
+                $result['schedule'] = $schedulePassData;
+                $this->toRecordResult($result);
+                continue;
+            }else{
+                $seq = $schedulePassData['seq'];
+                $targetData = $this->getAutomationTarget($seq);
                 if(!empty($targetData)){
-                    $seqs = $this->checkAutomationCondition($targetData);
+                    $conditionPassData = $this->checkAutomationCondition($targetData);
+                    /* if(empty($conditionPassData)) {
+                        $this->recordLog($automation['id'], 'No seqs');
+                    } */
+                    $seq = $conditionPassData['seq'];
                 }
-                
-            }
-        }
-
-        $executions = $this->automation->getExecutions($seqs);
-        
-        //순서 재정렬
-        usort($executions, function($a, $b) {
-            return $a['aae_order'] - $b['aae_order'];
-        });
-
-        foreach ($executions as $execution) {
-            switch ($execution['aae_media']) {
-                case 'facebook':
-                    switch ($execution['aae_type']) {
-                        case 'campaign':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':                              
-                                    if($execution['aae_exec_value'] === "ON"){
-                                        $status = 'ACTIVE';
-                                    }else{
-                                        $status = 'PAUSED';
-                                    }
-                                    $zenith = new ZenithFB();
-                                    $result = $zenith->setCampaignStatus($execution['aae_id'], $status);
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
+                $executions = $this->automation->getExecution($seq);
+                //순서 재정렬
+                /* usort($executions, function($a, $b) {
+                    return $a['aae_order'] - $b['aae_order'];
+                }); */
+                foreach ($executions as $execution) {
+                    $zenith = null;
+                    switch ($execution['media']) {
+                        case 'facebook':
+                            $zenith = new ZenithFB();
                             break;
-                        case 'adgroup':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':
-                                    # code...
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
+                        case 'google':
+                            $zenith = new ZenithGG();
                             break;
-                        case 'ad':
-                            switch ($execution['aae_exec_type']) {
-                                case 'status':
-                                    # code...
-                                    break;
-                                case 'budget':
-                                    # code...
-                                    break;
-                                default:
-                                    # code...
-                                    break;
-                            }
-                            break;
-                        default:
-                            # code...
+                        case 'kakao':
+                            $zenith = new ZenithKM();
                             break;
                     }
-                    break;
-                case 'google':
-                
-                    break;
-                case 'kakao':
-            
-                    break;
-                default:
-                    break;
+                    if($zenith){
+                        switch ($execution['type']) {
+                            case 'campaign':
+                                $customerId = null;
+                                if ($execution['media'] === 'google') {
+                                    $customerId = $this->google->getCustomerById($execution['id'], 'campaign');
+                                }
+                                switch ($execution['exec_type']) {
+                                    case 'status':
+                                        if ($execution['media'] === 'facebook') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = 'ACTIVE';
+                                            }else{
+                                                $status = 'PAUSED';
+                                            }
+                                            $result = $zenith->setCampaignStatus($execution['id'], $status);
+                                        } else if ($execution['media'] === 'google') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = ['status' => 'ENABLED'];
+                                            }else{
+                                                $status = ['status' => 'PAUSED'];
+                                            }
+                                            $result = $zenith->updateCampaign($customerId['customerId'], $execution['id'], $status);
+                                        } else if ($execution['media'] === 'kakao') {
+                                            $result = $zenith->setCampaignOnOff($execution['id'], $execution['exec_value']);
+                                        }
+                                        break;
+                                    case 'budget':     
+                                        if ($execution['media'] === 'facebook') {
+                                            $data = [
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $result = $zenith->updateCampaignBudget($data);
+                                        } else if ($execution['media'] === 'google') {
+                                            $result = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $execution['exec_value']]);
+                                        } else if ($execution['media'] === 'kakao') {
+                                            $data = [
+                                                'type' => 'campaign',
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $result = $zenith->setDailyBudgetAmount($data);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                break;
+                            case 'adgroup':
+                                $customerId = null;
+                                if ($execution['media'] === 'google') {
+                                    $customerId = $this->google->getCustomerById($execution['id'], 'adgroup');
+                                }
+                                switch ($execution['exec_type']) {
+                                    case 'status':
+                                        if ($execution['media'] === 'facebook') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = 'ACTIVE';
+                                            }else{
+                                                $status = 'PAUSED';
+                                            }
+                                            $result = $zenith->setAdsetStatus($execution['id'], $status);
+                                        } else if ($execution['media'] === 'google') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = ['status' => 'ENABLED'];
+                                            }else{
+                                                $status = ['status' => 'PAUSED'];
+                                            }
+                                            $result = $zenith->updateAdGroup($customerId['customerId'], $execution['id'], $status);
+                                        } else if ($execution['media'] === 'kakao') {
+                                            $result = $zenith->setAdGroupOnOff($execution['id'], $execution['exec_value']);
+                                        }
+                                        break;
+                                    case 'budget':
+                                        if ($execution['media'] === 'facebook') {
+                                            $data = [
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $result = $zenith->updateAdSetBudget($data);
+                                        } else if ($execution['media'] === 'google') {
+
+                                        } else if ($execution['media'] === 'kakao') {
+                                            $data = [
+                                                'type' => 'adgroup',
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $result = $zenith->setDailyBudgetAmount($data);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                break;
+                            case 'ad':
+                                $customerId = null;                               
+                                if ($execution['media'] === 'google') {
+                                    $customerId = $this->google->getCustomerById($execution['id'], 'ad');
+                                }
+                                switch ($execution['exec_type']) {
+                                    case 'status':
+                                        if ($execution['media'] === 'facebook') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = 'ACTIVE';
+                                            }else{
+                                                $status = 'PAUSED';
+                                            }
+                                            $result = $zenith->setAdStatus($execution['id'], $status);
+                                        } else if ($execution['media'] === 'google') {
+                                            if($execution['exec_value'] === "ON"){
+                                                $status = ['status' => 'ENABLED'];
+                                            }else{
+                                                $status = ['status' => 'PAUSED'];
+                                            }                                     
+    
+                                            $result = $zenith->updateAdGroupAd($customerId['customerId'], null, $execution['id'], $status);
+                                        } else if ($execution['media'] === 'kakao') {
+                                            $result = $zenith->setCreativeOnOff($execution['id'], $execution['exec_value']);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            default:
+                                break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -645,6 +733,7 @@ class AutomationController extends BaseController
     public function checkAutomationSchedule($automation)
     {
         if(empty($automation['aas_idx'])){return false;}
+        $resultArray = [];
         $lastExecTime = $automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime'];
         $lastExecTime = Time::parse($lastExecTime);
 
@@ -659,7 +748,13 @@ class AutomationController extends BaseController
             $ignoreStartTime = Time::parse($ignoreStartTime);
             $ignoreEndTime = Time::parse($ignoreEndTime);
             if ($currentDate->isAfter($ignoreStartTime) && $currentDate->isBefore($ignoreEndTime)) {
-                return false;
+                $resultArray = [
+                    'result' => false,
+                    'status' => 'not_execution',
+                    'msg' => '제외시간',
+                    'seq' => $automation['aa_seq'],
+                ];
+                return $resultArray;
             }
         }
 
@@ -672,7 +767,12 @@ class AutomationController extends BaseController
                 $diffTime = $diffTime->getMinutes();
             }
             if($diffTime >= $automation['aas_type_value']){
-                return $automation;
+                $resultArray = [
+                    'result' => true,
+                    'seq' => $automation['aa_seq'],
+                    'msg' => '설정 시간 일치'
+                ];
+                return $resultArray;
             }
         }
 
@@ -681,7 +781,12 @@ class AutomationController extends BaseController
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTime = $diffTime->getDays();
             if($diffTime >= $automation['aas_type_value'] && $currentTime === $automation['aas_exec_time']){
-                return $automation;
+                $resultArray = [
+                    'result' => true,
+                    'seq' => $automation['aa_seq'],
+                    'msg' => '설정 시간 일치'
+                ];
+                return $resultArray;
             }
         }
 
@@ -691,7 +796,12 @@ class AutomationController extends BaseController
             $diffTime = $diffTime->getWeeks();
             $currentDoW = $currentDate->dayOfWeek;
             if($diffTime >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $currentTime === $automation['aas_exec_time']){
-                return $automation;
+                $resultArray = [
+                    'result' => true,
+                    'seq' => $automation['aa_seq'],
+                    'msg' => '설정 시간 일치'
+                ];
+                return $resultArray;
             }
         }
 
@@ -703,12 +813,22 @@ class AutomationController extends BaseController
             $currentDay = $currentDate->getDay();
             if($automation['aas_month_type'] === 'start_day'){
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === '1' && $currentTime === $automation['aas_exec_time']){
-                    return $automation;
+                    $resultArray = [
+                        'result' => true,
+                        'seq' => $automation['aa_seq'],
+                        'msg' => '설정 시간 일치'
+                    ];
+                    return $resultArray;
                 }
             }else if($automation['aas_month_type'] === 'end_day'){
                 $currentMonthLastDay = $currentDate->format('t');   
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $currentTime === $automation['aas_exec_time']){
-                    return $automation;
+                    $resultArray = [
+                        'result' => true,
+                        'seq' => $automation['aa_seq'],
+                        'msg' => '설정 시간 일치'
+                    ];
+                    return $resultArray;
                 }
             }else if($automation['aas_month_type'] === 'first'){
                 $firstDayMonth = $currentDate->setDay(1);
@@ -716,7 +836,12 @@ class AutomationController extends BaseController
                     $firstDayMonth = $firstDayMonth->addDays(1);
                 }
                 if($diffTime >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                    return $automation;
+                    $resultArray = [
+                        'result' => true,
+                        'seq' => $automation['aa_seq'],
+                        'msg' => '설정 시간 일치'
+                    ];
+                    return $resultArray;
                 }
             }else if($automation['aas_month_type'] === 'last'){
                 $lastDayMonth = $currentDate->setDay($currentDate->format('t'));
@@ -724,21 +849,37 @@ class AutomationController extends BaseController
                     $lastDayMonth = $lastDayMonth->subDays(1);
                 }
                 if($diffTime >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
-                    return $automation;
+                    $resultArray = [
+                        'result' => true,
+                        'seq' => $automation['aa_seq'],
+                        'msg' => '설정 시간 일치'
+                    ];
+                    return $resultArray;
                 }
             }else if($automation['aas_month_type'] === 'day'){
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $currentTime === $automation['aas_exec_time']){
-                    return $automation;
+                    $resultArray = [
+                        'result' => true,
+                        'seq' => $automation['aa_seq'],
+                        'msg' => '설정 시간 일치'
+                    ];
+                    return $resultArray;
                 }
             }
         }
 
-        return false;
+        $resultArray = [
+            'result' => false,
+            'status' => 'failed',
+            'msg' => '설정 시간 오류',
+            'seq' => $automation['aa_seq'],
+        ];
+        return $resultArray;
     }
 
-    public function getAutomationTarget($automation)
+    public function getAutomationTarget($seq)
     {
-        $target = $this->automation->getTarget($automation);
+        $target = $this->automation->getTarget($seq);
         if(empty($target)){return false;}
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
@@ -751,7 +892,7 @@ class AutomationController extends BaseController
                     return false;
                 }
                 $data = $this->setData($data);
-                $data['aa_seq'] = $automation['aa_seq'];
+                $data['aa_seq'] = $seq;
                 return $data;
             }
         }else{
@@ -759,117 +900,202 @@ class AutomationController extends BaseController
         }
     }
 
-    public function checkAutomationCondition($targetDatas)
+    public function checkAutomationCondition($target)
     {
-        if(empty($targetDatas)){return false;}
-        $matchedArray = [];
         $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
-        foreach ($targetDatas as $target) {
-            $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
-            if(!$conditions){continue;}
-
-            //순서 재정렬
-            usort($conditions, function($a, $b) {
-                return $a['order'] - $b['order'];
-            });
-
-            $isTargetMatched = false;
-            $allConditionsMatched = true;
-            foreach ($conditions as $condition) {       
-                $conditionMatched = false;       
-                $message = "일치하는 조건이 존재하지 않습니다.";
-                if ($condition['type'] === 'status') {//status 비교
-                    if ($target['status'] == $condition['type_value']) {
-                        $conditionMatched = true;
-                        $message = 'status 일치';
-                    }else{
-                        $message = 'status가 일치하지 않습니다.';
-                    }
-                }else{//그 외 필드 비교
-                    foreach ($types as $type) {                     
-                        if ($condition['type'] === $type) {
-                            switch ($condition['compare']) {
-                                case 'less':
-                                    $conditionMatched = $target[$type] < $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
-                                    break;
-                                case 'greater':
-                                    $conditionMatched = $target[$type] > $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
-                                    break;
-                                case 'less_equal':
-                                    $conditionMatched = $target[$type] <= $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
-                                    break;
-                                case 'greater_equal':
-                                    $conditionMatched = $target[$type] >= $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
-                                    break;
-                                case 'equal':
-                                    $conditionMatched = $target[$type] == $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
-                                    break;
-                                case 'not_equal':
-                                    $conditionMatched = $target[$type] != $condition['type_value'];
-                                    $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
-                                    break;
-                                default:
-                                    $conditionMatched = false;
-                                    $message = '비교할 조건이 존재하지 않습니다.';
-                                    break;
-                            }
-                        }
-                    }
+        $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
+        if(empty($conditions)){return false;}
+        //순서 재정렬
+        usort($conditions, function($a, $b) {
+            return $a['order'] - $b['order'];
+        });
+        $isTargetMatched = false;
+        $allConditionsMatched = true;
+        $operation = $conditions[0]['operation'];
+        foreach ($conditions as $condition) {       
+            $conditionMatched = false;       
+            $message = "일치하는 조건이 존재하지 않습니다.";
+            if ($condition['type'] === 'status') {//status 비교
+                if ($target['status'] == $condition['type_value']) {
+                    $conditionMatched = true;
+                    $message = 'status 일치';
+                }else{
+                    $message = 'status가 일치하지 않습니다.';
                 }
-
-                if($condition['operation'] == 'or'){
-                    if($conditionMatched){
-                        $isTargetMatched = true;
-                        break;
-                    }else{
-                        //조건이 하나이고 조건에 해당되지 않을때
-                        if(count($conditions) == 1){
-                            $allConditionsMatched = false; 
-                        }
-
-                        //and 조건이 없을때
-                        if (!in_array('and', array_column($conditions, 'operation'))) {
-                            $allConditionsMatched = false; 
-                        }
-                    }
-                }
-
-                if($condition['operation'] == 'and'){
-                    if(!$conditionMatched){
-                        $allConditionsMatched = false; 
-                        //뒤에 or 조건이 있을수 있어서 or 조건이 없을때만 break
-                        $nextKey = array_search($condition, $conditions) + 1;
-                        if ($nextKey < count($conditions)) {
-                            if ($conditions[$nextKey]['operation'] != 'or') {
+            }else{//그 외 필드 비교
+                foreach ($types as $type) {                     
+                    if ($condition['type'] === $type) {
+                        switch ($condition['compare']) {
+                            case 'less':
+                                $conditionMatched = $target[$type] < $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
                                 break;
-                            }
-                        } else {
-                            break;
+                            case 'greater':
+                                $conditionMatched = $target[$type] > $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'less_equal':
+                                $conditionMatched = $target[$type] <= $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'greater_equal':
+                                $conditionMatched = $target[$type] >= $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'equal':
+                                $conditionMatched = $target[$type] == $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'not_equal':
+                                $conditionMatched = $target[$type] != $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                                break;
+                            default:
+                                $conditionMatched = false;
+                                $message = '비교할 조건이 존재하지 않습니다.';
+                                break;
                         }
                     }
                 }
-                
             }
 
-            if($isTargetMatched || $allConditionsMatched){
-                $matchedArray['match'][] = [
-                    'aa_seq' => $target['aa_seq'],
-                    'msg' => $message
-                ];
-            }else{
-                $matchedArray['notMatch'][] = [
-                    'aa_seq' => $target['aa_seq'],
-                    'msg' => $message
-                ];
+            if($operation == 'or'){
+                if($conditionMatched){
+                    $isTargetMatched = true;
+                    break;
+                }
+            }
+
+            if($operation == 'and'){
+                if (!$conditionMatched) {
+                    $allConditionsMatched = false;
+                    break;
+                }
             }
         }
-        return $matchedArray;
+        
+        if(($operation == 'or' && $isTargetMatched) || ($operation == 'and' && $allConditionsMatched)){
+            return [
+                "seq" => $target['aa_seq'],
+                "result" => true,
+                "message" => $message,
+            ];
+        }else{
+            return [
+                "seq" => $target['aa_seq'],
+                "result" => false,
+                "message" => $message,
+            ];
+        }
     }
+    
+    /* public function checkAutomationCondition($target)
+    {
+        $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
+        $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
+        if(empty($conditions)){return false;}
+        //순서 재정렬
+        usort($conditions, function($a, $b) {
+            return $a['order'] - $b['order'];
+        });
+
+        $isTargetMatched = false;
+        $allConditionsMatched = true;
+        foreach ($conditions as $condition) {       
+            $conditionMatched = false;       
+            $message = "일치하는 조건이 존재하지 않습니다.";
+            if ($condition['type'] === 'status') {//status 비교
+                if ($target['status'] == $condition['type_value']) {
+                    $conditionMatched = true;
+                    $message = 'status 일치';
+                }else{
+                    $message = 'status가 일치하지 않습니다.';
+                }
+            }else{//그 외 필드 비교
+                foreach ($types as $type) {                     
+                    if ($condition['type'] === $type) {
+                        switch ($condition['compare']) {
+                            case 'less':
+                                $conditionMatched = $target[$type] < $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'greater':
+                                $conditionMatched = $target[$type] > $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'less_equal':
+                                $conditionMatched = $target[$type] <= $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'greater_equal':
+                                $conditionMatched = $target[$type] >= $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'equal':
+                                $conditionMatched = $target[$type] == $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
+                                break;
+                            case 'not_equal':
+                                $conditionMatched = $target[$type] != $condition['type_value'];
+                                $message = $conditionMatched ? $condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                                break;
+                            default:
+                                $conditionMatched = false;
+                                $message = '비교할 조건이 존재하지 않습니다.';
+                                break;
+                        }
+                    }
+                }
+            }
+
+            if($condition['operation'] == 'or'){
+                if($conditionMatched){
+                    $isTargetMatched = true;
+                    break;
+                }else{
+                    //조건이 하나이고 조건에 해당되지 않을때
+                    if(count($conditions) == 1){
+                        $allConditionsMatched = false; 
+                    }
+
+                    //and 조건이 없을때
+                    if (!in_array('and', array_column($conditions, 'operation'))) {
+                        $allConditionsMatched = false; 
+                    }
+                }
+            }
+
+            if($condition['operation'] == 'and'){
+                if(!$conditionMatched){
+                    $allConditionsMatched = false; 
+                    //뒤에 or 조건이 있을수 있어서 or 조건이 없을때만 break
+                    $nextKey = array_search($condition, $conditions) + 1;
+                    if ($nextKey < count($conditions)) {
+                        if ($conditions[$nextKey]['operation'] != 'or') {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+        }
+
+        if($isTargetMatched || $allConditionsMatched){
+            $matchedArray['match'][] = [
+                'aa_seq' => $target['aa_seq'],
+                'msg' => $message
+            ];
+        }else{
+            $matchedArray['notMatch'][] = [
+                'aa_seq' => $target['aa_seq'],
+                'msg' => $message
+            ];
+        }
+
+    return $matchedArray;
+    } */
 
     private function setData($data)
     {
@@ -920,5 +1146,58 @@ class AutomationController extends BaseController
         }
 
         return $formatData;
+    }
+
+    private function toRecordResult($result)
+    {
+        $resultData = [];
+        if(!empty($result['schedule'])){
+            $resultData['idx'] = $result['schedule']['seq'];
+            $resultData['result'] = $result['schedule']['status'];
+            $resultData['exec_timestamp'] = date('Y-m-d H:i:s');
+            $logData['idx'] = $result['schedule']['seq'];
+            $logData['schedule_desc'] = json_encode($result['schedule']);
+        }
+
+        /* if(isset($result['target'])) {
+            $logData['target_desc'] = json_encode($result['target']);
+        }
+
+        if(isset($result['conditions'])) {
+            $logData['conditions_desc'] = json_encode($result['conditions']);
+        }
+
+        if(isset($result['executions'])) {
+            $logData['executions_desc'] = json_encode($result['executions']);
+        } */
+
+        if(!empty($resultData)){
+            $this->automation->recodeResult($resultData);
+        }
+    }
+
+    private function recordLog($log)
+    {
+        $data = [];
+        if(!empty($log['schedule'])){
+            $data['idx'] = $log['schedule']['seq'];
+            $data['schedule_desc'] = json_encode($log['schedule']);
+        }
+
+        if(isset($log['target'])) {
+            $data['target_desc'] = json_encode($log['target']);
+        }
+
+        if(isset($log['conditions'])) {
+            $data['conditions_desc'] = json_encode($log['conditions']);
+        }
+
+        if(isset($log['executions'])) {
+            $data['executions_desc'] = json_encode($log['executions']);
+        }
+
+        if(!empty($data)){
+            $this->automation->recodeLog($data);
+        }
     }
 }
