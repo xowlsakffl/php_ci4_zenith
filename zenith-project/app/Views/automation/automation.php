@@ -248,8 +248,10 @@
                             </ul>
                             <div class="search">
                                 <form name="search-target-form" class="search d-flex justify-content-center w-100">
-                                    <input type="text" placeholder="검색어를 입력하세요" id="showTargetAdv" class="w-100">
-                                    <button class="btn-primary" id="search_target_btn" type="submit">조회</button>
+                                    <div class="input">
+                                        <input type="text" placeholder="검색어를 입력하세요" id="showTargetAdv">
+                                        <button class="btn-primary" id="search_target_btn" type="submit">조회</button>
+                                    </div>
                                 </form>
                             </div>
                             <table class="table tbl-header w-100" id="targetTable">
@@ -374,15 +376,17 @@
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
                             <div class="search">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <input class="form-check-input" type="checkbox" value="1" id="searchAll">
                                     <label class="form-check-label" for="searchAll">
                                         전체검색
                                     </label>
                                 </div>
                                 <form name="search-exec-form" class="search d-flex justify-content-center w-100">
-                                    <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv" class="w-100">
-                                    <button class="btn-primary" id="search_exec_btn" type="submit">조회</button>
+                                   <div class="input">
+                                        <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv">
+                                        <button class="btn-primary" id="search_exec_btn" type="submit">조회</button>
+                                   </div>
                                 </form>
                             </div>
                             <table class="table tbl-header w-100 mt-4" id="execTable">
@@ -426,7 +430,7 @@
                                                     <option value="OFF">OFF</option>
                                                 </select>
                                                 <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue">
-                                                <button class="btn-primnary" id="execConditionBtn">적용</button>
+                                                <button class="btn-special" id="execConditionBtn">적용</button>
                                             </div>
                                         </td>
                                     </tr>

@@ -1,8 +1,3 @@
-@mixin effect($second:0.3s) {
-    transform: translateY(6.25rem); visibility:hidden; transition: all linear $second;
-    &.up{transform: translateY(0); visibility:visible;}
-}
-
 .sub-contents-wrap{flex:1; overflow:auto; padding:40px 2.9908vw 50px; margin-left:240px; transition:all 0.3s;}
 
 .title-area{display:flex; align-items:center; margin:0 0 20px; 

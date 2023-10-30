@@ -43,3 +43,7 @@
     100% {box-shadow: inset 200px 0px 7px $red;}
 }
 
+@mixin effect($second:0.3s) {
+    transform: translateY(6.25rem); visibility:hidden; transition: all linear $second;
+    &.up{transform: translateY(0); visibility:visible;}
+}
