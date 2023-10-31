@@ -558,174 +558,42 @@ class AutomationController extends BaseController
         return ['result' => true];
     }
     
-    public function execAutomation()
+    public function automation()
     {
         $automations = $this->automation->getAutomations();
         foreach ($automations as $automation) {
             $result = [];
             $schedulePassData = $this->checkAutomationSchedule($automation);
+            $result['schedule'] = $schedulePassData;
             if($schedulePassData['result'] == false){
-                $result['schedule'] = $schedulePassData;
-                $this->toRecordResult($result);
+                $logIdx = $this->recordResult($schedulePassData);
+                $this->recordLog($result, $logIdx);
                 continue;
             }else{
                 $seq = $schedulePassData['seq'];
                 $targetData = $this->getAutomationTarget($seq);
-                if(!empty($targetData)){
+                $result['target'] = $targetData;
+                if($targetData['result'] == false){
+                    $logIdx = $this->recordResult($targetData);
+                    $this->recordLog($result, $logIdx);
+                    continue;
+                }
+                
+                if($targetData['result'] == true && !empty($targetData['target'])){
                     $conditionPassData = $this->checkAutomationCondition($targetData);
-                    /* if(empty($conditionPassData)) {
-                        $this->recordLog($automation['id'], 'No seqs');
-                    } */
+                    $result['conditions'] = $conditionPassData;
+                    if($conditionPassData['result'] == false){
+                        $logIdx = $this->recordResult($conditionPassData);
+                        $this->recordLog($result, $logIdx);
+                        continue;
+                    }
                     $seq = $conditionPassData['seq'];
                 }
-                $executions = $this->automation->getExecution($seq);
-                //순서 재정렬
-                /* usort($executions, function($a, $b) {
-                    return $a['aae_order'] - $b['aae_order'];
-                }); */
-                foreach ($executions as $execution) {
-                    $zenith = null;
-                    switch ($execution['media']) {
-                        case 'facebook':
-                            $zenith = new ZenithFB();
-                            break;
-                        case 'google':
-                            $zenith = new ZenithGG();
-                            break;
-                        case 'kakao':
-                            $zenith = new ZenithKM();
-                            break;
-                    }
-                    if($zenith){
-                        switch ($execution['type']) {
-                            case 'campaign':
-                                $customerId = null;
-                                if ($execution['media'] === 'google') {
-                                    $customerId = $this->google->getCustomerById($execution['id'], 'campaign');
-                                }
-                                switch ($execution['exec_type']) {
-                                    case 'status':
-                                        if ($execution['media'] === 'facebook') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = 'ACTIVE';
-                                            }else{
-                                                $status = 'PAUSED';
-                                            }
-                                            $result = $zenith->setCampaignStatus($execution['id'], $status);
-                                        } else if ($execution['media'] === 'google') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = ['status' => 'ENABLED'];
-                                            }else{
-                                                $status = ['status' => 'PAUSED'];
-                                            }
-                                            $result = $zenith->updateCampaign($customerId['customerId'], $execution['id'], $status);
-                                        } else if ($execution['media'] === 'kakao') {
-                                            $result = $zenith->setCampaignOnOff($execution['id'], $execution['exec_value']);
-                                        }
-                                        break;
-                                    case 'budget':     
-                                        if ($execution['media'] === 'facebook') {
-                                            $data = [
-                                                'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
-                                            ];
-                                            $result = $zenith->updateCampaignBudget($data);
-                                        } else if ($execution['media'] === 'google') {
-                                            $result = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $execution['exec_value']]);
-                                        } else if ($execution['media'] === 'kakao') {
-                                            $data = [
-                                                'type' => 'campaign',
-                                                'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
-                                            ];
-                                            $result = $zenith->setDailyBudgetAmount($data);
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                break;
-                            case 'adgroup':
-                                $customerId = null;
-                                if ($execution['media'] === 'google') {
-                                    $customerId = $this->google->getCustomerById($execution['id'], 'adgroup');
-                                }
-                                switch ($execution['exec_type']) {
-                                    case 'status':
-                                        if ($execution['media'] === 'facebook') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = 'ACTIVE';
-                                            }else{
-                                                $status = 'PAUSED';
-                                            }
-                                            $result = $zenith->setAdsetStatus($execution['id'], $status);
-                                        } else if ($execution['media'] === 'google') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = ['status' => 'ENABLED'];
-                                            }else{
-                                                $status = ['status' => 'PAUSED'];
-                                            }
-                                            $result = $zenith->updateAdGroup($customerId['customerId'], $execution['id'], $status);
-                                        } else if ($execution['media'] === 'kakao') {
-                                            $result = $zenith->setAdGroupOnOff($execution['id'], $execution['exec_value']);
-                                        }
-                                        break;
-                                    case 'budget':
-                                        if ($execution['media'] === 'facebook') {
-                                            $data = [
-                                                'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
-                                            ];
-                                            $result = $zenith->updateAdSetBudget($data);
-                                        } else if ($execution['media'] === 'google') {
 
-                                        } else if ($execution['media'] === 'kakao') {
-                                            $data = [
-                                                'type' => 'adgroup',
-                                                'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
-                                            ];
-                                            $result = $zenith->setDailyBudgetAmount($data);
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                break;
-                            case 'ad':
-                                $customerId = null;                               
-                                if ($execution['media'] === 'google') {
-                                    $customerId = $this->google->getCustomerById($execution['id'], 'ad');
-                                }
-                                switch ($execution['exec_type']) {
-                                    case 'status':
-                                        if ($execution['media'] === 'facebook') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = 'ACTIVE';
-                                            }else{
-                                                $status = 'PAUSED';
-                                            }
-                                            $result = $zenith->setAdStatus($execution['id'], $status);
-                                        } else if ($execution['media'] === 'google') {
-                                            if($execution['exec_value'] === "ON"){
-                                                $status = ['status' => 'ENABLED'];
-                                            }else{
-                                                $status = ['status' => 'PAUSED'];
-                                            }                                     
-    
-                                            $result = $zenith->updateAdGroupAd($customerId['customerId'], null, $execution['id'], $status);
-                                        } else if ($execution['media'] === 'kakao') {
-                                            $result = $zenith->setCreativeOnOff($execution['id'], $execution['exec_value']);
-                                        }
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            default:
-                                break;
-                        }
-                    }
-                }
+                $executionData = $this->automationExecution($seq);
+                $logIdx = $this->recordResult($executionData['result']);
+                $result['executions'] = $executionData['log'];
+                $this->recordLog($result, $logIdx);
             }
         }
     }
@@ -769,8 +637,9 @@ class AutomationController extends BaseController
             if($diffTime >= $automation['aas_type_value']){
                 $resultArray = [
                     'result' => true,
+                    'status' => 'success',
+                    'msg' => '설정 시간 일치',
                     'seq' => $automation['aa_seq'],
-                    'msg' => '설정 시간 일치'
                 ];
                 return $resultArray;
             }
@@ -783,8 +652,9 @@ class AutomationController extends BaseController
             if($diffTime >= $automation['aas_type_value'] && $currentTime === $automation['aas_exec_time']){
                 $resultArray = [
                     'result' => true,
+                    'status' => 'success',
+                    'msg' => '설정 시간 일치',
                     'seq' => $automation['aa_seq'],
-                    'msg' => '설정 시간 일치'
                 ];
                 return $resultArray;
             }
@@ -798,8 +668,9 @@ class AutomationController extends BaseController
             if($diffTime >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $currentTime === $automation['aas_exec_time']){
                 $resultArray = [
                     'result' => true,
+                    'status' => 'success',
+                    'msg' => '설정 시간 일치',
                     'seq' => $automation['aa_seq'],
-                    'msg' => '설정 시간 일치'
                 ];
                 return $resultArray;
             }
@@ -815,8 +686,9 @@ class AutomationController extends BaseController
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === '1' && $currentTime === $automation['aas_exec_time']){
                     $resultArray = [
                         'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
                         'seq' => $automation['aa_seq'],
-                        'msg' => '설정 시간 일치'
                     ];
                     return $resultArray;
                 }
@@ -825,8 +697,9 @@ class AutomationController extends BaseController
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $currentTime === $automation['aas_exec_time']){
                     $resultArray = [
                         'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
                         'seq' => $automation['aa_seq'],
-                        'msg' => '설정 시간 일치'
                     ];
                     return $resultArray;
                 }
@@ -838,8 +711,9 @@ class AutomationController extends BaseController
                 if($diffTime >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
                     $resultArray = [
                         'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
                         'seq' => $automation['aa_seq'],
-                        'msg' => '설정 시간 일치'
                     ];
                     return $resultArray;
                 }
@@ -851,8 +725,9 @@ class AutomationController extends BaseController
                 if($diffTime >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $currentTime === $automation['aas_exec_time']){
                     $resultArray = [
                         'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
                         'seq' => $automation['aa_seq'],
-                        'msg' => '설정 시간 일치'
                     ];
                     return $resultArray;
                 }
@@ -860,8 +735,9 @@ class AutomationController extends BaseController
                 if($diffTime >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $currentTime === $automation['aas_exec_time']){
                     $resultArray = [
                         'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
                         'seq' => $automation['aa_seq'],
-                        'msg' => '설정 시간 일치'
                     ];
                     return $resultArray;
                 }
@@ -870,8 +746,8 @@ class AutomationController extends BaseController
 
         $resultArray = [
             'result' => false,
-            'status' => 'failed',
-            'msg' => '설정 시간 오류',
+            'status' => 'not_execution',
+            'msg' => '설정 시간 일치하지 않음',
             'seq' => $automation['aa_seq'],
         ];
         return $resultArray;
@@ -880,7 +756,14 @@ class AutomationController extends BaseController
     public function getAutomationTarget($seq)
     {
         $target = $this->automation->getTarget($seq);
-        if(empty($target)){return false;}
+        if(empty($target)){
+            return [
+                'result' => true,
+                'msg' => '대상 존재하지 않음',
+                'seq' => $seq,
+                'target' => null,
+            ];
+        }
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         //값 별로 메소드 매칭
@@ -888,23 +771,36 @@ class AutomationController extends BaseController
             $methodName = "getTarget" . ucfirst($target['aat_media']);
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
-                if(empty($data)){
-                    return false;
-                }
                 $data = $this->setData($data);
-                $data['aa_seq'] = $seq;
-                return $data;
+                return  [
+                    'result' => true,
+                    'msg' => '대상 존재',
+                    'seq' => $seq,
+                    'target' => $data,
+                ];
             }
         }else{
-            return false;
+            return [
+                'result' => false,
+                'status' => 'failed',
+                'msg' => '대상 메소드 매칭 오류',
+                'seq' => $seq,
+            ];
         }
     }
 
     public function checkAutomationCondition($target)
     {
         $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
-        $conditions = $this->automation->getAutomationConditionBySeq($target['aa_seq']);
-        if(empty($conditions)){return false;}
+        $conditions = $this->automation->getAutomationConditionBySeq($target['seq']);
+        if(empty($conditions)){
+            return [            
+                "result" => false,
+                'status' => 'failed',
+                "msg" => '조건이 존재하지 않음',
+                "seq" => $target['seq'],
+            ];
+        }
         //순서 재정렬
         usort($conditions, function($a, $b) {
             return $a['order'] - $b['order'];
@@ -914,9 +810,9 @@ class AutomationController extends BaseController
         $operation = $conditions[0]['operation'];
         foreach ($conditions as $condition) {       
             $conditionMatched = false;       
-            $message = "일치하는 조건이 존재하지 않습니다.";
+            $msg = "일치하는 조건이 존재하지 않습니다.";
             if ($condition['type'] === 'status') {//status 비교
-                if ($target['status'] == $condition['type_value']) {
+                if ($target['target']['status'] == $condition['type_value']) {
                     $conditionMatched = true;
                     $message = 'status 일치';
                 }else{
@@ -927,27 +823,27 @@ class AutomationController extends BaseController
                     if ($condition['type'] === $type) {
                         switch ($condition['compare']) {
                             case 'less':
-                                $conditionMatched = $target[$type] < $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] < $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
                                 break;
                             case 'greater':
-                                $conditionMatched = $target[$type] > $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] > $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
                                 break;
                             case 'less_equal':
-                                $conditionMatched = $target[$type] <= $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] <= $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
                                 break;
                             case 'greater_equal':
-                                $conditionMatched = $target[$type] >= $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] >= $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
                                 break;
                             case 'equal':
-                                $conditionMatched = $target[$type] == $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] == $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
                                 break;
                             case 'not_equal':
-                                $conditionMatched = $target[$type] != $condition['type_value'];
+                                $conditionMatched = $target['target'][$type] != $condition['type_value'];
                                 $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
                                 break;
                             default:
@@ -975,17 +871,467 @@ class AutomationController extends BaseController
         }
         
         if(($operation == 'or' && $isTargetMatched) || ($operation == 'and' && $allConditionsMatched)){
-            return [
-                "seq" => $target['aa_seq'],
+            return [            
                 "result" => true,
-                "message" => $message,
+                'status' => 'success',
+                "msg" => $message,
+                "seq" => $target['seq'],
             ];
         }else{
             return [
-                "seq" => $target['aa_seq'],
                 "result" => false,
-                "message" => $message,
+                'status' => 'not_execution',
+                "msg" => $message,
+                "seq" => $target['seq'],
             ];
+        }
+    }
+    
+    public function automationExecution($seq)
+    {
+        $executions = $this->automation->getExecution($seq);
+        if(empty($executions)){
+            return [            
+                "result" => false,
+                'status' => 'failed',
+                "msg" => '실행항목이 존재하지 않음',
+                "seq" => $seq,
+            ];
+        }
+        //순서 재정렬
+        /* usort($executions, function($a, $b) {
+            return $a['aae_order'] - $b['aae_order'];
+        }); */
+        $originalSettings = [];
+        $result = [
+            'result' => [],
+            'log' => [],
+        ];
+        try {
+            foreach ($executions as $execution) {
+                $zenith = null;
+                switch ($execution['media']) {
+                    case 'facebook':
+                        $zenith = new ZenithFB();
+                        break;
+                    case 'google':
+                        $zenith = new ZenithGG();
+                        break;
+                    case 'kakao':
+                        $zenith = new ZenithKM();
+                        break;
+                }
+                if($zenith){ 
+                    switch ($execution['type']) {
+                        case 'campaign':
+                            $customerId = null;
+                            if ($execution['media'] === 'google') {
+                                $customerId = $this->google->getCustomerById($execution['id'], 'campaign');
+                            }
+                            switch ($execution['exec_type']) {
+                                case 'status':
+                                    if ($execution['media'] === 'facebook') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = 'ACTIVE';
+                                        }else{
+                                            $status = 'PAUSED';
+                                        }
+                                        $originalData = $zenith->getCampaignStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setCampaignStatus($execution['id'], $status);
+                                        }                                  
+                                    } else if ($execution['media'] === 'google') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = ['status' => 'ENABLED'];
+                                        }else{
+                                            $status = ['status' => 'PAUSED'];
+                                        }
+                                        $originalData = $zenith->getCampaignStatusBudget($customerId['customerId'], $execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->updateCampaign($customerId['customerId'], $execution['id'], $status);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    } else if ($execution['media'] === 'kakao') {
+                                        $originalData = $zenith->getCampaignStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setCampaignOnOff($execution['id'], $execution['exec_value']);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    }
+                                    break;
+                                case 'budget':     
+                                    if ($execution['media'] === 'facebook') {
+                                        $originalData = $zenith->getCampaignStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'budget' => $originalData['budget'],
+                                            ];
+                                            $data = [
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $return = $zenith->updateCampaignBudget($data);
+                                        }else{
+                                            $return = false;
+                                        }  
+                                    } else if ($execution['media'] === 'google') {
+                                        $originalData = $zenith->getCampaignStatusBudget($customerId['customerId'], $execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'budget' => $originalData['budget'],
+                                            ];
+                                            $return = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $execution['exec_value']]);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    } else if ($execution['media'] === 'kakao') {
+                                        $originalData = $zenith->getCampaignStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $data = [
+                                                'type' => 'campaign',
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $return = $zenith->setDailyBudgetAmount($data);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case 'adgroup':
+                            $customerId = null;
+                            if ($execution['media'] === 'google') {
+                                $customerId = $this->google->getCustomerById($execution['id'], 'adgroup');
+                            }
+                            switch ($execution['exec_type']) {
+                                case 'status':
+                                    if ($execution['media'] === 'facebook') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = 'ACTIVE';
+                                        }else{
+                                            $status = 'PAUSED';
+                                        }
+                                        $originalData = $zenith->getAdsetStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setAdsetStatus($execution['id'], $status);
+                                        }else{
+                                            $return = false;
+                                        }  
+                                    } else if ($execution['media'] === 'google') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = ['status' => 'ENABLED'];
+                                        }else{
+                                            $status = ['status' => 'PAUSED'];
+                                        }
+                                        $originalData = $zenith->getAdgroupStatus($customerId['customerId'], $execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->updateAdGroup($customerId['customerId'], $execution['id'], $status);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    } else if ($execution['media'] === 'kakao') {
+                                        $originalData = $zenith->getAdgroupStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setAdGroupOnOff($execution['id'], $execution['exec_value']);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    }
+                                    break;
+                                case 'budget':
+                                    if ($execution['media'] === 'facebook') {
+                                        $originalData = $zenith->getAdsetStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'budget' => $originalData['budget'],
+                                            ];
+                                            $data = [
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $return = $zenith->updateAdSetBudget($data);
+                                        }else{
+                                            $return = false;
+                                        }  
+                                    } else if ($execution['media'] === 'kakao') {
+                                        $originalData = $zenith->getAdgroupStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'budget' => $originalData['budget'],
+                                            ];
+                                            $data = [
+                                                'type' => 'adgroup',
+                                                'id' => $execution['id'],
+                                                'budget' => $execution['exec_value']
+                                            ];
+                                            $return = $zenith->setDailyBudgetAmount($data);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case 'ad':
+                            $customerId = null;                               
+                            if ($execution['media'] === 'google') {
+                                $customerId = $this->google->getCustomerById($execution['id'], 'ad');
+                            }
+                            switch ($execution['exec_type']) {
+                                case 'status':
+                                    if ($execution['media'] === 'facebook') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = 'ACTIVE';
+                                        }else{
+                                            $status = 'PAUSED';
+                                        }
+                                        $originalData = $zenith->getAdStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setAdStatus($execution['id'], $status);
+                                        }else{
+                                            $return = false;
+                                        } 
+                                    } else if ($execution['media'] === 'google') {
+                                        if($execution['exec_value'] === "ON"){
+                                            $status = ['status' => 'ENABLED'];
+                                        }else{
+                                            $status = ['status' => 'PAUSED'];
+                                        }                                     
+                                        $originalData = $zenith->getAdStatus($customerId['customerId'], $execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->updateAdGroupAd($customerId['customerId'], null, $execution['id'], $status);
+                                        }else{
+                                            $return = false;
+                                        }
+                                    } else if ($execution['media'] === 'kakao') {
+                                        $originalData = $zenith->getAdStatusBudget($execution['id']);
+                                        if(!empty($originalData)){
+                                            $originalSettings[] = [
+                                                'media' => $execution['media'],
+                                                'type' => $execution['type'],
+                                                'id' => $execution['id'],
+                                                'status' => $originalData['status'],
+                                            ];
+                                            $return = $zenith->setCreativeOnOff($execution['id'], $execution['exec_value']);
+                                        }else{
+                                            $return = false;
+                                        } 
+                                    }
+                                    break;
+                            }
+                            break;
+                    }
+                    
+                    if($return == true || (isset($return['http_code']) && $return['http_code'] == 200) || isset($return['id'])){
+                        $result['log'][] = [
+                            "result" => true,
+                            'status' => 'success',
+                            "msg" => '실행 완료',
+                            "seq" => $seq,
+                            "data" => [
+                                'media' => $execution['media'],
+                                'type' => $execution['type'],
+                                'id' => $execution['id'],
+                                'exec_type' => $execution['exec_type'],
+                                'exec_value' => $execution['exec_value'],
+                            ]
+                        ];
+                    }
+                }
+            }
+            $result['result'] = [
+                "result" => true,
+                'status' => 'success',
+                "seq" => $seq,
+            ];
+            return $result;
+        } catch (Exception $e) {
+            foreach ($originalSettings as $original) {
+                switch ($original['media']) {
+                    case 'facebook':
+                        $zenith = new ZenithFB();
+                        break;
+                    case 'google':
+                        $zenith = new ZenithGG();
+                        break;
+                    case 'kakao':
+                        $zenith = new ZenithKM();
+                        break;
+                }
+
+                switch ($original['type']) {
+                    case 'campaign':
+                        $customerId = null;
+                        if ($original['media'] === 'google') {
+                            $customerId = $this->google->getCustomerById($original['id'], 'campaign');
+                        }
+
+                        if(isset($original['status'])){
+                            if ($original['media'] === 'facebook') {
+                                $zenith->setCampaignStatus($original['id'], $original['status']);                            
+                            } else if ($original['media'] === 'google') {
+                                $zenith->updateCampaign($customerId['customerId'], $original['id'], $original['status']);
+                            } else if ($original['media'] === 'kakao') {
+                                $zenith->setCampaignOnOff($original['id'], $original['status']);
+                            }
+                        }
+
+                        if(isset($original['budget'])){
+                            if ($original['media'] === 'facebook') {
+                                $data = [
+                                    'id' => $original['id'],
+                                    'budget' => $original['budget']
+                                ];
+                                $zenith->updateCampaignBudget($data); 
+                            } else if ($original['media'] === 'google') {
+                                $zenith->updateCampaignBudget($customerId['customerId'], $original['id'], ['budget' => $original['budget']]);
+                            } else if ($original['media'] === 'kakao') {
+                                $data = [
+                                    'type' => 'campaign',
+                                    'id' => $original['id'],
+                                    'budget' => $original['budget']
+                                ];
+                                $zenith->setDailyBudgetAmount($data);
+                            }
+                        }
+                    case 'adgroup':
+                        $customerId = null;
+                        if ($original['media'] === 'google') {
+                            $customerId = $this->google->getCustomerById($original['id'], 'adgroup');
+                        }
+
+                        if(isset($original['status'])){
+                            if ($original['media'] === 'facebook') {
+                                $zenith->setAdsetStatus($original['id'], $original['status']);                         
+                            } else if ($original['media'] === 'google') {
+                                $zenith->updateAdGroup($customerId['customerId'], $original['id'], $original['status']);
+                            } else if ($original['media'] === 'kakao') {
+                                $zenith->setAdGroupOnOff($original['id'], $original['exec_value']);
+                            }
+                        }
+
+                        if(isset($original['budget'])){
+                            if ($original['media'] === 'facebook') {
+                                $data = [
+                                    'id' => $original['id'],
+                                    'budget' => $original['exec_value']
+                                ];
+                                $zenith->updateAdSetBudget($data);
+                            } else if ($original['media'] === 'kakao') {
+                                $data = [
+                                    'type' => 'adgroup',
+                                    'id' => $original['id'],
+                                    'budget' => $original['exec_value']
+                                ];
+                                $return = $zenith->setDailyBudgetAmount($data);
+                            }
+                        }
+                    case 'ad':
+                        $customerId = null;                               
+                        if ($original['media'] === 'google') {
+                            $customerId = $this->google->getCustomerById($original['id'], 'ad');
+                        }
+
+                        if(isset($original['status'])){
+                            if ($original['media'] === 'facebook') {
+                                $zenith->setAdStatus($original['id'], $original['status']);                        
+                            } else if ($original['media'] === 'google') {
+                                $zenith->updateAdGroupAd($customerId['customerId'], null, $original['id'], $original['status']);
+                            } else if ($original['media'] === 'kakao') {
+                                $zenith->setCreativeOnOff($original['id'], $original['exec_value']);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            $result['result'] = [
+                "result" => false,
+                'status' => 'failed',
+                "seq" => $seq
+            ];
+
+            $result['log'] = [
+                "result" => false,
+                'status' => 'failed',
+                'msg' => 'Api 오류 발생',
+                "seq" => $seq,
+            ];
+            return $result;
         }
     }
     
@@ -1148,47 +1494,33 @@ class AutomationController extends BaseController
         return $formatData;
     }
 
-    private function toRecordResult($result)
+    private function recordResult($result)
     {
-        $resultData = [];
-        if(!empty($result['schedule'])){
-            $resultData['idx'] = $result['schedule']['seq'];
-            $resultData['result'] = $result['schedule']['status'];
-            $resultData['exec_timestamp'] = date('Y-m-d H:i:s');
-            $logData['idx'] = $result['schedule']['seq'];
-            $logData['schedule_desc'] = json_encode($result['schedule']);
-        }
+        $resultData = [
+            'idx' => $result['seq'],
+            'result' => $result['status'],
+            'exec_timestamp' => date('Y-m-d H:i:s')
+        ];
 
-        /* if(isset($result['target'])) {
-            $logData['target_desc'] = json_encode($result['target']);
-        }
-
-        if(isset($result['conditions'])) {
-            $logData['conditions_desc'] = json_encode($result['conditions']);
-        }
-
-        if(isset($result['executions'])) {
-            $logData['executions_desc'] = json_encode($result['executions']);
-        } */
-
-        if(!empty($resultData)){
-            $this->automation->recodeResult($resultData);
-        }
+        $seq = $this->automation->recodeResult($resultData);
+        return $seq;
     }
 
-    private function recordLog($log)
+    private function recordLog($log, $seq)
     {
         $data = [];
         if(!empty($log['schedule'])){
-            $data['idx'] = $log['schedule']['seq'];
+            $data['idx'] = $seq;
             $data['schedule_desc'] = json_encode($log['schedule']);
         }
 
         if(isset($log['target'])) {
+            $data['idx'] = $seq;
             $data['target_desc'] = json_encode($log['target']);
         }
 
         if(isset($log['conditions'])) {
+            $data['idx'] = $seq;
             $data['conditions_desc'] = json_encode($log['conditions']);
         }
 

@@ -553,7 +553,6 @@ class ZenithFB
                 $this->setCampaignId($campaign_id);
                 $campaign = $this->campaign->getSelf([], $params);
                 $response = $campaign->getData();
-                dd($this->campaign->getAdSets());
                 if(is_cli()){
                     CLI::showProgress($step++, $total);
                 }
@@ -831,6 +830,28 @@ class ZenithFB
         return $result;
     }
 
+    public function getCampaignStatusBudget($campaign_id)
+    {
+        $params = [
+            'fields' => [
+                CampaignFields::ID,
+                CampaignFields::DAILY_BUDGET,
+                CampaignFields::STATUS,
+            ]
+        ];
+
+        $this->setCampaignId($campaign_id);
+        $campaign = $this->campaign->getSelf([], $params);
+        $response = $campaign->getData();
+
+        $result = [
+            'id' => $response['id'],
+            'budget' => $response['daily_budget'],
+            'status' => $response['status']
+        ];
+        return $result;
+    }
+
     //광고 상태 업데이트
     public function setCampaignStatus($id, $status)
     {
@@ -852,6 +873,28 @@ class ZenithFB
         return null;
     }
     
+    public function getAdsetStatusBudget($adset_id)
+    {
+        $params = [
+            'fields' => [
+                AdSetFields::ID,
+                AdSetFields::STATUS,
+                AdSetFields::DAILY_BUDGET,
+            ]
+        ];
+
+        $this->setAdsetId($adset_id);
+        $adset = $this->adset->getSelf([], $params);
+        $response = $adset->getData();
+
+        $result = [
+            'id' => $response['id'],
+            'budget' => $response['daily_budget'],
+            'status' => $response['status']
+        ];
+        return $result;
+    }
+
     public function setAdsetStatus($id, $status)
     {
         $result = [];
@@ -869,6 +912,26 @@ class ZenithFB
         }
 
         return null;
+    }
+
+    public function getAdStatusBudget($ad_id)
+    {
+        $params = [
+            'fields' => [
+                AdFields::ID,
+                AdFields::STATUS,
+            ]
+        ];
+
+        $this->setAdId($ad_id);
+        $ads = $this->ad->getSelf([], $params);
+        $response = $ads->getData();
+
+        $result = [
+            'id' => $response['id'],
+            'status' => $response['status']
+        ];
+        return $result;
     }
 
     public function setAdStatus($id, $status)

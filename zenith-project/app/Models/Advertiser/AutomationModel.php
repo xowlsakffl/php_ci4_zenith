@@ -1133,8 +1133,9 @@ class AutomationModel extends Model
     {
         $builder = $this->zenith->table('aa_result');
         $result = $builder->insert($data);
-
-        return $result;
+        $seq = $this->zenith->insertID();
+        
+        return $seq;
     }
 
     public function recodeLog($data)

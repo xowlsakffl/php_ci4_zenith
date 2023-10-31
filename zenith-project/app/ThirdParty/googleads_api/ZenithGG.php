@@ -334,6 +334,26 @@ class ZenithGG
         };
     }
 
+    public function getCampaignStatusBudget($customerId, $campaignId)
+    {
+        $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
+        $account = $account->getRowArray();
+        self::setCustomerId($account['manageCustomer']);
+        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
+        $query = "SELECT campaign.id, campaign.status, campaign_budget.amount_micros FROM campaign WHERE campaign.status IN ('ENABLED','PAUSED','REMOVED') AND campaign.id = $campaignId";
+        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
+        foreach ($stream->iterateAllElements() as $googleAdsRow) {
+            $c = $googleAdsRow->getCampaign();
+            $budget = $googleAdsRow->getCampaignBudget();
+            $data = [
+                'id' => $c->getId(), 
+                'status' => CampaignStatus::name($c->getStatus()), 
+                'budget' => ($budget->getAmountMicros() / 1000000), 
+            ];
+        }
+        return $data;
+    }
+
     public function updateCampaignBudget($customerId = null, $campaignId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
@@ -431,6 +451,24 @@ class ZenithGG
                 $result[] = $data;
         }
         return $result;
+    }
+
+    public function getAdgroupStatus($customerId, $adgroupId)
+    {
+        $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
+        $account = $account->getRowArray();
+        self::setCustomerId($account['manageCustomer']);
+        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
+        $query = "SELECT ad_group.id, ad_group.status FROM ad_group WHERE ad_group.status IN ('ENABLED','PAUSED','REMOVED') AND ad_group.id = $adgroupId";
+        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
+        foreach ($stream->iterateAllElements() as $googleAdsRow) {
+            $g = $googleAdsRow->getAdGroup();
+            $data = [
+                'id' => $g->getId(), 
+                'status' => AdGroupStatus::name($g->getStatus()), 
+            ];
+        }
+        return $data;
     }
 
     public function updateAdGroup($customerId = null, $adsetId = null, $param = null)
@@ -579,6 +617,24 @@ class ZenithGG
         return $result;
     }
       
+    public function getAdStatus($customerId, $adId)
+    {
+        $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");
+        $account = $account->getRowArray();
+        self::setCustomerId($account['manageCustomer']);
+        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
+        $query = "SELECT ad_group_ad.ad.id, ad_group_ad.status FROM ad_group_ad WHERE ad_group_ad.status IN ('ENABLED','PAUSED','REMOVED') AND ad_group_ad.ad.id = $adId";
+        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
+        foreach ($stream->iterateAllElements() as $googleAdsRow) {
+            $d = $googleAdsRow->getAdGroupAd();
+            $data = [
+                'id' => $d->getAd()->getId(), 
+                'status' => AdGroupAdStatus::name($d->getStatus()), 
+            ];
+        }
+        return $data;
+    }
+
     public function updateAdGroupAd($customerId = null, $adGroupId = null, $adId = null, $param = null)
     {
         $account = $this->db->getAccounts(0, "AND customerId = {$customerId}");

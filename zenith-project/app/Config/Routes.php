@@ -132,7 +132,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->put('update', 'AdvertisementManager\Automation\AutomationController::updateAutomation');
         $routes->delete('delete', 'AdvertisementManager\Automation\AutomationController::deleteAutomation');
 
-        $routes->get('exec', 'AdvertisementManager\Automation\AutomationController::execAutomation');
+        $routes->get('exec', 'AdvertisementManager\Automation\AutomationController::automation');
     });
     
     // 통합 DB관리

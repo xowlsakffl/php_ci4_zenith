@@ -1570,10 +1570,21 @@ $('body').on('click', '.target-btn', function(e){
 $('body').on('click', '#execTable tbody tr', function(){
     if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
+        $('#execConditionType option[value=budget]').show();
+        $('#execConditionValue').show();
+        $('#execConditionValueStatus').hide();
     }
     else {
         $('#execTable tr.selected').removeClass('selected');
         $(this).addClass('selected');
+        let media = $(this).children('td').eq(0).text();
+        let type = $(this).children('td').eq(1).text();
+        if((type == '광고') || (media == '구글' && type == '광고그룹')){
+            $('#execConditionType').val('');
+            $('#execConditionType option[value=budget]').hide();
+            $('#execConditionValue').val('').hide();
+            $('#execConditionValueStatus').show();
+        }
     }
 });
 

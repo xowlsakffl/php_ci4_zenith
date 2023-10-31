@@ -238,6 +238,20 @@ class ZenithKM
         return $data;
     }
 
+    public function getCampaignStatusBudget($campaignId)
+    {
+        $request = "campaigns/{$campaignId}";
+        $campaign = $this->db->getCampaignById($campaignId);
+        if ($campaign['ad_account_id']) $this->ad_account_id = $campaign['ad_account_id'];
+        $result = $this->getCall($request, '', '', 'GET', true);
+        $data = [
+            'id' => $result['id'],
+            'status' => $result['config'],
+            'budget' => $result['dailyBudgetAmount']
+        ];
+        return $data;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 3. 광고그룹 */
      
@@ -446,6 +460,20 @@ class ZenithKM
         return $result;
     }
 
+    public function getAdgroupStatusBudget($adgroupId)
+    {
+        $request = "adGroups/{$adgroupId}";
+        $adAccountId = $this->db->getAdAccountIdByAdGroupId($adgroupId);
+        if ($adAccountId) $this->ad_account_id = $adAccountId;
+        $result = $this->getCall($request, '', '', 'GET', false);
+        $data = [
+            'id' => $result['id'],
+            'status' => $result['config'],
+            'budget' => $result['dailyBudgetAmount']
+        ];
+        return $data;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /* 4. 소재 */
      
@@ -600,6 +628,19 @@ class ZenithKM
         }
         
         return $result;
+    }
+
+    public function getAdStatusBudget($creativeId)
+    {
+        $request = "creatives/{$creativeId}";
+        $adAccountId = $this->db->getAdAccountIdByCreativeId($creativeId);
+        if ($adAccountId) $this->ad_account_id = $adAccountId;
+        $result = $this->getCall($request, '', '', 'GET', false);
+        $data = [
+            'id' => $result['id'],
+            'status' => $result['config'],
+        ];
+        return $data;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
