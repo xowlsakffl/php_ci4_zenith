@@ -436,7 +436,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <table class="table tbl-header w-100 mt-4" id="execSelectTable">
+                            <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <colgroup>
                                     <col style="width:10%">
                                     <col style="width:10%">

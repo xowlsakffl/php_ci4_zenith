@@ -2068,8 +2068,9 @@ div.dataTables_scrollBody > table {
   border-bottom: 1px solid #c3c3c3;
 }
 .regi-content .detail-wrap .tbl-header tr.selected > * {
-  box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-hover), 0.075);
-  color: red;
+  box-shadow: inset 0 0 0 9999px rgba(255, 199, 209, 0.368627451);
+  color: rgba(58, 32, 232, 0.8196078431);
+  font-weight: 600;
 }
 .regi-content .detail-wrap .tbl-header td {
   min-height: 42px;
