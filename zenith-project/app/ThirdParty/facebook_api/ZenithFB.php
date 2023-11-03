@@ -1401,7 +1401,7 @@ class ZenithFB
                 foreach($leads->getResultArray() as $row) {
                     // if($data['ad_id'] == 23853888597370162) dd($row);
                     $sales = 0;
-                    $db_count = $row['db_count'];
+                    $db_count = $row['db_count'] ?? 0;
                     if($db_price) $sales = $db_price * $db_count;
                     if($initZero) $sales = 0;
                     if(preg_match('/cpm/i', $data['media'])) $db_count = 0;

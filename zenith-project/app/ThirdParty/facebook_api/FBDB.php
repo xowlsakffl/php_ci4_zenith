@@ -253,8 +253,8 @@ class FBDB extends Config
                 }
             }
 
-            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
-            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
+            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
+            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
             $name = $this->db->escape($report['name']);
             //          $name = addslashes($report['name']);
             $use_landing = 0;
@@ -339,9 +339,9 @@ class FBDB extends Config
         $cnt = 0;
         foreach ($data as $key => $report) {
             if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
-            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
-            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
-            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
+            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : null;
+            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
+            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
             $name = $this->db->escape($report['name']);
             if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
@@ -354,7 +354,7 @@ class FBDB extends Config
                 $budget = 'NULL';
             }
 
-            $lst_sig_edit_ts = '0000-00-00 00:00:00';
+            $lst_sig_edit_ts = null;
             if(isset($report['learning_stage_info'])){
                 if(isset($report['learning_stage_info']['last_sig_edit_ts'])){
                     $lst_sig_edit_ts = date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']);
@@ -444,9 +444,9 @@ class FBDB extends Config
     {
         foreach ($data as $key => $report) {
             if (empty($report['budget_remaining'])) $report['budget_remaining'] = 'NULL';
-            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : '0000-00-00 00:00:00';
-            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : '0000-00-00 00:00:00';
-            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : '0000-00-00 00:00:00';
+            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : null;
+            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
+            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
             $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
@@ -559,7 +559,7 @@ class FBDB extends Config
             $this->db_query('BEGIN');
             foreach ($data as $key => $lead) {
                 CLI::showProgress($step++, $total);
-                $created_time = $lead['created_time'];
+                $created_time = date('Y-m-d H:i:s', strtotime($lead['created_time']));
                 $full_name = $phone_number = $date_of_birth = $gender = null;
                 $is_organic = (strlen($lead['is_organic']) == 0) ? 0 : 1;
                 $custom_fields = array();
@@ -592,10 +592,9 @@ class FBDB extends Config
                             array_push($custom_fields, $field);
                         }
                     }
-
                     $field_data = addslashes(var_export($custom_fields, true));     // 배열 그대로 저장하는데 조금 이상하다...이상해씨
                     $values .= ", field_data = '{$field_data}'";
-                    $sql = $insert . $values . ", created_time = DATE_ADD('{$created_time}', INTERVAL 9 HOUR) ON DUPLICATE KEY UPDATE {$values}, update_date = NOW();";
+                    $sql = $insert . $values . ", created_time = '{$created_time}' ON DUPLICATE KEY UPDATE {$values}, update_date = NOW();";
                     $result = $this->db_query($sql, true);
                 }
             }
@@ -675,10 +674,10 @@ class FBDB extends Config
                     'period' => $row['period_ad'],
                     'event_seq' => $row['event_seq'],
                     'site' => $row['site'],
-                    'db_price' => $row['db_price'],
-                    'db_count' => $v['count'],
-                    'margin' => $v['margin'],
-                    'sales' => $v['sales'],
+                    'db_price' => (integer)$row['db_price'],
+                    'db_count' => (integer)$v['count'],
+                    'margin' => (integer)$v['margin'],
+                    'sales' => (integer)$v['sales'],
                 ];
                 $builder = $this->db->table('fb_ad_insight_history');
                 $builder->setData($data);

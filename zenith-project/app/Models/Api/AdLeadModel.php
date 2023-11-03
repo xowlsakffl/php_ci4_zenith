@@ -34,7 +34,7 @@ class AdLeadModel extends Model
     {
         $sql = "SELECT * FROM fb_ad AS ad
 		JOIN fb_ad_lead as LE on ad.ad_id = LE.ad_id
-		WHERE LE.created_time >= '2018-05-03 10:20:00' and ad.ad_name REGEXP '#[0-9]+' and (LE.send_time IS NULL OR LE.send_time = '0000-00-00 00:00:00')
+		WHERE LE.created_time >= '2018-05-03 10:20:00' and ad.ad_name REGEXP '#[0-9]+' and (LE.send_time IS NULL)
 		ORDER BY LE.created_time ";
                 
         $result = $this->facebook->query($sql)->getResultArray();
@@ -49,6 +49,7 @@ class AdLeadModel extends Model
     public function insertEventLeadFacebook($row)
     {
         $is_added = false;
+        $age = $row['age'] ?? 0;
         $sql = "SELECT * FROM event_leads WHERE event_seq = '{$row['event_seq']}' AND site='{$row['site']}' AND name='{$row['name']}' AND gender='{$row['gender']}' AND age='{$row['age']}' AND phone=enc_data('{$row['phone']}') AND add1='{$row['add1']}' AND add2='{$row['add2']}' AND add3='{$row['add3']}' AND add4='{$row['add4']}' AND add5='{$row['add5']}' AND addr='{$row['addr']}' AND lead_id='{$row['id']}'";
         $result = $this->zenith->query($sql);
         $is_added = count($result->getResultArray());

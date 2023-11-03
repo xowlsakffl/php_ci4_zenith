@@ -78,7 +78,7 @@ class Facebook extends Controller
         if($to == null)
             $to = CLI::prompt("잠재고객 업데이트 할 종료날짜를 입력해주세요.", $from);
         $result = $this->zenith->adLeadByAd($ad_id, $from, $to);
-        dd($result);
+        CLI::write("잠재고객 업데이트 완료되었습니다.", "yellow");
     }
 
     public function getAdLead($from = null, $to = null) {

@@ -84,7 +84,7 @@ class AdLeadController extends BaseController
                 $result['name'] = $row['nickname'];
                 $result['email'] = $row['email']??'';
                 $result['gender'] = $row['gender']??null;
-                $result['age'] = $row['age']??null;
+                $result['age'] = $row['age'] ?? 0;
                 $result['phone'] = $phone;
                 $result['add1'] = $add1;
                 $result['add2'] = $add2;
@@ -191,7 +191,7 @@ class AdLeadController extends BaseController
                 $result['site'] = $landing['site'];
                 $result['name'] = addslashes($full_name);
                 $result['gender'] = $gender;
-                $result['age'] = $age;
+                $result['age'] = $age ?? 0;
                 $result['phone'] = $phone;
                 $result['add1'] = addslashes($add1);
                 $result['add2'] = addslashes($add2);
