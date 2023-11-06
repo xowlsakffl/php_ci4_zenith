@@ -4,6 +4,9 @@ namespace App\ThirdParty\facebook_api;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Database\Config;
 use CodeIgniter\Database\RawSql;
+use DateTime;
+use DateTimeZone;
+
 class FBDB extends Config
 {
     private $db, $db2, $zenith;
@@ -262,43 +265,55 @@ class FBDB extends Config
                 $use_landing = 1;
             }
             $sql = "INSERT INTO fb_ad (
-                        ad_id,
-                        ad_name,
-                        effective_status,
-                        status,
-                        fb_pixel,
-                        page_id,
-                        adset_id,
-                        use_landing,
-                        leadgen_id,
-                        created_time,
-                        updated_time,
-                        create_date
-                    ) VALUES (
-                        '{$report['id']}',
-                        {$name},
-                        '{$report['effective_status']}',
-                        '{$report['status']}',
-                        '{$report['fb_pixel']}',
-                        '{$report['page']}',
-                        '{$report['adset_id']}',
-                        '{$use_landing}',
-                        '{$report['leadgen']}',
-                        '{$created_time}',
-                        '{$updated_time}',
-                        NOW()
-                    ) ON DUPLICATE KEY UPDATE
-						ad_name = {$name},
-						effective_status = '{$report['effective_status']}',
-						status = '{$report['status']}',
-						fb_pixel = '{$report['fb_pixel']}',
-						page_id = '{$report['page']}',
-						use_landing = {$use_landing},
-						leadgen_id = '{$report['leadgen']}',
-						created_time = '{$created_time}',
-						updated_time = '{$updated_time}',
-						update_date = NOW()";
-            $result = $this->db_query($sql);
+                    ad_id,
+                    ad_name,
+                    effective_status,
+                    status,
+                    fb_pixel,
+                    page_id,
+                    adset_id,
+                    use_landing,
+                    leadgen_id,
+                    created_time,
+                    updated_time,
+                    create_date
+                ) VALUES (
+                    :ad_id:,
+                    :name:,
+                    :effective_status:,
+                    :status:,
+                    :fb_pixel:,
+                    :page_id:,
+                    :adset_id:,
+                    :use_landing:,
+                    :leadgen_id:,
+                    :created_time:,
+                    :updated_time:,
+                    NOW()
+                ) ON DUPLICATE KEY UPDATE
+                    ad_name = :name:,
+                    effective_status = :effective_status:,
+                    status = :status:,
+                    fb_pixel = :fb_pixel:,
+                    page_id = :page_id:,
+                    use_landing = :use_landing:,
+                    leadgen_id = :leadgen_id:,
+                    created_time = :created_time:,
+                    updated_time = :updated_time:,
+                    update_date = NOW()";
+            $result = $this->db->query($sql, [
+                'ad_id' => $report['id'],
+                'name' => $name,
+                'effective_status' => $report['effective_status'],
+                'status' => $report['status'],
+                'fb_pixel' => $report['fb_pixel'] ?? '',
+                'page_id' => $report['page_id'] ?? '',
+                'adset_id' => $report['adset_id'],
+                'use_landing' => $use_landing,
+                'leadgen_id' => $report['leadgen_id'] ?? '',
+                'created_time' => $created_time,
+                'updated_time' => $updated_time
+            ]);
             if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE ad_id = '{$report['id']}'");
@@ -338,31 +353,38 @@ class FBDB extends Config
     {
         $cnt = 0;
         foreach ($data as $key => $report) {
-            if (!$report['budget_remaining']) $report['budget_remaining'] = 'NULL';
-            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : null;
-            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
-            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
-            $name = $this->db->escape($report['name']);
+            if (!$report['budget_remaining']) $report['budget_remaining'] = NULL;
+            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : NULL;
+            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : NULL;
+            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : NULL;
+            $name = $this->db->escape(addslashes($report['name']));
             if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
-                $budget = $report['lifetime_budget'];
+                $budget = (integer)$report['lifetime_budget'];
             } elseif (isset($report['daily_budget'])) {
                 $budget_type = 'daily';
-                $budget = $report['daily_budget'];
+                $budget = (integer)$report['daily_budget'];
             } else {
                 $budget_type = NULL;
-                $budget = 'NULL';
+                $budget = NULL;
             }
 
-            $lst_sig_edit_ts = null;
-            if(isset($report['learning_stage_info'])){
-                if(isset($report['learning_stage_info']['last_sig_edit_ts'])){
+            $lst_sig_edit_ts = NULL;
+            $lsiConversions = 0;
+            $lsiStatus = '';
+            if(!empty($report['learning_stage_info'])){
+                if(!empty($report['learning_stage_info']['last_sig_edit_ts'])){
                     $lst_sig_edit_ts = date('Y-m-d H:i:s', $report['learning_stage_info']['last_sig_edit_ts']);
                 }
+
+                if(!empty($report['learning_stage_info']['conversions'])){
+                    $lsiConversions = (integer)$report['learning_stage_info']['conversions'];
+                }
+
+                if(!empty($report['learning_stage_info']['status'])){
+                    $lsiStatus = (integer)$report['learning_stage_info']['status'];
+                }
             }
-            
-            $lsiConversions = $report['learning_stage_info']['conversions'] ?? '';
-            $lsiStatus = $report['learning_stage_info']['status'] ?? '';
 
             $sql = "INSERT INTO fb_adset (
                         adset_id,
@@ -378,33 +400,48 @@ class FBDB extends Config
                         updated_time,
                         create_date
                     ) VALUES (
-                        '{$report['id']}',
-                        {$name},
-                        '{$report['campaign_id']}',
-                        '{$report['effective_status']}',
-                        '{$report['status']}',
-                        '{$start_time}',
-                        '{$lsiConversions}',
-                        '{$lsiStatus}',
-                        '{$lst_sig_edit_ts}',
-                        '{$created_time}',
-                        '{$updated_time}',
+                        :adset_id:,
+                        :name:,
+                        :campaign_id:,
+                        :effective_status:,
+                        :status:,
+                        :start_time:,
+                        :lsi_conversions:,
+                        :lsiStatus:,
+                        :lst_sig_edit_ts:,
+                        :created_time:,
+                        :updated_time:,
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
-						adset_name = {$name},
-						budget_type = '{$budget_type}',
-						budget = '{$budget}',
-						budget_remaining = {$report['budget_remaining']},
-						effective_status = '{$report['effective_status']}',
-						status = '{$report['status']}',
-						start_time = '{$start_time}',
-						lsi_conversions = '{$lsiConversions}',
-                        lsi_status = '{$lsiStatus}',
-                        lsi_last_sig_edit_ts = '{$lst_sig_edit_ts}',
-                        created_time = '{$created_time}',
-						updated_time = '{$updated_time}',
+						adset_name = :name:,
+						budget_type = :budget_type:,
+						budget = :budget:,
+						budget_remaining = :budget_remaining:,
+						effective_status = :effective_status:,
+						status = :status:,
+						start_time = :start_time:,
+						lsi_conversions = :lsi_conversions:,
+                        lsi_status = :lsiStatus:,
+                        lsi_last_sig_edit_ts = :lst_sig_edit_ts:,
+                        created_time = :created_time:,
+						updated_time = :updated_time:,
 						update_date = NOW()";
-            $result = $this->db_query($sql, true);
+            $result = $this->db->query($sql, [
+                'adset_id' => $report['id'],
+                'name' => $name,
+                'campaign_id' => $report['campaign_id'],
+                'effective_status' => $report['effective_status'],
+                'status' => $report['status'],
+                'start_time' => $start_time,
+                'lsi_conversions' => $lsiConversions,
+                'lsiStatus' => $lsiStatus,
+                'lst_sig_edit_ts' => $lst_sig_edit_ts,
+                'created_time' => $created_time,
+                'updated_time' => $updated_time,
+                'budget_type' => $budget_type,
+                'budget' => $budget,
+                'budget_remaining' => $report['budget_remaining'],
+            ]);
             if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE adset_id = '{$report['id']}'");
@@ -443,24 +480,24 @@ class FBDB extends Config
     public function updateCampaigns($data)
     {
         foreach ($data as $key => $report) {
-            if (empty($report['budget_remaining'])) $report['budget_remaining'] = 'NULL';
-            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : null;
-            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
-            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
+            if (empty($report['budget_remaining'])) (integer)$report['budget_remaining'] = NULL;
+            $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : NULL;
+            $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : NULL;
+            $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : NULL;
             $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
-            $spend_cap = isset($report['spend_cap']) ? $report['spend_cap'] : 'NULL';
+            $spend_cap = isset($report['spend_cap']) ? (integer)$report['spend_cap'] : NULL;
             
             if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
-                $budget = $report['lifetime_budget'];
+                $budget = (integer)$report['lifetime_budget'];
             } elseif (isset($report['daily_budget'])) {
                 $budget_type = 'daily';
-                $budget = $report['daily_budget'];
+                $budget = (integer)$report['daily_budget'];
             } else {
                 $budget_type = "";
-                $budget = 'NULL';
+                $budget = NULL;
             }
 
             $sql = "INSERT INTO fb_campaign (
@@ -481,39 +518,55 @@ class FBDB extends Config
                         updated_time,
                         create_date
                     ) VALUES (
-                        '{$report['id']}',
-                        {$name},
-                        '{$report['account_id']}',
-                        '{$report['effective_status']}',
-                        '{$report['status']}',
-                        '{$budget_type}',
-                        '{$budget}',
-                        {$report['budget_remaining']},
-                        {$budget_rebalance_flag},
-                        '{$can_use_spend_cap}',
-                        '{$spend_cap}',
-                        '{$report['objective']}',
-                        '{$start_time}',
-                        '{$created_time}',
-                        '{$updated_time}',
+                        :campaign_id:,
+                        :name:,
+                        :account_id:,
+                        :effective_status:,
+                        :status:,
+                        :budget_type:,
+                        :budget:,
+                        :budget_remaining:,
+                        :budget_rebalance_flag:,
+                        :can_use_spend_cap:,
+                        :spend_cap:,
+                        :objective:,
+                        :start_time:,
+                        :created_time:,
+                        :updated_time:,
                         NOW()
                     ) ON DUPLICATE KEY UPDATE
-						campaign_name = {$name},
-                        budget_type = '{$budget_type}',
-                        budget = '{$budget}',
-                        budget_remaining = {$report['budget_remaining']},
-                        budget_rebalance_flag = '{$budget_rebalance_flag}',
-						can_use_spend_cap = '{$can_use_spend_cap}',
-						spend_cap = '{$spend_cap}',
-						objective = '{$report['objective']}',
-						effective_status = '{$report['effective_status']}',
-						status = '{$report['status']}',
-						start_time = '{$start_time}',
-						created_time = '{$created_time}',
-						updated_time = '{$updated_time}',
+                        campaign_name = :name:,
+                        budget_type = :budget_type:,
+                        budget = :budget:,
+                        budget_remaining = :budget_remaining:,
+                        budget_rebalance_flag = :budget_rebalance_flag:,
+                        can_use_spend_cap = :can_use_spend_cap:,
+                        spend_cap = :spend_cap:,
+                        objective = :objective:,
+                        effective_status = :effective_status:,
+                        status = :status:,
+                        start_time = :start_time:,
+                        created_time = :created_time:,
+                        updated_time = :updated_time:,
                         is_updating = 0,
 						update_date = NOW()";
-            $result = $this->db_query($sql, true);
+            $result = $this->db->query($sql, [
+                'campaign_id' => $report['id'],
+                'name' => $name,
+                'account_id' => $report['account_id'],
+                'effective_status' => $report['effective_status'],
+                'status' => $report['status'],
+                'budget_type' => $budget_type,
+                'budget' => $budget,
+                'budget_remaining' => $report['budget_remaining'],
+                'budget_rebalance_flag' => $budget_rebalance_flag,
+                'can_use_spend_cap' => $can_use_spend_cap,
+                'spend_cap' => $spend_cap,
+                'objective' => $report['objective'],
+                'start_time' => $start_time,
+                'created_time' => $created_time,
+                'updated_time' => $updated_time,
+            ]);
             if(!$result){return false;};
             /*
             $this->db_query("DELETE FROM fb_recommendations WHERE campaign_id = '{$report['id']}'");
@@ -559,7 +612,10 @@ class FBDB extends Config
             $this->db_query('BEGIN');
             foreach ($data as $key => $lead) {
                 CLI::showProgress($step++, $total);
-                $created_time = date('Y-m-d H:i:s', strtotime($lead['created_time']));
+                $time = new DateTime($lead['created_time']);
+                $korea = new DateTimeZone('Asia/Seoul');
+                $time->setTimezone($korea);
+                $created_time = $time->format('Y-m-d H:i:s');
                 $full_name = $phone_number = $date_of_birth = $gender = null;
                 $is_organic = (strlen($lead['is_organic']) == 0) ? 0 : 1;
                 $custom_fields = array();

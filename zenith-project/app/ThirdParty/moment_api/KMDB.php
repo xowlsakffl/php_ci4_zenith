@@ -696,11 +696,39 @@ class KMDB
     {
         $row = $data['data'];
         if(empty($row) || !$row['id']) return;
+        $data = [
+            'id' => $row['id'],
+            'title' => $row['title'],
+            'imgUrl' => $row['imgUrl'],
+            'startAt' => $row['startAt'],
+            'startTimeAt' => $row['startTimeAt'],
+            'endAt' => $row['endAt'],
+            'endTimeAt' => $row['endTimeAt'],
+            'applyType' => $row['applyType'],
+            'privacyScopeUse' => $row['privacyScopeUse'],
+            'flowType' => $row['flowType'],
+            'completeType' => $row['completeType'],
+            'status' => $row['status'],
+            'runningStatus' => $row['runningStatus'],
+            'editingPhase' => $row['editingPhase'],
+            'channelUsed' => $row['channelUsed'],
+            'channelProfileId' => $row['channelProfileId'],
+            'prizeAnnouncedDateAt' => $row['prizeAnnouncedDateAt'],
+            'prizeAnnouncedTimeAt' => $row['prizeAnnouncedTimeAt'],
+            'partnerCsPhone' => $row['partnerCsPhone'],
+            'partnerCsUrl' => $row['partnerCsUrl'],
+            'reportEnable' => $row['reportEnable'],
+            'createdAt' => $row['createdAt'],
+            'abortedAt' => $row['abortedAt'],
+            'finishUv' => $row['finishUv'],
+        ];
         $sql = "INSERT INTO mm_bizform(`id`, `title`, `imgUrl`, `startAt`, `startTimeAt`, `endAt`, `endTimeAt`, `applyType`, `privacyScopeUse`, `flowType`, `completeType`, `status`, `runningStatus`, `editingPhase`, `channelUsed`, `channelProfileId`, `prizeAnnouncedDateAt`, `prizeAnnouncedTimeAt`, `partnerCsPhone`, `partnerCsUrl`, `reportEnable`, `createdAt`, `abortedAt`, `finishUv`, `create_time`)
-        VALUES('{$row['id']}', '{$row['title']}', '{$row['imgUrl']}', '{$row['startAt']}', '{$row['startTimeAt']}', '{$row['endAt']}', '{$row['endTimeAt']}', '{$row['applyType']}', '{$row['privacyScopeUse']}', '{$row['flowType']}', '{$row['completeType']}', '{$row['status']}', '{$row['runningStatus']}', '{$row['editingPhase']}', '{$row['channelUsed']}', '{$row['channelProfileId']}', '{$row['prizeAnnouncedDateAt']}', '{$row['prizeAnnouncedTimeAt']}', '{$row['partnerCsPhone']}', '{$row['partnerCsUrl']}', '{$row['reportEnable']}', '{$row['createdAt']}', '{$row['abortedAt']}', '{$row['finishUv']}', NOW())
+        VALUES(:id:, :title:, :imgUrl:, :startAt:, :startTimeAt:, :endAt:, :endTimeAt:, :applyType:, :privacyScopeUse:, :flowType:, :completeType:, :status:, :runningStatus:, :editingPhase:, :channelUsed:, :channelProfileId:, :prizeAnnouncedDateAt:, :prizeAnnouncedTimeAt:, :partnerCsPhone:, :partnerCsUrl:, :reportEnable:, :createdAt:, :abortedAt:, :finishUv:, NOW())
         ON DUPLICATE KEY
-        UPDATE `id` = '{$row['id']}', `title` = '{$row['title']}', `imgUrl` = '{$row['imgUrl']}', `startAt` = '{$row['startAt']}', `startTimeAt` = '{$row['startTimeAt']}', `endAt` = '{$row['endAt']}', `endTimeAt` = '{$row['endTimeAt']}', `applyType` = '{$row['applyType']}', `privacyScopeUse` = '{$row['privacyScopeUse']}', `flowType` = '{$row['flowType']}', `completeType` = '{$row['completeType']}', `status` = '{$row['status']}', `runningStatus` = '{$row['runningStatus']}', `editingPhase` = '{$row['editingPhase']}', `channelUsed` = '{$row['channelUsed']}', `channelProfileId` = '{$row['channelProfileId']}', `prizeAnnouncedDateAt` = '{$row['prizeAnnouncedDateAt']}', `prizeAnnouncedTimeAt` = '{$row['prizeAnnouncedTimeAt']}', `partnerCsPhone` = '{$row['partnerCsPhone']}', `partnerCsUrl` = '{$row['partnerCsUrl']}', `reportEnable` = '{$row['reportEnable']}', `createdAt` = '{$row['createdAt']}', `abortedAt` = '{$row['abortedAt']}', `finishUv` = '{$row['finishUv']}', `update_time` = NOW()";
-        if ($this->db_query($sql, true)) {
+        UPDATE `id` = :id:, `title` = :title:, `imgUrl` = :imgUrl:, `startAt` = :startAt:, `startTimeAt` = :startTimeAt:, `endAt` = :endAt:, `endTimeAt` = :endTimeAt:, `applyType` = :applyType:, `privacyScopeUse` = :privacyScopeUse:, `flowType` = :flowType:, `completeType` = :completeType:, `status` = :status:, `runningStatus` = :runningStatus:, `editingPhase` = :editingPhase:, `channelUsed` = :channelUsed:, `channelProfileId` = :channelProfileId:, `prizeAnnouncedDateAt` = :prizeAnnouncedDateAt:, `prizeAnnouncedTimeAt` = :prizeAnnouncedTimeAt:, `partnerCsPhone` = :partnerCsPhone:, `partnerCsUrl` = :partnerCsUrl:, `reportEnable` = :reportEnable:, `createdAt` = :createdAt:, `abortedAt` = :abortedAt:, `finishUv` = :finishUv:, `update_time` = NOW()";
+
+        $result = $this->db->query($sql, $data);
+        if ($result) {
             $this->updateBizFormItems($row['id'], $row['bizformItems']);
         }
     }

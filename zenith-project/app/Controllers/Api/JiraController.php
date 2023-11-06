@@ -36,33 +36,42 @@ class JiraController extends BaseController
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
-            log_message('info', print_r($param, true));
             if(!empty($param)){
-                $reporter = $param->issue->fields->reporter->displayName ?? '';
-                $projectName = $param->issue->fields->project->name ?? '';
-                $projectType = $param->issue->fields->project->key ?? '';
-                $projectSummary = $param->issue->fields->summary ?? '';
-                $issueKey = $param->issue->key ?? '';
+                $issueFields = $param->issue->fields ?? null;
                 $actionUser = $param->user->displayName ?? '';
-                $user = new UserModel();
-                $userData = $user->getUserByName($reporter);
+                if(!$issueFields) return $this->fail("잘못된 요청");;
+                $reporterName = $issueFields->reporter->displayName ?? '';
+                $projectName = $issueFields->project->name ?? '';
+                $projectKey = $issueFields->project->key ?? '';
+                $issueSummary = $issueFields->summary ?? '';
+                $issueKey = $param->issue->key ?? '';
+
+                $userModel = new UserModel();
+                $userData = $userModel->getUserByName($reporterName);
+                
+                if(!$userData) return $this->fail("잘못된 요청");;
+
                 $slack = new SlackChat();
-                $link = 'https://carelabs-dm.atlassian.net/jira/core/projects/'.$projectType.'/board?selectedIssue='.$issueKey.'';
-                $data = [
+                $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
+                
+                $slackMessage = [
                     'channel' => $slack->config['UserID'][$userData['nickname']],
                     'blocks' => [
                         [
                             'type' => 'section',
                             'text' => [
                                 'type' => 'mrkdwn',
-                                'text' => '['.$projectName.']['.$projectSummary.'] <'.$link.'|'.$issueKey.'> '.$actionUser.'님이 완료처리 하였습니다.',
+                                'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
                             ],
                             "block_id" => "text1"
                         ],
                     ],
                 ];
-                $result = $slack->sendMessage($data);
-                log_message('info', print_r($result, true));
+                
+                $slackResult = $slack->sendMessage($slackMessage);
+                log_message('info', print_r($slackResult, true));
+            }else{
+                return $this->fail("잘못된 요청");
             }
         }else{
             return $this->fail("잘못된 요청");

@@ -49,13 +49,13 @@ class AdLeadModel extends Model
     public function insertEventLeadFacebook($row)
     {
         $is_added = false;
-        $age = $row['age'] ?? 0;
-        $sql = "SELECT * FROM event_leads WHERE event_seq = '{$row['event_seq']}' AND site='{$row['site']}' AND name='{$row['name']}' AND gender='{$row['gender']}' AND age='{$row['age']}' AND phone=enc_data('{$row['phone']}') AND add1='{$row['add1']}' AND add2='{$row['add2']}' AND add3='{$row['add3']}' AND add4='{$row['add4']}' AND add5='{$row['add5']}' AND addr='{$row['addr']}' AND lead_id='{$row['id']}'";
+        $age = (integer)$row['age'] ?? (integer)0;
+        $sql = "SELECT * FROM event_leads WHERE event_seq = '{$row['event_seq']}' AND site='{$row['site']}' AND name='{$row['name']}' AND gender='{$row['gender']}' AND age='{$age}' AND phone=enc_data('{$row['phone']}') AND add1='{$row['add1']}' AND add2='{$row['add2']}' AND add3='{$row['add3']}' AND add4='{$row['add4']}' AND add5='{$row['add5']}' AND addr='{$row['addr']}' AND lead_id='{$row['id']}'";
         $result = $this->zenith->query($sql);
         $is_added = count($result->getResultArray());
         if (!$is_added) {
             $row['name'] = $this->zenith->escape($row['name']);
-            $sql = "INSERT INTO event_leads SET event_seq = '{$row['event_seq']}', site='{$row['site']}', name={$row['name']}, gender='{$row['gender']}', age='{$row['age']}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', is_deleted=0, lead_id='{$row['id']}', status=1";
+            $sql = "INSERT INTO event_leads SET event_seq = '{$row['event_seq']}', site='{$row['site']}', name={$row['name']}, gender='{$row['gender']}', age='{$age}', phone=ENC_DATA('{$row['phone']}'), add1='{$row['add1']}', add2='{$row['add2']}', add3='{$row['add3']}', add4='{$row['add4']}', add5='{$row['add5']}', addr='{$row['addr']}', reg_date='{$row['reg_date']}', is_deleted=0, lead_id='{$row['id']}', status=1";
             $result = $this->zenith->query($sql);
             if ($result) {
                 $sql = "UPDATE fb_ad_lead SET send_time=now() WHERE id='{$row['id']}'";
