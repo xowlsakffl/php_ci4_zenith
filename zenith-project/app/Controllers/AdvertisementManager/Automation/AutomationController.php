@@ -161,7 +161,7 @@ class AutomationController extends BaseController
 
     public function getAdv()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             switch ($arg['tab']) {

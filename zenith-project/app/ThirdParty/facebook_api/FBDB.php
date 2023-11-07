@@ -258,10 +258,9 @@ class FBDB extends Config
 
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : null;
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : null;
-            $name = $this->db->escape($report['name']);
             //          $name = addslashes($report['name']);
             $use_landing = 0;
-            if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $name)) {
+            if (preg_match('/\#[0-9\_]+.+\*[0-9]+.+\&[a-z]+.*/i', $report['name'])) {
                 $use_landing = 1;
             }
             $sql = "INSERT INTO fb_ad (
@@ -303,7 +302,7 @@ class FBDB extends Config
                     update_date = NOW()";
             $result = $this->db->query($sql, [
                 'ad_id' => $report['id'],
-                'name' => $name,
+                'name' => $report['name'],
                 'effective_status' => $report['effective_status'],
                 'status' => $report['status'],
                 'fb_pixel' => $report['fb_pixel'] ?? '',
@@ -357,7 +356,6 @@ class FBDB extends Config
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : NULL;
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : NULL;
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : NULL;
-            $name = $this->db->escape(addslashes($report['name']));
             if (isset($report['lifetime_budget'])) {
                 $budget_type = 'lifetime';
                 $budget = (integer)$report['lifetime_budget'];
@@ -428,7 +426,7 @@ class FBDB extends Config
 						update_date = NOW()";
             $result = $this->db->query($sql, [
                 'adset_id' => $report['id'],
-                'name' => $name,
+                'name' => $report['name'],
                 'campaign_id' => $report['campaign_id'],
                 'effective_status' => $report['effective_status'],
                 'status' => $report['status'],
@@ -484,7 +482,6 @@ class FBDB extends Config
             $start_time = $report['start_time'] && $report['start_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['start_time'])) : NULL;
             $created_time = $report['created_time'] && $report['created_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['created_time'])) : NULL;
             $updated_time = $report['updated_time'] && $report['updated_time'] != '1970-01-01T08:59:59+0900' ? date('Y-m-d H:i:s', strtotime($report['updated_time'])) : NULL;
-            $name = $this->db->escape($report['name']);
             $can_use_spend_cap = $report['can_use_spend_cap'] ? $report['can_use_spend_cap'] : '0';
             $budget_rebalance_flag = $report['budget_rebalance_flag'] ? $report['budget_rebalance_flag'] : '0';
             $spend_cap = isset($report['spend_cap']) ? (integer)$report['spend_cap'] : NULL;
@@ -552,7 +549,7 @@ class FBDB extends Config
 						update_date = NOW()";
             $result = $this->db->query($sql, [
                 'campaign_id' => $report['id'],
-                'name' => $name,
+                'name' => $report['name'],
                 'account_id' => $report['account_id'],
                 'effective_status' => $report['effective_status'],
                 'status' => $report['status'],
