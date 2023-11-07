@@ -174,6 +174,12 @@ class AutomationModel extends Model
                 }
             }
         }
+        if(!empty($data['stx'])){
+            $facebookBuilder->groupStart();
+            $facebookBuilder->like('A.campaign_name', $data['stx']);
+            $facebookBuilder->orLike('A.campaign_id', $data['stx']);
+            $facebookBuilder->groupEnd();
+        }
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_campaign A');
         $googleBuilder->select('A.id, "구글" AS media, "캠페인" AS type, A.name, A.status');
@@ -198,6 +204,12 @@ class AutomationModel extends Model
                     $googleBuilder->where('1 = 2');
                 }
             }
+        }
+        if(!empty($data['stx'])){
+            $googleBuilder->groupStart();
+            $googleBuilder->like('A.name', $data['stx']);
+            $googleBuilder->orLike('A.id', $data['stx']);
+            $googleBuilder->groupEnd();
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign A');
@@ -225,16 +237,15 @@ class AutomationModel extends Model
             }
         }
 
+        if(!empty($data['stx'])){
+            $kakaoBuilder->groupStart();
+            $kakaoBuilder->like('A.name', $data['stx']);
+            $kakaoBuilder->orLike('A.id', $data['stx']);
+            $kakaoBuilder->groupEnd();
+        }
+
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
-
-        if(!empty($data['stx'])){
-            $resultQuery->groupStart();
-            $resultQuery->like('adv.name', $data['stx']);
-            $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
-            $resultQuery->groupEnd();
-        }
 
         $resultQuery->groupBy('adv.id');
 
@@ -286,6 +297,13 @@ class AutomationModel extends Model
             }
         }
 
+        if(!empty($data['stx'])){
+            $facebookBuilder->groupStart();
+            $facebookBuilder->like('A.adset_name', $data['stx']);
+            $facebookBuilder->orLike('A.adset_id', $data['stx']);
+            $facebookBuilder->groupEnd();
+        }
+
         $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup A');
         $googleBuilder->select('A.id, "구글" AS media, "광고그룹" AS type, A.name, A.status');
         if(!empty($data['adv'])){ 
@@ -310,6 +328,13 @@ class AutomationModel extends Model
                     $googleBuilder->where('1 = 2');
                 }
             }
+        }
+
+        if(!empty($data['stx'])){
+            $googleBuilder->groupStart();
+            $googleBuilder->like('A.name', $data['stx']);
+            $googleBuilder->orLike('A.id', $data['stx']);
+            $googleBuilder->groupEnd();
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup A');
@@ -338,16 +363,16 @@ class AutomationModel extends Model
             }
         }
 
+        if(!empty($data['stx'])){
+            $kakaoBuilder->groupStart();
+            $kakaoBuilder->like('A.name', $data['stx']);
+            $kakaoBuilder->orLike('A.id', $data['stx']);
+            $kakaoBuilder->groupEnd();
+        }
+
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
 
-        if(!empty($data['stx'])){
-            $resultQuery->groupStart();
-            $resultQuery->like('adv.name', $data['stx']);
-            $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
-            $resultQuery->groupEnd();
-        }
         $resultQuery->groupBy('adv.id');
 
         if(!empty($seq)){
@@ -399,6 +424,13 @@ class AutomationModel extends Model
             }
         }
 
+        if(!empty($data['stx'])){
+            $facebookBuilder->groupStart();
+            $facebookBuilder->like('A.ad_name', $data['stx']);
+            $facebookBuilder->orLike('A.ad_id', $data['stx']);
+            $facebookBuilder->groupEnd();
+        }
+
         $googleBuilder = $this->zenith->table('z_adwords.aw_ad A');
         $googleBuilder->select('A.id, "구글" AS media, "광고" AS type, A.name, A.status');
         if(!empty($data['adv'])){ 
@@ -424,6 +456,13 @@ class AutomationModel extends Model
                     $googleBuilder->where('1 = 2');
                 }
             }
+        }
+
+        if(!empty($data['stx'])){
+            $googleBuilder->groupStart();
+            $googleBuilder->like('A.name', $data['stx']);
+            $googleBuilder->orLike('A.id', $data['stx']);
+            $googleBuilder->groupEnd();
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_creative A');
@@ -453,16 +492,16 @@ class AutomationModel extends Model
             }
         }
 
+        if(!empty($data['stx'])){
+            $kakaoBuilder->groupStart();
+            $kakaoBuilder->like('A.name', $data['stx']);
+            $kakaoBuilder->orLike('A.id', $data['stx']);
+            $kakaoBuilder->groupEnd();
+        }
+
         $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
         $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
 
-        if(!empty($data['stx'])){
-            $resultQuery->groupStart();
-            $resultQuery->like('adv.name', $data['stx']);
-            $resultQuery->orLike('adv.id', $data['stx']);
-            $resultQuery->orLike('adv.media', $data['stx']);
-            $resultQuery->groupEnd();
-        }
         $resultQuery->groupBy('adv.id');
 
         if(!empty($seq)){

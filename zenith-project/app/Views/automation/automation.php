@@ -419,13 +419,14 @@
                                     <tr>
                                         <td>
                                             <div class="form-flex">
+                                                <input type="text" name="exec_condition_order" placeholder="순서(1~)" class="form-control execConditionOrder" oninput="onlyNumber(this);" maxlength="3">
                                                 <select name="exec_condition_type" class="form-select" id="execConditionType">
                                                     <option value="">실행항목</option>
                                                     <option value="status">상태</option>
                                                     <option value="budget">예산</option>
                                                 </select>
                                                 <select name="exec_condition_value_status" class="form-select" style="display: none;" id="execConditionValueStatus">
-                                                    <option value="">상태</option>
+                                                    <option value="">상태값 선택</option>
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
                                                 </select>
@@ -438,17 +439,18 @@
                             </table>
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <colgroup>
+                                    <col style="width:4%">
                                     <col style="width:10%">
                                     <col style="width:10%">
-                                    <col style="width:25%">
-                                    <col style="width:25%">
+                                    <col style="width:24%">
+                                    <col style="width:22%">
                                     <col style="width:10%">
                                     <col style="width:10%">
                                     <col style="width:10%">
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="8"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1280,7 +1282,7 @@ function setModalData(data){
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
             var execIndex = index+1;
-            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td>' + execution.media + '</td><td>'
+            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td>' + execution.order + '</td><td>' + execution.media + '</td><td>'
                 + execution.type  +'</td><td>'
                 + execution.id  +'</td><td>'
                 + execution.name  +'</td><td>'
@@ -1394,15 +1396,15 @@ function setProcData(){
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
-        //let order = $row.find('td:eq(0)').text();
-        let media = $row.find('td:eq(0)').text();
-        let type = $row.find('td:eq(1)').text();
-        let id = $row.find('td:eq(2)').text();
-        let exec_type = $row.find('td:eq(5)').text();
-        let exec_value = $row.find('td:eq(6)').text();
+        let order = $row.find('td:eq(0)').text();
+        let media = $row.find('td:eq(1)').text();
+        let type = $row.find('td:eq(2)').text();
+        let id = $row.find('td:eq(3)').text();
+        let exec_type = $row.find('td:eq(6)').text();
+        let exec_value = $row.find('td:eq(7)').text();
 
         $executions.push({
-            //order: order,
+            order: order,
             media: media,
             type: type,
             id: id,
@@ -1657,34 +1659,43 @@ $('body').on('click', '#execConditionBtn', function() {
     }else{
         if ($('#execSelectTable tbody tr[data-id="' + trId + '"]').length == 0) {
             var cloneRow = $('#execTable tbody tr.selected').clone();
+            var execConditionOrder = $('#execConditionTable input[name=exec_condition_order]').val();
             var execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
             var execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
             var execConditionValue = '';
-            if(execConditionType != ''){
-                if(execConditionType == 'status'){
-                    execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
+            if(execConditionOrder != ''){
+                if(execConditionType != ''){
+                    if(execConditionType == 'status'){
+                        execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
+                    }else{
+                        execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
+                    }
+
+                    if(execConditionValue != ''){
+                        var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
+
+                        cloneRow.prepend('<td>'+execConditionOrder+'</td>');
+                        cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
+
+                        var selectedMediaTd = tr.children('td').eq(0).text();
+                        var selectedTypeTd = tr.children('td').eq(1).text();
+                        var selectedNameTd = tr.children('td').eq(3).text();
+                        var selectedStatusTd = tr.children('td').eq(4).text();
+
+                        var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
+                        $('#preactice-tab').append(newExecText);
+                    }else{
+                        alert("세부항목을 선택해주세요.");
+                        execConditionValue.focus();
+                    }
                 }else{
-                    execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
-                }
-
-                if(execConditionValue != ''){
-                    var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
-
-                    cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
-
-                    var selectedMediaTd = tr.children('td').eq(0).text();
-                    var selectedTypeTd = tr.children('td').eq(1).text();
-                    var selectedNameTd = tr.children('td').eq(3).text();
-                    var selectedStatusTd = tr.children('td').eq(4).text();
-
-                    var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
-                    $('#preactice-tab').append(newExecText);
-                }else{
-                    alert("세부항목을 선택해주세요.");
-                }
+                    alert("실행항목을 선택해주세요.");
+                    $('#execConditionTable select[name=exec_condition_type]').focus();
+                } 
             }else{
-                alert("실행항목을 선택해주세요.");
-            } 
+                alert("순서를 입력해주세요.");
+                $('#execConditionTable input[name=exec_condition_order]').focus();
+            }
         } else {
             alert("중복된 항목은 추가할 수 없습니다.");
         }

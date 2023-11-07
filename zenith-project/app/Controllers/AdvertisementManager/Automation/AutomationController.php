@@ -161,7 +161,7 @@ class AutomationController extends BaseController
 
     public function getAdv()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             switch ($arg['tab']) {
@@ -523,10 +523,12 @@ class AutomationController extends BaseController
         }else{
             foreach ($data['execution'] as $execution) {
                 $validationRules      = [
+                    'order' => 'required',
                     'exec_type' => 'required',
                     'exec_value' => 'required',
                 ];
                 $validationMessages   = [
+                    'order' => ['required' => '순서는 필수 항목입니다.'],
                     'exec_type' => ['required' => '실행항목은 필수 항목입니다.'],
                     'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
                 ];
@@ -575,6 +577,7 @@ class AutomationController extends BaseController
                 if(!empty($automation['aat_idx'])){
                     $targetData = $this->getAutomationTarget($seq);
                     $result['target'] = $targetData;
+                    d($targetData);
                     if($targetData['result'] == false){
                         $logIdx = $this->recordResult($targetData);
                         $this->recordLog($result, $logIdx);
