@@ -31,9 +31,7 @@ class GoogleAds extends BaseController
         $this->chainsaw->getAll();
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트 완료", "yellow");
     }
-    public function getAds() {
-        $this->chainsaw->getAds('4560872762', '6834341452', '147497830517', '2023-08-22');
-    }
+
     public function updateDB($sdate = null, $edate = null) {
         CLI::clearScreen();
         if($sdate == null)
@@ -49,5 +47,13 @@ class GoogleAds extends BaseController
             CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
             $this->chainsaw->getAdsUseLanding($date);
         }
+    }
+
+    public function getCampaign() {
+        $this->chainsaw->getCampaigns('7523804427', '7434864984', '20695798062');
+    }
+
+    public function getAds() {
+        $this->chainsaw->getAds('4560872762', '6834341452', '147497830517', '2023-08-22');
     }
 }

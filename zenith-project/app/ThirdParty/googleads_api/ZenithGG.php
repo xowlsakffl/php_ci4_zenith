@@ -832,7 +832,7 @@ class ZenithGG
     public function landingGroup($title)
     {
         if (empty($title)) return [];
-        preg_match_all('/^.*?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);
+        preg_match_all('/^.*?\#([0-9]+)?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches);   
         if (empty($matches[9][0])) {    // site underscore exception
             preg_match_all('/\#([0-9]+)?(\_([0-9]+))?(\_([0-9]+))?([\s]+)?(\*([0-9]+)?)?([\s]+)?(\&([a-z]+))?([\s]+)?(\^([0-9]+))?/i', $title, $matches_re);
             $matches[9][0] = $matches_re[11][0] ?? '';
@@ -893,14 +893,14 @@ class ZenithGG
             $error = [];
             CLI::showProgress($step++, $total);
 
-            if (!empty($row['code'])) {
-                $title = trim($row['code']);
-            } elseif (!empty($row['ad_name']) && strpos($row['ad_name'], '#') !== false) {
-                $title = $row['ad_name'];
-            } elseif (!empty($row['campaign_name']) && !empty($row['finalUrl'])) {
-                $title = $row['campaign_name'] . '||' . $row['finalUrl'];
-            } else {
-                $title = '';
+            if (isset($row['code']) && trim($row['code'])) {
+                $title = $row['code'];
+            }else{
+                if (isset($row['campaign_name']) && isset($row['finalUrl'])) {
+                    $title = $row['campaign_name'] . '||' . $row['finalUrl'];
+                } else {
+                    $title = ""; // default value in case all conditions fail
+                }
             }
 
             // CLI::write("[".date('[H:i:s]') ."] 광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}");
@@ -955,8 +955,9 @@ class ZenithGG
             if(!isset($data['event_seq']) && isset($data['media'])) {
                 foreach($sp_data as $hour => $spend) {
                     $margin = 0;
-                    if($data['period_ad']){
-                        $margin = $spend * ('0.' . $data['period_ad']);
+                    if($data['period_ad']) {
+                        $period_ad = is_numeric($data['period_ad']) ? $data['period_ad'] : 0;
+                        $margin = $spend * ('0.' . $period_ad);
                     }
                     $data['data'][] = ['hour' => $hour,'spend' => $spend,'count' => "",'sales' => "",'margin' => $margin];
                 }
@@ -985,18 +986,22 @@ class ZenithGG
             $_spend = $_count = $_sales = $_margin = 0;
             for($i=0; $i<=23; $i++) { //DB수량이 없어도 지출금액이 갱신되어야하기 때문에 0~23시까지 모두 저장
                 $hour = $i;
-                $spend = $sp_data[$i]??0;
-                $count = $lead[$i]['db_count']??0;
-                $sales = $lead[$i]['sales']??0;
+                $spend = $sp_data[$i] ?? 0;
+                $count = $lead[$i]['db_count'] ?? 0;
+                $sales = $lead[$i]['sales'] ?? 0;
                 $margin = $sales - $spend;
                 if($initZero) $margin = $sales = 0;
                 if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
-                if($data['period_ad']) $margin = $spend * ('0.' . $data['period_ad']);
+                if($data['period_ad']) {
+                    $period_ad = is_numeric($data['period_ad']) ? $data['period_ad'] : 0;
+                    $margin = $spend * ('0.' . $period_ad);
+                }
                 $_spend += $spend;
                 $_count += $count;
                 $_sales += $sales;
                 $_margin += $margin;
             }
+            
             $data['data'][] = [
                 'hour' => 0
                 ,'spend' => $_spend

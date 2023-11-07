@@ -492,7 +492,7 @@ class GADB
 						'date' => $row['date'],
 						'hour' => $v['hour'],
 						'media' => $row['media'],
-						'period' => $row['period_ad'],
+						'period' => is_numeric($row['period_ad']) ? $row['period_ad'] : 0,
 						'event_seq' => $row['event_seq'],
 						'site' => $row['site'],
 						'db_price' => $row['db_price'],
