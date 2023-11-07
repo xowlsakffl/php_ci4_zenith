@@ -30,47 +30,76 @@ class GADB
 		return call_user_func_array([$this, $method], $data);
 	}
 
-	private function updateAccount($data, $is_hidden = 0)
+	public function updateAccount($data, $is_hidden = 0)
 	{ //1 숨김, 0 활성화
 		$is_update = 0;
 		if ($is_hidden == '0') {
 			$is_update = 1; //1 업데이트, 0 제외
 		}
+
 		if(!isset($data['customerId'])) return;
-		$data['Name'] = isset($data['Name']) ? $this->db->escape($data['Name']) : "";
 		$sql = "INSERT INTO aw_ad_account (
-					customerId, 
-					manageCustomer, 
-					name, 
-					status, 
-					canManageClients, 
-					currencyCode, 
-					dateTimeZone, 
-					testAccount, 
-					is_hidden, 
-					create_time)
-                VALUES (
-					{$data['customerId']}, 
-					{$data['manageCustomer']}, 
-					{$data['name']}, 
-					{$data['status']}, 
-					{$data['canManageClients']}, 
-					{$data['currencyCode']}, 
-					{$data['dateTimeZone']}, 
-					{$data['testAccount']}, 
-					{$data['is_hidden']}, 
-					NOW()
-				) ON DUPLICATE KEY
-                UPDATE customerId = {$data['customerId']}, manageCustomer = {$data['manageCustomer']}, is_update = {$is_update}, name = {$data['name']}, status = {$data['status']},  canManageClients = {$data['canManageClients']}, currencyCode = {$data['currencyCode']}, dateTimeZone = {$data['dateTimeZone']}, testAccount = {$data['testAccount']}, is_hidden = {$data['is_hidden']}, update_time=NOW();";
-		//echo $sql .'<br>';
-		$result = $this->db_query($sql, true);
+			customerId, 
+			manageCustomer, 
+			name, 
+			status, 
+			canManageClients, 
+			currencyCode, 
+			dateTimeZone, 
+			testAccount, 
+			is_hidden, 
+			create_time)
+		VALUES (
+			:customerId:, 
+			:manageCustomer:, 
+			:name:, 
+			:status:, 
+			:canManageClients:, 
+			:currencyCode:, 
+			:dateTimeZone:, 
+			:testAccount:, 
+			:is_hidden:, 
+			NOW()
+		) ON DUPLICATE KEY
+			UPDATE customerId = :customerId:,
+			manageCustomer = :manageCustomer:, 
+			is_update = :is_update:,
+			name = :name:,
+			status = :status:, 
+			canManageClients = :canManageClients:, 
+			currencyCode = :currencyCode:, 
+			dateTimeZone = :dateTimeZone:, 
+			testAccount = :testAccount:, 
+			is_hidden = :is_hidden:, 
+			update_time = NOW();";
+
+		$params = [
+			'customerId' => $data['customerId'],
+			'manageCustomer' => $data['manageCustomer'],
+			'name' => $data['name'],
+			'status' => $data['status'],
+			'canManageClients' => (integer)$data['canManageClients'],
+			'currencyCode' => $data['currencyCode'],
+			'dateTimeZone' => $data['dateTimeZone'],
+			'testAccount' => (integer)$data['testAccount'],
+			'is_hidden' => (integer)$data['is_hidden'],
+			'is_update' => (integer)$is_update
+		];
+		$result = $this->db->query($sql, $params);
 		return $result;
 	}
 
-	private function modifyAccountBudget($data)
+	public function modifyAccountBudget($data)
 	{
-		$sql = "UPDATE aw_ad_account SET amountSpendingLimit = {$data['amountSpendingLimit']}, amountServed = {$data['amountServed']}  WHERE customerId = {$data['customerId']}";
-		$result = $this->db_query($sql, true);
+		$sql = "UPDATE aw_ad_account SET amountSpendingLimit = :amountSpendingLimit:, amountServed = :amountServed:  WHERE customerId = :customerId:";
+
+		$params = [
+			'amountSpendingLimit' => $data['amountSpendingLimit'],
+			'amountServed' => $data['amountServed'],
+			'customerId' => $data['customerId']
+		];
+
+		$result = $this->db->query($sql, $params);
 		return $result;
 	}
 
@@ -96,47 +125,66 @@ class GADB
 		return $result;
 	}
 
-	private function updateCampaign($data = null)
+	public function updateCampaign($data = null)
 	{
 		if (is_null($data)) return false;
 		//print_r($data);exit;
 		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, create_time)
 				VALUES(
-					{$data['customerId']},
-					{$data['id']},
-					{$data['name']}, 
-					{$data['status']},
-					{$data['servingStatus']},
-					{$data['startDate']},
-					{$data['endDate']},
-					{$data['budgetId']},
-					{$data['budgetName']},
-					{$data['budgetReferenceCount']},
-					{$data['budgetStatus']},
-					{$data['budgetAmount']},
-					{$data['budgetDeliveryMethod']},
-					{$data['advertisingChannelType']},
-					{$data['advertisingChannelSubType']},
-					{$data['adServingOptimizationStatus']}, NOW())
+					:customerId:,
+					:id:,
+					:name:, 
+					:status:,
+					:servingStatus:,
+					:startDate:,
+					:endDate:,
+					:budgetId:,
+					:budgetName:,
+					:budgetReferenceCount:,
+					:budgetStatus:,
+					:budgetAmount:,
+					:budgetDeliveryMethod:,
+					:advertisingChannelType:,
+					:advertisingChannelSubType:,
+					:adServingOptimizationStatus:, NOW())
 				ON DUPLICATE KEY UPDATE
-					name = {$data['name']},
-					status = {$data['status']},
-					servingStatus = {$data['servingStatus']},
-					startDate = {$data['startDate']},
-					endDate = {$data['endDate']},
-					budgetId = {$data['budgetId']},
-					budgetName = {$data['budgetName']},
-					budgetReferenceCount = {$data['budgetReferenceCount']},
-					budgetStatus = {$data['budgetStatus']},
-					amount = {$data['budgetAmount']},
-					deliveryMethod = {$data['budgetDeliveryMethod']},
-					advertisingChannelType = {$data['advertisingChannelType']},
-					advertisingChannelSubType = {$data['advertisingChannelSubType']},
-					AdServingOptimizationStatus = {$data['adServingOptimizationStatus']},
+					name = :name:,
+					status = :status:,
+					servingStatus = :servingStatus:,
+					startDate = :startDate:,
+					endDate = :endDate:,
+					budgetId = :budgetId:,
+					budgetName = :budgetName:,
+					budgetReferenceCount = :budgetReferenceCount:,
+					budgetStatus = :budgetStatus:,
+					amount = :budgetAmount:,
+					deliveryMethod = :budgetDeliveryMethod:,
+					advertisingChannelType = :advertisingChannelType:,
+					advertisingChannelSubType = :advertisingChannelSubType:,
+					AdServingOptimizationStatus = :adServingOptimizationStatus:,
 					is_updating = 0,
 					update_time = NOW()";
-		//echo $sql .'<br>'; exit;
-		$result = $this->db_query($sql, true);
+
+		$params = [
+			'customerId' => $data['customerId'],
+			'id' => $data['id'],
+			'name' => $data['name'],
+			'status' => $data['status'],
+			'servingStatus' => $data['servingStatus'],
+			'startDate' => $data['startDate'],
+			'endDate' => $data['endDate'],
+			'budgetId' => $data['budgetId'],
+			'budgetName' => $data['budgetName'],
+			'budgetReferenceCount' => $data['budgetReferenceCount'],
+			'budgetStatus' => $data['budgetStatus'],
+			'budgetAmount' => $data['budgetAmount'],
+			'budgetDeliveryMethod' => $data['budgetDeliveryMethod'],
+			'advertisingChannelType' => $data['advertisingChannelType'],
+			'advertisingChannelSubType' => $data['advertisingChannelSubType'],
+			'adServingOptimizationStatus' => $data['adServingOptimizationStatus']
+		];
+
+		$result = $this->db->query($sql, $params);
 
 		return $result;
 	}
@@ -166,7 +214,7 @@ class GADB
 		return $result;
 	}
 
-	private function getAdGroupIdByAd($id)
+	public function getAdGroupIdByAd($id)
 	{
 		if (is_null($id)) return false;
 
@@ -175,43 +223,55 @@ class GADB
 
 		return $result;
 	}
-	private function updateAdGroup($data = null)
+	public function updateAdGroup($data = null)
 	{
 		if (is_null($data)) return false;
 
 		$sql = "INSERT INTO aw_adgroup(campaignId, id, name, status, adGroupType, biddingStrategyType, cpcBidAmount, cpcBidSource, cpmBidAmount, cpmBidSource, cpaBidAmount, cpaBidSource, create_time)
 				VALUES(
-					{$data['campaignId']}, 
-					{$data['id']}, 
-					{$data['name']}, 
-					{$data['status']}, 
-					{$data['adGroupType']}, 
-					{$data['biddingStrategyType']}, 
-					{$data['cpcBidAmount']}, 
-					{$data['cpcBidSource']}, 
-					{$data['cpmBidAmount']}, 
-					{$data['cpmBidSource']}, 
+					:campaignId:, 
+					:id:, 
+					:name:, 
+					:status:, 
+					:adGroupType:, 
+					:biddingStrategyType:, 
+					:cpcBidAmount:, 
+					:cpcBidSource:, 
+					:cpmBidAmount:, 
+					:cpmBidSource:, 
 					0, 
 					'', NOW())
 				ON DUPLICATE KEY UPDATE
-					name = {$data['name']},
-					status = {$data['status']},
-					adGroupType = {$data['adGroupType']},
-					biddingStrategyType = {$data['biddingStrategyType']},
-					cpcBidAmount = {$data['cpcBidAmount']},
-					cpcBidSource = {$data['cpcBidSource']},
-					cpmBidAmount = {$data['cpmBidAmount']},
-					cpmBidSource = {$data['cpmBidSource']},
+					name = :name:,
+					status = :status:,
+					adGroupType = :adGroupType:,
+					biddingStrategyType = :biddingStrategyType:,
+					cpcBidAmount = :cpcBidAmount:,
+					cpcBidSource = :cpcBidSource:,
+					cpmBidAmount = :cpmBidAmount:,
+					cpmBidSource = :cpmBidSource:,
 					cpaBidAmount = 0,
 					cpaBidSource = '',
 					update_time = NOW()";
-		//echo $sql .'<br>'; exit;
-		$result = $this->db_query($sql, true);
+		$params = [
+			'campaignId' => $data['campaignId'],
+			'id' => $data['id'],
+			'name' => $data['name'],
+			'status' => $data['status'],
+			'adGroupType' => $data['adGroupType'],
+			'biddingStrategyType' => $data['biddingStrategyType'],
+			'cpcBidAmount' => $data['cpcBidAmount'],
+			'cpcBidSource' => $data['cpcBidSource'],
+			'cpmBidAmount' => $data['cpmBidAmount'],
+			'cpmBidSource' => $data['cpmBidSource']
+		];
+		
+		$result = $this->db->query($sql, $params);
 
 		return $result;
 	}
 
-	private function updateAdgroupField($data = null)
+	public function updateAdgroupField($data = null)
 	{
 		if (is_null($data)) return false;
 
@@ -230,65 +290,87 @@ class GADB
 		return $result;
 	}
 
-	private function updateAd($data = null)
+	public function updateAd($data = null)
 	{
 		if (is_null($data)) return false;
 
 		$sql = "INSERT INTO aw_ad(adgroupId, id, name, status, reviewStatus, approvalStatus, policyTopic, code, adType, mediaType, assets, imageUrl, finalUrl, create_time)
 				VALUES(
-					{$data['adgroupId']}, 
-					{$data['id']}, 
-					{$data['name']}, 
-					{$data['status']}, 
-					{$data['reviewStatus']}, 
-					{$data['approvalStatus']}, 
-					{$data['policyTopic']}, 
-					{$data['code']}, 
-					{$data['adType']}, 
-					{$data['mediaType']}, 
-					{$data['assets']}, 
-					{$data['imageUrl']}, 
-					{$data['finalUrl']}, 
+					:adgroupId:, 
+					:id:, 
+					:name:, 
+					:status:, 
+					:reviewStatus:, 
+					:approvalStatus:, 
+					:policyTopic:, 
+					:code:, 
+					:adType:, 
+					:mediaType:, 
+					:assets:, 
+					:imageUrl:, 
+					:finalUrl:, 
 					NOW()
 				)
 				ON DUPLICATE KEY UPDATE
-					name = {$data['name']},
-					status = {$data['status']},
-					reviewStatus = {$data['reviewStatus']},
-					approvalStatus = {$data['approvalStatus']},
-					policyTopic = {$data['policyTopic']},
-					adType = {$data['adType']},
-					mediaType = {$data['mediaType']},
-					assets = {$data['assets']},
-					imageUrl = {$data['imageUrl']},
-					finalUrl = {$data['finalUrl']},
+					name = :name:,
+					status = :status:,
+					reviewStatus = :reviewStatus:,
+					approvalStatus = :approvalStatus:,
+					policyTopic = :policyTopic:,
+					adType = :adType:,
+					mediaType = :mediaType:,
+					assets = :assets:,
+					imageUrl = :imageUrl:,
+					finalUrl = :finalUrl:,
 					update_time = NOW()";
-		//echo $sql .'<br>'; exit;
-		if ($result = $this->db_query($sql, true)) {
+		$params = [
+			'adgroupId' => $data['adgroupId'],
+			'id' => $data['id'],
+			'name' => $data['name'],
+			'status' => $data['status'],
+			'reviewStatus' => $data['reviewStatus'],
+			'approvalStatus' => $data['approvalStatus'],
+			'policyTopic' => $data['policyTopic'],
+			'code' => $data['code'],
+			'adType' => $data['adType'],
+			'mediaType' => $data['mediaType'],
+			'assets' => $data['assets'],
+			'imageUrl' => $data['imageUrl'],
+			'finalUrl' => $data['finalUrl']
+		];
+		if ($result = $this->db->query($sql, $params)) {
 			if ($data['impressions']) {
 				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
-							VALUES(
-								{$data['id']}, 
-								{$data['date']}, 
-								0,
-								{$data['impressions']}, 
-								{$data['clicks']}, 
-								{$data['cost']},
-								 NOW()
-							)
-							ON DUPLICATE KEY UPDATE
-								impressions = {$data['impressions']},
-								clicks = {$data['clicks']},
-								cost = {$data['cost']},
-								update_time = NOW()";
-				$this->db_query($sql, true);
+                VALUES(
+                    :id:, 
+                    :date:, 
+                    0,
+                    :impressions:, 
+                    :clicks:, 
+                    :cost:,
+                     NOW()
+                )
+                ON DUPLICATE KEY UPDATE
+                    impressions = :impressions:,
+                    clicks = :clicks:,
+                    cost = :cost:,
+                    update_time = NOW()";
+				$params = [
+					'id' => $data['id'],
+					'date' => $data['date'],
+					'impressions' => (integer)$data['impressions'],
+					'clicks' => (integer)$data['clicks'],
+					'cost' => (integer)$data['cost']
+				];
+		
+				$this->db->query($sql, $params);
 			}
 		}
 
 		return $result;
 	}
 
-	private function updateAdField($data = null)
+	public function updateAdField($data = null)
 	{
 		if (is_null($data)) return false;
 
