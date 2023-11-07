@@ -275,17 +275,20 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "UPDATE aw_adgroup SET";
+		$builder = $this->db->table('aw_adgroup');
+
+		$updateData = [];
+
 		if (isset($data['name'])) {
-			$sql .= " name = {$data['name']}";
+			$updateData['name'] = $data['name'];
 		}
 		if (isset($data['status'])) {
-			$sql .= isset($data['name']) ? "," : "";
-			$sql .= " status = {$data['status']}";
+			$updateData['status'] = $data['status'];
 		}
-		$sql .= " WHERE id = {$data['id']}";
 
-		$result = $this->db_query($sql, true);
+		$builder->set($updateData);
+		$builder->where('id', $data['id']);
+		$result = $builder->update();
 
 		return $result;
 	}
@@ -374,17 +377,20 @@ class GADB
 	{
 		if (is_null($data)) return false;
 
-		$sql = "UPDATE aw_ad SET";
+		$builder = $this->db->table('aw_ad');
+
+		$updateData = [];
+
 		if (isset($data['name'])) {
-			$sql .= " name = {$data['name']}";
+			$updateData['name'] = $data['name'];
 		}
 		if (isset($data['status'])) {
-			$sql .= isset($data['name']) ? "," : "";
-			$sql .= " status = {$data['status']}";
+			$updateData['status'] = $data['status'];
 		}
-		$sql .= " WHERE id = {$data['id']}";
 
-		$result = $this->db_query($sql, true);
+		$builder->set($updateData);
+		$builder->where('id', $data['id']);
+		$result = $builder->update();
 
 		return $result;
 	}

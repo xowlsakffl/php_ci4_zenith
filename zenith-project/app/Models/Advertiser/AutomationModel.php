@@ -571,6 +571,11 @@ class AutomationModel extends Model
 
     public function getAutomations()
     {
+        $subQueryBuilder = $this->zenith->table('aa_result aar');
+        $subQueryBuilder->select('aar.idx, aar.result, MAX(aar.exec_timestamp) as aar_exec_timestamp');
+        $subQueryBuilder->where('aar.result', 'success');
+        $subQueryBuilder->groupBy('aar.idx');
+        
         $builder = $this->zenith->table('admanager_automation aa');
         $builder->select('
         aa.seq as aa_seq, 
@@ -585,15 +590,15 @@ class AutomationModel extends Model
         aas.month_day as aas_month_day, 
         aas.month_week as aas_month_week, 
         aas.reg_datetime as aas_reg_datetime, 
-        aar.exec_timestamp as aar_exec_timestamp,
+        aat.idx as aat_idx,
+        aar_sub.aar_exec_timestamp as aar_exec_timestamp,
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
-        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
+        $builder->join("({$subQueryBuilder->getCompiledSelect()}) aar_sub", 'aar_sub.idx = aa.seq', 'left');
         $builder->where('aa.status', 1);
-        //가장 최근 날짜 reg_datetime
         $builder->groupBy('aa.seq');
         $result = $builder->get()->getResultArray();
-
         return $result;
     }
 

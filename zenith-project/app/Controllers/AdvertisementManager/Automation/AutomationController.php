@@ -571,25 +571,27 @@ class AutomationController extends BaseController
                 continue;
             }else{
                 $seq = $schedulePassData['seq'];
-                $targetData = $this->getAutomationTarget($seq);
-                $result['target'] = $targetData;
-                if($targetData['result'] == false){
-                    $logIdx = $this->recordResult($targetData);
-                    $this->recordLog($result, $logIdx);
-                    continue;
-                }
-                
-                if($targetData['result'] == true && !empty($targetData['target'])){
-                    $conditionPassData = $this->checkAutomationCondition($targetData);
-                    $result['conditions'] = $conditionPassData;
-                    if($conditionPassData['result'] == false){
-                        $logIdx = $this->recordResult($conditionPassData);
+                //대상 있을 시
+                if(!empty($automation['aat_idx'])){
+                    $targetData = $this->getAutomationTarget($seq);
+                    $result['target'] = $targetData;
+                    if($targetData['result'] == false){
+                        $logIdx = $this->recordResult($targetData);
                         $this->recordLog($result, $logIdx);
                         continue;
                     }
-                    $seq = $conditionPassData['seq'];
+                    
+                    if($targetData['result'] == true && !empty($targetData['target'])){
+                        $conditionPassData = $this->checkAutomationCondition($targetData);
+                        $result['conditions'] = $conditionPassData;
+                        if($conditionPassData['result'] == false){
+                            $logIdx = $this->recordResult($conditionPassData);
+                            $this->recordLog($result, $logIdx);
+                            continue;
+                        }
+                        $seq = $conditionPassData['seq'];
+                    }
                 }
-
                 $executionData = $this->automationExecution($seq);
                 $logIdx = $this->recordResult($executionData['result']);
                 $result['executions'] = $executionData['log'];
@@ -600,10 +602,8 @@ class AutomationController extends BaseController
 
     public function checkAutomationSchedule($automation)
     {
-        if(empty($automation['aas_idx'])){return false;}
         $resultArray = [];
-        $lastExecTime = $automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime'];
-        $lastExecTime = Time::parse($lastExecTime);
+        $lastExecTime = Time::parse($automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime']);
 
         $ignoreStartTime = $automation['aas_ignore_start_time'] ?? null;
         $ignoreEndTime = $automation['aas_ignore_end_time'] ?? null;
@@ -756,14 +756,6 @@ class AutomationController extends BaseController
     public function getAutomationTarget($seq)
     {
         $target = $this->automation->getTarget($seq);
-        if(empty($target)){
-            return [
-                'result' => true,
-                'msg' => '대상 존재하지 않음',
-                'seq' => $seq,
-                'target' => null,
-            ];
-        }
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         //값 별로 메소드 매칭
@@ -774,7 +766,7 @@ class AutomationController extends BaseController
                 $data = $this->setData($data);
                 return  [
                     'result' => true,
-                    'msg' => '대상 존재',
+                    'msg' => '대상 일치',
                     'seq' => $seq,
                     'target' => $data,
                 ];
@@ -810,7 +802,7 @@ class AutomationController extends BaseController
         $operation = $conditions[0]['operation'];
         foreach ($conditions as $condition) {       
             $conditionMatched = false;       
-            $msg = "일치하는 조건이 존재하지 않습니다.";
+            $message = "일치하는 조건이 없습니다.";
             if ($condition['type'] === 'status') {//status 비교
                 if ($target['target']['status'] == $condition['type_value']) {
                     $conditionMatched = true;
@@ -824,23 +816,23 @@ class AutomationController extends BaseController
                         switch ($condition['compare']) {
                             case 'less':
                                 $conditionMatched = $target['target'][$type] < $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";;
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
                                 break;
                             case 'greater':
                                 $conditionMatched = $target['target'][$type] > $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";;
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
                                 break;
                             case 'less_equal':
                                 $conditionMatched = $target['target'][$type] <= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
                                 break;
                             case 'greater_equal':
                                 $conditionMatched = $target['target'][$type] >= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";;
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
                                 break;
                             case 'equal':
                                 $conditionMatched = $target['target'][$type] == $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";;
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
                                 break;
                             case 'not_equal':
                                 $conditionMatched = $target['target'][$type] != $condition['type_value'];
@@ -848,7 +840,6 @@ class AutomationController extends BaseController
                                 break;
                             default:
                                 $conditionMatched = false;
-                                $message = '비교할 조건이 존재하지 않습니다.';
                                 break;
                         }
                     }
@@ -1511,21 +1502,21 @@ class AutomationController extends BaseController
         $data = [];
         if(!empty($log['schedule'])){
             $data['idx'] = $seq;
-            $data['schedule_desc'] = json_encode($log['schedule']);
+            $data['schedule_desc'] = json_encode($log['schedule'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['target'])) {
             $data['idx'] = $seq;
-            $data['target_desc'] = json_encode($log['target']);
+            $data['target_desc'] = json_encode($log['target'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['conditions'])) {
             $data['idx'] = $seq;
-            $data['conditions_desc'] = json_encode($log['conditions']);
+            $data['conditions_desc'] = json_encode($log['conditions'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['executions'])) {
-            $data['executions_desc'] = json_encode($log['executions']);
+            $data['executions_desc'] = json_encode($log['executions'], JSON_UNESCAPED_UNICODE);
         }
 
         if(!empty($data)){
