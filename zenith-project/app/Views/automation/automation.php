@@ -51,10 +51,10 @@
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
                 <button class="btn-special createBtn" type="button" data-bs-toggle="modal" data-bs-target="#automationModal">작성하기</button>
+                <button class="btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#logModal">로그 보기</button>
             </div>
         </form>
     </div>
-    <button class="btn-special createBtn" type="button" data-bs-toggle="modal" data-bs-target="#logModal">로그 보기</button>
     <div class="section">
         <div class="table-responsive">
             <table class="table table-striped table-hover table-default" id="automation-table">
@@ -496,7 +496,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table tbl-dark">
+                <table class="table tbl-dark" id="logTable">
                     <colgroup>
                         <col>
                         <col style="width:22%;">
@@ -507,97 +507,13 @@
                         <tr>
                             <th scope="col">제목</th>
                             <th scope="col">작성자</th>
-                            <th scope="col">업데이트</th>
-                            <th scope="col">사용</th>
+                            <th scope="col">결과</th>
+                            <th scope="col">마지막 실행</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b class="em">성공</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">2023-09-27 12:52 <span class="num">(20763687216)</span></td>
-                            <td class="text-center">커밋 후 작업</td>
-                            <td class="text-center"><b>실패</b></td>
-                            <td class="text-center">더보기</td>
-                        </tr>
                     </tbody>
                 </table>
-
-                <div class="paging">
-                    <a href="#" class="btn-prev">이전</a>
-                    <a href="#" class="current">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <span>...</span>
-                    <a href="#">291</a>
-                    <a href="#" class="btn-next">다음</a>
-                </div>
             </div>
         </div>
     </div>
@@ -1016,6 +932,7 @@ function getExecAdvs(data){
         },
     });
 }
+
 //유효성 검사
 function validationData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
@@ -1345,8 +1262,8 @@ function reset(){
         targetTable.destroy();
     }
     if ($.fn.DataTable.isDataTable('#execTable')) {
-        execTabl = $('#execTable').DataTable();
-        execTabl.destroy();
+        execTable = $('#execTable').DataTable();
+        execTable.destroy();
     }
 
     $('#targetTable tbody tr, #execTable tbody tr').remove();
@@ -1813,6 +1730,102 @@ $('body').on('click', '.delete-btn', function() {
         }
     });
 });
+//로그
+function getLogs(){
+    logTable = $('#logTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "order": [[3,'desc']],
+        "deferRender": false,
+        'lengthChange': false,
+        'pageLength': 10,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/automation/logs",
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res.data;
+            }
+        },
+        "columns": [
+            { "data": "subject"},
+            { "data": "nickname"},
+            { 
+                "data": "result",
+                "render": function(data, type, row){
+                    let result;
+                    if(data == '실행됨'){
+                        result = '<b class="em">'+data+'</b>';
+                    }else if(data == '실패'){
+                        result = '<b class="fail">'+data+'</b>';
+                    }else{
+                        result = data;
+                    }
+
+                    return result;
+                }
+            },
+            { "data": "exec_timestamp"},
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            let detailRow = '<h2>작업 세부 정보</h2>'+
+            '<div class="detail-log p-1">'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">일정</dt>'+
+                    '<dd>'+(data.schedule_desc ? data.schedule_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">대상</dt>'+
+                    '<dd>'+(data.target_desc ? data.target_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">조건</dt>'+
+                    '<dd>'+(data.conditions_desc ? data.conditions_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item">'+
+                    '<dt class="mb-1">실행</dt>'+
+                    '<dd>'+(data.executions_desc ? data.executions_desc.join('<br>') : "")+'</dd>'+
+                '</dl>'+
+            '</div>';
+            logTable.row(row).child(detailRow).hide();
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+    });
+}
+//모달 보기
+$('#logModal').on('show.bs.modal', function(e) {
+    getLogs();
+})//모달 닫기
+.on('hidden.bs.modal', function(e) { 
+    logTable = $('#logTable').DataTable();
+    logTable.destroy();
+});
+
+$('body').on('click', '#logModal tbody tr', function(){
+    var tr = $(this).closest('tr');
+    var row = logTable.row(tr);
+
+    if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+        row.child.hide();
+        tr.removeClass('shown');
+    }else {
+        $(this).addClass('selected');
+        row.child.show();
+        tr.addClass('shown');
+    }
+});
+
 </script>
 <?=$this->endSection();?>
 

@@ -127,6 +127,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('adv', 'AdvertisementManager\Automation\AutomationController::getAdv');
         $routes->put('set-status', 'AdvertisementManager\Automation\AutomationController::setStatus');
         $routes->get('get-automation', 'AdvertisementManager\Automation\AutomationController::getAutomation');
+        $routes->get('logs', 'AdvertisementManager\Automation\AutomationController::getLogs');
         $routes->post('create', 'AdvertisementManager\Automation\AutomationController::createAutomation');
         $routes->post('copy', 'AdvertisementManager\Automation\AutomationController::copyAutomation');
         $routes->put('update', 'AdvertisementManager\Automation\AutomationController::updateAutomation');

@@ -946,6 +946,34 @@ class AutomationModel extends Model
         return $result;
     }
 
+    public function getLogs($data)
+    {   
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('aa.seq, aa.subject, aa.nickname, aar.result, aar.exec_timestamp, aarl.schedule_desc, aarl.target_desc, aarl.conditions_desc, aarl.executions_desc');
+        $builder->join('aa_result aar', 'aa.seq = aar.idx');
+        $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx');
+        $builder->groupBy('aar.seq');
+        $builderNoLimit = clone $builder;
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "aar.exec_timestamp DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+
+        return $result;
+    }
+
     public function createAutomation($data)
     {
         $aaData = [

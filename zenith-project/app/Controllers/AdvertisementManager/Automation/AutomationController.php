@@ -203,6 +203,69 @@ class AutomationController extends BaseController
         }
     }
 
+    public function getLogs()
+    {
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            $result = $this->automation->getLogs($arg);                
+
+            foreach ($result['data'] as &$data) {
+                switch ($data['result']) {
+                    case 'success':
+                        $data['result'] = '실행됨';             
+                        break;
+                    case 'failed':
+                        $data['result'] = '실패';
+                        break;
+                    case 'not_execution':
+                        $data['result'] = '실행되지 않음';
+                        break;
+                }
+                $descFields = ['schedule_desc', 'target_desc', 'conditions_desc', 'executions_desc'];
+                foreach($descFields as $field) {
+                    if(isset($data[$field])) {
+                        $decoded = json_decode($data[$field], true);
+                        if($field == 'executions_desc'){
+                            $errorMsgs = [];
+                            foreach($decoded as $item) {
+                                if(isset($item['result']) && $item['result'] === false) {
+                                    $errorMsgs[] = '실패 - '.'['.$item['data']['media'].']['.$item['data']['type'].']['.$item['data']['id'].'] '.$item['data']['exec_type'].' => '.$item['data']['exec_value']." ".$item['msg'];
+                                }
+                            }
+                            if(empty($errorMsgs)){
+                                $data[$field] = ['통과'];
+                            }else{
+                                $data[$field] = $errorMsgs;
+                            }
+                        }else{
+                            if($decoded !== null) {
+                                if($decoded['result'] === true) {
+                                    $data[$field] = '통과';
+                                } else{
+                                    $data[$field] = '실패 - '.$decoded['msg'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            
+
+
+            $result = [
+                'data' => $result['data'],
+                'recordsTotal' => $result['allCount'],
+                'recordsFiltered' => $result['allCount'],
+                'draw' => intval($arg['draw']),
+            ];
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     public function createAutomation()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
