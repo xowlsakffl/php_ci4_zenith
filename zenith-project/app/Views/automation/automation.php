@@ -496,7 +496,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table tbl-dark" id="logTable">
+                <table class="table tbl-dark" id="logTable" style="width: 100%;">
                     <colgroup>
                         <col>
                         <col style="width:22%;">
