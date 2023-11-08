@@ -2325,6 +2325,47 @@ div.dataTables_scrollBody > table {
 .modal .tbl-dark .em {
   color: var(--bs-blue);
 }
+.modal .tbl-dark .fail {
+  color: var(--bs-red);
+}
+.modal .dataTables_paginate {
+  float: unset;
+  text-align: center !important;
+  padding-top: 1.755em;
+  padding-bottom: 1.755em;
+}
+.modal .dataTables_paginate .paginate_button {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+.modal .dataTables_paginate .paginate_button.disabled, .modal .dataTables_paginate .paginate_button.disabled:hover {
+  color: #aaa !important;
+}
+.modal .dataTables_paginate .paginate_button:hover {
+  color: red !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+.modal .dataTables_paginate .paginate_button:not(.previous, .next, .current) { /*@include dot-effect;*/
+  /*  @include underline-effect;*/
+}
+.modal .dataTables_paginate .paginate_button.current {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.modal .dataTables_paginate .paginate_button.current:hover {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+}
+.modal .dataTables_paginate .paginate_button:active {
+  background: none;
+  border: none;
+}
 
 #logModal .modal-header .modal-title {
   font-size: 20px;

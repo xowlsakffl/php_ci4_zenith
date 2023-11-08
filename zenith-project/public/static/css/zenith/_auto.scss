@@ -205,6 +205,23 @@
             .num{color:#a2a2a2;}
         }
         .em{color:var(--bs-blue);}
+        .fail{color:var(--bs-red);}
+    }
+    .dataTables_paginate{float:unset; text-align: center !important; padding-top:1.755em; padding-bottom:1.755em;
+        .paginate_button{border:none; padding:0.25rem 0.5rem;
+            &.disabled,
+            &.disabled:hover{color:#aaa !important;}
+
+            &:hover{color:$red !important; border:none; background:none; transition:0.2s;}
+            &:not(.previous,.next,.current){ /*@include dot-effect;*/
+              /*  @include underline-effect;*/
+            }
+            &.current{
+                color:#fff !important; background-color:$red; border:none; padding:0.2rem 1rem; border-radius:4px;
+                &:hover{color:#fff !important; background-color:$red; border:none;}
+            } 
+            &:active{background:none; border:none;}
+        }            
     }
 }
 #logModal{
