@@ -577,7 +577,6 @@ class AutomationController extends BaseController
                 if(!empty($automation['aat_idx'])){
                     $targetData = $this->getAutomationTarget($seq);
                     $result['target'] = $targetData;
-                    d($targetData);
                     if($targetData['result'] == false){
                         $logIdx = $this->recordResult($targetData);
                         $this->recordLog($result, $logIdx);
@@ -796,10 +795,7 @@ class AutomationController extends BaseController
                 "seq" => $target['seq'],
             ];
         }
-        //순서 재정렬
-        usort($conditions, function($a, $b) {
-            return $a['order'] - $b['order'];
-        });
+
         $isTargetMatched = false;
         $allConditionsMatched = true;
         $operation = $conditions[0]['operation'];
@@ -892,10 +888,7 @@ class AutomationController extends BaseController
                 "seq" => $seq,
             ];
         }
-        //순서 재정렬
-        /* usort($executions, function($a, $b) {
-            return $a['aae_order'] - $b['aae_order'];
-        }); */
+        
         $originalSettings = [];
         $result = [
             'result' => [],

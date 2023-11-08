@@ -929,6 +929,7 @@ class AutomationModel extends Model
         $builder = $this->zenith->table('aa_conditions');
         $builder->select('*');
         $builder->where('idx', $seq);
+        $builder->orderBy('order', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;
@@ -939,6 +940,7 @@ class AutomationModel extends Model
         $builder = $this->zenith->table('aa_executions');
         $builder->select('order, media, type, id, exec_type, exec_value');
         $builder->where('idx', $seq);
+        $builder->orderBy('order', 'asc');
         $result = $builder->get()->getResultArray();
 
         return $result;
