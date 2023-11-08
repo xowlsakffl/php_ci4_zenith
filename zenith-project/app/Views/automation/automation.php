@@ -1489,9 +1489,9 @@ $('body').on('click', '.target-btn', function(e){
 $('body').on('click', '#execTable tbody tr', function(){
     if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
-        $('#execConditionType option[value=budget]').show();
-        $('#execConditionValue').show();
-        $('#execConditionValueStatus').hide();
+        $('#execConditionTable select[name=exec_condition_type] option').show();
+        $('#execConditionTable input[name=exec_condition_value]').show();
+        $('#execConditionTable select[name=exec_condition_value_status]').hide();
     }
     else {
         $('#execTable tr.selected').removeClass('selected');
@@ -1499,10 +1499,14 @@ $('body').on('click', '#execTable tbody tr', function(){
         let media = $(this).children('td').eq(0).text();
         let type = $(this).children('td').eq(1).text();
         if((type == '광고') || (media == '구글' && type == '광고그룹')){
-            $('#execConditionType').val('');
-            $('#execConditionType option[value=budget]').hide();
-            $('#execConditionValue').val('').hide();
-            $('#execConditionValueStatus').show();
+            $('#execConditionTable select').val('');
+            $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
+            $('#execConditionTable input[name=exec_condition_value]').val('').hide();
+            $('#execConditionTable select[name=exec_condition_value_status]').show();
+        }else{
+            $('#execConditionTable select[name=exec_condition_type] option').show();
+            $('#execConditionTable input[name=exec_condition_value]').show();
+            $('#execConditionTable select[name=exec_condition_value_status]').hide();
         }
     }
 });
@@ -1792,7 +1796,7 @@ function getLogs(){
                 '</dl>'+
                 '<dl class="log-item">'+
                     '<dt class="mb-1">실행</dt>'+
-                    '<dd>'+(data.executions_desc ? data.executions_desc.join('<br>') : "")+'</dd>'+
+                    '<dd>'+(data.executions_desc != null ? (Array.isArray(data.executions_desc) ? data.executions_desc.join('<br>') : data.executions_desc) : "")+'</dd>'+
                 '</dl>'+
             '</div>';
             logTable.row(row).child(detailRow).hide();
