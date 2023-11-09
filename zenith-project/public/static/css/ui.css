@@ -242,7 +242,7 @@ body {
 }
 .nav-wrap .nav > li:has(div):after {
   position: absolute;
-  top: 16px;
+  top: 23px;
   right: 30px;
   width: 10px;
   height: 10px;
@@ -265,7 +265,7 @@ body {
   background: #ce1922;
 }
 .nav-wrap .nav > li:has([aria-expanded=true]):after {
-  top: 20px;
+  top: 26px;
   border-color: #2d2e34;
   transform: rotate(225deg);
 }
@@ -278,7 +278,7 @@ body {
 }
 .nav-wrap .nav button {
   display: block;
-  padding: 0 0 0 33px;
+  padding: 0 85px 0 33px;
   color: #fff;
 }
 .nav-wrap .nav button > i.bi {
@@ -345,12 +345,13 @@ body {
 
 .main-contents-wrap {
   flex: 1;
-  padding: 80px 6.7708vw;
-  margin-left: 200px;
+  padding: 70px 5.7708vw;
+  margin-left: 240px;
 }
 
 .ad-list .row {
   text-align: left;
+  margin-right: 0;
 }
 .ad-list .row:not(:first-child) {
   margin-top: 24px;
@@ -358,7 +359,7 @@ body {
 .ad-list .type {
   flex: 1;
   margin-right: 12px;
-  padding: 1.8229vw 2.5vw;
+  padding: 2vw 2vw;
   border: 1px solid #d1d1d1;
   border-radius: 10px;
   background: #fff;
@@ -381,7 +382,7 @@ body {
 }
 .ad-list .summary {
   display: flex;
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 .ad-list .summary strong {
   min-width: 210px;
@@ -423,6 +424,12 @@ body {
 .ad-list .summary .percentage dd {
   color: #ce1922;
 }
+.ad-list .ad-detail-info .col dt {
+  margin-bottom: 5px;
+}
+.ad-list .ad-detail-info .col dd {
+  font-size: 0.8rem;
+}
 .ad-list .detail dl {
   box-sizing: border-box;
   margin: 0 22px 0 0;
@@ -436,7 +443,7 @@ body {
 }
 
 .dayOff-contanier .form-select {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 @media screen and (max-width: 1400px) {
@@ -506,7 +513,7 @@ body {
   .left-side .logo {
     margin: 0 0 20px 45px;
   }
-  .left-side.open {
+  .left-side.active {
     width: 240px;
   }
   .left-side .btn-menu {
