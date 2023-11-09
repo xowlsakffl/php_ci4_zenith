@@ -1,7 +1,7 @@
 $(function(){
     var btn_Array = [];
     var result = null;
-    
+    var last = btn_Array.at(-1);
     $('.left-side .btn-menu').on('click', function(){       
         $('.left-side .nav > li > button').attr('aria-expanded', false);
         $('.left-side .nav .collapse').removeClass('show');
@@ -12,7 +12,6 @@ $(function(){
         
         let allExpand = $('.nav>li>button[aria-expanded="true"]').length;
         let expand = $(this).attr('aria-expanded');
-        console.log(expand, allExpand);
         if(expand == 'true' && allExpand == 1){
             $('.left-side').addClass('active');
         }
@@ -22,7 +21,7 @@ $(function(){
         }
     })
 
-    $('.nav-wrap').on('click',function(e){       
+    /* $('.nav-wrap').on('click',function(e){       
         e.preventDefault();
         if(last == 'open' || last == undefined && $(window).width() <= 1024){
             $('.left-side').toggleClass('open');
@@ -31,7 +30,7 @@ $(function(){
             $('.left-side').toggleClass('hide');
         }  
         $('.left-side').toggleClass('active');  
-    });
+    }); */
 
     $('.btn-top').on('click', function(e) {
         e.preventDefault();

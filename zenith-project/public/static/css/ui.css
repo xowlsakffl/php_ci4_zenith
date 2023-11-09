@@ -280,6 +280,10 @@ body {
   display: block;
   padding: 0 85px 0 33px;
   color: #fff;
+  transition: 0.2s;
+}
+.nav-wrap .nav button:hover {
+  color: #e91b25;
 }
 .nav-wrap .nav button > i.bi {
   display: inline-block;
@@ -299,6 +303,10 @@ body {
   padding: 0 0 2px 10px;
   font-size: 0.875rem;
   color: #929292;
+  transition: 0.3s;
+}
+.nav-wrap .nav .btn-toggle-nav a:hover {
+  color: #e91b25;
 }
 .nav-wrap .nav .btn-toggle-nav .active {
   color: #ce1922;
@@ -324,6 +332,10 @@ body {
 .util-nav a {
   font-size: 0.813rem;
   color: #aaa;
+  transition: 0.3s;
+}
+.util-nav a:hover {
+  color: #e91b25;
 }
 
 .btn-wrap a { /*이벤트 > 상세 페이지 버튼*/ }
@@ -2395,6 +2407,9 @@ div.dataTables_scrollBody > table {
   transform: rotate(360deg);
 }
 
+.ad-list .type {
+  transition: 0.4s;
+}
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
 }
@@ -2403,7 +2418,7 @@ div.dataTables_scrollBody > table {
 }
 .ad-list .btn-more:hover span {
   transition: 0.2s;
-  animation: moreBtn 0.5s infinite linear alternate;
+  animation: moreBtn 1.3s infinite linear alternate;
 }
 
 @media screen and (max-width: 1200px) {
@@ -2419,6 +2434,7 @@ div.dataTables_scrollBody > table {
     animation: moreBtn_mo 0.3s linear alternate;
     font-size: 0.8rem;
     color: #2d2e34;
+    font-weight: bold;
   }
   .ad-list .btn-more {
     width: auto;

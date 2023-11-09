@@ -2209,7 +2209,9 @@ div.dataTables_processing > div:last-child > div {
   vertical-align: middle;
   background: url(/images/ico_log.png) no-repeat 0 center;
 }
-
+.ad-list .type{
+  transition: 0.3s;
+}
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
 }
