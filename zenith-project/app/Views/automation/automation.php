@@ -33,13 +33,13 @@
 <?=$this->endSection();?>
 
 <?=$this->section('content');?>
-<div class="sub-contents-wrap">
+<div class="sub-contents-wrap" id="automationContent">
     <div class="title-area">
         <h2 class="page-title">자동화 목록</h2>
     </div>
 
     <div class="search-wrap">
-        <form name="search-form" class="search d-flex justify-content-center">
+        <form name="search-form" class="search">
             <div class="term d-flex align-items-center">
                 <input type="text" name="sdate" id="sdate" readonly="readonly">
                 <button type="button"><i class="bi bi-calendar2-week"></i></button>
@@ -242,6 +242,7 @@
                         <div class="detail" id="target" role="tabpanel"  aria-labelledby="target-tab" tabindex="1">
                             <ul class="tab" id="targetTab">
                                 <li class="active" data-tab="advertiser"><a href="#">광고주</a></li>
+                                <li data-tab="account"><a href="#">매체광고주</a></li>
                                 <li data-tab="campaign"><a href="#">캠페인</a></li>
                                 <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
@@ -254,6 +255,14 @@
                                     </div>
                                 </form>
                             </div>
+                            <table class="table tbl-header w-100" id="targetCheckedTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" colspan="5"  class="text-center">선택된 항목</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                             <table class="table tbl-header w-100" id="targetTable">
                                 <colgroup>
                                     <col style="width:10%">
@@ -287,7 +296,7 @@
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="5"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="5"  class="text-center">적용 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -850,7 +859,7 @@ function getTargetAdvs(searchData){
         "serverSide" : true,
         "responsive": true,
         "searching": false,
-        "ordering": false,
+        "ordering": true,
         "deferRender": false,
         'lengthChange': false,
         'pageLength': 10,
@@ -865,6 +874,9 @@ function getTargetAdvs(searchData){
                 return res.data;
             }
         },
+        "columnDefs": [
+            { targets: [5], orderable: false},
+        ],
         "columns": [
             { "data": "media", "width": "10%"},
             { "data": "type", "width": "10%"},
@@ -887,8 +899,9 @@ function getTargetAdvs(searchData){
             url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
         },
         "drawCallback": function(settings) {
-            if(saveTarget){
-                $('#targetTable tr[data-id="'+saveTarget+'"]').addClass('selected')
+            if($('#targetCheckedTable tbody tr').length > 0){
+                $selectedTargetRow = $('#targetCheckedTable tbody tr').data('id');
+                $('#targetTable tbody tr[data-id="'+$selectedTargetRow+'"]').addClass('selected')
             }
         }
     });
@@ -902,7 +915,7 @@ function getExecAdvs(data){
         "serverSide" : true,
         "responsive": true,
         "searching": false,
-        "ordering": false,
+        "ordering": true,
         "deferRender": false,
         'lengthChange': false,
         'pageLength': 10,
@@ -1229,7 +1242,7 @@ function setModalData(data){
 //모달 초기화
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
-    $('#targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
+    $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
     $('#condition-1 input[name=type_value]').show();
     $('#condition-1 select[name=type_value_status]').hide();
     $('#myTab li').each(function(index){
@@ -1415,7 +1428,6 @@ $('#automationModal').on('show.bs.modal', function(e) {
     }
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
-    saveTarget = null;
     reset();
 });
 
@@ -1468,7 +1480,10 @@ $('body').on('click', '#targetTable tbody tr', function(){
     }else {
         $('#targetTable tr.selected').removeClass('selected');
         $(this).addClass('selected');
-        saveTarget = $(this).data('id');
+        $('#targetCheckedTable tbody').empty();
+        let cloneRow = $(this).clone();
+        cloneRow.find('td:last-child').remove();
+        cloneRow.appendTo('#targetCheckedTable tbody');
     }
 });
 
@@ -1514,12 +1529,13 @@ $('body').on('click', '#execTable tbody tr', function(){
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
     $(this).addClass('active');
-    if(($('#targetTable tr.selected').length > 0 || saveTarget)){
+    if($('#targetCheckedTable tbody tr').length > 0){
+        $selectRow = $('#targetCheckedTable tbody tr').data('id');
         let data = {
             'tab': $('#targetTab li.active').data('tab'),
-            'adv': saveTarget ? saveTarget : $('#targetTable tr.selected').data('id')
+            'adv': $selectRow
         }
-        saveTarget = data.adv;
+
         getTargetAdvs(data);
     }
 })

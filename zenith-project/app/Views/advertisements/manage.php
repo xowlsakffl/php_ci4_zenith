@@ -93,7 +93,7 @@
             </div>
         </form>
         <div class="row d-flex">
-            <div class="reportData detail d-flex minWd justify-content-center">
+            <div class="reportData detail minWd">
 
             </div> 
         </div>
