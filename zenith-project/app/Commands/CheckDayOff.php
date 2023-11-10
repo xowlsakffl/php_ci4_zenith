@@ -96,7 +96,7 @@ class CheckDayOff extends BaseCommand
                     "type" => "mrkdwn",
                     "text" => "*{$row['name']}* _({$row['position']}-{$row['team']})_\n`[{$row['type']}]` {$term}"
                 ]
-                ];
+            ];
             $msg['연차공유'][] = ["type"=>"divider"];
             $msg['연차공유'][] = $slackMsg;
             $msg['연차알림'][] = ["type"=>"divider"];
@@ -117,7 +117,7 @@ class CheckDayOff extends BaseCommand
                 'text' => '',
                 'blocks' => json_encode($row,JSON_UNESCAPED_UNICODE)
             ];
-            // print_r($data);
+            // d($data);
             $response = $slack->sendMessage($data);
         }
     }
