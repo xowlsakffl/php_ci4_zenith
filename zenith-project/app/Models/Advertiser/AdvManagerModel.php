@@ -20,7 +20,7 @@ class AdvManagerModel extends Model
         if(!empty($data['check'])){
             $data = $this->setArgs($data);
         }
-
+        
         return $this->getQueryResults($data, 'getAccounts');
     }
 
@@ -108,6 +108,10 @@ class AdvManagerModel extends Model
     {
         $builders = [];
         $media = explode("|", $data['searchData']['media']);
+        if(empty($data['searchData']['media'])){
+            $media = ['facebook', 'google', 'kakao'];
+        }
+
         if (in_array('facebook', $media)) {
             $facebookBuilder = $this->facebook->$type($data['searchData']);
             $builders[] = $facebookBuilder;
@@ -168,7 +172,6 @@ class AdvManagerModel extends Model
                 dd($result);
             } */
             $result = $resultQuery->get()->getResultArray();
-            //dd($result);
         } else {
             $result = null;
         }

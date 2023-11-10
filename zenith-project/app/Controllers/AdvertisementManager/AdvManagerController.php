@@ -36,20 +36,6 @@ class AdvManagerController extends BaseController
         if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
-            if(empty($arg['searchData']['media'])){
-                $result = [
-                    'data' => []
-                ];
-                return $this->respond($result);
-            }
-
-            if(!isset($arg['searchData'])) {
-                $arg['searchData']['sdate'] = '2023-06-07';//date('Y-m-d')
-                $arg['searchData']['sdate'] = date('Y-m-d');
-                $arg['searchData']['type'] = 'campaigns';
-                $arg['searchData']['media'] = 'facebook';
-            }
-
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
