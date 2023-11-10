@@ -29,6 +29,11 @@
         --dt-row-selected: 130,190,255;
         --dt-row-selected-text: 0,0,0;
     }
+
+    .dataTable tfoot .header th{background-color:#000; color:#fff;}
+    .table-default tfoot .header th:not(:last-child) {
+        border-right: 1px dashed #dfdfdf;
+    }
     .inner button.disapproval::after{
         position: absolute;
         top: 0;
@@ -103,27 +108,6 @@
             <button type="button" class="reset-btn">필터 초기화</button>
         </div>
     </div>
-    <div class="section client-list media custom-margin-box-1">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
-        <div class="row">
-            <div class="col">
-                <div class="inner">
-                    <button type="button" value="facebook" id="media_btn" class="media_btn">페이스북</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" value="kakao" id="media_btn" class="media_btn">카카오</button>
-                </div>
-            </div>
-            <div class="col">
-                <div class="inner">
-                    <button type="button" value="google" id="media_btn" class="media_btn">구글</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- <div class="section client-list googlebiz"></div>
 
     <div class="section client-list facebookbiz">
@@ -150,6 +134,21 @@
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
         <div class="row" id="advertiser-list">
+        </div>
+    </div>
+
+    <div class="section client-list media custom-margin-box-1">
+        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
+        <div class="row">
+            <div class="col">
+                <div class="inner"><button type="button" value="facebook" id="media_btn" class="media_btn">페이스북</button></div>
+            </div>
+            <div class="col">
+                <div class="inner"><button type="button" value="kakao" id="media_btn" class="media_btn">카카오</button></div>
+            </div>
+            <div class="col">
+                <div class="inner"><button type="button" value="google" id="media_btn" class="media_btn">구글</button></div>
+            </div>
         </div>
     </div>
 
@@ -221,6 +220,23 @@
                                 <td id="avg-cpc"></td>
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
+                            </tr>
+                            <tr class="header">
+                                <th scope="col">매체</th>
+                                <th scope="col">제목</th>
+                                <th scope="col">상태</th>
+                                <th scope="col">예산</th>
+                                <th scope="col">현재<br>DB단가</th>
+                                <th scope="col">유효<br>DB</th>
+                                <th scope="col">지출액</th>
+                                <th scope="col">수익</th>
+                                <th scope="col">수익률</th>
+                                <th scope="col">매출액</th>
+                                <th scope="col">노출수</th>
+                                <th scope="col">링크<br>클릭</th>
+                                <th scope="col">CPC</th>
+                                <th scope="col">CTR</th>
+                                <th scope="col">DB <br>전환률</th>
                             </tr>
                         </tfoot>
                         <tbody>
