@@ -421,7 +421,6 @@
                                     <tr>
                                         <td>
                                             <div class="form-flex">
-                                                <input type="text" name="exec_condition_order" placeholder="순서(1~)" class="form-control execConditionOrder" oninput="onlyNumber(this);" maxlength="3">
                                                 <select name="exec_condition_type" class="form-select" id="execConditionType">
                                                     <option value="">실행항목</option>
                                                     <option value="status">상태</option>
@@ -1111,6 +1110,22 @@ function validationData(){
         return false;
     }
 
+    var execOrderCheck = true;
+    $('#execSelectTable tbody tr').each(function() {
+        var input = $(this).find('td:first input');
+        if(input.val() == '') {      
+            execOrderCheck = false;
+            return false;
+        }
+    });
+
+    if(!execOrderCheck){
+        $('#preactice-tab').trigger('click');
+        alert('순서를 입력해주세요.');
+        return false;
+    }
+
+
     if (($slack_webhook && !$slack_msg) || (!$slack_webhook && $slack_msg)) {     
         alert('웹훅 URL과 메세지 둘 다 입력해주세요.');
         $('#preactice-tab').trigger('click');
@@ -1226,7 +1241,7 @@ function setModalData(data){
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
             var execIndex = index+1;
-            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td>' + execution.order + '</td><td>' + execution.media + '</td><td>'
+            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
                 + execution.type  +'</td><td>'
                 + execution.id  +'</td><td>'
                 + execution.name  +'</td><td>'
@@ -1348,7 +1363,7 @@ function setProcData(){
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
-        let order = $row.find('td:eq(0)').text();
+        let order = $row.find('td:eq(0) input').val();
         let media = $row.find('td:eq(1)').text();
         let type = $row.find('td:eq(2)').text();
         let id = $row.find('td:eq(3)').text();
@@ -1390,7 +1405,7 @@ function setProcData(){
             'slack_msg': $slack_msg,
         }
     };
-
+    console.log($data);
     if ($('#targetSelectTable tbody tr').length > 0) {
         $data['target'] = {
             'type': $target_type,
@@ -1535,7 +1550,6 @@ $('body').on('click', '#execTable tbody tr', function(){
         $('#execConditionTable select[name=exec_condition_value_status]').hide();
     }
     else {
-        $('#execTable tr.selected').removeClass('selected');
         $(this).addClass('selected');
         let media = $(this).children('td').eq(0).text();
         let type = $(this).children('td').eq(1).text();
@@ -1614,54 +1628,49 @@ $('body').on('change', '#execConditionTable select[name=exec_condition_type]', f
 });
 
 $('body').on('click', '#execConditionBtn', function() {
-    var tr = $('#execTable tbody tr.selected');
-    var trId = tr.data('id');
-
-    if(tr.length == 0){
+    var trs = $('#execTable tbody tr.selected');
+    if(trs.length == 0){
         alert("항목을 선택해주세요.");
     }else{
-        if ($('#execSelectTable tbody tr[data-id="' + trId + '"]').length == 0) {
-            var cloneRow = $('#execTable tbody tr.selected').clone();
-            var execConditionOrder = $('#execConditionTable input[name=exec_condition_order]').val();
-            var execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
-            var execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
-            var execConditionValue = '';
-            if(execConditionOrder != ''){
-                if(execConditionType != ''){
-                    if(execConditionType == 'status'){
-                        execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
-                    }else{
-                        execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
-                    }
-
-                    if(execConditionValue != ''){
-                        var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
-
-                        cloneRow.prepend('<td>'+execConditionOrder+'</td>');
-                        cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
-
-                        var selectedMediaTd = tr.children('td').eq(0).text();
-                        var selectedTypeTd = tr.children('td').eq(1).text();
-                        var selectedNameTd = tr.children('td').eq(3).text();
-                        var selectedStatusTd = tr.children('td').eq(4).text();
-
-                        var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
-                        $('#preactice-tab').append(newExecText);
-                    }else{
-                        alert("세부항목을 선택해주세요.");
-                        execConditionValue.focus();
-                    }
-                }else{
-                    alert("실행항목을 선택해주세요.");
-                    $('#execConditionTable select[name=exec_condition_type]').focus();
-                } 
-            }else{
-                alert("순서를 입력해주세요.");
-                $('#execConditionTable input[name=exec_condition_order]').focus();
-            }
-        } else {
-            alert("중복된 항목은 추가할 수 없습니다.");
+        var execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
+        var execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
+        var execConditionValue = '';
+        if(execConditionType == 'status'){
+            execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
+        }else{
+            execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
         }
+        var selectedCount = trs.length;
+
+        if(!execConditionType){
+            alert("실행항목을 선택해주세요.");
+            $('#execConditionTable select[name=exec_condition_type]').focus();
+            return false;
+        }
+
+        if(!execConditionValue){
+            alert("세부항목을 선택해주세요.");
+            $('#execConditionTable select[name=exec_condition_value_status]').focus();
+            $('#execConditionTable input[name=exec_condition_value]').focus();
+            return false;
+        }
+
+        trs.each(function() {
+            var tr = $(this);
+            var trId = tr.data('id');
+            var cloneRow = tr.clone();
+            var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
+            cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
+            cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
+
+            var selectedMediaTd = tr.children('td').eq(0).text();
+            var selectedTypeTd = tr.children('td').eq(1).text();
+            var selectedNameTd = tr.children('td').eq(3).text();
+            var selectedStatusTd = tr.children('td').eq(4).text();
+
+            var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
+            $('#preactice-tab').append(newExecText);
+        })
     }
 });
 
