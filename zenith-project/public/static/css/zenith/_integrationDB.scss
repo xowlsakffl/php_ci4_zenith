@@ -19,7 +19,7 @@
                 font-size: 80%;
                 color: #fff;
                 border-radius: 7px;
-                background: #ce1922;
+                background: $color-primary;
             }
         }
     }
@@ -99,7 +99,7 @@
         table.dataTable{ 
             thead tr{
                 th,td{text-align: center;}
-                .sorting_asc:before,.sorting_desc:after{color:chartreuse; opacity:1;}  
+                .sorting_asc:before,.sorting_desc:after{color:#fff; opacity:1;}  
             }   
             tbody tr{background-color:#fff;
                 td{position: relative;}
@@ -159,7 +159,7 @@
 
     .detail.minWd{flex-wrap: wrap; min-width:1000px;  
         .col{padding: 0; flex: 1 0 auto; cursor:pointer;
-            &:hover, &.active{color:blue;}
+            &:hover, &.active{color:$color-primary;}
             dt{font-size: 1rem;}
             &:hover,&.active{
                 dd{font-weight:900;}
@@ -171,8 +171,8 @@
 div.dt-button-collection{padding:0;    
     .export{display: none;}
     button{text-align: left; font-size:90%; padding:0.3rem 0 0.3rem 0rem; width:100%;         
-        &:hover,&.dt-button-active{font-weight: 900; background-color: var(--bs-gray-200);
-            > span{text-indent: 1.5rem;
+        &:hover,&.dt-button-active{color:#fff; background-color: $color-primary;
+            > span{text-indent: 0.4rem;
                 i.bi::before{animation:sidebarShake 0.3s infinite linear alternate;}
             }            
         }

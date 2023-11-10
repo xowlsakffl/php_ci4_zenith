@@ -1,7 +1,7 @@
 .sub-contents-wrap{flex:1; overflow:auto; padding:40px 2.9908vw 50px; margin-left:240px; transition:all 0.3s;}
 
 .title-area{display:flex; align-items:center; margin:0 0 20px; 
-    .page-title{font-size:1.750rem; @include bold;}
+    .page-title{font-size:1.750rem; @include bold;min-width: 200px;}
     .title-disc{margin:0 0 0 15px;}
 }
 .content-title{position:relative; display:flex; align-items:center; margin:0 0 18px; font-size:1.250rem; @include bold;
@@ -26,6 +26,12 @@
 }
 
 .search-wrap{overflow:hidden; margin:0 0 50px; border:1px solid #c3c3c3; border-radius:$radius $radius 0 0; 
+    .reportData{
+        dl{
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+    }
     .search{padding:35px 10.4167vw; text-align:center; background:#fff;
         .term{flex:1; height:50px; padding:0 25px; border-top:2px solid #e2e2e2; border-bottom:2px solid #e2e2e2;
             input[type="text"]{flex:1; width:100%; border:0;}
@@ -46,7 +52,7 @@
         
     }
     .detail{padding:20px 0; text-align:center; border-top:1px solid #c3c3c3; background:#e9e9e9;
-        .col{flex:0 0 auto; width:auto; padding:0 30px; color:#929292; font-weight:500;
+        .col{flex:0 0 auto; width:auto; padding:0 25px; color:#929292; font-weight:500;
             dt{margin:0 0 5px; /*font-size:1.125rem;*/font-size:1rem; color:$color-dark;}
         }
     }
@@ -73,9 +79,10 @@
             .inner{position:relative; height:100%; min-height:45px; box-sizing:border-box; overflow:hidden; border-radius:5px;
                 &.active{color:$color-primary; border-color:$color-primary;}
             }
-            button{width:100%; height:100%; padding:2px 7px; white-space:normal; text-align:left; line-height:1.1; border:1px solid #c3c3c3; border-radius:5px; background:#fff; overflow-y:hidden; font-size: 85%;
-                &.active{color:$color-primary; border-color:$color-primary;}
-                &.on{color:var(--bs-white); background-color:#fda9a9;}
+            button{
+                width:100%; height:100%; padding:2px 7px; white-space:normal; text-align:left; line-height:1.1; border:1px solid #c3c3c3;                border-radius:5px; background:#fff; overflow-y:hidden; font-size: 85%;
+                &.active{color:#fff; background-color: $color-primary;}
+                &.on{color:#fff; background-color:$color-primary;}
                 &.alert{margin:0;
                     &::before{position:absolute; top:0; left:0; width:100%; height:3px; content:''; background:$color-primary;}
                 }
@@ -84,8 +91,8 @@
                 .progress-bar{height:3px; background:#ffa500;}
                 .txt{position:absolute; right:3px; bottom:3px; font-size:0.5rem;}
             }
-            &:hover{box-shadow:inset 20px 70px 0px red; 
-                button{border-left-color: transparent; border-right-color: transparent;}
+            &:hover{/* box-shadow:inset 20px 70px 0px $color-primary; */
+                button{font-weight: bold;color:#222;border:1px solid #222}
             }
         }
     }
@@ -144,7 +151,7 @@
 
 input:-internal-autofill-selected {color: #7286D3;}
 @include x-large{
-    .sub-contents-wrap{padding:30px 30px 30px 30px; margin-left:40px;}
+    .sub-contents-wrap{padding:30px 30px 30px 30px; margin-left:240px;}
     .title-area{flex-wrap:wrap;
         .title-disc{width:100%; margin:10px 0 0;}
     }
@@ -160,6 +167,7 @@ input:-internal-autofill-selected {color: #7286D3;}
 }
 
 @include large{
+    .sub-contents-wrap{padding:30px 30px 30px 30px; margin-left:240px;}
     .client-list{
         .row{flex-wrap:wrap; max-height:250px;
             .col{width:25%;
@@ -169,6 +177,7 @@ input:-internal-autofill-selected {color: #7286D3;}
     }
 }
 @include medium{
+    .sub-contents-wrap{padding:30px 30px 30px 30px; margin-left:40px;}
     // .sub-contents-wrap{padding:30px 30px 30px 70px;}
     .search-wrap{margin:0 0 20px;
         .search{flex-wrap:wrap; padding:20px;
@@ -210,6 +219,6 @@ input:-internal-autofill-selected {color: #7286D3;}
     }
 }
 @include small{
-    
+    .sub-contents-wrap{padding:30px 30px 30px 30px; margin-left:40px;}
 }
 
