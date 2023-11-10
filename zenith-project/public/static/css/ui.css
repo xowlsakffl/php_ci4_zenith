@@ -307,6 +307,7 @@ body {
 }
 .nav-wrap .nav .btn-toggle-nav a:hover {
   color: #e91b25;
+  text-indent: 0.4rem;
 }
 .nav-wrap .nav .btn-toggle-nav .active {
   color: #ce1922;
@@ -598,6 +599,7 @@ body {
   font-size: 1.75rem;
   font-weight: 600;
   font-variation-settings: "wght" 600;
+  min-width: 200px;
 }
 .title-area .title-disc {
   margin: 0 0 0 15px;
@@ -658,6 +660,10 @@ body {
   margin: 0 0 50px;
   border: 1px solid #c3c3c3;
   border-radius: 10px 10px 0 0;
+}
+.search-wrap .reportData dl {
+  display: inline-block;
+  margin-bottom: 15px;
 }
 .search-wrap .search {
   padding: 35px 10.4167vw;
@@ -736,7 +742,7 @@ body {
 .search-wrap .detail .col {
   flex: 0 0 auto;
   width: auto;
-  padding: 0 30px;
+  padding: 0 25px;
   color: #929292;
   font-weight: 500;
 }
@@ -819,12 +825,12 @@ body {
   font-size: 85%;
 }
 .client-list .row .col button.active {
-  color: #ce1922;
-  border-color: #ce1922;
+  color: #fff;
+  background-color: #ce1922;
 }
 .client-list .row .col button.on {
-  color: var(--bs-white);
-  background-color: #fda9a9;
+  color: #fff;
+  background-color: #ce1922;
 }
 .client-list .row .col button.alert {
   margin: 0;
@@ -858,12 +864,11 @@ body {
   bottom: 3px;
   font-size: 0.5rem;
 }
-.client-list .row .col:hover {
-  box-shadow: inset 20px 70px 0px red;
-}
+.client-list .row .col:hover { /* box-shadow:inset 20px 70px 0px $color-primary; */ }
 .client-list .row .col:hover button {
-  border-left-color: transparent;
-  border-right-color: transparent;
+  font-weight: bold;
+  color: #222;
+  border: 1px solid #222;
 }
 .client-list.biz .row .col {
   width: 160px;
@@ -985,7 +990,7 @@ input:-internal-autofill-selected {
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
     padding: 30px 30px 30px 30px;
-    margin-left: 40px;
+    margin-left: 240px;
   }
   .title-area {
     flex-wrap: wrap;
@@ -1012,6 +1017,10 @@ input:-internal-autofill-selected {
   }
 }
 @media screen and (max-width: 1200px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 240px;
+  }
   .client-list .row {
     flex-wrap: wrap;
     max-height: 250px;
@@ -1025,6 +1034,10 @@ input:-internal-autofill-selected {
   }
 }
 @media screen and (max-width: 1024px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
+  }
   .search-wrap {
     margin: 0 0 20px;
   }
@@ -1108,6 +1121,12 @@ input:-internal-autofill-selected {
     margin: 0.75em auto 0;
     padding: 0.25em 1.25em;
     font-size: 0.75em;
+  }
+}
+@media screen and (max-width: 768px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
   }
 }
 div.dataTables_processing {
@@ -1733,17 +1752,25 @@ div.dataTables_scrollBody > table {
     box-shadow: inset 200px 0px 7px red;
   }
 }
-.btn-primary + .btn-special {
-  margin-left: 5px;
-}
-
 .search button.btn-primary {
   width: 90px;
   font-weight: 700;
-  font-size: 80%;
+  font-size: 100%;
   color: #fff;
   border-radius: 7px;
   background: #ce1922;
+}
+.search .term {
+  margin-bottom: 15px;
+}
+.search .input {
+  margin-left: 0 !important;
+}
+.search .input .btn-primary {
+  margin-left: 5px;
+}
+.search .input .btn-special {
+  margin-left: 5px;
 }
 
 .num-line {
@@ -2624,7 +2651,7 @@ div.dataTables_scrollBody > table {
   text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
-  color: chartreuse;
+  color: #fff;
   opacity: 1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
@@ -2743,7 +2770,7 @@ div.dataTables_scrollBody > table {
   cursor: pointer;
 }
 .db-manage-contaniner .detail.minWd .col:hover, .db-manage-contaniner .detail.minWd .col.active {
-  color: blue;
+  color: #ce1922;
 }
 .db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;
@@ -2765,11 +2792,11 @@ div.dt-button-collection button {
   width: 100%;
 }
 div.dt-button-collection button:hover, div.dt-button-collection button.dt-button-active {
-  font-weight: 900;
-  background-color: var(--bs-gray-200);
+  color: #fff;
+  background-color: #ce1922;
 }
 div.dt-button-collection button:hover > span, div.dt-button-collection button.dt-button-active > span {
-  text-indent: 1.5rem;
+  text-indent: 0.4rem;
 }
 div.dt-button-collection button:hover > span i.bi::before, div.dt-button-collection button.dt-button-active > span i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
