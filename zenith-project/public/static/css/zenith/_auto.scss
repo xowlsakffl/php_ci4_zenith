@@ -1,8 +1,13 @@
 
-.btn-primary + .btn-special{margin-left:5px;}
+
 .search{
-    button.btn-primary{ width: 90px; font-weight: 700; font-size: 80%;color: #fff; border-radius: 7px; background: #ce1922;}
-   
+    button.btn-primary{ width: 90px; font-weight: 700; font-size: 100%;color: #fff; border-radius: 7px; background: #ce1922;}
+   .term{margin-bottom: 15px;}
+   .input{
+        margin-left: 0 !important;
+        .btn-primary{margin-left:5px;}
+        .btn-special{margin-left:5px;}
+    }
 }
 
 .num-line{display:flex; align-items:center; margin:0 0 12px; font-size:15px;

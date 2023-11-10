@@ -26,6 +26,7 @@ body{background:#f7f7f7;}
                     &[aria-expanded="true"]{@include bold;}
                 }
             }
+            
         }
         button{display:block; padding:0 85px 0 33px; color:#fff;
             transition: 0.2s;
@@ -40,7 +41,8 @@ body{background:#f7f7f7;}
                 position:relative; display:inline-block; padding:0 0 2px 10px; font-size:0.875rem; color:#929292;
                 transition: 0.3s;
                 &:hover{
-                    color:#e91b25
+                    color:#e91b25;
+                    text-indent: 0.4rem;
                 }
             }
             .active{color:$color-primary; border-bottom:2px solid #e58489;}
