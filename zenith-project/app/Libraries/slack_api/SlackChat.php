@@ -218,6 +218,27 @@ class SlackChat extends BaseController
         return $body;
     }
 
+    public function sendWebHookMessage($url, $msg)
+    {
+        $data = [
+            "text" => $msg
+        ];
+
+        $response = $this->client->request('POST', $url, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+            'body' => json_encode($data)
+        ]);
+
+        $body = $response->getBody();
+        if ($response->getStatusCode() == 200) {
+            $this->writeLog($body);
+        } else {
+            $this->writeLog($body);
+        }
+    }
+
     private function writeLog($log) {
         $fp = fopen(WRITEPATH.'/logs/slack_log', 'a+');
         $fw = fwrite($fp, print_r($log,true).PHP_EOL);

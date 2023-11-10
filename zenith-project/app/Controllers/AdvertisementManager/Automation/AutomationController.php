@@ -3,6 +3,7 @@
 namespace App\Controllers\AdvertisementManager\Automation;
 
 use App\Controllers\BaseController;
+use App\Libraries\slack_api\SlackChat;
 use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AutomationModel;
 use App\ThirdParty\facebook_api\ZenithFB;
@@ -50,7 +51,7 @@ class AutomationController extends BaseController
 
     public function getAutomation()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
             if(!empty($result['aat_id'])){
@@ -161,7 +162,7 @@ class AutomationController extends BaseController
 
     public function getAdv()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 
             switch ($arg['tab']) {
@@ -200,7 +201,7 @@ class AutomationController extends BaseController
 
     public function getLogs()
     {
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getLogs($arg);                
 
@@ -246,9 +247,6 @@ class AutomationController extends BaseController
                     }
                 }
             }
-
-            
-
 
             $result = [
                 'data' => $result['data'],
@@ -658,6 +656,11 @@ class AutomationController extends BaseController
                 $logIdx = $this->recordResult($executionData['result']);
                 $result['executions'] = $executionData['log'];
                 $this->recordLog($result, $logIdx);
+
+                if($executionData['result'] == true && (!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg']))){
+                    $slackChat = new SlackChat;
+                    $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
+                }
             }
         }
     }
@@ -1344,7 +1347,7 @@ class AutomationController extends BaseController
                                     'id' => $original['id'],
                                     'budget' => $original['exec_value']
                                 ];
-                                $return = $zenith->setDailyBudgetAmount($data);
+                                $zenith->setDailyBudgetAmount($data);
                             }
                         }
                     case 'ad':

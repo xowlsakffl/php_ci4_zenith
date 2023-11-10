@@ -287,13 +287,6 @@
                             </table>
                             <table class="table tbl-header w-100 mt-4" id="targetSelectTable">
                                 <input type="hidden" name="adv_info" id="advInfo">
-                                <colgroup>
-                                    <col style="width:10%">
-                                    <col style="width:10%">
-                                    <col style="width:30%">
-                                    <col style="width:40%">
-                                    <col style="width:10%">
-                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="5"  class="text-center">적용 항목</th>
@@ -439,30 +432,38 @@
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue">
+                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue" placeholder="예산" oninput="onlyNumber(this);">
                                                 <button class="btn-special" id="execConditionBtn">적용</button>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
-                                <colgroup>
-                                    <col style="width:4%">
-                                    <col style="width:10%">
-                                    <col style="width:10%">
-                                    <col style="width:24%">
-                                    <col style="width:22%">
-                                    <col style="width:10%">
-                                    <col style="width:10%">
-                                    <col style="width:10%">
-                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="8"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                </tbody>
+                            </table>
+                            <table class="table tbl-header w-100 mt-4 slackSendTable" id="slackSendTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">슬랙 메세지 보내기</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="form-flex">
+                                                <input type="text" name="slack_webhook" class="form-control" placeholder="웹훅 URL">
+                                                <input type="text" name="slack_msg" class="form-control" placeholder="메세지">
+                                            </div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -961,6 +962,8 @@ function validationData(){
     let $selectExec = $('#execSelectTable tbody tr').length;
 
     let $subject = $('#detailTable input[name=subject]').val();
+    let $slack_webhook = $('#slackSendTable input[name="slack_webhook"]').val();
+    let $slack_msg = $('#slackSendTable input[name="slack_msg"]').val();
 
     if (!$type_value) {
         alert('시간 조건값을 입력해주세요');
@@ -1108,6 +1111,17 @@ function validationData(){
         return false;
     }
 
+    if (($slack_webhook && !$slack_msg) || (!$slack_webhook && $slack_msg)) {     
+        alert('웹훅 URL과 메세지 둘 다 입력해주세요.');
+        $('#preactice-tab').trigger('click');
+        if(!$('#slackSendTable input[name="slack_webhook"]').val()){
+            $('#slackSendTable input[name="slack_webhook"]').focus();
+        } else if(!$('#slackSendTable input[name="slack_msg"]').val()){
+            $('#slackSendTable input[name="slack_msg"]').focus();
+        }
+        return false;
+    }
+
     if(!$subject){
         alert('제목을 추가해주세요.');
         $('#detailTable input[name=subject]').focus();
@@ -1222,6 +1236,14 @@ function setModalData(data){
             $('#execSelectTable tbody').append(executionData);
             $('#preactice-tab').append(newExecText);
         });
+    }
+
+    if(data.aa_slack_webhook){
+        $('#slackSendTable input[name=slack_webhook]').val(data.aa_slack_webhook); 
+    }
+
+    if(data.aa_slack_msg){
+        $('#slackSendTable input[name=slack_msg]').val(data.aa_slack_msg); 
     }
 
     $('#detailTable input[name=subject]').val(data.aa_subject);
@@ -1345,6 +1367,8 @@ function setProcData(){
 
     let $subject = $('#detailTable input[name=subject]').val();
     let $description = $('#detailTable textarea[name=description]').val();
+    let $slack_webhook = $('#slackSendTable input[name=slack_webhook]').val();
+    let $slack_msg = $('#slackSendTable input[name=slack_msg]').val();
 
     let $data = {
         'schedule': {
@@ -1362,6 +1386,8 @@ function setProcData(){
         'detail': {
             'subject': $subject,
             'description': $description,
+            'slack_webhook': $slack_webhook,
+            'slack_msg': $slack_msg,
         }
     };
 

@@ -725,6 +725,8 @@ class AutomationModel extends Model
         aa.seq as aa_seq, 
         aa.subject as aa_subject,
         aa.description as aa_description,
+        aa.slack_webhook as aa_slack_webhook,
+        aa.slack_msg as aa_slack_msg,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
         DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
@@ -816,6 +818,8 @@ class AutomationModel extends Model
         $builder = $this->zenith->table('admanager_automation aa');
         $builder->select('
         aa.seq as aa_seq, 
+        aa.slack_webhook as aa_slack_webhook,
+        aa.slack_msg as aa_slack_msg,
         aas.idx as aas_idx, 
         aas.exec_type as aas_exec_type, 
         aas.type_value as aas_type_value, 
@@ -1179,6 +1183,8 @@ class AutomationModel extends Model
             'description' => $data['detail']['description'],
             'nickname' => auth()->user()->nickname,
             'status' => 1,
+            'slack_webhook' =>$data['detail']['slack_webhook'],
+            'slack_msg' =>$data['detail']['slack_msg'],
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
@@ -1228,6 +1234,8 @@ class AutomationModel extends Model
         aa.subject as aa_subject,
         aa.description as aa_description,
         aa.status as aa_status,
+        aa.slack_webhook as aa_slack_webhook,
+        aa.slack_msg as aa_slack_msg,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
         aas.exec_time as aas_exec_time,
@@ -1261,6 +1269,8 @@ class AutomationModel extends Model
             'description' => $aaGetResult['aa_description'] ?? null,
             'nickname' => auth()->user()->nickname,
             'status' => $aaGetResult['aa_status'],
+            'slack_webhook' =>$aaGetResult['aa_slack_webhook'],
+            'slack_msg' =>$aaGetResult['aa_slack_msg'],
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
         $aaBuilder = $this->zenith->table('admanager_automation');
@@ -1335,6 +1345,8 @@ class AutomationModel extends Model
         $aaData = [
             'subject' => $data['detail']['subject'],
             'description' => $data['detail']['description'],
+            'slack_webhook' =>$data['detail']['slack_webhook'],
+            'slack_msg' =>$data['detail']['slack_msg'],
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
