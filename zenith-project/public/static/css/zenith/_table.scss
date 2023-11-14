@@ -88,7 +88,10 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
 .table-sm{min-width:1000px;}
 
 table.dataTable{border-right: 1px dashed var(--bs-border-color);}
-div.dataTables_scrollBody>table{padding-bottom:3rem;}
+div.dataTables_scrollBody{
+    height:73vh !important;
+    &>table{padding-bottom:3rem;}
+}
 
 @include x-large{
 

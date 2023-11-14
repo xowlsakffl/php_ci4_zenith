@@ -970,6 +970,8 @@ class AutomationController extends BaseController
                     case 'kakao':
                         $zenith = new ZenithKM();
                         break;
+                    default:
+                        break;
                 }
                 if($zenith){ 
                     switch ($execution['type']) {
@@ -1037,7 +1039,7 @@ class AutomationController extends BaseController
                                                 'media' => $execution['media'],
                                                 'type' => $execution['type'],
                                                 'id' => $execution['id'],
-                                                'budget' => $originalData['budget'],
+                                                'budget' => $originalData['budget'] ?? 0,
                                             ];
                                             $data = [
                                                 'id' => $execution['id'],
@@ -1054,7 +1056,7 @@ class AutomationController extends BaseController
                                                 'media' => $execution['media'],
                                                 'type' => $execution['type'],
                                                 'id' => $execution['id'],
-                                                'budget' => $originalData['budget'],
+                                                'budget' => $originalData['budget'] ?? 0,
                                             ];
                                             $return = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $execution['exec_value']]);
                                         }else{
@@ -1067,7 +1069,7 @@ class AutomationController extends BaseController
                                                 'media' => $execution['media'],
                                                 'type' => $execution['type'],
                                                 'id' => $execution['id'],
-                                                'status' => $originalData['status'],
+                                                'budget' => $originalData['budget'] ?? 0,
                                             ];
                                             $data = [
                                                 'type' => 'campaign',
@@ -1244,6 +1246,8 @@ class AutomationController extends BaseController
                                     break;
                             }
                             break;
+                        default:
+                            break;
                     }
                     
                     if($return == true || (isset($return['http_code']) && $return['http_code'] == 200) || isset($return['id'])){
@@ -1281,8 +1285,10 @@ class AutomationController extends BaseController
                     case 'kakao':
                         $zenith = new ZenithKM();
                         break;
+                    default:
+                        break;
                 }
-
+                
                 switch ($original['type']) {
                     case 'campaign':
                         $customerId = null;
@@ -1318,6 +1324,7 @@ class AutomationController extends BaseController
                                 $zenith->setDailyBudgetAmount($data);
                             }
                         }
+                        break;
                     case 'adgroup':
                         $customerId = null;
                         if ($original['media'] === 'google') {
@@ -1350,6 +1357,7 @@ class AutomationController extends BaseController
                                 $zenith->setDailyBudgetAmount($data);
                             }
                         }
+                        break;
                     case 'ad':
                         $customerId = null;                               
                         if ($original['media'] === 'google') {
@@ -1365,6 +1373,8 @@ class AutomationController extends BaseController
                                 $zenith->setCreativeOnOff($original['id'], $original['status']);
                             }
                         }
+                        break;
+                    default:
                         break;
                 }
             }

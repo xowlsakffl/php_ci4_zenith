@@ -964,14 +964,15 @@ class ZenithFB
         }
 
         $row = $this->db->getCampaign($campaign_id);
-
         // 기본 정보 설정
-        $campaignfields = [CampaignFields::DAILY_BUDGET => $budget];
-
+        $campaignfields = [CampaignFields::DAILY_BUDGET => intval($budget)];
+        
         $campaign = new Campaign($campaign_id);
+
         // $campaign->setData($campaignfields);
         $campaign = $campaign->updateSelf([], $campaignfields);
         $campaign = $campaign->getData();
+        
         if ($campaign['success'] == 1) {
             $this->db->updateCampaignBudget($campaign_id, $budget);
             return $campaign_id;
@@ -988,7 +989,6 @@ class ZenithFB
             return null;
         }
         $row = $this->db->getAdSet($adset_id);
-
         $field = '';
         switch ($row['budget_type']) {
             case 'lifetime':
@@ -1009,6 +1009,7 @@ class ZenithFB
             $this->db->updateAdSetBudget($adset_id, $budget);
             return $adset_id;
         }
+
         return null;
     }
     

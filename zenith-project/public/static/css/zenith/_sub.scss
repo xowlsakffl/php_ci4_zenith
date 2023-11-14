@@ -124,15 +124,16 @@
         }
     }
 }
-
-.dataTables_scrollBody{ /*table 스크롤바 안보임*/
-    -ms-overflow-style: none; /* 익스플로러, 앳지 */
-    scrollbar-width: none; /* 파이어폭스 */
+/*
+.dataTables_scrollBody{ /*table 스크롤바 안보임
+    -ms-overflow-style: none; /* 익스플로러, 앳지
+    scrollbar-width: none; /* 파이어폭스
 
     &::-webkit-scrollbar {
-        display: none; /* 크롬, 사파리, 오페라 */
+        display: none; /* 크롬, 사파리, 오페라
     }
 }
+*/
 
 #adv-show-table #p_name #search-results{position: absolute; background-color: #fff;}
 

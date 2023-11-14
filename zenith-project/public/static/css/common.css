@@ -202,6 +202,7 @@ body {
   padding: 42px 0;
   border-radius: 0 0 40px 0;
   background: #2d2e34;
+  z-index: 99;
 }
 .left-side .btn-menu {
   display: none;
@@ -246,7 +247,7 @@ body {
 }
 .nav-wrap .nav > li:has(div):after {
   position: absolute;
-  top: 16px;
+  top: 23px;
   right: 30px;
   width: 10px;
   height: 10px;
@@ -269,7 +270,7 @@ body {
   background: #ce1922;
 }
 .nav-wrap .nav > li:has([aria-expanded=true]):after {
-  top: 20px;
+  top: 26px;
   border-color: #2d2e34;
   transform: rotate(225deg);
 }
@@ -282,8 +283,12 @@ body {
 }
 .nav-wrap .nav button {
   display: block;
-  padding: 0 0 0 33px;
+  padding: 0 85px 0 33px;
   color: #fff;
+  transition: 0.2s;
+}
+.nav-wrap .nav button:hover {
+  color: #e91b25;
 }
 .nav-wrap .nav button > i.bi {
   display: inline-block;
@@ -303,6 +308,11 @@ body {
   padding: 0 0 2px 10px;
   font-size: 0.875rem;
   color: #929292;
+  transition: 0.3s;
+}
+.nav-wrap .nav .btn-toggle-nav a:hover {
+  color: #e91b25;
+  text-indent: 0.4rem;
 }
 .nav-wrap .nav .btn-toggle-nav .active {
   color: #ce1922;
@@ -328,6 +338,10 @@ body {
 .util-nav a {
   font-size: 0.813rem;
   color: #aaa;
+  transition: 0.3s;
+}
+.util-nav a:hover {
+  color: #e91b25;
 }
 
 .btn-wrap a { /*이벤트 > 상세 페이지 버튼*/ }
@@ -349,11 +363,13 @@ body {
 
 .main-contents-wrap {
   flex: 1;
-  padding: 80px 6.7708vw;
+  padding: 70px 5.7708vw;
+  margin-left: 240px;
 }
 
 .ad-list .row {
   text-align: left;
+  margin-right: 0;
 }
 .ad-list .row:not(:first-child) {
   margin-top: 24px;
@@ -361,7 +377,7 @@ body {
 .ad-list .type {
   flex: 1;
   margin-right: 12px;
-  padding: 1.8229vw 2.5vw;
+  padding: 2vw 2vw;
   border: 1px solid #d1d1d1;
   border-radius: 10px;
   background: #fff;
@@ -384,7 +400,7 @@ body {
 }
 .ad-list .summary {
   display: flex;
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 .ad-list .summary strong {
   min-width: 210px;
@@ -426,6 +442,12 @@ body {
 .ad-list .summary .percentage dd {
   color: #ce1922;
 }
+.ad-list .ad-detail-info .col dt {
+  margin-bottom: 5px;
+}
+.ad-list .ad-detail-info .col dd {
+  font-size: 0.8rem;
+}
 .ad-list .detail dl {
   box-sizing: border-box;
   margin: 0 22px 0 0;
@@ -439,7 +461,7 @@ body {
 }
 
 .dayOff-contanier .form-select {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 @media screen and (max-width: 1400px) {
@@ -493,6 +515,7 @@ body {
   }
   .main-contents-wrap {
     padding: 30px 30px 30px 70px;
+    margin-left: 1em;
   }
   .left-side {
     position: fixed;
@@ -508,7 +531,7 @@ body {
   .left-side .logo {
     margin: 0 0 20px 45px;
   }
-  .left-side.open {
+  .left-side.active {
     width: 240px;
   }
   .left-side .btn-menu {
@@ -581,6 +604,7 @@ body {
   font-size: 1.75rem;
   font-weight: 600;
   font-variation-settings: "wght" 600;
+  min-width: 200px;
 }
 .title-area .title-disc {
   margin: 0 0 0 15px;
@@ -641,6 +665,10 @@ body {
   margin: 0 0 50px;
   border: 1px solid #c3c3c3;
   border-radius: 10px 10px 0 0;
+}
+.search-wrap .reportData dl {
+  display: inline-block;
+  margin-bottom: 15px;
 }
 .search-wrap .search {
   padding: 35px 10.4167vw;
@@ -725,7 +753,7 @@ body {
 .search-wrap .detail .col {
   flex: 0 0 auto;
   width: auto;
-  padding: 0 30px;
+  padding: 0 25px;
   color: #929292;
   font-weight: 500;
 }
@@ -808,12 +836,12 @@ body {
   font-size: 85%;
 }
 .client-list .row .col button.active {
-  color: #ce1922;
-  border-color: #ce1922;
+  color: #fff;
+  background-color: #ce1922;
 }
 .client-list .row .col button.on {
-  color: var(--bs-white);
-  background-color: #fda9a9;
+  color: #fff;
+  background-color: #ce1922;
 }
 .client-list .row .col button.alert {
   margin: 0;
@@ -847,12 +875,11 @@ body {
   bottom: 3px;
   font-size: 0.5rem;
 }
-.client-list .row .col:hover {
-  box-shadow: inset 20px 70px 0px red;
-}
+.client-list .row .col:hover { /* box-shadow:inset 20px 70px 0px $color-primary; */ }
 .client-list .row .col:hover button {
-  border-left-color: transparent;
-  border-right-color: transparent;
+  font-weight: bold;
+  color: #222;
+  border: 1px solid #222;
 }
 .client-list.biz .row .col {
   width: 160px;
@@ -878,6 +905,9 @@ body {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   background: #d7d7d7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover, .nav-tabs .nav-link:active {
   border: 0;
@@ -901,9 +931,10 @@ body {
   padding: 0.25em 1.75em;
   border-radius: 14px;
   color: #fff;
-  margin-left: 10px;
-  display: none;
   font-size: 80%;
+  transition: 0.5s;
+  margin: 0 0 0 0.75em;
+  display: none;
   transition: 0.5s;
 }
 
@@ -930,14 +961,16 @@ body {
   color: #fff;
 }
 
-.dataTables_scrollBody { /*table 스크롤바 안보임*/
-  -ms-overflow-style: none; /* 익스플로러, 앳지 */
-  scrollbar-width: none; /* 파이어폭스 */
-}
-.dataTables_scrollBody::-webkit-scrollbar {
-  display: none; /* 크롬, 사파리, 오페라 */
-}
+/*
+.dataTables_scrollBody{ /*table 스크롤바 안보임
+    -ms-overflow-style: none; /* 익스플로러, 앳지
+    scrollbar-width: none; /* 파이어폭스
 
+    &::-webkit-scrollbar {
+        display: none; /* 크롬, 사파리, 오페라
+    }
+}
+*/
 #adv-show-table #p_name #search-results {
   position: absolute;
   background-color: #fff;
@@ -979,7 +1012,7 @@ input:-internal-autofill-selected {
 @media screen and (max-width: 1400px) {
   .sub-contents-wrap {
     padding: 30px 30px 30px 30px;
-    margin-left: 40px;
+    margin-left: 240px;
   }
   .title-area {
     flex-wrap: wrap;
@@ -1006,6 +1039,10 @@ input:-internal-autofill-selected {
   }
 }
 @media screen and (max-width: 1200px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 240px;
+  }
   .client-list .row {
     flex-wrap: wrap;
     max-height: 250px;
@@ -1019,6 +1056,10 @@ input:-internal-autofill-selected {
   }
 }
 @media screen and (max-width: 1024px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
+  }
   .search-wrap {
     margin: 0 0 20px;
   }
@@ -1074,6 +1115,9 @@ input:-internal-autofill-selected {
   }
   .nav-tabs .nav-link {
     padding: 10px 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100%;
   }
   .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover, .nav-tabs .nav-link:active {
     border: 0;
@@ -1091,6 +1135,20 @@ input:-internal-autofill-selected {
     height: 3px;
     content: "";
     background: #ce1922;
+  }
+  .nav-tabs .nav-link > span {
+    display: block;
+  }
+  .nav-tabs .nav-link .selected {
+    margin: 0.75em auto 0;
+    padding: 0.25em 1.25em;
+    font-size: 0.75em;
+  }
+}
+@media screen and (max-width: 768px) {
+  .sub-contents-wrap {
+    padding: 30px 30px 30px 30px;
+    margin-left: 40px;
   }
 }
 div.dataTables_processing {
@@ -1125,7 +1183,7 @@ div.dataTables_processing > div:last-child > div {
 
 .table {
   table-layout: fixed;
-  width: auto;
+  width: 100%;
 }
 .table .none {
   padding: 50px 0;
@@ -1305,6 +1363,17 @@ div.dataTables_processing > div:last-child > div {
 
 .table-sm {
   min-width: 1000px;
+}
+
+table.dataTable {
+  border-right: 1px dashed var(--bs-border-color);
+}
+
+div.dataTables_scrollBody {
+  height: 73vh !important;
+}
+div.dataTables_scrollBody > table {
+  padding-bottom: 3rem;
 }
 
 @media screen and (max-width: 1024px) {
@@ -1708,7 +1777,24 @@ div.dataTables_processing > div:last-child > div {
     box-shadow: inset 200px 0px 7px red;
   }
 }
-.btn-primary + .btn-special {
+.search button.btn-primary {
+  width: 90px;
+  font-weight: 700;
+  font-size: 100%;
+  color: #fff;
+  border-radius: 7px;
+  background: #ce1922;
+}
+.search .term {
+  margin-bottom: 15px;
+}
+.search .input {
+  margin-left: 0 !important;
+}
+.search .input .btn-primary {
+  margin-left: 5px;
+}
+.search .input .btn-special {
   margin-left: 5px;
 }
 
@@ -1982,6 +2068,25 @@ div.dataTables_processing > div:last-child > div {
 .regi-content .detail-wrap .detail.active {
   display: block;
 }
+.regi-content .detail-wrap .detail .form-check-input {
+  margin-top: 0;
+  transition: all 0.2s;
+}
+.regi-content .detail-wrap .detail .form-check-input + label {
+  margin-left: 5px !important;
+  margin-right: 1rem;
+}
+.regi-content .detail-wrap .detail .form-check-input:checked + label {
+  color: var(--bs-primary);
+  font-weight: 900;
+}
+.regi-content .detail-wrap .detail .form-control + .btn-special {
+  flex: unset;
+  float: unset;
+  height: auto;
+  padding: 12px 15px;
+  line-height: 1.4;
+}
 .regi-content .detail-wrap .tbl-side {
   font-size: 15px;
   border-radius: 5px;
@@ -2019,6 +2124,7 @@ div.dataTables_processing > div:last-child > div {
   padding: 0.8rem 0.5rem;
   border-bottom: 1px solid #c3c3c3;
   background: #f7f7f7;
+  text-align: center;
 }
 .regi-content .detail-wrap .tbl-header thead th:not(:first-child) {
   border-left: 1px dashed #c3c3c3;
@@ -2032,8 +2138,15 @@ div.dataTables_processing > div:last-child > div {
 .regi-content .detail-wrap .tbl-header tr:not(:last-child) td {
   border-bottom: 1px solid #c3c3c3;
 }
+.regi-content .detail-wrap .tbl-header tr.selected > * {
+  box-shadow: inset 0 0 0 9999px rgba(255, 199, 209, 0.368627451);
+  color: rgba(58, 32, 232, 0.8196078431);
+  font-weight: 600;
+}
 .regi-content .detail-wrap .tbl-header td {
   min-height: 42px;
+  vertical-align: middle;
+  word-break: break-word;
 }
 .regi-content .detail-wrap .tbl-header td:not(:first-child) {
   border-left: 1px dashed #c3c3c3;
@@ -2137,7 +2250,57 @@ div.dataTables_processing > div:last-child > div {
   padding: 0 0 0 42px;
   border: 1px solid #929292;
   border-radius: 22px;
-  background: url(/images/ico_search.png) no-repeat 20px center;
+  background: url("/img/search.svg") no-repeat 24px center;
+}
+.regi-content .detail-wrap .input {
+  flex: 1;
+  display: flex;
+}
+.regi-content .detail-wrap .input input[type=text] {
+  flex: 1;
+  width: 100%;
+  height: 50px;
+  box-sizing: border-box;
+  margin: 0 10px 0 0;
+  padding: 0 15px 0 45px;
+  border: 1px solid #929292;
+  border-radius: 25px;
+  background: url("/img/search.svg") no-repeat 24px center;
+}
+.regi-content .detail-wrap .input input[type=text]:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
+  caret-color: red;
+}
+.regi-content .detail-wrap .input input[type=text]:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
+}
+.regi-content .detail-wrap .input input[type=text]:focus::placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  transition: text-indent 0.3s;
+}
+.regi-content .detail-wrap .input .btn-primary {
+  width: 115px;
+  height: 52px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 7px;
+  background: #ce1922;
+}
+.regi-content .detail-wrap .input .btn-special {
+  width: 115px;
+  height: 52px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 7px;
+  background: var(--bs-blue);
+}
+.regi-content .detail-wrap * + .input {
+  margin: 0 0 0 20px;
 }
 .regi-content .detail-wrap .btn-special {
   float: right;
@@ -2147,6 +2310,50 @@ div.dataTables_processing > div:last-child > div {
   color: #fff;
   border-radius: 7px;
   background: var(--bs-blue);
+}
+.regi-content .detail-wrap .target-btn:hover {
+  color: var(--bs-blue);
+}
+.regi-content .detail-wrap .target-btn:active {
+  color: red;
+}
+.regi-content .dataTables_paginate {
+  float: unset;
+  text-align: center !important;
+  padding-top: 1.755em;
+  padding-bottom: 1.755em;
+}
+.regi-content .dataTables_paginate .paginate_button {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+.regi-content .dataTables_paginate .paginate_button.disabled, .regi-content .dataTables_paginate .paginate_button.disabled:hover {
+  color: #aaa !important;
+}
+.regi-content .dataTables_paginate .paginate_button:hover {
+  color: red !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+.regi-content .dataTables_paginate .paginate_button:not(.previous, .next, .current) { /*@include dot-effect;*/
+  /*  @include underline-effect;*/
+}
+.regi-content .dataTables_paginate .paginate_button.current {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.regi-content .dataTables_paginate .paginate_button.current:hover {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+}
+.regi-content .dataTables_paginate .paginate_button:active {
+  background: none;
+  border: none;
 }
 
 .week-radio {
@@ -2195,6 +2402,47 @@ div.dataTables_processing > div:last-child > div {
 .modal .tbl-dark .em {
   color: var(--bs-blue);
 }
+.modal .tbl-dark .fail {
+  color: var(--bs-red);
+}
+.modal .dataTables_paginate {
+  float: unset;
+  text-align: center !important;
+  padding-top: 1.755em;
+  padding-bottom: 1.755em;
+}
+.modal .dataTables_paginate .paginate_button {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+.modal .dataTables_paginate .paginate_button.disabled, .modal .dataTables_paginate .paginate_button.disabled:hover {
+  color: #aaa !important;
+}
+.modal .dataTables_paginate .paginate_button:hover {
+  color: red !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+.modal .dataTables_paginate .paginate_button:not(.previous, .next, .current) { /*@include dot-effect;*/
+  /*  @include underline-effect;*/
+}
+.modal .dataTables_paginate .paginate_button.current {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.modal .dataTables_paginate .paginate_button.current:hover {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+}
+.modal .dataTables_paginate .paginate_button:active {
+  background: none;
+  border: none;
+}
 
 #logModal .modal-header .modal-title {
   font-size: 20px;
@@ -2209,8 +2457,16 @@ div.dataTables_processing > div:last-child > div {
   vertical-align: middle;
   background: url(/images/ico_log.png) no-repeat 0 center;
 }
-.ad-list .type{
-  transition: 0.3s;
+
+.btn-close {
+  transition: all 0.5s;
+}
+.btn-close:active {
+  transform: rotate(360deg);
+}
+
+.ad-list .type {
+  transition: 0.4s;
 }
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
@@ -2220,7 +2476,7 @@ div.dataTables_processing > div:last-child > div {
 }
 .ad-list .btn-more:hover span {
   transition: 0.2s;
-  animation: moreBtn 0.5s infinite linear alternate;
+  animation: moreBtn 1.3s infinite linear alternate;
 }
 
 @media screen and (max-width: 1200px) {
@@ -2236,6 +2492,7 @@ div.dataTables_processing > div:last-child > div {
     animation: moreBtn_mo 0.3s linear alternate;
     font-size: 0.8rem;
     color: #2d2e34;
+    font-weight: bold;
   }
   .ad-list .btn-more {
     width: auto;
@@ -2425,7 +2682,7 @@ div.dataTables_processing > div:last-child > div {
   text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
-  color: chartreuse;
+  color: #fff;
   opacity: 1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
@@ -2544,7 +2801,7 @@ div.dataTables_processing > div:last-child > div {
   cursor: pointer;
 }
 .db-manage-contaniner .detail.minWd .col:hover, .db-manage-contaniner .detail.minWd .col.active {
-  color: blue;
+  color: #ce1922;
 }
 .db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;
@@ -2566,11 +2823,11 @@ div.dt-button-collection button {
   width: 100%;
 }
 div.dt-button-collection button:hover, div.dt-button-collection button.dt-button-active {
-  font-weight: 900;
-  background-color: var(--bs-gray-200);
+  color: #fff;
+  background-color: #ce1922;
 }
 div.dt-button-collection button:hover > span, div.dt-button-collection button.dt-button-active > span {
-  text-indent: 1.5rem;
+  text-indent: 0.4rem;
 }
 div.dt-button-collection button:hover > span i.bi::before, div.dt-button-collection button.dt-button-active > span i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
@@ -3198,6 +3455,9 @@ div.dt-button-collection h3 {
     box-shadow: inset 200px 0px 7px red;
   }
 }
+.ad-list .type {
+  transition: 0.4s;
+}
 .ad-list .type:hover {
   box-shadow: 2px 2px 15px #ccc;
 }
@@ -3206,7 +3466,7 @@ div.dt-button-collection h3 {
 }
 .ad-list .btn-more:hover span {
   transition: 0.2s;
-  animation: moreBtn 0.5s infinite linear alternate;
+  animation: moreBtn 1.3s infinite linear alternate;
 }
 
 @media screen and (max-width: 1200px) {
@@ -3222,6 +3482,7 @@ div.dt-button-collection h3 {
     animation: moreBtn_mo 0.3s linear alternate;
     font-size: 0.8rem;
     color: #2d2e34;
+    font-weight: bold;
   }
   .ad-list .btn-more {
     width: auto;
@@ -3411,7 +3672,7 @@ div.dt-button-collection h3 {
   text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
-  color: chartreuse;
+  color: #fff;
   opacity: 1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
@@ -3530,7 +3791,7 @@ div.dt-button-collection h3 {
   cursor: pointer;
 }
 .db-manage-contaniner .detail.minWd .col:hover, .db-manage-contaniner .detail.minWd .col.active {
-  color: blue;
+  color: #ce1922;
 }
 .db-manage-contaniner .detail.minWd .col dt {
   font-size: 1rem;
@@ -3552,11 +3813,11 @@ div.dt-button-collection button {
   width: 100%;
 }
 div.dt-button-collection button:hover, div.dt-button-collection button.dt-button-active {
-  font-weight: 900;
-  background-color: var(--bs-gray-200);
+  color: #fff;
+  background-color: #ce1922;
 }
 div.dt-button-collection button:hover > span, div.dt-button-collection button.dt-button-active > span {
-  text-indent: 1.5rem;
+  text-indent: 0.4rem;
 }
 div.dt-button-collection button:hover > span i.bi::before, div.dt-button-collection button.dt-button-active > span i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;

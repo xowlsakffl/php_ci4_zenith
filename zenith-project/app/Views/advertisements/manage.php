@@ -510,10 +510,10 @@ function getList(data = []){
         },
         "ordering": true,
         "paging": false,
-        "info": false,
+        "info": true,
         "scroller": false,
         "scrollX": true,
-        // "scrollY": 500,
+        "scrollY": "75vh",
         "scrollCollapse": true,
         "stateSave": true,
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
