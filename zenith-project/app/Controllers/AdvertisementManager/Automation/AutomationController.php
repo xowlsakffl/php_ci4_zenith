@@ -1330,7 +1330,7 @@ class AutomationController extends BaseController
                             } else if ($original['media'] === 'google') {
                                 $zenith->updateAdGroup($customerId['customerId'], $original['id'], $original['status']);
                             } else if ($original['media'] === 'kakao') {
-                                $zenith->setAdGroupOnOff($original['id'], $original['exec_value']);
+                                $zenith->setAdGroupOnOff($original['id'], $original['status']);
                             }
                         }
 
@@ -1338,14 +1338,14 @@ class AutomationController extends BaseController
                             if ($original['media'] === 'facebook') {
                                 $data = [
                                     'id' => $original['id'],
-                                    'budget' => $original['exec_value']
+                                    'budget' => $original['budget']
                                 ];
                                 $zenith->updateAdSetBudget($data);
                             } else if ($original['media'] === 'kakao') {
                                 $data = [
                                     'type' => 'adgroup',
                                     'id' => $original['id'],
-                                    'budget' => $original['exec_value']
+                                    'budget' => $original['budget']
                                 ];
                                 $zenith->setDailyBudgetAmount($data);
                             }
@@ -1362,7 +1362,7 @@ class AutomationController extends BaseController
                             } else if ($original['media'] === 'google') {
                                 $zenith->updateAdGroupAd($customerId['customerId'], null, $original['id'], $original['status']);
                             } else if ($original['media'] === 'kakao') {
-                                $zenith->setCreativeOnOff($original['id'], $original['exec_value']);
+                                $zenith->setCreativeOnOff($original['id'], $original['status']);
                             }
                         }
                         break;
