@@ -10,6 +10,7 @@ use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\moment_api\ZenithKM;
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\CLI\CLI;
 use CodeIgniter\I18n\Time;
 use DateTime;
 use Exception;
@@ -628,8 +629,12 @@ class AutomationController extends BaseController
     
     public function automation()
     {
+        CLI::write("자동화를 실행합니다.", "light_red");
         $automations = $this->automation->getAutomations();
+        $step = 1;
+        $total = count($automations);
         foreach ($automations as $automation) {
+            CLI::showProgress($step++, $total);
             $result = [];
             $schedulePassData = $this->checkAutomationSchedule($automation);
             $result['schedule'] = $schedulePassData;
@@ -671,6 +676,7 @@ class AutomationController extends BaseController
                 }
             }
         }
+        CLI::write("자동화 실행 완료", "light_red");
     }
 
     public function checkAutomationSchedule($automation)

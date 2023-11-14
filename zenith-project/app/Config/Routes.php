@@ -132,8 +132,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->post('copy', 'AdvertisementManager\Automation\AutomationController::copyAutomation');
         $routes->put('update', 'AdvertisementManager\Automation\AutomationController::updateAutomation');
         $routes->delete('delete', 'AdvertisementManager\Automation\AutomationController::deleteAutomation');
-
-        $routes->get('exec', 'AdvertisementManager\Automation\AutomationController::automation');
     });
     
     // 통합 DB관리
@@ -231,6 +229,9 @@ $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead
 $routes->get('example/(:any)', 'ExampleController::view/$1');
 
 $routes->get('calendar', 'Calendar\CalendarController::index');
+
+//자동화 실행
+$routes->cli('automation/exec', 'AdvertisementManager\Automation\AutomationController::automation');
 
 /* $routes->get('slack/code', '\App\ThirdParty\botman\ChatBot::getCode');
 $routes->get('auth/slack/callback', '\App\ThirdParty\botman\ChatBot::getToken');
