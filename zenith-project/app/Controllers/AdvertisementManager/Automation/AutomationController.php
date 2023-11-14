@@ -201,7 +201,7 @@ class AutomationController extends BaseController
 
     public function getLogs()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getLogs($arg);                
 
@@ -224,16 +224,24 @@ class AutomationController extends BaseController
                         if(!empty($decoded)){
                             if($field == 'executions_desc'){
                                 $errorMsgs = [];
-                                foreach($decoded as $item) {
-                                    if(isset($item['result']) && $item['result'] === false) {
-                                        $errorMsgs[] = '실패 - '.'['.$item['data']['media'].']['.$item['data']['type'].']['.$item['data']['id'].'] '.$item['data']['exec_type'].' => '.$item['data']['exec_value']." ".$item['msg'];
+                                if(is_array($decoded)){
+                                    foreach($decoded as $item) {                              
+                                        if(is_array($item)){
+                                            if($item['result'] == false) {
+                                                $errorMsgs[] = '실패 - '.'['.$item['data']['media'].']['.$item['data']['type'].']['.$item['data']['id'].'] '.$item['data']['exec_type'].' => '.$item['data']['exec_value']." ".$item['msg'];
+                                            }
+                                        }else{
+                                            $errorMsgs = '실패 - '.$decoded['msg'];
+                                            continue;
+                                        }
+                                    }                          
+                                    if(empty($errorMsgs)){
+                                        $data[$field] = '통과';
+                                    }else{
+                                        $data[$field] = $errorMsgs;
                                     }
                                 }
-                                if(empty($errorMsgs)){
-                                    $data[$field] = ['통과'];
-                                }else{
-                                    $data[$field] = $errorMsgs;
-                                }
+                                
                             }else{
                                 if($decoded !== null) {
                                     if($decoded['result'] === true) {
