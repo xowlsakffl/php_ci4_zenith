@@ -753,6 +753,11 @@ class AutomationModel extends Model
                     $result['aat_name'] = $target['name'];
                     $result['aat_status'] = $target['status'];
                     break;
+                case 'account':
+                    $target = $this->getSearchAccounts(null, $result['aat_id']);
+                    $result['aat_name'] = $target['name'];
+                    $result['aat_status'] = $target['status'];
+                    break;
                 case 'campaign':
                     $target = $this->getSearchCampaigns(null, $result['aat_id']);
                     $result['aat_name'] = $target['name'];

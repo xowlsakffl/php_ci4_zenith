@@ -66,6 +66,9 @@ class AutomationController extends BaseController
                     case 'advertiser':
                         $result['aat_type'] = '광고주';
                         break;
+                    case 'account':
+                        $result['aat_type'] = '매체광고주';
+                        break;
                     case 'campaign':
                         $result['aat_type'] = '캠페인';
                         break;
@@ -279,90 +282,21 @@ class AutomationController extends BaseController
                 return $this->failValidationErrors($validationResult);
             }
 
-            if(!empty($data['target'])){
-                switch ($data['target']['media']) {
-                    case '광고주':
-                        $data['target']['media'] = 'company';
-                        break;
-                    case '페이스북':
-                        $data['target']['media'] = 'facebook';
-                        break;
-                    case '구글':
-                        $data['target']['media'] = 'google';
-                        break;
-                    case '카카오':
-                        $data['target']['media'] = 'kakao';
-                        break;
-                    default:
-                        break;
-                }
-
-                switch ($data['target']['type']) {
-                    case '광고주':
-                        $data['target']['type'] = 'advertiser';
-                        break;
-                    case '캠페인':
-                        $data['target']['type'] = 'campaign';
-                        break;
-                    case '광고그룹':
-                        $data['target']['type'] = 'adgroup';
-                        break;
-                    case '광고':
-                        $data['target']['type'] = 'ad';
-                        break;
-                    default:
-                        break;
-                }
+            $mediaMapping = ['광고주' => 'company', '페이스북' => 'facebook', '구글' => 'google', '카카오' => 'kakao'];
+            $typeMapping = ['광고주' => 'advertiser', '매체광고주' => 'account', '캠페인' => 'campaign', '광고그룹' => 'adgroup', '광고' => 'ad'];
+            $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
+            
+            if(!empty($data['target'])) {
+                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
+                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
             }
 
-            if(!empty($data['execution'])){
+            if(!empty($data['execution'])) {
                 foreach ($data['execution'] as &$execution) {
-                    switch ($execution['media']) {
-                        case '광고주':
-                            $execution['media'] = 'company';
-                            break;
-                        case '페이스북':
-                            $execution['media'] = 'facebook';
-                            break;
-                        case '구글':
-                            $execution['media'] = 'google';
-                            break;
-                        case '카카오':
-                            $execution['media'] = 'kakao';
-                            break;
-                        default:
-                            break;
-                    }
-    
-                    switch ($execution['type']) {
-                        case '광고주':
-                            $execution['type'] = 'advertiser';
-                            break;
-                        case '캠페인':
-                            $execution['type'] = 'campaign';
-                            break;
-                        case '광고그룹':
-                            $execution['type'] = 'adgroup';
-                            break;
-                        case '광고':
-                            $execution['type'] = 'ad';
-                            break;
-                        default:
-                            break;
-                    }
-
-                    switch ($execution['exec_type']) {
-                        case '상태':
-                            $execution['exec_type'] = 'status';
-                            break;
-                        case '예산':
-                            $execution['exec_type'] = 'budget';
-                            break;
-                        default:
-                            break;
-                    }
+                    $execution['media'] = $mediaMapping[$execution['media']] ?? $execution['media'];
+                    $execution['type'] = $typeMapping[$execution['type']] ?? $execution['type'];
+                    $execution['exec_type'] = $execTypeMapping[$execution['exec_type']] ?? $execution['exec_type'];
                 }
-                
             }
             
             $result = $this->automation->createAutomation($data);
@@ -395,90 +329,21 @@ class AutomationController extends BaseController
                 return $this->failValidationErrors($validationResult);
             }
             
-            if(!empty($data['target'])){
-                switch ($data['target']['media']) {
-                    case '광고주':
-                        $data['target']['media'] = 'company';
-                        break;
-                    case '페이스북':
-                        $data['target']['media'] = 'facebook';
-                        break;
-                    case '구글':
-                        $data['target']['media'] = 'google';
-                        break;
-                    case '카카오':
-                        $data['target']['media'] = 'kakao';
-                        break;
-                    default:
-                        break;
-                }
-
-                switch ($data['target']['type']) {
-                    case '광고주':
-                        $data['target']['type'] = 'advertiser';
-                        break;
-                    case '캠페인':
-                        $data['target']['type'] = 'campaign';
-                        break;
-                    case '광고그룹':
-                        $data['target']['type'] = 'adgroup';
-                        break;
-                    case '광고':
-                        $data['target']['type'] = 'ad';
-                        break;
-                    default:
-                        break;
-                }
+            $mediaMapping = ['광고주' => 'company', '페이스북' => 'facebook', '구글' => 'google', '카카오' => 'kakao'];
+            $typeMapping = ['광고주' => 'advertiser', '매체광고주' => 'account', '캠페인' => 'campaign', '광고그룹' => 'adgroup', '광고' => 'ad'];
+            $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
+            
+            if(!empty($data['target'])) {
+                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
+                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
             }
 
-            if(!empty($data['execution'])){
+            if(!empty($data['execution'])) {
                 foreach ($data['execution'] as &$execution) {
-                    switch ($execution['media']) {
-                        case '광고주':
-                            $execution['media'] = 'company';
-                            break;
-                        case '페이스북':
-                            $execution['media'] = 'facebook';
-                            break;
-                        case '구글':
-                            $execution['media'] = 'google';
-                            break;
-                        case '카카오':
-                            $execution['media'] = 'kakao';
-                            break;
-                        default:
-                            break;
-                    }
-    
-                    switch ($execution['type']) {
-                        case '광고주':
-                            $execution['type'] = 'advertiser';
-                            break;
-                        case '캠페인':
-                            $execution['type'] = 'campaign';
-                            break;
-                        case '광고그룹':
-                            $execution['type'] = 'adgroup';
-                            break;
-                        case '광고':
-                            $execution['type'] = 'ad';
-                            break;
-                        default:
-                            break;
-                    }
-
-                    switch ($execution['exec_type']) {
-                        case '상태':
-                            $execution['exec_type'] = 'status';
-                            break;
-                        case '예산':
-                            $execution['exec_type'] = 'budget';
-                            break;
-                        default:
-                            break;
-                    }
+                    $execution['media'] = $mediaMapping[$execution['media']] ?? $execution['media'];
+                    $execution['type'] = $typeMapping[$execution['type']] ?? $execution['type'];
+                    $execution['exec_type'] = $execTypeMapping[$execution['exec_type']] ?? $execution['exec_type'];
                 }
-                
             }
 
             $result = $this->automation->updateAutomation($data);
