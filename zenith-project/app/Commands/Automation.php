@@ -58,8 +58,8 @@ class Automation extends BaseCommand
      */
     public function run(array $params)
     {
-        $automation = new AutomationController;
+        /* $automation = new AutomationController;
         $checkSchedule = $automation->checkAutomationSchedule();
-        dd($checkSchedule);
+        dd($checkSchedule); */
     }
 }
