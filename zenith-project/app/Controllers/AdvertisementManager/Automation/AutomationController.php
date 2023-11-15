@@ -500,6 +500,7 @@ class AutomationController extends BaseController
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
+            CLI::showProgress($step++, $total);
             $result = [];
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
@@ -535,10 +536,9 @@ class AutomationController extends BaseController
                 }
             }
         }
-
+        dd($seqs);
         if(!empty($seqs)){
             foreach ($seqs as $seq) {
-                CLI::showProgress($step++, $total);
                 $executionData = $this->automationExecution($seq);
                 $logIdx = $this->recordResult($executionData['result']);
                 $result['executions'] = $executionData['log'];
