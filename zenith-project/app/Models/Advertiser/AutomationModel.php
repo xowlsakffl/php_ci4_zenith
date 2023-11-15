@@ -1314,13 +1314,12 @@ class AutomationModel extends Model
             foreach ($aacGetResult as $condition) {
                 $aacData = [
                     'idx' => $seq,
-                    'order' => $condition['order'],
+                    'order' => $condition['order'] ?? 0,
                     'type' => $condition['type'],
-                    'type_value' => $condition['type_value'],
+                    'type_value' => $condition['type_value'] ?? '',
                     'compare' => $condition['compare'],
                     'operation' => $condition['operation'],
                 ];
-                $aacData = array_filter($aacData);
                 $aacBuilder = $this->zenith->table('aa_conditions');
                 $aacBuilder->insert($aacData);
             }
@@ -1334,9 +1333,8 @@ class AutomationModel extends Model
                 'type' => $execution['type'],
                 'id' => $execution['id'],
                 'exec_type' => $execution['exec_type'],
-                'exec_value' => $execution['exec_value'],
+                'exec_value' => $execution['exec_value'] ?? '',
             ];
-            $aaeData = array_filter($aaeData);
             $aaeBuilder = $this->zenith->table('aa_executions');
             $aaeBuilder->insert($aaeData);
         }
