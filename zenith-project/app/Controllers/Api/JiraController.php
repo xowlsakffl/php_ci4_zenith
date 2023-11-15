@@ -85,7 +85,7 @@ class JiraController extends BaseController
 
     public function writeIssueLog($request = null, $addLog = null) 
     {
-        if(!empty($request)){
+        if(is_null($request)){
             $request = $this->request;
         }
 
@@ -98,7 +98,7 @@ class JiraController extends BaseController
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
         $logText .= '요청 헤더: '.json_encode($headers)."\n";
         $logText .= '요청 메소드: '.$request->getMethod()."\n";
-        if(!empty($addLog)){
+        if(!is_null($addLog)){
             $logText .= $addLog;
         }
         $fp = fopen(WRITEPATH.'/logs/issue_complete_log', 'a+');
