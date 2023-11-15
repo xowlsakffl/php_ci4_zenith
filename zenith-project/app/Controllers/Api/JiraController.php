@@ -102,6 +102,7 @@ class JiraController extends BaseController
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
         $logText .= '요청 헤더: '.json_encode($headers)."\n";
         $logText .= '요청 메소드: '.$request->getMethod()."\n";
+        $logText .= '요청 본문: '.$request->getBody()."\n";
         if(!is_null($addLog)){
             $logText .= $addLog;
         }
