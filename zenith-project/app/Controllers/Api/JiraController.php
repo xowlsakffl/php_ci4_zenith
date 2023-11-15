@@ -36,7 +36,8 @@ class JiraController extends BaseController
     {  
         $logText = '';
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
-        $logText .= '요청 헤더: '.json_encode($this->request->getHeaders())."\n";
+        $logText .= '요청 헤더: '.json_encode($this->request->headers())."\n";
+        $logText .= '요청 메소드: '.json_encode($this->request->getMethod())."\n";
         $logText .= '요청 바디: '.json_encode($this->request->getBody());
         $this->writeLog($logText);
         if (strtolower($this->request->getMethod()) === 'post') {
