@@ -46,7 +46,6 @@ class JiraController extends BaseController
         $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
         //$logText .= '요청 바디: '.$this->request->getBody();
         try {
-            $logText .= '---------------------------';
             $this->writeLog($logText);
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
@@ -90,7 +89,6 @@ class JiraController extends BaseController
             }
         } catch (Exception $e) {
             $logText .= "오류 메세지: ".$e->getMessage();
-            $logText .= '---------------------------';
             $this->writeLog($logText);
         }
     }
