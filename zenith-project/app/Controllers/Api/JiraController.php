@@ -37,9 +37,10 @@ class JiraController extends BaseController
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
             if(!empty($param)){
+                $this->writeLog($param);
                 $issueFields = $param->issue->fields ?? null;
                 $actionUser = $param->user->displayName ?? '';
-                if(!$issueFields) return $this->fail("잘못된 요청");;
+                if(!$issueFields) return $this->fail("잘못된 요청");
                 $reporterName = $issueFields->reporter->displayName ?? '';
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
@@ -69,7 +70,6 @@ class JiraController extends BaseController
                 ];
                 
                 $slackResult = $slack->sendMessage($slackMessage);
-                log_message('info', print_r($slackResult, true));
             }else{
                 return $this->fail("잘못된 요청");
             }
@@ -78,8 +78,11 @@ class JiraController extends BaseController
         }
     }
 
-
-
+    private function writeLog($log) {
+        $fp = fopen(WRITEPATH.'/logs/issue_complete_log', 'a+');
+        $fw = fwrite($fp, print_r($log,true).PHP_EOL);
+        fclose($fp);
+    }
 
     /* public function getAuthorizationCode()
     {
