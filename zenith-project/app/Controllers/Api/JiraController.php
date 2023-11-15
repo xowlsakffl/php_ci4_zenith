@@ -40,7 +40,6 @@ class JiraController extends BaseController
             if(!empty($param)){
                 $issueFields = $param->issue->fields ?? null;
                 $actionUser = $param->user->displayName ?? '';
-                if(!$issueFields) return $this->fail("잘못된 요청");
                 $reporterName = $issueFields->reporter->displayName ?? '';
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
