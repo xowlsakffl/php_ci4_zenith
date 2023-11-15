@@ -100,9 +100,9 @@ class JiraController extends BaseController
 
         $logText = '---------------------------'."\n";
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
-        $logText .= '요청 헤더: '.json_encode($headers)."\n";
+        $logText .= '요청 헤더: '.json_encode($headers, JSON_UNESCAPED_UNICODE)."\n";
         $logText .= '요청 메소드: '.$request->getMethod()."\n";
-        $logText .= '요청 본문: '.json_encode($request->getBody())."\n";
+        $logText .= '요청 본문: '.json_encode($request->getBody(), JSON_UNESCAPED_UNICODE)."\n";
         if(!is_null($addLog)){
             $logText .= $addLog;
         }
