@@ -61,6 +61,20 @@ class AutomationModel extends Model
         ];
     }
 
+    public function getAutomationBySeq($seq)
+    {
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('
+        aa.seq as aa_seq, 
+        aa.slack_webhook as aa_slack_webhook,
+        aa.slack_msg as aa_slack_msg,
+        ');
+        $builder->where('aa.seq', $seq);
+        $result = $builder->get()->getRowArray();
+
+        return $result;
+    }
+
     public function getSearchCompanies($data = null, $seq = null)
     {
         if(!empty($data['adv'])){
