@@ -496,6 +496,7 @@ class AutomationController extends BaseController
     {
         CLI::write("자동화를 실행합니다.", "light_red");
         $automations = $this->automation->getAutomations();
+        $seqs = [];
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
@@ -509,10 +510,9 @@ class AutomationController extends BaseController
                     $this->recordLog($result, $logIdx);
                     continue;
                 }else{
-                    $seq = $schedulePassData['seq'];
                     //대상 있을 시
                     if(!empty($automation['aat_idx'])){
-                        $targetData = $this->getAutomationTarget($seq);
+                        $targetData = $this->getAutomationTarget($schedulePassData['seq']);
                         $result['target'] = $targetData;
                         if($targetData['result'] == false){
                             $logIdx = $this->recordResult($targetData);
@@ -528,21 +528,29 @@ class AutomationController extends BaseController
                                 $this->recordLog($result, $logIdx);
                                 continue;
                             }
-                            $seq = $conditionPassData['seq'];
+                            $seqs[] = $conditionPassData['seq'];
                         }
-                    }
-                    $executionData = $this->automationExecution($seq);
-                    $logIdx = $this->recordResult($executionData['result']);
-                    $result['executions'] = $executionData['log'];
-                    $this->recordLog($result, $logIdx);
-    
-                    if($executionData['result'] == true && (!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg']))){
-                        $slackChat = new SlackChat;
-                        $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
+                    }else{
+                        $seqs[] = $schedulePassData['seq'];
                     }
                 }
             }
         }
+        dd($seqs);
+        if(!empty($seqs)){
+            foreach ($seqs as $seq) {
+                $executionData = $this->automationExecution($seq);
+                $logIdx = $this->recordResult($executionData['result']);
+                $result['executions'] = $executionData['log'];
+                $this->recordLog($result, $logIdx);
+    
+                if($executionData['result'] == true && (!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg']))){
+                    $slackChat = new SlackChat;
+                    $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
+                }
+            }
+        }
+
         CLI::write("자동화 실행 완료", "light_red");
     }
 
