@@ -1423,8 +1423,8 @@ class AutomationModel extends Model
         $this->zenith->transStart();
         $builder = $this->zenith->table('aa_result');
         $builder->insert($data);
-        $this->zenith->transComplete();
         $seq = $this->zenith->insertID();
+        $this->zenith->transComplete();
        
         return $seq;
     }
