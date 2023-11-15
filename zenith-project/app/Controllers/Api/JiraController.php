@@ -40,12 +40,13 @@ class JiraController extends BaseController
             $value = $value->getValue();
         });
 
-        $logText = '';
+        $logText = '---------------------------';
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
         $logText .= '요청 헤더: '.json_encode($headers)."\n";
         $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
         //$logText .= '요청 바디: '.$this->request->getBody();
         try {
+            $logText .= '---------------------------';
             $this->writeLog($logText);
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
@@ -89,6 +90,7 @@ class JiraController extends BaseController
             }
         } catch (Exception $e) {
             $logText .= "오류 메세지: ".$e->getMessage();
+            $logText .= '---------------------------';
             $this->writeLog($logText);
         }
     }
