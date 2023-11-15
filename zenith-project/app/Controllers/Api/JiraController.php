@@ -35,18 +35,8 @@ class JiraController extends BaseController
 
     public function getIssueComplete()
     {  
-        $headers = $this->request->headers();
-        array_walk($headers, function(&$value, $key) {
-            $value = $value->getValue();
-        });
-
-        $logText = '---------------------------'."\n";
-        $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
-        $logText .= '요청 헤더: '.json_encode($headers)."\n";
-        $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
-        //$logText .= '요청 바디: '.$this->request->getBody();
         try {
-            $this->writeLog($logText);
+            $this->writeIssueLog($this->request);
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 if(!empty($param)){
@@ -88,14 +78,31 @@ class JiraController extends BaseController
                 throw new Exception("잘못된 요청");
             }
         } catch (Exception $e) {
-            $logText .= "오류 메세지: ".$e->getMessage();
-            $this->writeLog($logText);
+            $logText = "오류 메세지: ".$e->getMessage();
+            $this->writeIssueLog($this->request, $logText);
         }
     }
 
-    private function writeLog($log) {
+    public function writeIssueLog($request = null, $addLog = null) 
+    {
+        if(!empty($request)){
+            $request = $this->request;
+        }
+
+        $headers = $request->headers();
+        array_walk($headers, function(&$value, $key) {
+            $value = $value->getValue();
+        });
+
+        $logText = '---------------------------'."\n";
+        $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
+        $logText .= '요청 헤더: '.json_encode($headers)."\n";
+        $logText .= '요청 메소드: '.$request->getMethod()."\n";
+        if(!empty($addLog)){
+            $logText .= $addLog;
+        }
         $fp = fopen(WRITEPATH.'/logs/issue_complete_log', 'a+');
-        $fw = fwrite($fp, print_r($log,true).PHP_EOL);
+        $fw = fwrite($fp, print_r($logText,true).PHP_EOL);
         fclose($fp);
     }
 
