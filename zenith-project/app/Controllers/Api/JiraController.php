@@ -46,6 +46,7 @@ class JiraController extends BaseController
         $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
         //$logText .= '요청 바디: '.$this->request->getBody();
         try {
+            $this->writeLog($logText);
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 if(!empty($param)){
