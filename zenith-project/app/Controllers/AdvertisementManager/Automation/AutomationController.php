@@ -501,43 +501,45 @@ class AutomationController extends BaseController
         foreach ($automations as $automation) {
             CLI::showProgress($step++, $total);
             $result = [];
-            $schedulePassData = $this->checkAutomationSchedule($automation);
-            $result['schedule'] = $schedulePassData;
-            if($schedulePassData['result'] == false){
-                $logIdx = $this->recordResult($schedulePassData);
-                $this->recordLog($result, $logIdx);
-                continue;
-            }else{
-                $seq = $schedulePassData['seq'];
-                //대상 있을 시
-                if(!empty($automation['aat_idx'])){
-                    $targetData = $this->getAutomationTarget($seq);
-                    $result['target'] = $targetData;
-                    if($targetData['result'] == false){
-                        $logIdx = $this->recordResult($targetData);
-                        $this->recordLog($result, $logIdx);
-                        continue;
-                    }
-                    
-                    if($targetData['result'] == true && !empty($targetData['target'])){
-                        $conditionPassData = $this->checkAutomationCondition($targetData);
-                        $result['conditions'] = $conditionPassData;
-                        if($conditionPassData['result'] == false){
-                            $logIdx = $this->recordResult($conditionPassData);
+            if(!empty($automation)){
+                $schedulePassData = $this->checkAutomationSchedule($automation);
+                $result['schedule'] = $schedulePassData;
+                if($schedulePassData['result'] == false){
+                    $logIdx = $this->recordResult($schedulePassData);
+                    $this->recordLog($result, $logIdx);
+                    continue;
+                }else{
+                    $seq = $schedulePassData['seq'];
+                    //대상 있을 시
+                    if(!empty($automation['aat_idx'])){
+                        $targetData = $this->getAutomationTarget($seq);
+                        $result['target'] = $targetData;
+                        if($targetData['result'] == false){
+                            $logIdx = $this->recordResult($targetData);
                             $this->recordLog($result, $logIdx);
                             continue;
                         }
-                        $seq = $conditionPassData['seq'];
+                        
+                        if($targetData['result'] == true && !empty($targetData['target'])){
+                            $conditionPassData = $this->checkAutomationCondition($targetData);
+                            $result['conditions'] = $conditionPassData;
+                            if($conditionPassData['result'] == false){
+                                $logIdx = $this->recordResult($conditionPassData);
+                                $this->recordLog($result, $logIdx);
+                                continue;
+                            }
+                            $seq = $conditionPassData['seq'];
+                        }
                     }
-                }
-                $executionData = $this->automationExecution($seq);
-                $logIdx = $this->recordResult($executionData['result']);
-                $result['executions'] = $executionData['log'];
-                $this->recordLog($result, $logIdx);
-
-                if($executionData['result'] == true && (!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg']))){
-                    $slackChat = new SlackChat;
-                    $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
+                    $executionData = $this->automationExecution($seq);
+                    $logIdx = $this->recordResult($executionData['result']);
+                    $result['executions'] = $executionData['log'];
+                    $this->recordLog($result, $logIdx);
+    
+                    if($executionData['result'] == true && (!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg']))){
+                        $slackChat = new SlackChat;
+                        $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
+                    }
                 }
             }
         }
