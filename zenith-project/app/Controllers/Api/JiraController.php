@@ -34,9 +34,13 @@ class JiraController extends BaseController
 
     public function getIssueComplete()
     {  
+        $logText = '';
+        $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
+        $logText .= '요청 헤더: '.json_encode($this->request->getHeaders())."\n";
+        $logText .= '요청 바디: '.json_encode($this->request->getBody());
+        $this->writeLog($logText);
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
-            $this->writeLog($param);
             if(!empty($param)){
                 $issueFields = $param->issue->fields ?? null;
                 $actionUser = $param->user->displayName ?? '';
