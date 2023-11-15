@@ -36,7 +36,7 @@ class JiraController extends BaseController
     public function getIssueComplete()
     {  
         try {
-            $this->writeIssueLog($this->request, null, 'issue_complete_log');
+            $this->writeLog($this->request, null, 'issue_complete_log');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 if(!empty($param)){
@@ -79,11 +79,11 @@ class JiraController extends BaseController
             }
         } catch (Exception $e) {
             $logText = "오류 메세지: ".$e->getMessage();
-            $this->writeIssueLog($this->request, $logText, 'issue_complete_log');
+            $this->writeLog($this->request, $logText, 'issue_complete_log');
         }
     }
 
-    public function writeIssueLog($request = null, $addLog = null, $filename = null) 
+    public function writeLog($request = null, $addLog = null, $filename = null) 
     {
         if(is_null($request)){
             $request = $this->request;
