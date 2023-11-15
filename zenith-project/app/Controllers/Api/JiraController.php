@@ -36,7 +36,7 @@ class JiraController extends BaseController
     public function getIssueComplete()
     {  
         try {
-            $this->writeIssueLog($this->request);
+            $this->writeIssueLog($this->request, null, 'issue_complete_log');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 if(!empty($param)){
@@ -79,14 +79,18 @@ class JiraController extends BaseController
             }
         } catch (Exception $e) {
             $logText = "오류 메세지: ".$e->getMessage();
-            $this->writeIssueLog($this->request, $logText);
+            $this->writeIssueLog($this->request, $logText, 'issue_complete_log');
         }
     }
 
-    public function writeIssueLog($request = null, $addLog = null) 
+    public function writeIssueLog($request = null, $addLog = null, $filename = null) 
     {
         if(is_null($request)){
             $request = $this->request;
+        }
+
+        if(is_null($filename)){
+            $filename = 'jira_test_log';
         }
 
         $headers = $request->headers();
@@ -101,7 +105,7 @@ class JiraController extends BaseController
         if(!is_null($addLog)){
             $logText .= $addLog;
         }
-        $fp = fopen(WRITEPATH.'/logs/issue_complete_log', 'a+');
+        $fp = fopen(WRITEPATH.'/logs/'.$filename, 'a+');
         $fw = fwrite($fp, print_r($logText,true).PHP_EOL);
         fclose($fp);
     }
