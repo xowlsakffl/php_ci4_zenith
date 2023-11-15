@@ -10,6 +10,7 @@ use App\Models\Api\UserModel;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\jira_api\ZenithJira;
 use CodeIgniter\CLI\CLI;
+use Exception;
 
 class JiraController extends BaseController
 {
@@ -44,46 +45,50 @@ class JiraController extends BaseController
         $logText .= '요청 헤더: '.$headers."\n";
         $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
         //$logText .= '요청 바디: '.$this->request->getBody();
-        $this->writeLog($logText);
-        if (strtolower($this->request->getMethod()) === 'post') {
-            $param = $this->request->getVar();
-            if(!empty($param)){
-                $issueFields = $param->issue->fields ?? null;
-                $actionUser = $param->user->displayName ?? '';
-                $reporterName = $issueFields->reporter->displayName ?? '';
-                $projectName = $issueFields->project->name ?? '';
-                $projectKey = $issueFields->project->key ?? '';
-                $issueSummary = $issueFields->summary ?? '';
-                $issueKey = $param->issue->key ?? '';
-
-                $userModel = new UserModel();
-                $userData = $userModel->getUserByName($reporterName);
-                
-                if(!$userData) return $this->fail("잘못된 요청");;
-
-                $slack = new SlackChat();
-                $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
-                
-                $slackMessage = [
-                    'channel' => $slack->config['UserID'][$userData['nickname']],
-                    'blocks' => [
-                        [
-                            'type' => 'section',
-                            'text' => [
-                                'type' => 'mrkdwn',
-                                'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+        try {
+            if (strtolower($this->request->getMethod()) === 'post') {
+                $param = $this->request->getVar();
+                if(!empty($param)){
+                    $issueFields = $param->issue->fields ?? null;
+                    $actionUser = $param->user->displayName ?? '';
+                    $reporterName = $issueFields->reporter->displayName ?? '';
+                    $projectName = $issueFields->project->name ?? '';
+                    $projectKey = $issueFields->project->key ?? '';
+                    $issueSummary = $issueFields->summary ?? '';
+                    $issueKey = $param->issue->key ?? '';
+    
+                    $userModel = new UserModel();
+                    $userData = $userModel->getUserByName($reporterName);
+                    
+                    if(!$userData) return $this->fail("잘못된 요청");;
+    
+                    $slack = new SlackChat();
+                    $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
+                    
+                    $slackMessage = [
+                        'channel' => $slack->config['UserID'][$userData['nickname']],
+                        'blocks' => [
+                            [
+                                'type' => 'section',
+                                'text' => [
+                                    'type' => 'mrkdwn',
+                                    'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+                                ],
+                                "block_id" => "text1"
                             ],
-                            "block_id" => "text1"
                         ],
-                    ],
-                ];
-                
-                $slackResult = $slack->sendMessage($slackMessage);
+                    ];
+                    
+                    $slackResult = $slack->sendMessage($slackMessage);
+                }else{
+                    throw new Exception("잘못된 요청");
+                }
             }else{
-                return $this->fail("잘못된 요청");
+                throw new Exception("잘못된 요청");
             }
-        }else{
-            return $this->fail("잘못된 요청");
+        } catch (Exception $e) {
+            $logText .= "오류 메세지: ".$e->getMessage();
+            $this->writeLog($logText);
         }
     }
 
