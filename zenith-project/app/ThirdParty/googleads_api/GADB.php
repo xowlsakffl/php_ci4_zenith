@@ -173,11 +173,11 @@ class GADB
 			'servingStatus' => $data['servingStatus'],
 			'startDate' => $data['startDate'],
 			'endDate' => $data['endDate'],
-			'budgetId' => $data['budgetId'],
+			'budgetId' => (integer)$data['budgetId'],
 			'budgetName' => $data['budgetName'],
-			'budgetReferenceCount' => $data['budgetReferenceCount'],
+			'budgetReferenceCount' => (integer)$data['budgetReferenceCount'],
 			'budgetStatus' => $data['budgetStatus'],
-			'budgetAmount' => $data['budgetAmount'],
+			'budgetAmount' => (integer)$data['budgetAmount'],
 			'budgetDeliveryMethod' => $data['budgetDeliveryMethod'],
 			'advertisingChannelType' => $data['advertisingChannelType'],
 			'advertisingChannelSubType' => $data['advertisingChannelSubType'],
@@ -260,9 +260,9 @@ class GADB
 			'status' => $data['status'],
 			'adGroupType' => $data['adGroupType'],
 			'biddingStrategyType' => $data['biddingStrategyType'],
-			'cpcBidAmount' => $data['cpcBidAmount'],
+			'cpcBidAmount' => (integer)$data['cpcBidAmount'] ?? 0,
 			'cpcBidSource' => $data['cpcBidSource'],
-			'cpmBidAmount' => $data['cpmBidAmount'],
+			'cpmBidAmount' => (integer)$data['cpmBidAmount'] ?? 0,
 			'cpmBidSource' => $data['cpmBidSource']
 		];
 		
