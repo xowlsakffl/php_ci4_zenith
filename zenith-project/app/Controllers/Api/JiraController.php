@@ -34,9 +34,14 @@ class JiraController extends BaseController
 
     public function getIssueComplete()
     {  
+        $headers = $this->request->headers();
+        array_walk($headers, function(&$value, $key) {
+            $value = $value->getValue();
+        });
+
         $logText = '';
         $logText .= '요청 시간: '.date('Y-m-d H:i:s')."\n";
-        $logText .= '요청 헤더: '.$this->request->headers()."\n";
+        $logText .= '요청 헤더: '.$headers."\n";
         $logText .= '요청 메소드: '.$this->request->getMethod()."\n";
         $logText .= '요청 바디: '.$this->request->getBody();
         $this->writeLog($logText);
