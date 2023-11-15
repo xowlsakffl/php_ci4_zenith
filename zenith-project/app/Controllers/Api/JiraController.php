@@ -36,8 +36,8 @@ class JiraController extends BaseController
     {  
         if (strtolower($this->request->getMethod()) === 'post') {
             $param = $this->request->getVar();
+            $this->writeLog($param);
             if(!empty($param)){
-                $this->writeLog($param);
                 $issueFields = $param->issue->fields ?? null;
                 $actionUser = $param->user->displayName ?? '';
                 if(!$issueFields) return $this->fail("잘못된 요청");
