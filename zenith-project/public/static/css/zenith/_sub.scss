@@ -81,8 +81,9 @@
             }
             button{
                 width:100%; height:100%; padding:2px 7px; white-space:normal; text-align:left; line-height:1.1; border:1px solid #c3c3c3;                border-radius:5px; background:#fff; overflow-y:hidden; font-size: 85%;
-                &.active{color:#fff; background-color: $color-primary;}
-                &.on{color:#fff; background-color:$color-primary;}
+                &.active{color: #ce1922;border-color: #ce1922;}
+                &.on{color: var(--bs-white);
+                    background-color: #ff9393;}
                 &.alert{margin:0;
                     &::before{position:absolute; top:0; left:0; width:100%; height:3px; content:''; background:$color-primary;}
                 }
@@ -91,9 +92,7 @@
                 .progress-bar{height:3px; background:#ffa500;}
                 .txt{position:absolute; right:3px; bottom:3px; font-size:0.5rem;}
             }
-            &:hover{/* box-shadow:inset 20px 70px 0px $color-primary; */
-                button{font-weight: bold;color:#222;border:1px solid #222}
-            }
+            &:hover{box-shadow:inset 20px 70px 0px $color-primary;}
         }
     }
     &.biz{

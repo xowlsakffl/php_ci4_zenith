@@ -108,9 +108,7 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 input[type=submit], button {
@@ -149,9 +147,7 @@ textarea:focus {
 }
 
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 select:focus {
@@ -713,12 +709,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.search-wrap .search .input input[type=text]:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.75rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .search-wrap .search .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -835,12 +825,12 @@ body {
   font-size: 85%;
 }
 .client-list .row .col button.active {
-  color: #fff;
-  background-color: #ce1922;
+  color: #ce1922;
+  border-color: #ce1922;
 }
 .client-list .row .col button.on {
-  color: #fff;
-  background-color: #ce1922;
+  color: var(--bs-white);
+  background-color: #ff9393;
 }
 .client-list .row .col button.alert {
   margin: 0;
@@ -874,11 +864,8 @@ body {
   bottom: 3px;
   font-size: 0.5rem;
 }
-.client-list .row .col:hover { /* box-shadow:inset 20px 70px 0px $color-primary; */ }
-.client-list .row .col:hover button {
-  font-weight: bold;
-  color: #222;
-  border: 1px solid #222;
+.client-list .row .col:hover {
+  box-shadow: inset 20px 70px 0px #ce1922;
 }
 .client-list.biz .row .col {
   width: 160px;
@@ -980,12 +967,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.form-control:focus::-moz-placeholder, .form-select:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.5rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .form-control:focus::placeholder, .form-select:focus::placeholder {
   color: red;
   text-indent: 0.5rem;
@@ -995,9 +976,6 @@ body {
 .account-container input.form-control:focus {
   box-shadow: 0 0 0 0.25rem #C0DBEA;
   caret-color: #7286D3;
-  color: #7286D3;
-}
-.account-container input.form-control:focus::-moz-placeholder {
   color: #7286D3;
 }
 .account-container input.form-control:focus::placeholder {
@@ -2271,12 +2249,6 @@ div.dataTables_scrollBody > table {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.regi-content .detail-wrap .input input[type=text]:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.75rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .regi-content .detail-wrap .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -2978,9 +2950,7 @@ div.dt-button-collection h3 {
 }
 
 .none {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -3014,9 +2984,7 @@ div.dt-button-collection h3 {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -3124,7 +3092,6 @@ div.dt-button-collection h3 {
   background-color: #ededed;
 }
 .account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
-  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 .account-container form .form-check .form-check-input {
@@ -3380,4 +3347,6 @@ div.dt-button-collection h3 {
     padding: 0.6rem 0.7rem;
     font-size: 90%;
   }
-}/*# sourceMappingURL=ui.css.map */
+}
+
+/*# sourceMappingURL=ui.css.map */
