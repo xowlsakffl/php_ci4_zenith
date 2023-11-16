@@ -46,7 +46,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->post('mypage/update', 'User\UserController::myPageUpdate');
     $routes->get('password-changed-at', 'User\UserController::setPasswordChangedAtAjax');
 
-    $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){
+    $routes->group('', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){
         $routes->get('/', 'HomeController::index');
         $routes->get('/home', 'HomeController::index');
         $routes->get('/home/report', 'HomeController::getReports');
