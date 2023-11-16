@@ -491,16 +491,16 @@ class AutomationController extends BaseController
 
         return ['result' => true];
     }
-    
+
     public function automation()
     {
         CLI::write("자동화를 실행합니다.", "light_red");
         $automations = $this->automation->getAutomations();
         $seqs = [];
+        $logs = [];
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
-            CLI::showProgress($step++, $total);
             $result = [];
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
@@ -529,29 +529,36 @@ class AutomationController extends BaseController
                                 continue;
                             }
                             $seqs[] = $conditionPassData['seq'];
+                            $logs[] = $result;
                         }
                     }else{
                         $seqs[] = $schedulePassData['seq'];
+                        $logs[] = $result;
                     }
                 }
             }
         }
-
+        
         if(!empty($seqs)){
             $executionData = [];
             foreach ($seqs as $seq) {
+                CLI::showProgress($step++, $total);
                 $executionData[] = $this->automationExecution($seq);
             }
 
             foreach ($executionData as $exec) {
                 $logIdx = $this->recordResult($exec['result']);
-                $result['executions'] = $exec['log'];
-                $this->recordLog($result, $logIdx);
+                foreach ($logs as &$log) {
+                    if($log['schedule']['seq'] === $exec['result']['seq']){
+                        $log['executions'] = $exec['log'];
+                        $this->recordLog($log, $logIdx);
+                    }
+                }
             }
 
             foreach ($executionData as $exec) {
                 if($exec['result'] == true){
-                    $automation = $this->automation->getAutomationBySeq($exec['seq']);
+                    $automation = $this->automation->getAutomationBySeq($exec['result']['seq']);
                     if(!empty($automation['aa_slack_webhook']) && !empty($automation['aa_slack_msg'])){
                         $slackChat = new SlackChat;
                         $slackChat->sendWebHookMessage($automation['aa_slack_webhook'], $automation['aa_slack_msg']);
