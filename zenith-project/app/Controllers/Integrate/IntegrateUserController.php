@@ -28,7 +28,7 @@ class IntegrateUserController extends BaseController
 
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             if(!isset($arg['searchData'])) {
                 $arg['searchData'] = [
@@ -38,7 +38,6 @@ class IntegrateUserController extends BaseController
             }
             //list
             $list = $this->integrateUser->getEventLead($arg);
-            
             foreach($list['data'] as &$d){
                 $etc = [];
                 if(!empty($d['email'])) {
@@ -105,19 +104,20 @@ class IntegrateUserController extends BaseController
                     $filter_lists[$type][$k] = array_merge($buttons['filtered'][$type][$k], $v);
                 }                
             }
-            foreach($filter_lists as $type => $row) {
-                $sortedRow = array();
+            if(!empty($filter_lists)){
+                foreach($filter_lists as $type => $row) {
+                    $sortedRow = array();
 
-                foreach ($row as $name => $v) {
-                    $sortedRow[$name] = array_merge(['label' => $name], $v);
+                    foreach ($row as $name => $v) {
+                        $sortedRow[$name] = array_merge(['label' => $name], $v);
+                    }
+                
+                    asort($sortedRow);
+                    $sortedRow = array_values($sortedRow);
+                
+                    $filters[$type] = $sortedRow;
                 }
-            
-                asort($sortedRow);
-                $sortedRow = array_values($sortedRow);
-            
-                $filters[$type] = $sortedRow;
             }
-
             $status = $this->integrateUser->getStatusCount($arg);
             $filters['status'] = $status;
             
