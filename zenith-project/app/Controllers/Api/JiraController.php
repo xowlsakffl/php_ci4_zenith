@@ -47,7 +47,7 @@ class JiraController extends BaseController
                     $projectKey = $issueFields->project->key ?? '';
                     $issueSummary = $issueFields->summary ?? '';
                     $issueKey = $param->issue->key ?? '';
-    
+                    if(!$reporterName) return;
                     $userModel = new UserModel();
                     $userData = $userModel->getUserByName($reporterName);
                     
