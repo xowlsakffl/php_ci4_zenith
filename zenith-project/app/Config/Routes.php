@@ -108,7 +108,6 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         });
 
         $routes->group('google', static function($routes){
-            $routes->get('manageaccounts', 'AdvertisementManager\AdvGoogleManagerController::getManageAccounts');
             $routes->get('report', 'AdvertisementManager\AdvGoogleManagerController::getReport');
         });
     });

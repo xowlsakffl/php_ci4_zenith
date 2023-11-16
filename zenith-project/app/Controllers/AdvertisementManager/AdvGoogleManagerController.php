@@ -104,10 +104,8 @@ class AdvGoogleManagerController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = [
-                'dates' => [
-                    'sdate' => $this->request->getGet('sdate'),
-                    'edate' => $this->request->getGet('edate'),
-                ],
+                'sdate' => $this->request->getGet('sdate'),
+                'edate' => $this->request->getGet('edate'),
             ];
 
             $res = $this->google->getReport($arg)->get()->getResultArray();
@@ -148,6 +146,13 @@ class AdvGoogleManagerController extends BaseController
                 if ($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
                     $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100, 2); //총 수익률
                 }
+
+                $report['impressions_sum'] = number_format($report['impressions_sum']);
+                $report['clicks_sum'] = number_format($report['clicks_sum']);
+                $report['spend_sum'] = number_format($report['spend_sum']);
+                $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
+                $report['price_sum'] = number_format($report['price_sum']);
+                $report['profit_sum'] = number_format($report['profit_sum']);
             }
             
             return $this->respond($report);

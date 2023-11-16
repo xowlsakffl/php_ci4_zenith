@@ -256,6 +256,7 @@ class AdvFacebookManagerModel extends Model
         $builder->orderBy('B.ad_name', 'asc');
         return $builder;
 	}
+	
 	public function getReport($data)
 	{
 		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
