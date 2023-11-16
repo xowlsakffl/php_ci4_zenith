@@ -3,7 +3,13 @@ $uri = current_url(true)->getPath();
 ?>
 <div class="left-side">
     <button type="button" class="btn-menu">메뉴보기</button>
-    <h1 class="logo"><a href="/"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
+    <h1 class="logo"><a href="<?php 
+    if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
+        echo '/integrate';
+    }else{
+        echo '/';
+    }
+    ?>"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
     <div class="nav-wrap">
         <ul class="nav flex-column">
             <?php if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')) {?>
