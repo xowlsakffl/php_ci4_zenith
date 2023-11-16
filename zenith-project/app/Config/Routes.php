@@ -42,26 +42,19 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
 
 //관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사
 $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
-    $routes->get('/', 'HomeController::index');
-    $routes->get('/home', 'HomeController::index');
-    $routes->get('/home/report', 'HomeController::getReports');
-    $routes->get('pages/(:any)', 'PageController::view/$1');
     $routes->get('mypage', 'User\UserController::myPage');
     $routes->post('mypage/update', 'User\UserController::myPageUpdate');
     $routes->get('password-changed-at', 'User\UserController::setPasswordChangedAtAjax');
-    // 게시판
-    $routes->group('boards', static function($routes){     
-        $routes->get('', 'Api\ApiBoardController::get');
-        $routes->get('(:num)', 'Api\ApiBoardController::$1');
-        $routes->post('', 'Api\ApiBoardController::$1');
-        $routes->put('(:num)', 'Api\ApiBoardController::$1');
-        $routes->delete('(:num)', 'Api\ApiBoardController::$1');
-    });   
 
-    $routes->get('board/list', 'BoardController::index');
+    $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){
+        $routes->get('/', 'HomeController::index');
+        $routes->get('/home', 'HomeController::index');
+        $routes->get('/home/report', 'HomeController::getReports');
+        $routes->get('pages/(:any)', 'PageController::view/$1');
+    });
 
     //광고주, 광고대행사 관리
-    $routes->group('', ['filter' => 'group:admin,superadmin,user', 'permission:admin.access,admin.settings,agency.access'], static function($routes){
+    $routes->group('', ['filter' => 'group:group:superadmin,admin,developer,user', 'permission:admin.access,admin.settings,agency.access'], static function($routes){
         $routes->get('company', 'Company\CompanyController::index');
         $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
         $routes->get('company/get-company', 'Company\CompanyController::getCompany');
@@ -91,7 +84,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 광고관리
-    $routes->group('advertisements', static function($routes){ 
+    $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
@@ -121,7 +114,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     //자동화
-    $routes->group('automation', static function($routes){ 
+    $routes->group('automation', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
         $routes->get('list', 'AdvertisementManager\Automation\AutomationController::getList');
         $routes->get('adv', 'AdvertisementManager\Automation\AutomationController::getAdv');
@@ -146,20 +139,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->post('setstatus', 'Integrate\IntegrateController::setStatus');
     });
 
-    // 사용자 DB관리
-    $routes->group('integrate-user', static function($routes){   
-        $routes->get('', 'Integrate\IntegrateUserController::index');
-        $routes->get('list', 'Integrate\IntegrateUserController::getList');
-        $routes->get('lead', 'Integrate\IntegrateUserController::getLead');
-        $routes->get('leadcount', 'Integrate\IntegrateUserController::getEventLeadCount');
-        $routes->get('statuscount', 'Integrate\IntegrateUserController::getStatusCount');
-        $routes->get('getmemo', 'Integrate\IntegrateUserController::getMemo');
-        $routes->post('addmemo', 'Integrate\IntegrateUserController::addMemo');
-        $routes->post('setstatus', 'Integrate\IntegrateUserController::setStatus');
-    });
-
     // 회계 관리
-    $routes->group('accounting', ['filter' => 'group:admin,superadmin'], static function($routes){   
+    $routes->group('accounting', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
         $routes->get('tax', 'Accounting\TaxController::tax');
         $routes->get('taxList', 'Accounting\TaxController::taxList');
         $routes->get('unpaid', 'Accounting\UnpaidController::unpaid');
@@ -168,12 +149,12 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 인사 관리
-    $routes->group('humanresource', ['filter' => 'group:admin,superadmin'], static function($routes){   
+    $routes->group('humanresource', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
         $routes->get('management', 'HumanResource\HumanResourceController::humanResource');
     });
 
     // 이벤트
-    $routes->group('eventmanage', static function($routes){   
+    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
         $routes->group('event', static function($routes){   
             $routes->get('', 'EventManage\EventController::index');
             $routes->get('list', 'EventManage\EventController::getList');
@@ -226,21 +207,26 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         });
         
     });
+
+    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){
+        $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
+
+        $routes->get('fbapi/(:any)', 'Advertisement\Facebook::$1');
+
+        $routes->get('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
+
+        $routes->get('example/(:any)', 'ExampleController::view/$1');
+
+        $routes->get('calendar', 'Calendar\CalendarController::index');
+    });
 });
-$routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
+
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
-$routes->get('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
-$routes->get('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 $routes->cli('ggapi/(:any)', 'Advertisement\GoogleAds::$1');
 
 //잠재고객 가져오기
 $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead');
-
-//테스트
-$routes->get('example/(:any)', 'ExampleController::view/$1');
-
-$routes->get('calendar', 'Calendar\CalendarController::index');
 
 //자동화 실행
 $routes->cli('automation/exec', 'AdvertisementManager\Automation\AutomationController::automation');

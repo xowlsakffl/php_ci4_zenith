@@ -6,6 +6,7 @@ $uri = current_url(true)->getPath();
     <h1 class="logo"><a href="/"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
     <div class="nav-wrap">
         <ul class="nav flex-column">
+            <?php if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')) {?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#advertisements" aria-expanded="false"><i class="bi bi-bar-chart-line-fill"></i>통합 광고관리</button>
                 <div class="collapse" id="advertisements">
@@ -15,13 +16,11 @@ $uri = current_url(true)->getPath();
                     </ul>
                 </div>
             </li>
+            <?php }?>
             <li>
                 <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-database-fill"></i>통합 DB관리</button></a>
             </li>
-            <li>
-                <a href="/integrate-user" class="<?php if($uri === '/integrate-user'){ echo "active";}?>"><button><i class="bi bi-person-fill-down"></i>사용자 DB관리</button></a>
-            </li>
-            <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
+            <?php if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')) {?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
                 <div class="collapse" id="accounting">
@@ -35,7 +34,6 @@ $uri = current_url(true)->getPath();
             <li>
                 <a href="/humanresource/management" class="<?php if($uri === '/humanresource/management'){ echo "active";}?>"><button><i class="bi bi-person-vcard-fill"></i>인사 관리</button></a>                
             </li>
-            <?php }?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#event" aria-expanded="false"><i class="bi bi-calendar-week"></i>이벤트</button>
                 <div class="collapse" id="event">
@@ -60,6 +58,7 @@ $uri = current_url(true)->getPath();
                     </ul>
                 </div>
             </li>
+            <?php }?>
         </ul>
     </div>
     <div class="user-nav">

@@ -356,6 +356,11 @@ class Auth extends ShieldAuth
         if(auth()->user()->inGroup('guest')){
             return '/guest';
         }
+
+        if(auth()->user()->inGroup('advertiser', 'agency')){
+            return '/integrate';
+        }
+
         $url = setting('Auth.redirects')['login'];
 
         return $this->getUrl($url);

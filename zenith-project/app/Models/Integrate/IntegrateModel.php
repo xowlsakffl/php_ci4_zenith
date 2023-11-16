@@ -59,10 +59,16 @@ class IntegrateModel extends Model
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
         $builder->join('event_leads_memo as lm', 'el.seq = lm.leads_seq', 'left');
+
+        if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
+            $builder->join('companies_users as cu', "adv.company_seq = cu.company_id", 'left');
+            $builder->where('cu.user_id', auth()->user()->id);
+        }
+
         $builder->where('el.is_deleted', 0);
         $builder->where('DATE(el.reg_date) >=', $srch['sdate']);
         $builder->where('DATE(el.reg_date) <=', $srch['edate']);
-
+        
         if(!empty($srch['stx'])){
             $builder->groupStart();
             $builder->like('adv.name', $srch['stx']);
@@ -134,6 +140,12 @@ class IntegrateModel extends Model
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
+
+        if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
+            $builder->join('companies_users as cu', "adv.company_seq = cu.company_id", 'left');
+            $builder->where('cu.user_id', auth()->user()->id);
+        }
+
         $builder->where('el.is_deleted', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);
@@ -199,6 +211,12 @@ class IntegrateModel extends Model
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
         $builder->join('event_media as med', 'info.media = med.seq', 'left');
+
+        if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
+            $builder->join('companies_users as cu', "adv.company_seq = cu.company_id", 'left');
+            $builder->where('cu.user_id', auth()->user()->id);
+        }
+
         $builder->where('el.is_deleted', 0);
         $builder->where('DATE(el.reg_date) >=', $data['sdate']);
         $builder->where('DATE(el.reg_date) <=', $data['edate']);

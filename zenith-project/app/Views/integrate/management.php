@@ -18,6 +18,9 @@
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
+<style>
+    #advertiserBtn{display: none;}
+</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -51,7 +54,7 @@
             <button type="button" class="reset-btn">필터 초기화</button>
         </div>
     </div>
-    <div class="section client-list custom-margin-box-1">
+    <div class="section client-list custom-margin-box-1" <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){echo 'id="advertiserBtn"'; }?>>
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 광고주
         </h3>
@@ -524,6 +527,17 @@ $(window).resize(function() {
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
     $.each(data, function(type, row) {
         if(type == 'status') return true;
+        <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
+                if(type == 'advertiser'){
+                    if(data.advertiser.length > 1){
+                        $('#advertiserBtn').show();
+                    }else{
+                        $('#advertiserBtn').hide();
+                        return true;
+                    }
+                } 
+        <?php }?>
+        
         var html = "";
         $.each(row, function(idx, v) {
             html += '<div class="col" data-name="'+v.label+'"><div class="inner">';

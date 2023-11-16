@@ -105,19 +105,20 @@ class IntegrateController extends BaseController
                     $filter_lists[$type][$k] = array_merge($buttons['filtered'][$type][$k], $v);
                 }                
             }
-            foreach($filter_lists as $type => $row) {
-                $sortedRow = array();
+            if(!empty($filter_lists)){
+                foreach($filter_lists as $type => $row) {
+                    $sortedRow = array();
 
-                foreach ($row as $name => $v) {
-                    $sortedRow[$name] = array_merge(['label' => $name], $v);
+                    foreach ($row as $name => $v) {
+                        $sortedRow[$name] = array_merge(['label' => $name], $v);
+                    }
+                
+                    asort($sortedRow);
+                    $sortedRow = array_values($sortedRow);
+                
+                    $filters[$type] = $sortedRow;
                 }
-            
-                asort($sortedRow);
-                $sortedRow = array_values($sortedRow);
-            
-                $filters[$type] = $sortedRow;
             }
-
             $status = $this->integrate->getStatusCount($arg);
             $filters['status'] = $status;
             /* $buttons = [
