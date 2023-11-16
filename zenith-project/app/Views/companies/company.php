@@ -701,7 +701,7 @@ function getUsers(){
                     response(
                         $.map(data, function(item) {
                             return {
-                                label: item.username,
+                                label: item.username+"("+item.nickname+")",
                                 value: item.username,
                                 id: item.id
                             };

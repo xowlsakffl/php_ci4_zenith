@@ -146,6 +146,18 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->post('setstatus', 'Integrate\IntegrateController::setStatus');
     });
 
+    // 사용자 DB관리
+    $routes->group('integrate-user', static function($routes){   
+        $routes->get('', 'Integrate\IntegrateUserController::index');
+        $routes->get('list', 'Integrate\IntegrateUserController::getList');
+        $routes->get('lead', 'Integrate\IntegrateUserController::getLead');
+        $routes->get('leadcount', 'Integrate\IntegrateUserController::getEventLeadCount');
+        $routes->get('statuscount', 'Integrate\IntegrateUserController::getStatusCount');
+        $routes->get('getmemo', 'Integrate\IntegrateUserController::getMemo');
+        $routes->post('addmemo', 'Integrate\IntegrateUserController::addMemo');
+        $routes->post('setstatus', 'Integrate\IntegrateUserController::setStatus');
+    });
+
     // 회계 관리
     $routes->group('accounting', ['filter' => 'group:admin,superadmin'], static function($routes){   
         $routes->get('tax', 'Accounting\TaxController::tax');

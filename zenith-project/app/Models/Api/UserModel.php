@@ -111,9 +111,10 @@ class UserModel extends ShieldUserModel
     public function getSearchUsers($data)
     {
         $builder = $this->db->table('users');
-        $builder->select('id, username');
+        $builder->select('id, username, nickname');
         if(!empty($data['stx'])){        
             $builder->like('username', $data['stx']);
+            $builder->orLike('nickname', $data['stx']);
             $builder->limit(10);
         }
         $result = $builder->get()->getResultArray();

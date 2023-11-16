@@ -18,6 +18,9 @@ $uri = current_url(true)->getPath();
             <li>
                 <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>통합 DB관리</button></a>
             </li>
+            <li>
+                <a href="/integrate-user" class="<?php if($uri === '/integrate-user'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>사용자 DB관리</button></a>
+            </li>
             <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#accounting" aria-expanded="false"><i class="bi bi-cash-coin"></i>회계 관리</button>
