@@ -7,7 +7,7 @@ $uri = current_url(true)->getPath();
     <div class="nav-wrap">
         <ul class="nav flex-column">
             <li>
-                <button data-bs-toggle="collapse" data-bs-target="#advertisements" aria-expanded="false"><i class="bi bi-graph-up-arrow"></i>통합 광고관리</button>
+                <button data-bs-toggle="collapse" data-bs-target="#advertisements" aria-expanded="false"><i class="bi bi-bar-chart-line-fill"></i>통합 광고관리</button>
                 <div class="collapse" id="advertisements">
                     <ul class="btn-toggle-nav">
                         <li><a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>">통합 광고관리</a></li>
@@ -16,10 +16,10 @@ $uri = current_url(true)->getPath();
                 </div>
             </li>
             <li>
-                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>통합 DB관리</button></a>
+                <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-database-fill"></i>통합 DB관리</button></a>
             </li>
             <li>
-                <a href="/integrate-user" class="<?php if($uri === '/integrate-user'){ echo "active";}?>"><button><i class="bi bi-pie-chart-fill"></i>사용자 DB관리</button></a>
+                <a href="/integrate-user" class="<?php if($uri === '/integrate-user'){ echo "active";}?>"><button><i class="bi bi-person-fill-down"></i>사용자 DB관리</button></a>
             </li>
             <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
             <li>
