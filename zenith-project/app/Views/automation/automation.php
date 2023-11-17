@@ -1405,7 +1405,7 @@ function setProcData(){
             'slack_msg': $slack_msg,
         }
     };
-    console.log($data);
+
     if ($('#targetSelectTable tbody tr').length > 0) {
         $data['target'] = {
             'type': $target_type,
