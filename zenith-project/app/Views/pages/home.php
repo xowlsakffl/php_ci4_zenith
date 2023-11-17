@@ -197,89 +197,29 @@
 <!--스크립트-->
 <?=$this->section('script');?>
 <script>
-var args = {
-'sdate': moment().format('YYYY-MM-DD'),
-'edate': moment().format('YYYY-MM-DD'),
-};
-
-getReport(args);
+getReport();
 
 function getReport(){
-    getFacebookReport(args);
-    getKakaoReport(args);
-    getGoogleReport(args);
-}
-function getFacebookReport(args){
     $.ajax({
         type: "GET",
-        url: "<?=base_url()?>/advertisements/facebook/report",
-        data: args,
+        url: "<?=base_url()?>/home/report",
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            $('#facebookReport #profit_sum').text(data.profit_sum);
-            $('#facebookReport #impressions_sum').text(data.impressions_sum);
-            $('#facebookReport #clicks_sum').text(data.clicks_sum);
-            $('#facebookReport #click_ratio_sum').text(data.click_ratio_sum);
-            $('#facebookReport #spend_sum').text(data.spend_sum);
-            $('#facebookReport #unique_total_sum').text(data.unique_total_sum);
-            $('#facebookReport #unique_one_price_sum').text(data.unique_one_price_sum);
-            $('#facebookReport #conversion_ratio_sum').text(data.conversion_ratio_sum);
-            $('#facebookReport #profit_sum').text(data.profit_sum);
-            $('#facebookReport #per_sum').text(data.per_sum);
-            $('#facebookReport #price_01_sum').text(data.price_sum);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-}
-
-function getKakaoReport(args){
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/kakao/report",
-        data: args,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            $('#kakaoReport #profit_sum').text(data.profit_sum);
-            $('#kakaoReport #impressions_sum').text(data.impressions_sum);
-            $('#kakaoReport #clicks_sum').text(data.clicks_sum);
-            $('#kakaoReport #click_ratio_sum').text(data.click_ratio_sum);
-            $('#kakaoReport #spend_sum').text(data.spend_sum);
-            $('#kakaoReport #unique_total_sum').text(data.unique_total_sum);
-            $('#kakaoReport #unique_one_price_sum').text(data.unique_one_price_sum);
-            $('#kakaoReport #conversion_ratio_sum').text(data.conversion_ratio_sum);
-            $('#kakaoReport #profit_sum').text(data.profit_sum);
-            $('#kakaoReport #per_sum').text(data.per_sum);
-            $('#kakaoReport #price_01_sum').text(data.price_sum);
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
-        }
-    });
-}
-
-function getGoogleReport(args){
-    $.ajax({
-        type: "GET",
-        url: "<?=base_url()?>/advertisements/google/report",
-        data: args,
-        dataType: "json",
-        contentType: 'application/json; charset=utf-8',
-        success: function(data){  
-            $('#googleReport #profit_sum').text(data.profit_sum);
-            $('#googleReport #impressions_sum').text(data.impressions_sum);
-            $('#googleReport #clicks_sum').text(data.clicks_sum);
-            $('#googleReport #click_ratio_sum').text(data.click_ratio_sum);
-            $('#googleReport #spend_sum').text(data.spend_sum);
-            $('#googleReport #unique_total_sum').text(data.unique_total_sum);
-            $('#googleReport #unique_one_price_sum').text(data.unique_one_price_sum);
-            $('#googleReport #conversion_ratio_sum').text(data.conversion_ratio_sum);
-            $('#googleReport #profit_sum').text(data.profit_sum);
-            $('#googleReport #per_sum').text(data.per_sum);
-            $('#googleReport #price_01_sum').text(data.price_sum);
+            $.each(data, function(key, value) {
+                console.log(value)
+                $('#'+ key + ' #profit_sum').text(value.profit_sum);
+                $('#'+ key + ' #impressions_sum').text(value.impressions_sum);
+                $('#'+ key + ' #clicks_sum').text(value.clicks_sum);
+                $('#'+ key + ' #click_ratio_sum').text(value.click_ratio_sum);
+                $('#'+ key + ' #spend_sum').text(value.spend_sum);
+                $('#'+ key + ' #unique_total_sum').text(value.unique_total_sum);
+                $('#'+ key + ' #unique_one_price_sum').text(value.unique_one_price_sum);
+                $('#'+ key + ' #conversion_ratio_sum').text(value.conversion_ratio_sum);
+                $('#'+ key + ' #profit_sum').text(value.profit_sum);
+                $('#'+ key + ' #per_sum').text(value.per_sum);
+                $('#'+ key + ' #price_01_sum').text(value.price_sum);
+            });
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );

@@ -76,57 +76,64 @@ class AdvKakaoManagerController extends BaseController
 
     public function getReport()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(isset($this->request) && $this->request->isAJAX()){
             $arg = [
                 'sdate' => $this->request->getGet('sdate'),
                 'edate' => $this->request->getGet('edate'),
             ];
+        }else{
+            $arg = [
+                'sdate' => date("Y-m-d"),
+                'edate' => date("Y-m-d"),
+            ];
+        }
 
-            $res = $this->kakao->getReport($arg)->get()->getResultArray();
-            $columnIndex = 0;
-            $data = [];
-            foreach($res as $row) {
-                $data[] = $row;
-                foreach ($row as $col => $val) {
-                    if ($val == NULL) $val = "0";
-                    $total[$col][$columnIndex] = $val;
-                }
-                $columnIndex++;
+        $res = $this->kakao->getReport($arg)->get()->getResultArray();
+        $columnIndex = 0;
+        $data = [];
+        foreach($res as $row) {
+            $data[] = $row;
+            foreach ($row as $col => $val) {
+                if ($val == NULL) $val = "0";
+                $total[$col][$columnIndex] = $val;
+            }
+            $columnIndex++;
+        }
+
+        $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
+
+        if(!empty($res)){
+            $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
+            $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
+            if($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
+                $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
+            }
+            $report['spend_sum'] = array_sum($total['spend']); //총 지출액
+            $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
+            if($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
+                $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'],0); //총 db당 단가
+            }
+            if($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
+                $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100,2); //총 전환율
+            }
+            $report['price_sum'] = array_sum($total['price']); //총 매출액
+            $report['profit_sum'] = array_sum($total['profit']); //총 수익
+            if($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
+                $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100,2); //총 수익률
             }
 
-            $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = 0;
-
-            if(!empty($res)){
-                $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
-                $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
-                if($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
-                    $report['click_ratio_sum'] = round(($report['clicks_sum'] / $report['impressions_sum']) * 100,2); //총 클릭률    
-                }
-                $report['spend_sum'] = array_sum($total['spend']); //총 지출액
-                $report['spend_ratio_sum'] = floor(array_sum($total['spend']) * 0.85); //총 매체비
-                $report['unique_total_sum'] = array_sum($total['unique_total']); //총 유효db수
-                if($report['spend_sum'] != 0 && $report['unique_total_sum'] != 0) {
-                    $report['unique_one_price_sum'] = round($report['spend_sum'] / $report['unique_total_sum'],0); //총 db당 단가
-                }
-                if($report['unique_total_sum'] != 0 && $report['clicks_sum'] != 0) {
-                    $report['conversion_ratio_sum'] = round(($report['unique_total_sum'] / $report['clicks_sum']) * 100,2); //총 전환율
-                }
-                $report['price_sum'] = array_sum($total['price']); //총 매출액
-                $report['profit_sum'] = array_sum($total['profit']); //총 수익
-                if($report['profit_sum'] != 0 && $report['price_sum'] != 0) {
-                    $report['per_sum'] = round(($report['profit_sum'] / $report['price_sum']) * 100,2); //총 수익률
-                }
-
-                $report['impressions_sum'] = number_format($report['impressions_sum']);
-                $report['clicks_sum'] = number_format($report['clicks_sum']);
-                $report['spend_sum'] = number_format($report['spend_sum']);
-                $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
-                $report['price_sum'] = number_format($report['price_sum']);
-                $report['profit_sum'] = number_format($report['profit_sum']);
-            }
+            $report['impressions_sum'] = number_format($report['impressions_sum']);
+            $report['clicks_sum'] = number_format($report['clicks_sum']);
+            $report['spend_sum'] = number_format($report['spend_sum']);
+            $report['unique_one_price_sum'] = number_format($report['unique_one_price_sum']);
+            $report['price_sum'] = number_format($report['price_sum']);
+            $report['profit_sum'] = number_format($report['profit_sum']);
+        }
+        
+        if(isset($this->request) && $this->request->isAJAX()){
             return $this->respond($report);
         }else{
-            return $this->fail("잘못된 요청");
+            return $report;
         }
     }
 
