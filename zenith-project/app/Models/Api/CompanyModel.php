@@ -286,23 +286,28 @@ class CompanyModel extends Model
 
     public function setCompanyAdAccount($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('company_adaccounts');
         $newRecord = [
             'company_id' => $data['company_id'],
             'ad_account_id' => $data['ad_account_id'],
             'media' => $data['media']
         ];
-        $result = $builder->insert($newRecord);
+        $builder->insert($newRecord);
+        $result = $this->zenith->transComplete();
+
         return $result;
     }
 
     public function exceptCompanyAdAccount($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('company_adaccounts');
         $builder->where('company_id', $data['company_id']);
         $builder->where('ad_account_id', $data['ad_account_id']);
         $builder->where('media', $data['media']);
-        $result = $builder->delete();
+        $builder->delete();
+        $result = $this->zenith->transComplete();
 
         return $result;
     }

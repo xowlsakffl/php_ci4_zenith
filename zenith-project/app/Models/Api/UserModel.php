@@ -222,11 +222,12 @@ class UserModel extends ShieldUserModel
 
     public function exceptBelongUser($data)
     {
+        $this->db->transStart();   
         $builder = $this->db->table('companies_users');
         $builder->where('user_id', $data['user_id']);
         $builder->where('company_id', $data['company_id']);
-        $result = $builder->delete();
-
+        $builder->delete();
+        $result = $this->db->transComplete();
         return $result;
     }
 

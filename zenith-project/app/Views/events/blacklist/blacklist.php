@@ -103,6 +103,10 @@
                                     <th scope="row" class="text-end">아이피</th>
                                     <td><input class="form-control" type="text" name="ip" placeholder="아이피를 입력하세요." title="아이피"></td>
                                 </tr>
+                                <tr class="memo">
+                                    <th scope="row" class="text-end">메모</th>
+                                    <td><textarea class="form-control" name="memo"></textarea>
+                                </tr>
                                 <tr class="term">
                                     <th scope="row" class="text-end">차단 기간</th>
                                     <td>
@@ -156,6 +160,10 @@
                                 </tr>
                                 <tr class="ip_show">
                                     <th scope="row" class="text-end">아이피</th>
+                                    <td></td>
+                                </tr>
+                                <tr class="memo_show">
+                                    <th scope="row" class="text-end">메모</th>
                                     <td></td>
                                 </tr>
                                 <tr class="username_show">
@@ -317,6 +325,7 @@ function setBlack(data){
         $('.phone_show td').text(data.phone);
         
     }
+    $('.memo_show td').text(data.memo);
     $('.term_show td').text(data.term);
     $('#black-delete-form input[name=seq]').val(data.type+"_"+data.seq);
 }
@@ -377,6 +386,7 @@ $('form[name="black-create-form"]').bind('submit', function(e) {
     var data = {
         'type': type,
         'term': $('form[name="black-create-form"] select[name="term"]').val(),
+        'memo': $('form[name="black-create-form"] textarea[name="memo"]').val(),
     };
 
     if (type === 'phone') {

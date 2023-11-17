@@ -96,18 +96,20 @@ class AdvertiserModel extends Model
 
     public function createAdv($data)
     {
+        $this->db->transStart();
         $builder = $this->db->table('event_advertiser');
         $builder->insert($data);
-
-        return true;
+        $result = $this->db->transComplete();
+        return $result;
     }
 
     public function updateAdv($data, $seq)
     {
+        $this->db->transStart();
         $builder = $this->db->table('event_advertiser');
         $builder->where('seq', $seq);
         $builder->update($data);
-
-        return true;
+        $result = $this->db->transComplete();
+        return $result;
     }
 }

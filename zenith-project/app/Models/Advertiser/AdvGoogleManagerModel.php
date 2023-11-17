@@ -478,11 +478,12 @@ class AdvGoogleManagerModel extends Model
 
 	public function updateCode($data) {
 		$result = [];
+		$this->db->transStart();
         $builder = $this->db->table('z_adwords.aw_ad');  
 		$builder->set('code', $data['code']);
 		$builder->where('id', $data['id']);
-		$queryResult = $builder->update();
-
+		$builder->update();
+		$queryResult = $this->db->transComplete();
 		if($queryResult){
 			$result['code'] = $data['code'] ?? '';
 		}

@@ -21,12 +21,13 @@ class IdentityModel extends ShieldUserIdentityModelModel
 
     public function setPasswordChangedAt($id, $date)
     {
+        $this->db->transStart();
         $builder = $this->db->table('auth_identities');
         $builder->set('password_changed_at', $date);
         $builder->where('user_id', $id);
         $builder->where('type', 'email_password');
-        $result = $builder->update();
-        
+        $builder->update();
+        $result = $this->db->transComplete();
         return $result;
     }
 }

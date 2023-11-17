@@ -213,18 +213,22 @@ class AdvManagerModel extends Model
 
     public function addMemo($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('advertisement_memo');
         $builder->insert($data);
-        return true;
+        $result = $this->zenith->transComplete();
+        return $result;
     }
 
     public function checkMemo($data)
     {
+        $this->zenith->transStart();
         $builder = $this->zenith->table('advertisement_memo');
         $builder->set('is_done', $data['is_done']);
         $builder->set('done_nickname', $data['done_nickname']);
         $builder->where('seq', $data['seq']);
         $builder->update();
-        return true;
+        $result = $this->zenith->transComplete();
+        return $result;
     }
 }

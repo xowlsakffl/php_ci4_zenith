@@ -54,14 +54,16 @@ class ChangeModel extends Model
 
     public function createChange($data)
     {
+        $this->db->transStart();
         $builder = $this->db->table('event_conversion');
         $builder->insert($data);
-
-        return true;
+        $result = $this->db->transComplete();
+        return $result;
     }
 
     public function updateChange($data)
     {
+        $this->db->transStart();
         $builder = $this->db->table('event_conversion');
         $builder->set('id', $data['id']);
         $builder->set('name', $data['name']);
@@ -73,6 +75,7 @@ class ChangeModel extends Model
         }
         $builder->update();
     
-        return true;
+        $result = $this->db->transComplete();
+        return $result;
     }
 }

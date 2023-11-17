@@ -88,57 +88,63 @@ class BlackListModel extends Model
 
     public function createBlackList($data)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_blacklist');
-        $result = $builder->insert($data);
-
+        $builder->insert($data);
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function createBlackListPhone($data)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_phone_blacklist');
-        $result = $builder->insert($data);
-
+        $builder->insert($data);
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function updateBlackList($data)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_blacklist');
         $builder->set('reg_date', date('Y-m-d H:i:s'));
         $builder->where('seq', $data['seq']);
         unset($data['seq']);
-        $result = $builder->update($data);
-
+        $builder->update($data);
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function updateBlackListPhone($data)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_phone_blacklist');
         $builder->set('reg_date', date('Y-m-d H:i:s'));
         $builder->where('seq', $data['seq']);
         unset($data['seq']);
-        $result = $builder->update($data);
-
+        $builder->update($data);
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function deleteBlackList($seq)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_blacklist');
         $builder->where('seq', $seq);
-        $result = $builder->delete();
-
+        $builder->delete();
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function deleteBlackListPhone($seq)
     {
+        $this->db->transStart(); 
         $builder = $this->db->table('event_phone_blacklist');
         $builder->where('seq', $seq);
-        $result = $builder->delete();
-
+        $builder->delete();
+        $result = $this->db->transComplete();
         return $result;
     }
 }

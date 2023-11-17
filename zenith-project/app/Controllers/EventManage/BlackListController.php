@@ -119,6 +119,7 @@ class BlackListController extends BaseController
             $data = [
                 'username' => auth()->user()->username,
 				'term' => $arg['term'],
+                'memo' => $arg['memo']
             ];
             $data['reg_date'] = date('Y-m-d H:i:s');
             switch($data['term']){
