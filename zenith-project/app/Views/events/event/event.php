@@ -266,8 +266,8 @@
                                             </div>
                                         </div>
                                         <div class="mb-2" id="bizform">
-                                            <input type="text" name="creative_id" value="" class="form-control" style="float:left;width:49%;margin-right:2%" placeholder="소재번호를 입력하세요." title="소재 번호" autocomplete="off">
-                                            <input type="text" name="bizform_apikey" value=""  class="form-control" style="float:left;width:49%" placeholder="비즈폼 API KEY를 입력하세요." title="소재 번호">
+                                            <input type="text" name="creative_id" class="form-control" style="float:left;width:49%;margin-right:2%" placeholder="소재번호를 입력하세요." title="소재 번호" autocomplete="off">
+                                            <input type="text" name="bizform_apikey"  class="form-control" style="float:left;width:49%" placeholder="비즈폼 API KEY를 입력하세요." title="소재 번호">
                                         </div>
                                     </td>
                                 </tr>
@@ -693,13 +693,13 @@ function getList(){
                 "data": "mantis", "width": "5%",
                 "render": function(data, type, row) {
                     name = '';
-                    if(data.designer){
+                    /* if(data.designer){
                         name += data.designer+" / ";
                     }
                     if(data.developer){
                         name += data.developer;
-                    }
-                    return '<a href="https://mantis.chainsaw.co.kr/view.php?id='+data.id+'" target="_blank">'+name+'</a>';
+                    } */
+                    return '<a href="" target="_blank">'+name+'</a>';
                 }
             },
             { 

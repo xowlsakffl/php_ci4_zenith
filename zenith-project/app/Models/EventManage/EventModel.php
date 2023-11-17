@@ -131,34 +131,41 @@ class EventModel extends Model
 
     public function createEvent($data)
     {
+        $this->db->transStart();
         $keyword = $data['keyword'];
         unset($data['keyword']);
         $builder = $this->db->table('event_information');
         $builder->insert($data);
-        $result = $builder->getWhere(['seq' => $this->db->insertID()])->getRowArray();
-        if(!empty($result)){
-            $this->syncKeyword($keyword, $result['seq']);
+        $seq = $this->db->insertID();
+        $event = $builder->getWhere(['seq' => $seq])->getRowArray();
+        $result = $this->db->transComplete();
+        
+        if(!empty($event)){
+            $this->syncKeyword($keyword, $event['seq']);
             
-            return true;
+            return $result;
         }
     }
 
     public function updateEvent($data, $seq)
     {
+        $this->db->transStart();
         $keyword = $data['keyword'];
         unset($data['keyword']);
         $builder = $this->db->table('event_information');
         $builder->where('seq', $seq);
-        $result = $builder->update($data);
+        $builder->update($data);
+        $result = $this->db->transComplete();
         if(!empty($result)){
             $this->syncKeyword($keyword, $seq);
             
-            return true;
+            return $result;
         }
     }
 
     public function copyEvent($seq)
     {
+        $this->db->transStart();
         $data = $this->db->table('event_information')->select('advertiser, media, lead, title, description, subtitle, object, object_items, interlock, partner_id, partner_name, paper_code, paper_name, pixel_id, view_script, done_script, db_price, check_gender, check_age_min, check_age_max, duplicate_term, check_phone, check_name, check_cookie')
             ->where('seq', $seq)
             ->get()->getRowArray();
@@ -167,8 +174,8 @@ class EventModel extends Model
         $data['username'] = auth()->user()->username;
         $data['ei_datetime'] = date('Y-m-d H:i:s');
 
-        $result = $this->db->table('event_information')->insert($data);
-
+        $this->db->table('event_information')->insert($data);
+        $result = $this->db->transComplete();
         return $result;
     }
 
@@ -199,15 +206,17 @@ class EventModel extends Model
 
     public function deleteEvent($seq)
     {
+        $this->db->transStart();
         $builder = $this->db->table('event_information');
         $builder->where('seq', $seq);
         $result = $builder->delete();
-
+        $result = $this->db->transComplete();
         return $result;
     }
 
     public function syncKeyword($keywords, $seq)
     {
+        $this->db->transStart();
         $builder_3 = $this->db->table('event_keyword_idx');
         $builder_3->where('ei_seq', $seq);
         $builder_3->delete();
@@ -234,7 +243,7 @@ class EventModel extends Model
                 
             }
         }
-
-        return true;
+        $result = $this->db->transComplete();
+        return $result;
     }
 }

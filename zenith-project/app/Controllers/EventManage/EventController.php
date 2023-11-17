@@ -23,11 +23,11 @@ class EventController extends BaseController
 
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->event->getInformation($arg);
             $ads = $this->event->getEnabledAds();
-            $issues = $this->event->getIssuesFromMantis();
+            //$issues = $this->event->getIssuesFromMantis();
             $list = $result['data'];
             for ($i = 0; $i < count($list); $i++) {   
                 if($list[$i]['is_stop']){
@@ -47,14 +47,14 @@ class EventController extends BaseController
                     $list[$i]['title'] = $lead_array[$list[$i]['lead']];
                 }
 
-                $list[$i]['mantis'] = [];
+                /* $list[$i]['mantis'] = [];
                 if ($issues[$list[$i]['seq']]['id']) {
                     $list[$i]['mantis']['id'] = $issues[$list[$i]['seq']]['id'];
                     if ($issues[$list[$i]['seq']]['designer'])
                         $list[$i]['mantis']['designer'] = $issues[$list[$i]['seq']]['designer'];
                     if ($issues[$list[$i]['seq']]['developer'])
                         $list[$i]['mantis']['developer'] = $issues[$list[$i]['seq']]['developer'];
-                }
+                } */
 
                 if(preg_match('/(카카오|GDN|페이스북|잠재|유튜브)/', $list[$i]['media_name'])) {
                     $is_enabledAds = false;
@@ -175,7 +175,7 @@ class EventController extends BaseController
 
     public function copyEvent()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'post'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $data = $this->request->getRawInput();
             if(empty($data['seq'])){
                 return $this->fail("잘못된 요청");
@@ -189,7 +189,7 @@ class EventController extends BaseController
 
     public function deleteEvent()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'delete'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'delete'){
             $data = $this->request->getRawInput();
             if(empty($data['seq'])){
                 return $this->fail("잘못된 요청");
@@ -237,19 +237,31 @@ class EventController extends BaseController
         }
     }
 
+    public function getInterlockData()
+    {
+        /* if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $seq = $this->request->getGet('seq');
+            $result = $this->event->getEventImpressions($seq);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        } */
+    }
+
     private function setArg($arg){
         $data = [
             'media' => $arg['media'],
             'description' => $arg['description'],
-            'db_price' => $arg['db_price'],
-            'interlock' => $arg['interlock'],
+            'db_price' => (integer)$arg['db_price'] ?? 0,
+            'interlock' => (integer)$arg['interlock'] ?? 0,
             'partner_id' => $arg['partner_id'],
             'partner_name' => $arg['partner_name'],
             'paper_code' => $arg['paper_code'],
             'paper_name' => $arg['paper_name'],
-            'lead' => $arg['lead'],
-            'creative_id' => $arg['creative_id'],
+            'lead' => (integer)$arg['lead'],
+            'creative_id' => (integer)$arg['creative_id'] ?? 0,
             'bizform_apikey' => $arg['bizform_apikey'],
+            'is_stop' => (integer)$arg['is_stop'] ?? 0,
             'custom' => $arg['custom'],
             'title' => $arg['title'],
             'subtitle' => $arg['subtitle'],
@@ -259,13 +271,13 @@ class EventController extends BaseController
             'view_script' => $arg['view_script'],
             'done_script' => $arg['done_script'],
             'check_gender' => $arg['check_gender'],
-            'check_age_min' => $arg['check_age_min'],
-            'check_age_max' => $arg['check_age_max'],
-            'duplicate_term' => $arg['duplicate_term'],
+            'check_age_min' => (integer)$arg['check_age_min'] ?? 0,
+            'check_age_max' => (integer)$arg['check_age_max'] ?? 0,
+            'duplicate_term' => (integer)$arg['duplicate_term'] ?? 0,
             'check_phone' => $arg['check_phone'],
             'check_name' => $arg['check_name'],
-            'check_cookie' => $arg['check_cookie'],
-            'duplicate_precheck' => $arg['duplicate_precheck'],
+            'check_cookie' => (integer)$arg['check_cookie'] ?? 0,
+            'duplicate_precheck' => (integer)$arg['duplicate_precheck'] ?? 0,
             'username' => auth()->user()->nickname,
         ];
 
