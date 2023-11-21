@@ -1,9 +1,11 @@
 <?php
-namespace App\Libraries;
+
+namespace App\Controllers\Api;
+
 use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 
-class Test extends BaseController 
+class TestController extends BaseController
 {
     use ResponseTrait;
 

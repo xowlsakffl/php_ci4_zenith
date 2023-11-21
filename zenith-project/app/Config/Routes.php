@@ -220,7 +220,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 });
 
-$routes->match(['get', 'post'], 'interlock/(:any)', '\App\Libraries\Test::$1');
+
 
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
@@ -245,3 +245,4 @@ $routes->cli('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 $routes->get('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 
 $routes->match(['get', 'post'], 'jira/(:any)', 'Api\JiraController::$1');
+$routes->post('interlock', 'Api\TestController::getInterlockData');
