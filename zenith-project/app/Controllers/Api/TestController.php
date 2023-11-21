@@ -12,7 +12,6 @@ class TestController extends BaseController
     public function getInterlockData()
     {
         $data = $this->request->getVar();
-        log_message('info', 'interlock : '.print_r($data));
         return $this->respond(['result'=> 200, 'msg' => 'success']);
     } 
 }
