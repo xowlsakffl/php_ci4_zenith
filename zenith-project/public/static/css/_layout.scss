@@ -83,6 +83,7 @@ body{background:#f7f7f7;}
             span{padding:0; background:none;}
         }
     }
+    .left-side{overflow:hidden;}
 }
 @include medium{
     .wrap{min-width:580px;}
