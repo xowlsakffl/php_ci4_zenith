@@ -220,7 +220,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 });
 
-$routes->post('interlock', 'Api\TestController::getInterlockData');
+$routes->match(['get', 'post'], 'interlock/(:any)', '\App\Libraries\Test::$1');
 
 $routes->cli('fbapi/(:any)', 'Advertisement\Facebook::$1');
 $routes->cli('kmapi/(:any)', 'Advertisement\KakaoMoment::$1');
