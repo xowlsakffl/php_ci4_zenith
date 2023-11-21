@@ -239,13 +239,8 @@ class EventController extends BaseController
 
     public function getInterlockData()
     {
-        /* if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $seq = $this->request->getGet('seq');
-            $result = $this->event->getEventImpressions($seq);
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
-        } */
+        $data = $this->request->getPost();
+        log_message('info', 'interlock : '.print_r($data));
     }
 
     private function setArg($arg){
