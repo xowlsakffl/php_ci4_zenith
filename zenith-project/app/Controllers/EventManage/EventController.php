@@ -241,7 +241,7 @@ class EventController extends BaseController
     {
         $data = $this->request->getPost();
         log_message('info', 'interlock : '.print_r($data));
-        return json_encode(['status'=> 200, 'msg' => 'success']);
+        return $this->respond(['status'=> 200, 'msg' => 'success']);
     }
 
     private function setArg($arg){
