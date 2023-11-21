@@ -41,14 +41,15 @@ class JiraController extends BaseController
                 $param = $this->request->getVar();
                 if(!empty($param)){
                     $issueFields = $param->issue->fields ?? null;
+                    $issueKey = $param->issue->key ?? '';
                     $actionUser = $param->user->displayName ?? '';
                     $reporterName = $issueFields->reporter->displayName ?? '';
                     $projectName = $issueFields->project->name ?? '';
                     $projectKey = $issueFields->project->key ?? '';
                     $issueSummary = $issueFields->summary ?? '';
-                    $issueKey = $param->issue->key ?? '';
+                    
 
-                    if(empty($reporterName)) return $this->fail("보고자 이름 오류");
+                    if(empty($reporterName)) return $this->fail($reporterName);
                     $userModel = new UserModel();
                     $userData = $userModel->getUserByName($reporterName);
                     
