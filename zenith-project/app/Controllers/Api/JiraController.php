@@ -48,10 +48,9 @@ class JiraController extends BaseController
                     $projectKey = $issueFields->project->key ?? '';
                     $issueSummary = $issueFields->summary ?? '';
                     
-                    
                     if(empty($reporterName)) return $this->fail("보고자 이름 오류");
                     $userModel = new UserModel();
-                    $userData = $userModel->getUserByName((string)$reporterName);
+                    $userData = $userModel->getUserByName($reporterName);
                     
                     if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
     

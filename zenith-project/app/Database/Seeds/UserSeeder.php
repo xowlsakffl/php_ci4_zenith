@@ -183,7 +183,7 @@ class UserSeeder extends Seeder
                 "username" => "chanyeong",
                 "email" => "chanyeong@carelabs.co.kr"
             ), */
-            array(
+            /* array(
                 "username" => "pjh8778",
                 "nickname" => "박종호",
                 "email" => "pjh8778@carelabs.co.kr",
@@ -192,6 +192,11 @@ class UserSeeder extends Seeder
                 "username" => "sungjin",
                 "nickname" => "박성진",
                 "email" => "sunshine_psj@carelabs.co.kr"
+            ), */
+            array(
+                "username" => "jinhong",
+                "nickname" => "김진홍",
+                "email" => "jinhong@carelabs.co.kr",
             ),
         ];
 
