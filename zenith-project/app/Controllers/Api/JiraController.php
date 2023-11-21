@@ -51,9 +51,9 @@ class JiraController extends BaseController
                     
                     if(empty($reporterName)) return $this->fail("보고자 이름 오류");
                     $userModel = new UserModel();
-                    $userData = $userModel->getUserByName($reporterName);
+                    $userData = $userModel->getUserByName((string)$reporterName);
                     
-                    if(empty($userData)) return $this->fail("일치하는 사용자 없음".$reporterName);
+                    if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
     
                     $slack = new SlackChat();
                     $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
