@@ -89,7 +89,7 @@ div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !imp
 
 table.dataTable{border-right: 1px dashed var(--bs-border-color);}
 div.dataTables_scrollBody{
-    height:73vh !important;
+    /*height:73vh !important;*/
     &>table{padding-bottom:3rem;}
 }
 

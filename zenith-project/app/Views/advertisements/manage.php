@@ -12,6 +12,7 @@
 <link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-scroller-bs5/css/scroller.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
@@ -20,6 +21,7 @@
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
 <script src="/static/node_modules/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
 <script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
@@ -202,8 +204,6 @@
                                 <th scope="col">CTR</th>
                                 <th scope="col">DB <br>전환률</th>
                             </tr>
-                        </thead>
-                        <tfoot>
                             <tr id="total">
                                 <td></td>
                                 <td id="total-count"></td>
@@ -221,24 +221,7 @@
                                 <td id="avg-ctr"></td>
                                 <td id="avg-cvr"></td>
                             </tr>
-                            <tr class="header">
-                                <th scope="col">매체</th>
-                                <th scope="col">제목</th>
-                                <th scope="col">상태</th>
-                                <th scope="col">예산</th>
-                                <th scope="col">현재<br>DB단가</th>
-                                <th scope="col">유효<br>DB</th>
-                                <th scope="col">지출액</th>
-                                <th scope="col">수익</th>
-                                <th scope="col">수익률</th>
-                                <th scope="col">매출액</th>
-                                <th scope="col">노출수</th>
-                                <th scope="col">링크<br>클릭</th>
-                                <th scope="col">CPC</th>
-                                <th scope="col">CTR</th>
-                                <th scope="col">DB <br>전환률</th>
-                            </tr>
-                        </tfoot>
+                        </thead>
                         <tbody>
                         </tbody>
                     </table>
@@ -493,7 +476,7 @@ function getList(data = []){
         "dom": '<Bfrip<t>>',
         "fixedHeader": {
             "header" : true,
-            "footer" : true
+            "footer" : true,
         },
         "fixedColumns": {
             "leftColumns": 3
@@ -509,12 +492,14 @@ function getList(data = []){
             "return": true
         },
         "ordering": true,
+        "orderMulti": true,
+        "orderCellsTop": true,
         "paging": false,
         "info": true,
         "scroller": false,
         "scrollX": true,
-        "scrollY": "75vh",
-        "scrollCollapse": true,
+        // "scrollY": "75vh",
+        // "scrollCollapse": true,
         "stateSave": true,
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')

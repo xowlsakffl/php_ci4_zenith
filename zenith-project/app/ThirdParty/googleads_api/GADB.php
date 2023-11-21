@@ -343,6 +343,7 @@ class GADB
 		];
 		if ($result = $this->db->query($sql, $params)) {
 			if ($data['impressions']) {
+				$this->db->transStart();
 				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
                 VALUES(
                     :id:, 
@@ -365,8 +366,8 @@ class GADB
 					'clicks' => (integer)$data['clicks'],
 					'cost' => (integer)$data['cost']
 				];
-		
-				$this->db->query($sql, $params);
+				$result = $this->db->query($sql, $params);
+				$this->db->transComplete();
 			}
 		}
 
@@ -443,7 +444,7 @@ class GADB
 
 	public function getAdLeads($date)
 	{
-		$sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.cost),'}') AS spend_data, ad.code, ad.finalUrl, ac.name AS campaign_name
+		$sql = "SELECT his.ad_id, CONCAT('{',GROUP_CONCAT('\"',his.`hour`,'\":',his.cost),'}') AS spend_data, ad.code, ad.finalUrl, ad.name AS ad_name, ac.name AS campaign_name
 				FROM
 					`aw_ad_report_history` AS his
 					LEFT JOIN aw_ad AS ad ON his.ad_id = ad.id

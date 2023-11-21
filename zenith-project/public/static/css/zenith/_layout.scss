@@ -3,9 +3,9 @@ body{background:#f7f7f7;}
 .left-side{position:fixed; display:flex; flex-direction:column; width:240px; height:100vh; box-sizing:border-box; padding:42px 0; border-radius:0 0 40px 0; background:$color-dark; z-index: 99;
     .btn-menu{display:none;}
     .logo{margin:0 auto 40px;}
-    .btn-top{position:absolute; left:4px; bottom:4px;
-        a{color:var(--bs-light); font-size:80%;
-            i.bi{margin-right:4px; vertical-align:bottom;}
+    .btn-top{position:fixed; right:4px; bottom:4px;
+        a{display:block; color:var(--bs-light); font-size:200%; background-color:var(--bs-dark); border-radius:5px; text-align:center; margin:3px 0;
+            i.bi{vertical-align:bottom;}
         }
     }
 }

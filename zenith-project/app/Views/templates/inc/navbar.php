@@ -75,6 +75,7 @@ $uri = current_url(true)->getPath();
         </div>
     </div>
     <div class="btn-top">
-        <a href="#"><i class="bi bi-arrow-up-square-fill"></i><span>TOP</span></a>
+        <a href="#" class="head"><i class="bi bi-chevron-double-up"></i><span class="sr-only">TOP</span></a>
+        <a href="#" class="list"><i class="bi bi-chevron-up"></i><span class="sr-only">Up To List</span></a>
     </div>
 </div>

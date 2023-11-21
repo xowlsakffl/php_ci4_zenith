@@ -893,15 +893,7 @@ class ZenithGG
             $error = [];
             CLI::showProgress($step++, $total);
 
-            if (isset($row['code']) && trim($row['code'])) {
-                $title = $row['code'];
-            }else{
-                if (isset($row['campaign_name']) && isset($row['finalUrl'])) {
-                    $title = $row['campaign_name'] . '||' . $row['finalUrl'];
-                } else {
-                    $title = ""; // default value in case all conditions fail
-                }
-            }
+            $title = (trim($row['code']) ? $row['code'] : (strpos($row['ad_name'], '#') !== false ? $row['ad_name'] : $row['campaign_name'] . '||' . $row['finalUrl']));
 
             // CLI::write("[".date('[H:i:s]') ."] 광고({$row['ad_id']}) 유효DB개수 업데이트 - {$title}");
 
