@@ -72,28 +72,51 @@ class EventModel extends Model
 
     public function getEnabledAds()
 	{
-        $query = $this->db->query("SELECT * FROM
-        (
-        (SELECT ad.ad_name AS name, cr.link AS link FROM `facebook`.`fb_ad` AS ad
-            LEFT JOIN `facebook`.`fb_adcreative` AS cr ON cr.ad_id = ad.ad_id
-        WHERE ad.effective_status = 'ACTIVE' AND (ad.ad_name LIKE '%#%' OR cr.link <> ''))
-        UNION
-        (SELECT IF(INSTR(code, '#')>0, ad.code, ad.name) AS name, ad.finalUrl AS link 
-            FROM `adwords`.`aw_ad` AS ad
-            LEFT JOIN `adwords`.`aw_adgroup` AS ag ON ad.adgroupId = ag.id
-            LEFT JOIN `adwords`.`aw_campaign` AS ac ON ag.campaignId = ac.id
-        WHERE ad.status = 'ENABLED' AND ag.status = 'ENABLED' AND ac.status = 'ENABLED' AND (ad.name LIKE '%#%' OR ad.code LIKE '%#%' OR ad.finalUrl <> ''))
-        UNION
-        (SELECT ad.name, ad.landingUrl AS link
-            FROM `moment`.`mm_creative` AS ad
-            LEFT JOIN `moment`.`mm_adgroup` AS ag ON ad.adgroup_id = ag.id
-            LEFT JOIN `moment`.`mm_campaign` AS ac ON ag.campaign_id = ac.id
-        WHERE ad.config = 'ON' AND ag.config = 'ON' AND ac.config = 'ON' AND (ad.name LIKE '%#%' OR ad.landingUrl <> ''))
-        ) AS tb
-        WHERE tb.name REGEXP('^.*#([0-9]+).*') OR tb.link REGEXP('.+(kr|com|event)\/([0-9]+)')");
+        $fbSubQuery = $this->db->table('z_facebook.fb_ad AS ad');
+        $fbSubQuery->select('ad.ad_name AS name, cr.link AS link');
+        $fbSubQuery->join('z_facebook.fb_adcreative AS cr', 'cr.ad_id = ad.ad_id', 'left');
+        $fbSubQuery->where('ad.effective_status', 'ACTIVE');
+        $fbSubQuery->groupStart();
+        $fbSubQuery->like('ad.ad_name', '#');
+        $fbSubQuery->orGroupStart();
+        $fbSubQuery->where('cr.link !=', '');
+        $fbSubQuery->groupEnd();
+        $fbSubQuery->groupEnd();
 
-        $result = $query->getResultArray();
+        $awSubQuery = $this->db->table('z_adwords.aw_ad AS ad');
+        $awSubQuery->select("IF(INSTR(code, '#')>0, ad.code, ad.name) AS name, ad.finalUrl AS link");
+        $awSubQuery->join('z_adwords.aw_adgroup AS ag', 'ad.adgroupId = ag.id', 'left');
+        $awSubQuery->join('z_adwords.aw_campaign AS ac', 'ag.campaignId = ac.id', 'left');
+        $awSubQuery->where('ad.status', 'ENABLED');
+        $awSubQuery->where('ag.status', 'ENABLED');
+        $awSubQuery->where('ac.status', 'ENABLED');
+        $awSubQuery->groupStart();
+        $awSubQuery->like('ad.name', '#');
+        $awSubQuery->orLike('ad.code', '#');
+        $awSubQuery->orGroupStart();
+        $awSubQuery->where('ad.finalUrl !=', '');
+        $awSubQuery->groupEnd();
+        $awSubQuery->groupEnd();
 
+        $mmSubQuery = $this->db->table('z_moment.mm_creative AS ad');
+        $mmSubQuery->select('ad.name, ad.landingUrl AS link');
+        $mmSubQuery->join('z_moment.mm_adgroup AS ag', 'ad.adgroup_id = ag.id', 'left');
+        $mmSubQuery->join('z_moment.mm_campaign AS ac', 'ag.campaign_id = ac.id', 'left');
+        $mmSubQuery->where('ad.config', 'ON');
+        $mmSubQuery->where('ag.config', 'ON');
+        $mmSubQuery->where('ac.config', 'ON');
+        $mmSubQuery->groupStart();
+        $mmSubQuery->like('ad.name', '#');
+        $mmSubQuery->orGroupStart();
+        $mmSubQuery->where('ad.landingUrl !=', '');
+        $mmSubQuery->groupEnd();
+        $mmSubQuery->groupEnd();
+
+        $fbSubQuery->union($awSubQuery)->union($mmSubQuery);
+        $resultQuery = $this->db->newQuery()->fromSubquery($fbSubQuery, 'tb');
+        $resultQuery->where("tb.name REGEXP('^.*#([0-9]+).*') OR tb.link REGEXP('.+(kr|com|event)\/([0-9]+)')");
+        $result = $resultQuery->get()->getResultArray();
+        
         foreach($result as $row) {
 			if(preg_match('/^.+(kr|com|event)\/([0-9]{3,6})(\?.+)?$/', $row['link'])) {
 				$data[] = preg_replace('/^.+(kr|com|event)\/([0-9]{3,6})(\?.+)?/', '$2', $row['link']);
@@ -101,6 +124,7 @@ class EventModel extends Model
 				$data[] = preg_replace('/^.*\#([0-9]+).*/', '$1', $row['name']);
 			}
 		}
+
 		$data = array_unique($data);
         return $data;
     }

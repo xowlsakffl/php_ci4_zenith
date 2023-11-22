@@ -23,9 +23,26 @@ class JiraController extends BaseController
         $this->jira = new ZenithJira(); 
     }
 
+    public function getCode()
+    {
+        $url = $this->jira->getCode();
+        return redirect()->to($url);
+    }
+
+    public function callback()
+    {
+        $code = $this->request->getGet('code');
+        if (empty($code)) {
+            throw new \Exception('No authorization code provided');
+        }
+        $result = $this->jira->getToken($code);
+        dd($result);
+    }
+
     public function getProjects()
     {
         $result = $this->jira->getProjects();
+        dd($result);
     }
 
     public function getIssues()
