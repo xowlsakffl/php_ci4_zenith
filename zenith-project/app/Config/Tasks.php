@@ -36,10 +36,12 @@ class Tasks extends BaseConfig
     {
         $schedule->command('EventCron')->everyMinute(5)->named('event');
 
-        $schedule->command('GwCron')->cron('0 11-19 * * *')->named('gw');
+        if(getenv('MY_SERVER_NAME') === 'carelabs'){
+            $schedule->command('GwCron')->cron('0 11-19 * * *')->named('gw');
 
-        $schedule->command('todayDayOff')->cron('0 9-19 * * *')->named('sendSlackForDayOff');
-
+            $schedule->command('todayDayOff')->cron('0 9-19 * * *')->named('sendSlackForDayOff');
+        }
+        
         $schedule->command('Automation')->everyMinute(1)->named('aaCheck');
     }
 }
