@@ -112,7 +112,7 @@
                                         <tr>
                                             <th scope="col">타입</th>
                                             <th scope="col">소속대행사</th>
-                                            <th scope="col">광고주명</th>
+                                            <th scope="col">이름</th>
                                             <th scope="col">작성자</th>
                                             <th scope="col">생성일</th>
                                             <th scope="col"></th>
@@ -255,7 +255,7 @@
                                         <tr>
                                             <th scope="col">타입</th>
                                             <th scope="col">소속대행사</th>
-                                            <th scope="col">광고주명</th>
+                                            <th scope="col">이름</th>
                                         </tr>
                                     </thead>
                                     <tbody>
