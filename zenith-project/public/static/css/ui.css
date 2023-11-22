@@ -207,7 +207,7 @@ body {
 }
 .left-side .btn-top {
   position: fixed;
-  right: 4px;
+  right: 2px;
   bottom: 4px;
 }
 .left-side .btn-top a {
@@ -221,6 +221,9 @@ body {
 }
 .left-side .btn-top a i.bi {
   vertical-align: bottom;
+}
+.left-side .btn-top a i.bi:before {
+  vertical-align: -0.225em;
 }
 
 .nav-wrap {
@@ -1134,6 +1137,7 @@ input:-internal-autofill-selected {
 }
 div.dataTables_processing {
   z-index: 1;
+  top: 150px !important;
   padding-top: 16px !important;
   background-color: rgba(255, 255, 255, 0.9);
 }
@@ -1198,7 +1202,7 @@ div.dataTables_processing > div:last-child > div {
   width: 75%;
 }
 .table td .btn-budget {
-  margin: 1.5rem auto 0;
+  margin: 1rem auto 0;
   display: flex;
   justify-content: space-between;
   width: 80%;

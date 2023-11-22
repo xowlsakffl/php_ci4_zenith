@@ -191,6 +191,7 @@
                                 <th scope="col">매체</th>
                                 <th scope="col">제목</th>
                                 <th scope="col">상태</th>
+                                <th scope="col">ID</th>
                                 <th scope="col">예산</th>
                                 <th scope="col">현재<br>DB단가</th>
                                 <th scope="col">유효<br>DB</th>
@@ -207,7 +208,7 @@
                             <tr id="total">
                                 <td></td>
                                 <td id="total-count"></td>
-                                <td></td>
+                                <td colspan="2"></td>
                                 <td id="total-budget"></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
@@ -574,7 +575,7 @@ function getList(data = []){
         ],
         "columns": [
             { 
-                "data": "media", 
+                "data": "media", //매체
                 "width": "40px",
                 "render": function (data, type, row) {
                     media = '<div class="media_box"><i class="'+row.media+'"></i></div>';
@@ -582,7 +583,7 @@ function getList(data = []){
                 },
             },
             { 
-                "data": "name", 
+                "data": "name", //제목
                 "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
@@ -596,38 +597,47 @@ function getList(data = []){
                 },
             },
             { 
-                "data": "status", 
-                "width": "60px",
+                "data": "status", //상태
+                "width": "40px",
                 "render": function (data, type, row) {
                     status = '<select name="status" class="form-select form-select-sm" id="status_btn"><option value="OFF" '+(row.status === "OFF" ? 'selected' : '')+'>비활성</option><option value="ON" '+(row.status === "ON" ? 'selected' : '')+'>활성</option></select>';
                     return status;
                 },
             },
             { 
-                "data": "budget", 
+                "data": "id", //ID
+                "width": "150px"
+            },
+            { 
+                "data": "budget", //예산
                 "width": "80px",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget)+'</div><div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget+'</p>')+'</div>';
+                    if(row.budget != 0)
+                        budget += '<div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
                 },
             },
             { 
-                "data": "cpa",
-                "width": "80px",
+                "data": "cpa", //현재 DB단가
+                "width": "70px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
-            { "data": "unique_total", "width": "60px"},
+            { 
+                "data": "unique_total", //유효 DB
+                "width": "40px"
+            },
             {
-                "data": "spend",
+                "data": "spend", //지출액
                 "width": "100px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
             { 
-                "data": "margin",
+                "data": "margin", //수익
                 "width": "100px",
                 "render": function (data, type, row) {
                     if(parseInt(data) < 0){
@@ -640,8 +650,8 @@ function getList(data = []){
                 },
             },
             { 
-                "data": "margin_ratio",
-                "width": "80px",
+                "data": "margin_ratio", //수익률
+                "width": "50px",
                 "render": function (data, type, row) {
                     if(data < 20 && data != 0){
                         margin_ratio = data+'\u0025';   
@@ -654,31 +664,37 @@ function getList(data = []){
                 },
             },
             { 
-                "data": "sales",
+                "data": "sales", //매출액
                 "width": "100px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             },
-            { "data": "impressions", "width": "80px"},
-            { "data": "click", "width": "80px"},
+            { 
+                "data": "impressions", //노출수
+                "width": "80px"
+            },
+            { 
+                "data": "click", //링크클릭
+                "width": "50px"
+            },
             { 
                 "data": "cpc", 
-                "width": "80px",
+                "width": "50px",
                 "render": function (data, type, row) {
                     return '\u20A9'+data;
                 },
             }, //클릭당단가 (1회 클릭당 비용)
             { 
                 "data": "ctr", 
-                "width": "80px",
+                "width": "50px",
                 "render": function (data, type, row) {
                     return data+'\u0025';
                 },
             }, //클릭율 (노출 대비 클릭한 비율)
             { 
-                "data": "cvr", 
-                "width": "80px",
+                "data": "cvr",  //DB전환률
+                "width": "50px",
                 "render": function (data, type, row) {
                     return data+'\u0025';
                 },
