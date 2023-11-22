@@ -546,8 +546,9 @@ class AutomationController extends BaseController
                 $executionData[] = $this->automationExecution($seq);
             }
 
+            $execTime = date('Y-m-d H:i:s');
             foreach ($executionData as $exec) {
-                $logIdx = $this->recordResult($exec['result']);
+                $logIdx = $this->recordResult($exec['result'], $execTime);
                 foreach ($logs as &$log) {
                     if($log['schedule']['seq'] === $exec['result']['seq']){
                         $log['executions'] = $exec['log'];
@@ -1459,12 +1460,12 @@ class AutomationController extends BaseController
         return $formatData;
     }
 
-    private function recordResult($result)
+    private function recordResult($result, $execTime = null)
     {
         $resultData = [
             'idx' => $result['seq'],
             'result' => $result['status'],
-            'exec_timestamp' => date('Y-m-d H:i:s')
+            'exec_timestamp' => $execTime ?? date('Y-m-d H:i:s')
         ];
 
         $seq = $this->automation->recodeResult($resultData);
