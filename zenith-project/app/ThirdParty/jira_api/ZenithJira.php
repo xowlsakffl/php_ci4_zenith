@@ -20,13 +20,9 @@ class ZenithJira
 
     public function __construct()
     {
-        /* $this->clientId = 'iiisb2fVWfvBNxfazgJhsPxDkgGKldQy';
+        $this->clientId = 'iiisb2fVWfvBNxfazgJhsPxDkgGKldQy';
         $this->clientSecret = 'ATOAEa7qX_LpMrJnt-rj3SQsQcGU4Ejg6skpynqWqnOoUnihyvAOi4C_Ur_h-1HahQFp08E74721';
-        $this->callbackUrl = 'https://carezenith.co.kr/jira/callback';  */
-        $this->clientId = '3TUJpCxPIoiOeANfyP8aaXqizS96kbjD';
-        $this->clientSecret = 'ATOAkI8U7eoF44QOLAXZ53z1Vsiz9HyjPu37wNH94w6GvqDepZeoyM2IQM9mCM-5bVit49FC1644';
-        $this->callbackUrl = 'https://5a88-59-9-155-203.ngrok-free.app/jira/callback';
-
+        $this->callbackUrl = 'https://carezenith.co.kr/jira/callback'; 
         $this->scopes = 'manage:jira-project write:jira-work read:jira-work offline_access';
 
         $this->db = new JIRADB();
@@ -70,8 +66,8 @@ class ZenithJira
         ];
 
         $url = 'https://auth.atlassian.com/authorize?' . http_build_query($params);
-        $response = $this->curl($url, NULL, NULL);
-        return $response;
+       
+        return $url;
     }
 
     public function getToken($code)
