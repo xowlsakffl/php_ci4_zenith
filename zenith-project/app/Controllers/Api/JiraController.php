@@ -50,6 +50,11 @@ class JiraController extends BaseController
         $result = $this->jira->getIssues();
     }
 
+    public function getUsers()
+    {
+        $result = $this->jira->getIssues();
+    }
+
     public function getIssueComplete()
     {  
         try {
