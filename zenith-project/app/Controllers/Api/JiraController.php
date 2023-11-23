@@ -25,8 +25,8 @@ class JiraController extends BaseController
 
     public function getCode()
     {
-        $url = $this->jira->getCode();
-        return redirect()->to($url);
+        $result = $this->jira->getCode();
+        dd($result);
     }
 
     public function callback()
