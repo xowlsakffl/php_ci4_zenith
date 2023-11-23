@@ -9,22 +9,16 @@ class BlackListModel extends Model
     public function getBlackLists($data)
     {
         $srch = $data['searchData'];
-        $ipBuilder = $this->db->table('event_blacklist');
-        $ipBuilder->select('CONCAT("ip_", seq) as seq, ip, "" AS phone, forever, username, term, reg_date');
-
-        $phoneBuilder = $this->db->table('event_phone_blacklist');
-        $phoneBuilder->select('CONCAT("phone_", seq) as seq, "" AS ip, phone, forever, username, term, reg_date');
-        $ipBuilder->unionAll($phoneBuilder);
-
-        $resultQuery = $this->db->newQuery()->fromSubquery($ipBuilder, 'black');
+        $builder = $this->db->table('event_blacklist');
+        $builder->select('*');
 
         if(!empty($srch['stx'])){
-            $resultQuery->like('ip', $srch['stx']);
-            $resultQuery->orLike('phone', $srch['stx']);
+            $builder->like('data', $srch['stx']);
+            $builder->orLike('memo', $srch['stx']);
         }
 
         // limit 적용하지 않은 쿼리
-        $builderNoLimit = clone $resultQuery;
+        $builderNoLimit = clone $builder;
 
         $orderBy = [];
         if(!empty($data['order'])) {
@@ -33,11 +27,11 @@ class BlackListModel extends Model
                 if($col) $orderBy[] = "{$col} {$row['dir']}";
             }
         }
-        $orderBy[] = "reg_date desc";
-        $resultQuery->orderBy(implode(",", $orderBy),'',true);
-        if(isset($data['length']) && !isset($data['noLimit']) && ($data['length'] != -1)) $resultQuery->limit($data['length'], $data['start']);
+        $orderBy[] = "datetime desc";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if(isset($data['length']) && !isset($data['noLimit']) && ($data['length'] != -1)) $builder->limit($data['length'], $data['start']);
 
-        $result = $resultQuery->get()->getResultArray();
+        $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();
 
         return [
@@ -56,36 +50,6 @@ class BlackListModel extends Model
         return $result;
     }
 
-    public function getBlackListPhone($data)
-    {
-        $builder = $this->db->table('event_phone_blacklist');
-        $builder->select('*');
-        $builder->where('seq', $data);
-
-        $result = $builder->get()->getRowArray();
-        return $result;
-    }
-
-    public function getBlackListByIp($ip)
-    {
-        $builder = $this->db->table('event_blacklist');
-        $builder->select('*');
-        $builder->where('ip', $ip);
-
-        $result = $builder->get()->getRowArray();
-        return $result;
-    }
-
-    public function getBlackListByPhone($phone)
-    {
-        $builder = $this->db->table('event_phone_blacklist');
-        $builder->select('*');
-        $builder->where('phone', $phone);
-
-        $result = $builder->get()->getRowArray();
-        return $result;
-    }
-
     public function createBlackList($data)
     {
         $this->db->transStart(); 
@@ -95,53 +59,10 @@ class BlackListModel extends Model
         return $result;
     }
 
-    public function createBlackListPhone($data)
-    {
-        $this->db->transStart(); 
-        $builder = $this->db->table('event_phone_blacklist');
-        $builder->insert($data);
-        $result = $this->db->transComplete();
-        return $result;
-    }
-
-    public function updateBlackList($data)
-    {
-        $this->db->transStart(); 
-        $builder = $this->db->table('event_blacklist');
-        $builder->set('reg_date', date('Y-m-d H:i:s'));
-        $builder->where('seq', $data['seq']);
-        unset($data['seq']);
-        $builder->update($data);
-        $result = $this->db->transComplete();
-        return $result;
-    }
-
-    public function updateBlackListPhone($data)
-    {
-        $this->db->transStart(); 
-        $builder = $this->db->table('event_phone_blacklist');
-        $builder->set('reg_date', date('Y-m-d H:i:s'));
-        $builder->where('seq', $data['seq']);
-        unset($data['seq']);
-        $builder->update($data);
-        $result = $this->db->transComplete();
-        return $result;
-    }
-
     public function deleteBlackList($seq)
     {
         $this->db->transStart(); 
         $builder = $this->db->table('event_blacklist');
-        $builder->where('seq', $seq);
-        $builder->delete();
-        $result = $this->db->transComplete();
-        return $result;
-    }
-
-    public function deleteBlackListPhone($seq)
-    {
-        $this->db->transStart(); 
-        $builder = $this->db->table('event_phone_blacklist');
         $builder->where('seq', $seq);
         $builder->delete();
         $result = $this->db->transComplete();

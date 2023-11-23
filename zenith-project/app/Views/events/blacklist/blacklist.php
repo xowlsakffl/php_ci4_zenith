@@ -47,10 +47,8 @@
             <table class="table table-striped table-hover table-default" id="blacklist-table">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">전화번호</th>
-                        <th scope="col">아이피</th>
-                        <th scope="col">등록자</th>
-                        <th scope="col">기간</th>
+                        <th scope="col">전화번호/아이피</th>
+                        <th scope="col">메모</th>
                         <th scope="col">작성일</th>
                     </tr>
                 </thead>
@@ -80,43 +78,13 @@
                                 <col style="width:70%;">
                             </colgroup>
                             <tbody>
-                                <tr class="type">
-                                    <th scope="row" class="text-end">분류</th>
-                                    <td>
-                                        <div class="d-flex radio-wrap">
-                                            <div class="form-check me-3">
-                                                <input class="form-check-input" type="radio" value="phone" name="type" id="is_phone" checked="">
-                                                <label class="form-check-label" for="is_phone">전화번호</label>
-                                            </div>
-                                            <div class="form-check me-3">
-                                                <input class="form-check-input" type="radio" value="ip" name="type" id="is_ip">
-                                                <label class="form-check-label" for="is_ip">아이피</label>
-                                            </div>
-                                        </div>
-                                    </td>
+                                <tr>
+                                    <th scope="row" class="text-end">전화번호/아이피</th>
+                                    <td><input class="form-control" type="text" name="data"></td>
                                 </tr>
-                                <tr class="phone">
-                                    <th scope="row" class="text-end">전화번호</th>
-                                    <td><input class="form-control" type="text" name="phone" placeholder="전화번호를 입력하세요." title="전화번호"></td>
-                                </tr>
-                                <tr class="ip">
-                                    <th scope="row" class="text-end">아이피</th>
-                                    <td><input class="form-control" type="text" name="ip" placeholder="아이피를 입력하세요." title="아이피"></td>
-                                </tr>
-                                <tr class="memo">
+                                <tr>
                                     <th scope="row" class="text-end">메모</th>
                                     <td><textarea class="form-control" name="memo"></textarea>
-                                </tr>
-                                <tr class="term">
-                                    <th scope="row" class="text-end">차단 기간</th>
-                                    <td>
-                                        <select class="form-select me-2" name="term">
-                                            <option value="1d">1일</option><option value="7d">1주</option>
-                                            <option value="14d">2주</option><option value="1m">1개월</option>
-                                            <option value="3m">3개월</option><option value="forever">영구차단</option>
-                                            <option value="" disabled selected hidden>선택</option>
-                                        </select>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>                    
@@ -150,28 +118,16 @@
                                 <col style="width:70%;">
                             </colgroup>
                             <tbody>
-                                <tr class="type_show">
-                                    <th scope="row" class="text-end">분류</th>
-                                    <td></td>
-                                </tr>
-                                <tr class="phone_show">
-                                    <th scope="row" class="text-end">전화번호</th>
-                                    <td></td>
-                                </tr>
-                                <tr class="ip_show">
-                                    <th scope="row" class="text-end">아이피</th>
+                                <tr class="data_show">
+                                    <th scope="row" class="text-end">전화번호/아이피</th>
                                     <td></td>
                                 </tr>
                                 <tr class="memo_show">
                                     <th scope="row" class="text-end">메모</th>
                                     <td></td>
                                 </tr>
-                                <tr class="username_show">
-                                    <th scope="row" class="text-end">등록자</th>
-                                    <td></td>
-                                </tr>
-                                <tr class="term_show">
-                                    <th scope="row" class="text-end">차단 기간</th>
+                                <tr class="datetime_show">
+                                    <th scope="row" class="text-end">생성일</th>
                                     <td></td>
                                 </tr>
                             </tbody>
@@ -208,7 +164,7 @@ function setData() {
 
 function getList(){
     dataTable = $('#blacklist-table').DataTable({
-        "order": [[4,'desc']],
+        "order": [[2,'desc']],
         "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
@@ -232,27 +188,16 @@ function getList(){
         },
         "columns": [
             { 
-                "data": "phone", 
-                "width": "20%",
+                "data": "data", 
+                "width": "30%",
                 "render": function(data, type, row) {
                     return '<button type="button" id="deleteBtn" data-bs-toggle="modal" data-bs-target="#blackShowModal">'+data+'</button>';
                 }
             },
+            { "data": "memo", "width": "50%"},
             { 
-                "data": "ip", 
+                "data": "datetime", 
                 "width": "20%",
-                "render": function(data, type, row) {
-                    return '<button type="button" id="deleteBtn" data-bs-toggle="modal" data-bs-target="#blackShowModal">'+data+'</button>';
-                }
-            },
-            { "data": "username", "width": "7%"},
-            { "data": "term", "width": "20%"},
-            { 
-                "data": "reg_date", 
-                "width": "10%",
-                "render": function(data){
-                    return data.substr(0, 10);
-                }
             }
         ],
         "language": {
@@ -309,43 +254,8 @@ function deleteBlack(seq){
     });
 }
 
-function setBlack(data){
-    if(data.type === 'ip'){
-        $('.phone_show').hide();
-        $('.ip_show').show();
-        $('.username_show').show();
-        $('.type_show td').text('아이피');
-        $('.ip_show td').text(data.ip);
-        $('.username_show td').text(data.username);
-    }else{
-        $('.ip_show').hide();
-        $('.username_show').hide();
-        $('.phone_show').show();
-        $('.type_show td').text('전화번호');
-        $('.phone_show td').text(data.phone);
-        
-    }
-    $('.memo_show td').text(data.memo);
-    $('.term_show td').text(data.term);
-    $('#black-delete-form input[name=seq]').val(data.type+"_"+data.seq);
-}
-
-function setType(){
-    var type = $('input[name="type"]:checked').val();
-    $('.type').show();
-    if(type === 'phone'){
-        $('.phone').show();
-        $('.ip').hide();
-        $('.ip input[name="ip"]').val('');
-    }else{
-        $('.phone').hide();
-        $('.ip').show();
-        $('.phone input[name="phone"]').val('');
-    }
-}
-
 $('#blackCreateModal').on('show.bs.modal', function(e) {
-    setType()
+    //
 })
 .on('hidden.bs.modal', function(e) { 
     $('form[name="black-create-form"]')[0].reset();
@@ -365,7 +275,10 @@ $('#blackShowModal').on('show.bs.modal', function(e) {
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data){  
-            setBlack(data);
+            $('#black-delete-form input[name="seq"]').val(data.seq);
+            $('.data_show td').text(data.data);
+            $('.memo_show td').text(data.memo);
+            $('.datetime_show td').text(data.datetime);
         },
         error: function(error, status, msg){
             alert("상태코드 " + status + "에러메시지" + msg );
@@ -373,7 +286,7 @@ $('#blackShowModal').on('show.bs.modal', function(e) {
     });
 })
 .on('hidden.bs.modal', function(e) { 
-    $('input[name="seq"]').val('');
+    $('#black-delete-form input[name="seq"]').val('');
 });
 
 $('form[name="search-form"]').bind('submit', function() {
@@ -382,18 +295,10 @@ $('form[name="search-form"]').bind('submit', function() {
 });
 
 $('form[name="black-create-form"]').bind('submit', function(e) {
-    type = $('input[name="type"]:checked').val();
     var data = {
-        'type': type,
-        'term': $('form[name="black-create-form"] select[name="term"]').val(),
+        'data': $('form[name="black-create-form"] input[name="data"]').val(),
         'memo': $('form[name="black-create-form"] textarea[name="memo"]').val(),
     };
-
-    if (type === 'phone') {
-        data.phone = $('form[name="black-create-form"] input[name="phone"]').val();
-    } else {
-        data.ip = $('form[name="black-create-form"] input[name="ip"]').val();
-    }
 
     createBlack(data);
     return false;
@@ -402,10 +307,6 @@ $('form[name="black-create-form"]').bind('submit', function(e) {
 $('body').on('click', '.deleteActionBtn', function() {
     seq = $('#black-delete-form input[name="seq"]').val();
     deleteBlack(seq);
-});
-
-$('body').on('change', 'input[name="type"]', function() {
-    setType();
 });
 
 </script>
