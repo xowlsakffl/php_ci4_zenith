@@ -22,7 +22,7 @@ class ZenithJira
     {
         $this->clientId = 'iiisb2fVWfvBNxfazgJhsPxDkgGKldQy';
         $this->clientSecret = 'ATOAEa7qX_LpMrJnt-rj3SQsQcGU4Ejg6skpynqWqnOoUnihyvAOi4C_Ur_h-1HahQFp08E74721';
-        $this->callbackUrl = 'https://5a88-59-9-155-203.ngrok-free.app/jira/callback'; 
+        $this->callbackUrl = 'https://carezenith.co.kr/jira/callback'; 
         $this->scopes = 'manage:jira-project write:jira-work read:jira-work offline_access';
 
         $this->db = new JIRADB();
