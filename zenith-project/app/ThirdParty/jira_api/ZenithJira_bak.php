@@ -10,52 +10,127 @@ use JiraRestApi\Project\ProjectService;
 use JiraRestApi\JiraException;
 use JiraRestApi\User\UserService;
 
-class ZenithJira
+class ZenithJiraBack
 {
     //jira api 패키지
     private $iss;
-    private $accessToken = "ATATT3xFfGF0Gh6USmXkCmBDSx-1bQ6rfv0j47LdsmFfTw3XjSyBdVPMbk3H5ahoqLbC5lBcrxs__c6W10eZ1aFIpOuSnqUC5WdkMGQ0GtZjIPsS-sZyo9IXzAt2_OikJoP7DaaouGhxdaC1wLrce6uuuyxDtoCLVBG-yotCEnCgQAQAHM0ZcMw=8526015D";
     private $jiraHost = "https://carelabs-dm.atlassian.net";
-    private $db;
-    
+
+    private $clientId, $clientSecret, $callbackUrl, $scopes, $accessToken, $refreshToken, $db;
+
     public function __construct()
     {
+        $this->clientId = 'iiisb2fVWfvBNxfazgJhsPxDkgGKldQy';
+        $this->clientSecret = 'ATOAEa7qX_LpMrJnt-rj3SQsQcGU4Ejg6skpynqWqnOoUnihyvAOi4C_Ur_h-1HahQFp08E74721';
+        $this->callbackUrl = 'https://carezenith.co.kr/jira/callback'; 
+        $this->scopes = 'manage:jira-project write:jira-work read:jira-work offline_access';
+
         $this->db = new JIRADB();
+        try {
+            $token = $this->db->getToken();
+            if ($token['access_token']) {
+                $this->accessToken = $token['access_token'];
+                $this->refreshToken = $token['refresh_token'];
+                if (time() >= strtotime($token['expires_time'] . ' -30 minute')){
+                    $this->getRefreshToken();
+                }
+            }
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            return false;
+        }
+
         $this->iss = new ArrayConfiguration(
             [
-                'jiraHost' => $this->jiraHost,
-                'jiraUser' => 'jaybe@carelabs.co.kr',
-                'jiraPassword' => $this->accessToken,
-                /* 'useTokenBasedAuth' => true,
-                'personalAccessToken' => $this->accessToken, */
-                
-                // custom log config
-                /* 'jiraLogEnabled' => true,
-                'jiraLogFile' => "/my-jira-rest-client.log",
-                'jiraLogLevel' => 'INFO', */
-        ]
+                 'jiraHost' => $this->jiraHost,
+                 'useTokenBasedAuth' => false,
+                 'personalAccessToken' => $this->accessToken,
+                  
+                  // custom log config
+                 'jiraLogEnabled' => true,
+                 'jiraLogFile' => "my-jira-rest-client.log",
+                 'jiraLogLevel' => 'INFO',
+            ]
         );
+    }
+
+    public function getCode()
+    {
+        $params = [
+            'audience' => 'api.atlassian.com',
+            'client_id' => $this->clientId,
+            'scope' => $this->scopes,
+            'redirect_uri' => $this->callbackUrl,
+            'response_type' => 'code',
+            'state' => 'random-state',
+        ];
+
+        $url = 'https://auth.atlassian.com/authorize?' . http_build_query($params);
+       
+        return $url;
+    }
+
+    public function getToken($code)
+    {
+        $postData = [
+            'grant_type' => 'authorization_code',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'code' => $code,
+            'redirect_uri' => $this->callbackUrl,
+        ];
+
+        $response = $this->curl('https://auth.atlassian.com/oauth/token', json_encode($postData), 'POST');
+        if (isset($response['access_token'])) {
+            $result = $this->db->updateToken($response);
+            dd($result);
+        }
+    }
+
+    public function getRefreshToken()
+    {
+        $postData = [
+            'grant_type' => 'refresh_token',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'refresh_token' => $this->refreshToken,
+        ];
+
+        $response = $this->curl('https://auth.atlassian.com/oauth/token', json_encode($postData), 'POST');
+        if (isset($response['refresh_token'])) {
+            $result = $this->db->updateToken($response);
+        }
     }
 
     public function getProjects()
     {
         try {
+            $prjsArray = [];
             $proj = new ProjectService($this->iss);
-
+            
             $prjs = $proj->getAllProjects();
-            return $prjs;
+            foreach ($prjs as $p) {
+                $prjsArray[] = sprintf('Project Key:%s, Id:%s, Name:%s, projectCategory: %s\n',
+                    $p->key, $p->id, $p->name, $p->projectCategory['name']
+                );			
+            }	
+            return $prjsArray;
 
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
     }
 
-    public function getIssue()
+    public function getIssues()
     {
         try {
             $issueService = new IssueService($this->iss);
 	
             $queryParam = [
+                'fields' => [  // default: '*all'
+                    'summary',
+                    'comment',
+                ],
                 'expand' => [
                     'renderedFields',
                     'names',
@@ -69,7 +144,7 @@ class ZenithJira
                     
             $issue = $issueService->get('DEV-1016', $queryParam);
             
-            return $issue;
+            dd($issue);
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
