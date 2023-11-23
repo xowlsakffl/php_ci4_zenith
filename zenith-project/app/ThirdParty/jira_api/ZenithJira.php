@@ -220,7 +220,6 @@ class ZenithJira
 
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
-        dd($info);
         $result = json_decode($result, true);
 
         if (isset($result['error'])) {

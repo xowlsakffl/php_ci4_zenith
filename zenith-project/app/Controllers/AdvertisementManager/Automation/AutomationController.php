@@ -623,7 +623,7 @@ class AutomationController extends BaseController
 
             $diffExecCurrent = Time::parse($currentTime)->difference(Time::parse($automation['aas_exec_time']));
             $diffExecCurrentMinutes = $diffExecCurrent->getMinutes();
-            if($diffTimeDay >= $automation['aas_type_value'] && $diffExecCurrentMinutes <= 1 && $diffTimeMinute < 1){
+            if($diffTimeDay >= $automation['aas_type_value'] && $diffExecCurrentMinutes <= 1 && $diffTimeMinute >= 1){
                 $resultArray = [
                     'result' => true,
                     'status' => 'success',
@@ -644,7 +644,7 @@ class AutomationController extends BaseController
 
             $diffExecCurrent = Time::parse($currentTime)->difference(Time::parse($automation['aas_exec_time']));
             $diffExecCurrentMinutes = $diffExecCurrent->getMinutes();
-            if($diffTimeWeek >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+            if($diffTimeWeek >= $automation['aas_type_value'] && $currentDoW === $automation['aas_exec_week'] && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                 $resultArray = [
                     'result' => true,
                     'status' => 'success',
@@ -666,7 +666,7 @@ class AutomationController extends BaseController
             $diffExecCurrent = Time::parse($currentTime)->difference(Time::parse($automation['aas_exec_time']));
             $diffExecCurrentMinutes = $diffExecCurrent->getMinutes();
             if($automation['aas_month_type'] === 'start_day'){
-                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === '1' && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === '1' && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
@@ -677,7 +677,7 @@ class AutomationController extends BaseController
                 }
             }else if($automation['aas_month_type'] === 'end_day'){
                 $currentMonthLastDay = $currentDate->format('t');   
-                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === $currentMonthLastDay && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
@@ -691,7 +691,7 @@ class AutomationController extends BaseController
                 while ($firstDayMonth->dayOfWeek != $automation['aas_month_week']) {
                     $firstDayMonth = $firstDayMonth->addDays(1);
                 }
-                if($diffTimeMonth >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+                if($diffTimeMonth >= $automation['aas_type_value'] && $firstDayMonth->equals($currentDate) && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
@@ -705,7 +705,7 @@ class AutomationController extends BaseController
                 while ($lastDayMonth->dayOfWeek != $automation['aas_month_week']) {
                     $lastDayMonth = $lastDayMonth->subDays(1);
                 }
-                if($diffTimeMonth >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+                if($diffTimeMonth >= $automation['aas_type_value'] && $lastDayMonth->equals($currentDate) && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
@@ -715,7 +715,7 @@ class AutomationController extends BaseController
                     return $resultArray;
                 }
             }else if($automation['aas_month_type'] === 'day'){
-                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $diffExecCurrentMinutes <= 1  && $diffTimeMinute < 1){
+                if($diffTimeMonth >= $automation['aas_type_value'] && $currentDay === $automation['aas_month_day'] && $diffExecCurrentMinutes <= 1  && $diffTimeMinute >= 1){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
