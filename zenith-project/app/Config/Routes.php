@@ -231,7 +231,7 @@ $routes->cli('sendToEventLead', 'Advertisement\AdLeadController::sendToEventLead
 
 //자동화 실행
 $routes->cli('automation/exec', 'AdvertisementManager\Automation\AutomationController::automation');
-//$routes->get('automation/exec', 'AdvertisementManager\Automation\AutomationController::automation');
+$routes->get('automation/exec', 'AdvertisementManager\Automation\AutomationController::automation');
 /* $routes->get('slack/code', '\App\ThirdParty\botman\ChatBot::getCode');
 $routes->get('auth/slack/callback', '\App\ThirdParty\botman\ChatBot::getToken');
 $routes->match(['get', 'post'], 'slack/test', '\App\ThirdParty\botman\ChatBot::test'); */

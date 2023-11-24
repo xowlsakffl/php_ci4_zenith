@@ -205,7 +205,7 @@ class AutomationController extends BaseController
 
     public function getLogs()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getLogs($arg);                
 

@@ -1052,8 +1052,8 @@ class AutomationModel extends Model
         $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
         $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
         $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
-        /* $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d')); */
+        $builder->where('DATE(A.date) >=', date('Y-m-d'));
+        $builder->where('DATE(A.date) <=', date('Y-m-d'));
         switch ($data['aat_type']) {
             case 'account':
                 $builder->select('E.status AS status');
@@ -1099,8 +1099,8 @@ class AutomationModel extends Model
         $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
         $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
         $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
-        /* $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d')); */
+        $builder->where('DATE(A.date) >=', date('Y-m-d'));
+        $builder->where('DATE(A.date) <=', date('Y-m-d'));
         switch ($data['aat_type']) {
             case 'account':
                 $builder->select('E.status AS status');
@@ -1147,8 +1147,8 @@ class AutomationModel extends Model
         $builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
         $builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
         $builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
-        /* $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d')); */
+        $builder->where('DATE(A.date) >=', date('Y-m-d'));
+        $builder->where('DATE(A.date) <=', date('Y-m-d'));
         switch ($data['aat_type']) {
             case 'account':
                 $builder->select('E.config AS status');
