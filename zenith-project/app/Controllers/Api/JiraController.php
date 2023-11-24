@@ -53,26 +53,28 @@ class JiraController extends BaseController
 
     public function getIssueEventData()
     {
-        $this->writeLog($this->request, null, 'issue_test_log');
-        $param = $this->request->getVar();
-        if(!empty($param)){
-            $issueFields = $param->issue->fields ?? null;
-            if(!empty($issueFields)){
-                $projectKey = $issueFields->project->key ?? null;
-                $landingType = $issueFields->customfield_10172->value ?? null;
-                if((!empty($projectKey) && $projectKey == 'DEV') && (!empty($landingType) && ($landingType == '1.1 신규 랜딩제작' || $landingType == '1.3 랜딩 복사'))){
-                    $reporterName = $issueFields->reporter->displayName ?? null;
-                    
+        try {
+            $this->writeLog($this->request, null, 'issue_test_log');
+            $param = $this->request->getVar();
+            if(!empty($param)){
+                $issueFields = $param->issue->fields ?? null;
+                if(!empty($issueFields)){
+                    $projectKey = $issueFields->project->key ?? null;
+                    $landingType = $issueFields->customfield_10172->value ?? null;
+                    if((!empty($projectKey) && $projectKey == 'DEV') && (!empty($landingType) && ($landingType == '1.1 신규 랜딩제작' || $landingType == '1.3 랜딩 복사'))){
+                        $reporterName = $issueFields->reporter->displayName ?? null;
+                        
 
-                }   
+                    }
+                }else{
+                    throw new Exception("이슈 필드 빈값 오류");
+                }
+            }else{
+                throw new Exception("요청 데이터 오류");
             }
-            
-            if(empty($reporterName)) return $this->fail("보고자 이름 오류");
-            $userModel = new UserModel();
-            $userData = $userModel->getUserByName($reporterName);
-            
-        }else{
-            throw new Exception("요청 데이터 오류");
+        } catch (Exception $e) {
+            $logText = "오류 메세지: ".$e->getMessage();
+            $this->writeLog($this->request, $logText, 'issue_test_log');
         }
     }
 
