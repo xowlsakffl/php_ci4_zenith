@@ -53,6 +53,7 @@ class JiraController extends BaseController
 
     public function getIssueEventData()
     {
+        $this->writeLog($this->request, null, 'issue_test_log');
         $param = $this->request->getVar();
         if(!empty($param)){
             $issueFields = $param->issue->fields ?? null;
