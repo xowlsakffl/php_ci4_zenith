@@ -57,12 +57,15 @@ class JiraController extends BaseController
         $param = $this->request->getVar();
         if(!empty($param)){
             $issueFields = $param->issue->fields ?? null;
-            $issueKey = $param->issue->key ?? '';
-            $actionUser = $param->user->displayName ?? '';
-            $reporterName = $issueFields->reporter->displayName ?? '';
-            $projectName = $issueFields->project->name ?? '';
-            $projectKey = $issueFields->project->key ?? '';
-            $issueSummary = $issueFields->summary ?? '';
+            if(!empty($issueFields)){
+                $projectKey = $issueFields->project->key ?? null;
+                $landingType = $issueFields->customfield_10172->value ?? null;
+                if((!empty($projectKey) && $projectKey == 'DEV') && (!empty($landingType) && ($landingType == '1.1 신규 랜딩제작' || $landingType == '1.3 랜딩 복사'))){
+                    $reporterName = $issueFields->reporter->displayName ?? null;
+                    
+
+                }   
+            }
             
             if(empty($reporterName)) return $this->fail("보고자 이름 오류");
             $userModel = new UserModel();
@@ -81,15 +84,18 @@ class JiraController extends BaseController
                 $param = $this->request->getVar();
                 if(!empty($param)){
                     $issueFields = $param->issue->fields ?? null;
-                    if(!empty($issueFields)){
-                        $projectKey = $issueFields->project->key ?? null;
-                        $landingType = $issueFields->customfield_10172->value ?? null;
-                        if((!empty($projectKey) && $projectKey == 'DEV') && (!empty($landingType) && ($landingType == '1.1 신규 랜딩제작' || $landingType == '1.3 랜딩 복사'))){
-                            $reporterName = $issueFields->reporter->displayName ?? null;
-                            
-
-                        }   
-                    }
+                    $issueKey = $param->issue->key ?? '';
+                    $actionUser = $param->user->displayName ?? '';
+                    $reporterName = $issueFields->reporter->displayName ?? '';
+                    $projectName = $issueFields->project->name ?? '';
+                    $projectKey = $issueFields->project->key ?? '';
+                    $issueSummary = $issueFields->summary ?? '';
+                    
+                    if(empty($reporterName)) return $this->fail("보고자 이름 오류");
+                    $userModel = new UserModel();
+                    $userData = $userModel->getUserByName($reporterName);
+                    
+                    if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
     
                     $slack = new SlackChat();
                     $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
