@@ -10,27 +10,25 @@ class CompanySeeder extends Seeder
 {
     public function run()
     {
-        $company = new CompanyModel;
-
-        $faker = \Faker\Factory::create();
         $db = \Config\Database::connect();
         $builder = $db->table('event_advertiser');
-        $builder->select('
-			name
-		');
+        $builder->select('name');
         $adv = $builder->get()->getResultArray();
+        
+        $compBuilder = $db->table('companies');
         foreach($adv as $v){
-        $data = [
-            'type' =>    '',
-            'name' =>    $v['name'],
-            'tel'  =>    '',
-            'created_at'  =>    Time::createFromTimestamp($faker->unixTime()),
-            'updated_at'  =>    Time::now(),
-            'deleted_at'  =>    NULL,
-        ];
-
-        $builder = $db->table('companies');
-        $builder->insert($data);
+            $compBuilder->where('name', $v['name']);
+            $existing = $compBuilder->get()->getRow();
+            if(!$existing) {
+                $data = [
+                    'type' =>    '',
+                    'name' =>    $v['name'],
+                    'tel'  =>    '',
+                    'created_at'  =>    Time::now(),
+                    'updated_at'  =>    Time::now(),
+                ];
+                $compBuilder->insert($data);
+            }
         }
     }
 }

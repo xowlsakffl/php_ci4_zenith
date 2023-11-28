@@ -17,7 +17,7 @@ class AdvManagerController extends BaseController
 {
     use ResponseTrait;
     
-    protected $admanager;
+    protected $admanager, $facebook, $google, $kakao;
     private $campaign;
     public function __construct() 
     {
