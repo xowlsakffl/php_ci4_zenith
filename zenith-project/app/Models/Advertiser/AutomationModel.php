@@ -254,7 +254,7 @@ class AutomationModel extends Model
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_ad_account A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, IF(A.config = "OM", "활성", "비활성") AS status');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, IF(A.config = "ON", "활성", "비활성") AS status');
         if(!empty($seq)){
             $kakaoBuilder->where('A.id', $seq);
         }
@@ -951,14 +951,17 @@ class AutomationModel extends Model
         }
         $builder = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
         $result = $builder->get()->getResultArray();
+
         return $result;
     }
 
     private function getFacebookByCompany($data, $company)
     {
-        $facebookBuilder = $this->zenith->table('z_facebook.fb_ad_insight_history A');
-        $facebookBuilder->select(' 
-            SUM(D.budget) AS budget,
+        $subQuery = $this->zenith->table('z_facebook.fb_ad_insight_history A');
+        $subQuery->select(' 
+            D.account_id AS customerId,
+            D.campaign_id AS id, 
+            D.budget AS budget,
             SUM(A.db_count) AS unique_total,
             SUM(A.spend) AS spend,
             SUM(A.margin) AS margin,
@@ -966,14 +969,25 @@ class AutomationModel extends Model
             SUM(A.impressions) AS impressions,
             SUM(A.inline_link_clicks) AS click,
         ');
-        $facebookBuilder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
-        $facebookBuilder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
-        $facebookBuilder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
-        $facebookBuilder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+        $subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+        $subQuery->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $subQuery->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+        $subQuery->groupBy('D.campaign_id');
+
+        $facebookBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+        $facebookBuilder->select('
+            SUM(sub.budget) as budget,
+            SUM(sub.unique_total) as unique_total, 
+            SUM(sub.spend) as spend, 
+            SUM(sub.margin) as margin, 
+            SUM(sub.sales) as sales, 
+            SUM(sub.impressions) as impressions, 
+            SUM(sub.click) as click');
+        $facebookBuilder->join('z_facebook.fb_ad_account E', 'sub.customerId = E.ad_account_id');
         $facebookBuilder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
         $facebookBuilder->join('zenith.companies G', 'F.company_id = G.id');
-        $facebookBuilder->where('DATE(A.date) >=', date('Y-m-d'));
-        $facebookBuilder->where('DATE(A.date) <=', date('Y-m-d'));
         $facebookBuilder->whereIn('E.ad_account_id', explode(",",$company['ad_account_id']));
         $facebookBuilder->where('G.id', $data['aat_id']);
         $facebookBuilder->groupBy('G.id');
@@ -983,9 +997,11 @@ class AutomationModel extends Model
 
     private function getGoogleByCompany($data, $company)
     {
-        $googleBuilder = $this->zenith->table('z_adwords.aw_ad_report_history A');
-        $googleBuilder->select('
-            SUM(D.amount) AS budget,
+        $subQuery = $this->zenith->table('z_adwords.aw_ad_report_history A');
+        $subQuery->select(' 
+            D.customerId AS customerId,
+            D.id AS id, 
+            D.amount AS budget,
             SUM(A.db_count) AS unique_total,
             SUM(A.cost) AS spend,
             SUM(A.margin) AS margin,
@@ -993,15 +1009,27 @@ class AutomationModel extends Model
             SUM(A.impressions) AS impressions,
             SUM(A.clicks) AS click,
         ');
-        $googleBuilder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
-        $googleBuilder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
-        $googleBuilder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
-        $googleBuilder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+        $subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $subQuery->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+        $subQuery->where('D.status !=', 'NODATA');
+        $subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+        $subQuery->groupBy('D.id');
+
+        $googleBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+        $googleBuilder->select('
+            SUM(sub.budget) as budget,
+            SUM(sub.unique_total) as unique_total, 
+            SUM(sub.spend) as spend, 
+            SUM(sub.margin) as margin, 
+            SUM(sub.sales) as sales, 
+            SUM(sub.impressions) as impressions, 
+            SUM(sub.click) as click
+        ');
+        $googleBuilder->join('z_adwords.aw_ad_account E', 'sub.customerId = E.customerId');
         $googleBuilder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
         $googleBuilder->join('zenith.companies G', 'F.company_id = G.id');
-        $googleBuilder->where('D.status !=', 'NODATA');
-        $googleBuilder->where('DATE(A.date) >=', date('Y-m-d'));
-        $googleBuilder->where('DATE(A.date) <=', date('Y-m-d'));
         $googleBuilder->whereIn('E.customerId', explode(",",$company['ad_account_id']));
         $googleBuilder->where('G.id', $data['aat_id']);
         $googleBuilder->groupBy('G.id');
@@ -1011,9 +1039,11 @@ class AutomationModel extends Model
 
     private function getKakaoByCompany($data, $company)
     {
-        $kakaoBuilder = $this->zenith->table('z_moment.mm_creative_report_basic A');
-        $kakaoBuilder->select('
-            SUM(D.dailyBudgetAmount) AS budget,
+        $subQuery = $this->zenith->table('z_moment.mm_creative_report_basic A');
+        $subQuery->select(' 
+            D.ad_account_id AS customerId,
+            D.id AS id, 
+            D.dailyBudgetAmount AS budget,
             SUM(A.db_count) AS unique_total,
             SUM(A.cost) AS spend,
             SUM(A.margin) AS margin,
@@ -1021,14 +1051,26 @@ class AutomationModel extends Model
             SUM(A.imp) AS impressions,
             SUM(A.click) AS click,
         ');
-        $kakaoBuilder->join('z_moment.mm_creative B', 'A.id = B.id');
-        $kakaoBuilder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
-        $kakaoBuilder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
-        $kakaoBuilder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
+        $subQuery->join('z_moment.mm_creative B', 'A.id = B.id');
+        $subQuery->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+        $subQuery->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+        $subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+        $subQuery->groupBy('D.id');
+
+        $kakaoBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+        $kakaoBuilder->select('
+            SUM(sub.budget) as budget,
+            SUM(sub.unique_total) as unique_total, 
+            SUM(sub.spend) as spend, 
+            SUM(sub.margin) as margin, 
+            SUM(sub.sales) as sales, 
+            SUM(sub.impressions) as impressions, 
+            SUM(sub.click) as click
+        ');
+        $kakaoBuilder->join('z_moment.mm_ad_account E', 'sub.customerId = E.id');
         $kakaoBuilder->join('zenith.company_adaccounts F', 'E.id = F.ad_account_id AND F.media = "kakao"');
         $kakaoBuilder->join('zenith.companies G', 'F.company_id = G.id');
-        $kakaoBuilder->where('DATE(A.date) >=', date('Y-m-d'));
-        $kakaoBuilder->where('DATE(A.date) <=', date('Y-m-d'));
         $kakaoBuilder->whereIn('E.id', explode(",",$company['ad_account_id']));
         $kakaoBuilder->where('G.id', $data['aat_id']);
         $kakaoBuilder->groupBy('G.id');
@@ -1038,45 +1080,65 @@ class AutomationModel extends Model
 
     public function getTargetFacebook($data)
     {
-        $builder = $this->zenith->table('z_facebook.fb_ad_insight_history A');
-        $builder->select(' 
-            SUM(D.budget) AS budget,
-            SUM(A.db_count) AS unique_total,
-            SUM(A.spend) AS spend,
-            SUM(A.margin) AS margin,
-            SUM(A.sales) AS sales,
-            SUM(A.impressions) AS impressions,
-            SUM(A.inline_link_clicks) AS click,
-        ');
-        $builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
-        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
-        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
-        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
-        $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d'));
-        switch ($data['aat_type']) {
-            case 'account':
-                $builder->select('E.status AS status');
-                $builder->where('E.ad_account_id', $data['aat_id']);      
-                $builder->groupBy('E.ad_account_id');      
-                break;
-            case 'campaign':
-                $builder->select('D.status AS status');
-                $builder->where('D.campaign_id', $data['aat_id']);
-                $builder->groupBy('D.campaign_id');  
-                break;
-            case 'adgroup':                
-                $builder->select('C.status AS status');
-                $builder->where('C.adset_id', $data['aat_id']);
-                $builder->groupBy('C.adset_id');  
-                break;
-            case 'ad':
-                $builder->select('B.status AS status');
-                $builder->where('B.ad_id', $data['aat_id']);
-                $builder->groupBy('B.ad_id');  
-                break;
-            default:
-                return;
+        $subQuery = $this->zenith->table('z_facebook.fb_ad_insight_history A');
+		$subQuery->select('
+		SUM(A.impressions) AS impressions, 
+		SUM(A.inline_link_clicks) AS click, 
+		SUM(A.spend) AS spend, 
+		SUM(A.sales) as sales, 
+		SUM(A.db_count) as unique_total, 
+		SUM(A.margin) as margin');
+		$subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+		$subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+		
+        if($data['aat_type'] === 'account' || $data['aat_type'] === 'campaign'){
+            $subQuery->select('D.account_id as customerId, 
+            D.campaign_id AS id, D.status AS status, D.budget AS budget');
+            $subQuery->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+            $subQuery->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+            $subQuery->groupBy('D.campaign_id');
+        }else if($data['aat_type'] === 'adgroup'){
+            $subQuery->select('C.campaign_id as campaign_id, 
+            C.adset_id AS id, C.status AS status, C.budget AS budget ');
+            $subQuery->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+            $subQuery->groupBy('C.adset_id');  
+        }else if($data['aat_type'] === 'ad'){
+            $subQuery->select('B.adset_id as adset_id, 
+            B.ad_id AS id, B.status AS status, 0 AS budget');
+            $subQuery->where('B.ad_id', $data['aat_id']);
+            $subQuery->groupBy('B.ad_id');  
+        }
+
+        $builder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+
+        if($data['aat_type'] === 'account'){
+            $builder->select(' 
+                SUM(sub.budget) as budget,
+                SUM(sub.unique_total) as unique_total, 
+                SUM(sub.spend) as spend, 
+                SUM(sub.margin) as margin, 
+                SUM(sub.sales) as sales, 
+                SUM(sub.impressions) as impressions, 
+                SUM(sub.click) as click,
+                E.status AS status
+            ');
+            $builder->join('z_facebook.fb_ad_account E', 'sub.customerId = E.ad_account_id');
+            $builder->where('E.ad_account_id', $data['aat_id']);      
+            $builder->groupBy('E.ad_account_id');  
+        }else{
+            $builder->select('
+                sub.budget as budget,
+                sub.unique_total as unique_total, 
+                sub.spend as spend, 
+                sub.margin as margin, 
+                sub.sales as sales, 
+                sub.impressions as impressions, 
+                sub.click as click, 
+                sub.status AS status
+            ');
+            $builder->where('sub.id', $data['aat_id']);
+            $builder->groupBy('sub.id'); 
         }
        
         $result = $builder->get()->getResultArray();
@@ -1085,45 +1147,65 @@ class AutomationModel extends Model
 
     public function getTargetGoogle($data)
     {
-        $builder = $this->zenith->table('z_adwords.aw_ad_report_history A');
-        $builder->select('
-            SUM(D.amount) AS budget,
-            SUM(A.db_count) AS unique_total,
-            SUM(A.cost) AS spend,
-            SUM(A.margin) AS margin,
-            SUM(A.sales) AS sales,
-            SUM(A.impressions) AS impressions,
-            SUM(A.clicks) AS click,
-        ');
-        $builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
-        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
-        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
-        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
-        $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d'));
-        switch ($data['aat_type']) {
-            case 'account':
-                $builder->select('E.status AS status');
-                $builder->where('E.customerId', $data['aat_id']);  
-                $builder->groupBy('E.customerId');          
-                break;
-            case 'campaign':
-                $builder->select('D.status AS status');
-                $builder->where('D.id', $data['aat_id']);
-                $builder->groupBy('D.id');
-                break;
-            case 'adgroup':
-                $builder->select('C.status AS status');
-                $builder->where('C.id', $data['aat_id']);
-                $builder->groupBy('C.id');
-                break;
-            case 'ad':
-                $builder->select('B.status AS status');
-                $builder->where('B.id', $data['aat_id']);
-                $builder->groupBy('B.id');
-                break;
-            default:
-                return;
+        $subQuery = $this->zenith->table('z_adwords.aw_ad_report_history A');
+		$subQuery->select('
+		SUM(A.db_count) AS unique_total,
+        SUM(A.cost) AS spend,
+        SUM(A.margin) AS margin,
+        SUM(A.sales) AS sales,
+        SUM(A.impressions) AS impressions,
+        SUM(A.clicks) AS click,');
+		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+		$subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+		
+        if($data['aat_type'] === 'account' || $data['aat_type'] === 'campaign'){
+            $subQuery->select('D.customerId as customerId,
+            D.id AS id, D.status AS status, D.amount AS budget');
+            $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+            $subQuery->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+            $subQuery->groupBy('D.id');
+        }else if($data['aat_type'] === 'adgroup'){
+            $subQuery->select('C.campaignId as campaign_id,
+            C.id AS id, C.status AS status, 0 AS budget');
+            $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+            $subQuery->groupBy('C.id');  
+        }else if($data['aat_type'] === 'ad'){
+            $subQuery->select('B.adgroupId as adgroupId,
+            B.id AS id, B.status AS status, 0 AS budget');
+            $subQuery->where('B.id', $data['aat_id']);
+            $subQuery->groupBy('B.id');  
+        }
+
+        $builder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+
+        if($data['aat_type'] === 'account'){
+            $builder->select(' 
+                SUM(sub.budget) as budget,
+                SUM(sub.unique_total) as unique_total, 
+                SUM(sub.spend) as spend, 
+                SUM(sub.margin) as margin, 
+                SUM(sub.sales) as sales, 
+                SUM(sub.impressions) as impressions, 
+                SUM(sub.click) as click,
+                E.status AS status
+            ');
+            $builder->join('z_adwords.aw_ad_account E', 'sub.customerId = E.customerId');
+            $builder->where('E.customerId', $data['aat_id']);      
+            $builder->groupBy('E.customerId');  
+        }else{
+            $builder->select('
+                sub.budget as budget,
+                sub.unique_total as unique_total, 
+                sub.spend as spend, 
+                sub.margin as margin, 
+                sub.sales as sales, 
+                sub.impressions as impressions, 
+                sub.click as click, 
+                sub.status AS status
+            ');
+            $builder->where('sub.id', $data['aat_id']);
+            $builder->groupBy('sub.id'); 
         }
         
         $result = $builder->get()->getResultArray();
@@ -1133,45 +1215,65 @@ class AutomationModel extends Model
 
     public function getTargetKakao($data)
     {
-        $builder = $this->zenith->table('z_moment.mm_creative_report_basic A');
-        $builder->select('
-            SUM(D.dailyBudgetAmount) AS budget,
-            SUM(A.db_count) AS unique_total,
-            SUM(A.cost) AS spend,
-            SUM(A.margin) AS margin,
-            SUM(A.sales) AS sales,
-            SUM(A.imp) AS impressions,
-            SUM(A.click) AS click,
-        ');
-        $builder->join('z_moment.mm_creative B', 'A.id = B.id');
-        $builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
-        $builder->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
-        $builder->join('z_moment.mm_ad_account E', 'D.ad_account_id = E.id');
-        $builder->where('DATE(A.date) >=', date('Y-m-d'));
-        $builder->where('DATE(A.date) <=', date('Y-m-d'));
-        switch ($data['aat_type']) {
-            case 'account':
-                $builder->select('E.config AS status');
-                $builder->where('E.id', $data['aat_id']);            
-                $builder->groupBy('E.id');
-                break;
-            case 'campaign':
-                $builder->select('D.config AS status');
-                $builder->where('D.id', $data['aat_id']);
-                $builder->groupBy('D.id');
-                break;
-            case 'adgroup':
-                $builder->select('C.config AS status');
-                $builder->where('C.id', $data['aat_id']);
-                $builder->groupBy('C.id');
-                break;
-            case 'ad':
-                $builder->select('B.config AS status');
-                $builder->where('B.id', $data['aat_id']);
-                $builder->groupBy('B.id');
-                break;
-            default:
-                return;
+        $subQuery = $this->zenith->table('z_moment.mm_creative_report_basic A');
+		$subQuery->select('
+		SUM(A.imp) AS impressions, 
+        SUM(A.click) AS click, 
+        SUM(A.cost) AS spend, 
+        SUM(A.sales) AS sales, 
+        SUM(A.db_count) as unique_total,
+        SUM(A.margin) as margin');
+		$subQuery->join('z_moment.mm_creative B', 'A.id = B.id');
+		$subQuery->where('DATE(A.date) >=', date('Y-m-d'));
+        $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
+		
+        if($data['aat_type'] === 'account' || $data['aat_type'] === 'campaign'){
+            $subQuery->select('D.ad_account_id as customerId,
+            D.id AS id, D.config AS status, D.dailyBudgetAmount AS budget');
+            $subQuery->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+		    $subQuery->join('z_moment.mm_campaign D', 'C.campaign_id = D.id');
+            $subQuery->groupBy('D.id');
+        }else if($data['aat_type'] === 'adgroup'){
+            $subQuery->select('C.campaign_id as campaign_id, 
+            C.id AS id, C.config AS status, C.dailyBudgetAmount AS budget');
+            $subQuery->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
+            $subQuery->groupBy('C.id');  
+        }else if($data['aat_type'] === 'ad'){
+            $subQuery->select('B.adgroup_id as adgroup_id, 
+            B.id AS id, B.config AS status, 0 AS budget');
+            $subQuery->where('B.id', $data['aat_id']);
+            $subQuery->groupBy('B.id');  
+        }
+
+        $builder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
+
+        if($data['aat_type'] === 'account'){
+            $builder->select(' 
+                SUM(sub.budget) as budget,
+                SUM(sub.unique_total) as unique_total, 
+                SUM(sub.spend) as spend, 
+                SUM(sub.margin) as margin, 
+                SUM(sub.sales) as sales, 
+                SUM(sub.impressions) as impressions, 
+                SUM(sub.click) as click,
+                E.config AS status
+            ');
+            $builder->join('z_moment.mm_ad_account E', 'sub.customerId = E.id');
+            $builder->where('E.id', $data['aat_id']);      
+            $builder->groupBy('E.id');  
+        }else{
+            $builder->select('
+                sub.budget as budget,
+                sub.unique_total as unique_total, 
+                sub.spend as spend, 
+                sub.margin as margin, 
+                sub.sales as sales, 
+                sub.impressions as impressions, 
+                sub.click as click, 
+                sub.status AS status
+            ');
+            $builder->where('sub.id', $data['aat_id']);
+            $builder->groupBy('sub.id'); 
         }
         
         $result = $builder->get()->getResultArray();
@@ -1482,5 +1584,23 @@ class AutomationModel extends Model
         $builder->insert($data);
         $result = $this->zenith->transComplete();
         return $result;
+    }
+
+    private function setAccountData($datas)
+    {
+        $total['budget'] = $total['unique_total'] = $total['spend'] = $total['margin'] = $total['sales'] = $total['impressions'] = $total['click'] = 0;
+
+        foreach($datas as $data){
+            $total['budget'] +=$data['budget'];
+            $total['unique_total'] +=$data['unique_total'];
+            $total['spend'] +=$data['spend'];
+            $total['margin'] +=$data['margin'];
+            $total['sales'] +=$data['sales'];
+            $total['impressions'] +=$data['impressions'];
+            $total['click'] +=$data['click'];
+        }
+
+        $total['status'] = $datas[0]['status'];
+        return $total;
     }
 }

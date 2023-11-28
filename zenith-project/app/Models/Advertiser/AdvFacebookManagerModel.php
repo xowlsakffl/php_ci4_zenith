@@ -90,36 +90,49 @@ class AdvFacebookManagerModel extends Model
 
     public function getCampaigns($data)
     {
-        $builder = $this->db->table('z_facebook.fb_ad_insight_history A');
-        $builder->select('
-			G.id AS company_id,
-			G.name AS company_name,
-			"facebook" AS media, 
-			D.campaign_id AS id, 
-			D.campaign_name AS name, 
-			D.status AS status, 
-			D.budget AS budget, 
-			SUM(A.impressions) AS impressions, 
-			SUM(A.inline_link_clicks) AS click, 
-			SUM(A.spend) AS spend, 
-			SUM(A.sales) as sales, 
-			SUM(A.db_count) as unique_total, 
-			SUM(A.margin) as margin, 
-			E.ad_account_id as customerId
-		');
-		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
-        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
-        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
-        $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
+		$subQuery = $this->db->table('z_facebook.fb_ad_insight_history A');
+		$subQuery->select('
+		D.account_id as customerId, 
+		D.campaign_id AS id, 
+		D.campaign_name AS name, 
+		D.status AS status, 
+		D.budget AS budget, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.inline_link_clicks) AS click, 
+		SUM(A.spend) AS spend, 
+		SUM(A.sales) as sales, 
+		SUM(A.db_count) as unique_total, 
+		SUM(A.margin) as margin');
+		$subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+		$subQuery->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+		$subQuery->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+			$subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+		}
+		$subQuery->groupBy('D.campaign_id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
+		$builder->select('
+		G.id AS company_id, 
+		G.name AS company_name,
+		E.ad_account_id as customerId,
+		"facebook" AS media, 
+		sub.id AS id, 
+		sub.name AS name, 
+		sub.status,
+		sub.budget,
+		sub.impressions, 
+		sub.click, 
+		sub.spend, 
+		sub.sales, 
+		sub.unique_total, 
+		sub.margin');
+		$builder->join("z_facebook.fb_ad_account AS E", 'sub.customerId = E.ad_account_id');
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
 
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
-        
-        if(!empty($data['business'])){
+		if(!empty($data['business'])){
 			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
 
@@ -133,47 +146,61 @@ class AdvFacebookManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('D.campaign_name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('D.campaign_id');
-		$builder->orderBy('A.create_date', 'desc');
-        $builder->orderBy('D.campaign_name', 'asc');
+        $builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
+		
         return $builder;
     }
 
 	public function getAdsets($data)
 	{
-		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+		$subQuery = $this->db->table('z_facebook.fb_ad_insight_history A');
+		$subQuery->select('
+		C.campaign_id as campaign_id, 
+		C.adset_id AS id, 
+		C.adset_name AS name, 
+		C.status AS status, 
+		C.budget AS budget, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.inline_link_clicks) AS click, 
+		SUM(A.spend) AS spend, 
+		SUM(A.sales) as sales, 
+		SUM(A.db_count) as unique_total, 
+		SUM(A.margin) as margin');
+		$subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+		$subQuery->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+			$subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+		}
+		$subQuery->groupBy('C.adset_id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
         $builder->select('
 			G.id AS company_id,
 			G.name AS company_name,
-			"facebook" AS media, 
+			E.ad_account_id as customerId,
 			D.campaign_id AS campaign_id,
-			C.adset_id AS id, 
-			C.adset_name AS name, 
-			C.status AS status, 
-			C.budget AS budget, 
-			SUM(A.impressions) AS impressions, 
-			SUM(A.inline_link_clicks) AS click, 
-			SUM(A.spend) AS spend, 
-			SUM(A.sales) as sales, 
-			SUM(A.db_count) as unique_total, 
-			SUM(A.margin) as margin, 
-			E.ad_account_id as customerId
+			"facebook" AS media, 
+			sub.id AS id, 
+			sub.name AS name, 
+			sub.status AS status, 
+			sub.budget AS budget, 
+			sub.impressions, 
+			sub.click, 
+			sub.spend, 
+			sub.sales, 
+			sub.unique_total, 
+			sub.margin
 		');
-		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
-        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
-        $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
+        $builder->join('z_facebook.fb_campaign D', 'sub.campaign_id = D.campaign_id');
         $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
-
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
         
         if(!empty($data['business'])){
 			$builder->whereIn('E.business_id', explode("|",$data['business']));
@@ -189,49 +216,62 @@ class AdvFacebookManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('C.adset_name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('C.adset_id');
-		$builder->orderBy('A.create_date', 'desc');
-        $builder->orderBy('C.adset_name', 'asc');
+        $builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
         return $builder;
 	}
 
 	public function getAds($data)
 	{
-		$builder = $this->db->table('z_facebook.fb_ad_insight_history A');
+		$subQuery = $this->db->table('z_facebook.fb_ad_insight_history A');
+		$subQuery->select('
+		B.adset_id as adset_id, 
+		B.ad_id AS id, 
+		B.ad_name AS name, 
+		B.code AS code,
+		B.status AS status, 
+		SUM(A.impressions) AS impressions, 
+		SUM(A.inline_link_clicks) AS click, 
+		SUM(A.spend) AS spend, 
+		SUM(A.sales) as sales, 
+		SUM(A.db_count) as unique_total, 
+		SUM(A.margin) as margin');
+		$subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+			$subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+		}
+		$subQuery->groupBy('B.ad_id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
         $builder->select('
 			G.id AS company_id,
 			G.name AS company_name,
-			"facebook" AS media, 
+			E.ad_account_id as customerId,
 			D.campaign_id AS campaign_id,
 			C.adset_id AS adset_id,
-			B.ad_id AS id, 
-			B.ad_name AS name, 
-			B.code AS code,
-			B.status AS status, 
+			"facebook" AS media, 
+			sub.id AS id, 
+			sub.name AS name, 
+			sub.code AS code,
+			sub.status AS status,
 			0 AS budget, 
-			SUM(A.impressions) AS impressions, 
-			SUM(A.inline_link_clicks) AS click, 
-			SUM(A.spend) AS spend, 
-			SUM(A.sales) as sales, 
-			SUM(A.db_count) as unique_total, 
-			SUM(A.margin) as margin, 
-			E.ad_account_id as customerId
+			sub.impressions, 
+			sub.click, 
+			sub.spend, 
+			sub.sales, 
+			sub.unique_total, 
+			sub.margin 
 		');
-		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
-        $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
+        $builder->join('z_facebook.fb_adset C', 'sub.adset_id = C.adset_id');
         $builder->join('z_facebook.fb_campaign D', 'C.campaign_id = D.campaign_id');
         $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
-
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
         
         if(!empty($data['business'])){
 			$builder->whereIn('E.business_id', explode("|",$data['business']));
@@ -247,13 +287,13 @@ class AdvFacebookManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('B.ad_name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('B.ad_id');
-		$builder->orderBy('A.create_date', 'desc');
-        $builder->orderBy('B.ad_name', 'asc');
+        $builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
+
         return $builder;
 	}
 	

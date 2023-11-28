@@ -106,11 +106,9 @@ class AdvGoogleManagerModel extends Model
 
     public function getCampaigns($data)
     {
-		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
-        $builder->select('
-		G.id AS company_id,
-		G.name AS company_name,
-		"google" AS media,
+		$subQuery = $this->db->table('z_adwords.aw_ad_report_history A');
+        $subQuery->select('
+		D.customerId as customerId,
 		D.id AS id, 
 		D.name AS name, 
 		D.status AS status, 
@@ -118,23 +116,39 @@ class AdvGoogleManagerModel extends Model
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
-		sum(A.sales) AS sales, 
+		SUM(A.sales) AS sales, 
 		SUM(A.db_count) AS unique_total, 
 		SUM(A.margin) AS margin, 
-		E.customerId as customerId
 		');
-		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
-        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
-        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
-        $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
+		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+        $subQuery->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+        }
+		$subQuery->groupBy('D.id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
+		$builder->select('
+		G.id AS company_id, 
+		G.name AS company_name, 
+		E.customerId as customerId,
+		"google" AS media, 
+		sub.id AS id, 
+		sub.name AS name, 
+		sub.status,
+		sub.budget,
+		sub.impressions, 
+		sub.click, 
+		sub.spend, 
+		sub.sales, 
+		sub.unique_total, 
+		sub.margin');
+        $builder->join('z_adwords.aw_ad_account E', 'sub.customerId = E.customerId');
 		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
-        $builder->where('D.status !=', 'NODATA');
-
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
+        $builder->where('sub.status !=', 'NODATA');
         
         if(!empty($data['business'])){
 			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
@@ -150,48 +164,61 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('D.name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('D.id');
-		$builder->orderBy('A.create_time', 'desc');
-        $builder->orderBy('D.name', 'asc');
+		$builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
+
 		return $builder;
     }
 
     public function getAdsets($data)
 	{
-		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
-        $builder->select('
-		G.id AS company_id,
-		G.name AS company_name,
-		"google" AS media,
-		D.id AS campaign_id,
+		$subQuery = $this->db->table('z_adwords.aw_ad_report_history A');
+        $subQuery->select('
+		C.campaignId as campaign_id,
 		C.id AS id, 
 		C.name AS name, 
 		C.status AS status, 
-		0 AS budget, 
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
-		sum(A.sales) AS sales, 
+		SUM(A.sales) AS sales, 
 		SUM(A.db_count) AS unique_total, 
 		SUM(A.margin) AS margin, 
-		E.customerId as customerId
 		');
-		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
-        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
-        $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
+		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+        $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+        }
+		$subQuery->groupBy('C.id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name,
+		E.customerId as customerId,
+		D.id AS campaign_id,
+		"google" AS media,
+		sub.id AS id, 
+		sub.name AS name, 
+		sub.status,
+		0 AS budget,
+		sub.impressions, 
+		sub.click, 
+		sub.spend, 
+		sub.sales, 
+		sub.unique_total, 
+		sub.margin');
+        $builder->join('z_adwords.aw_campaign D', 'sub.campaign_id = D.id');
         $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
 		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
         $builder->where('D.status !=', 'NODATA');
-
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
         
         if(!empty($data['business'])){
 			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
@@ -207,50 +234,64 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('C.name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('C.id');
-		$builder->orderBy('A.create_time', 'desc');
-        $builder->orderBy('C.name', 'asc');
+        $builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
 		return $builder;
 	}
 
     public function getAds($data)
 	{
-		$builder = $this->db->table('z_adwords.aw_ad_report_history A');
-        $builder->select('
-		G.id AS company_id,
-		G.name AS company_name,
-		"google" AS media,
-		D.id AS campaign_id,
-		C.id AS adset_id,
+		$subQuery = $this->db->table('z_adwords.aw_ad_report_history A');
+        $subQuery->select('
+		B.adgroupId as adgroupId,
 		B.id AS id, 
 		B.name AS name, 
 		B.code AS code,
 		B.status AS status, 
-		0 AS budget, 
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
-		sum(A.sales) AS sales, 
+		SUM(A.sales) AS sales, 
 		SUM(A.db_count) AS unique_total, 
 		SUM(A.margin) AS margin, 
-		E.customerId as customerId
 		');
-		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
-        $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
+		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
+		if(!empty($data['sdate']) && !empty($data['edate'])){
+            $subQuery->where('DATE(A.date) >=', $data['sdate']);
+			$subQuery->where('DATE(A.date) <=', $data['edate']);
+        }
+		$subQuery->groupBy('B.id');
+
+		$builder = $this->db->newQuery()->fromSubquery($subQuery, 'sub');
+        $builder->select('
+		G.id AS company_id,
+		G.name AS company_name,
+		E.customerId as customerId,
+		D.id AS campaign_id,
+		C.id AS adset_id,
+		"google" AS media,
+		sub.id AS id, 
+		sub.name AS name, 
+		sub.code AS code,
+		sub.status AS status, 
+		0 AS budget, 
+		sub.impressions, 
+		sub.click, 
+		sub.spend, 
+		sub.sales, 
+		sub.unique_total, 
+		sub.margin
+		');
+        $builder->join('z_adwords.aw_adgroup C', 'sub.adgroupId = C.id');
         $builder->join('z_adwords.aw_campaign D', 'C.campaignId = D.id');
         $builder->join('z_adwords.aw_ad_account E', 'D.customerId = E.customerId');
 		$builder->join('zenith.company_adaccounts F', 'E.customerId = F.ad_account_id AND F.media = "google"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
         $builder->where('D.status !=', 'NODATA');
-
-        if(!empty($data['sdate']) && !empty($data['edate'])){
-            $builder->where('DATE(A.date) >=', $data['sdate']);
-            $builder->where('DATE(A.date) <=', $data['edate']);
-        }
         
         if(!empty($data['business'])){
 			$builder->whereIn('E.manageCustomer', explode("|",$data['business']));
@@ -266,13 +307,12 @@ class AdvGoogleManagerModel extends Model
 
         if(!empty($data['stx'])){
             $builder->groupStart();
-            $builder->like('B.name', $data['stx']);
+            $builder->like('sub.name', $data['stx']);
             $builder->groupEnd();
         }
 
-        $builder->groupBy('B.id');
-		$builder->orderBy('A.create_time', 'desc');
-        $builder->orderBy('B.name', 'asc');
+        $builder->groupBy('sub.id');
+        $builder->orderBy('sub.name', 'asc');
 		return $builder;
 	}
 
