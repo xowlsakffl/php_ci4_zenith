@@ -139,7 +139,6 @@ class AdvManagerModel extends Model
 
         if ($unionBuilder) {
             $resultQuery = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
-            
             if($type == 'getAccounts'){   
                 $resultQuery->groupBy('adv.company_id');
                 $resultQuery->orderBy('adv.company_name', 'asc');
@@ -149,18 +148,19 @@ class AdvManagerModel extends Model
                 $resultQuery->groupBy('adv.media_account_id');
                 $resultQuery->orderBy('adv.media_account_name', 'asc');
             }
+            
             if($type == 'getAdsets' || $type == 'getAds') {
                 $ids = [];
                 if($type == 'getAdsets' && (isset($data['searchData']['data']['campaigns']) && count($data['searchData']['data']['campaigns']))) {
-                    $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['campaigns']);
+                    $ids = array_map(function($v) { $v=explode('_', $v); return (integer)array_pop($v); }, $data['searchData']['data']['campaigns']);                 
                     $resultQuery->whereIn('campaign_id', $ids);
                 } else if($type == 'getAds') {
                     if(isset($data['searchData']['data']['campaigns']) && count($data['searchData']['data']['campaigns'])) {
-                        $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['campaigns']);
+                        $ids = array_map(function($v) { $v=explode('_', $v); return (integer)array_pop($v); }, $data['searchData']['data']['campaigns']);
                         $resultQuery->whereIn('campaign_id', $ids);
                     }
                     if(isset($data['searchData']['data']['adsets']) && count($data['searchData']['data']['adsets'])) {
-                        $ids = array_map(function($v) { $v=explode('_', $v); return array_pop($v); }, $data['searchData']['data']['adsets']);
+                        $ids = array_map(function($v) { $v=explode('_', $v); return (integer)array_pop($v); }, $data['searchData']['data']['adsets']);
                         $resultQuery->whereIn('adset_id', $ids);
                     }
                 }
