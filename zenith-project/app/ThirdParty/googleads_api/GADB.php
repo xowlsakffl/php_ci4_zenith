@@ -366,11 +366,11 @@ class GADB
 					'clicks' => (integer)$data['clicks'],
 					'cost' => (integer)$data['cost']
 				];
-				$result = $this->db->query($sql, $params);
-				$this->db->transComplete();
+				$this->db->query($sql, $params);
+				$result = $this->db->transComplete();
 			}
 		}
-
+		
 		return $result;
 	}
 

@@ -928,6 +928,7 @@ class ZenithGG
             }
             $dp = $this->db->getDbPrice($data);
             $leads = $this->db->getLeads($data);
+            
             $cpm = false;
             if(is_null($leads) && isset($data['media']) && preg_match('/cpm/i', $data['media'])){
                 $cpm = true;
@@ -968,7 +969,7 @@ class ZenithGG
                     $db_count = $row['db_count'];
                     if($db_price) $sales = $db_price * $db_count;
                     if($initZero) $sales = 0;
-                    if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
+                    //if(preg_match('/cpm/i', $data['media'])) $db_count = 0;
                     $lead[$row['hour']] = [
                         'sales' => $sales
                         ,'db_count' => $db_count
@@ -1001,6 +1002,7 @@ class ZenithGG
                 ,'sales' => $_sales
                 ,'margin' => $_margin
             ];
+            
             $result = array_merge($result, $data);
             if(isset($data['ad_id'])){
                 $this->db->updateReport($data);
