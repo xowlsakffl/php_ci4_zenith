@@ -107,9 +107,10 @@ class AdvManagerModel extends Model
     private function getQueryResults($data, $type)
     {
         $builders = [];
-        $media = explode("|", $data['searchData']['media']);
         if(empty($data['searchData']['media'])){
             $media = ['facebook', 'google', 'kakao'];
+        }else{
+            $media = explode("|", $data['searchData']['media']);
         }
 
         if (in_array('facebook', $media)) {
