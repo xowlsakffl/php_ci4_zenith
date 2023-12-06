@@ -26,6 +26,10 @@ class AdvKakaoManagerModel extends Model
             $builder->where('DATE(A.date) <=', $data['edate']);
         }
         
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+
         if(!empty($data['kakaoCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
