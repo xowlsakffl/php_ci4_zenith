@@ -34,12 +34,12 @@ class RestaController extends BaseController
             if(empty($arg['external']) || $arg['external'] != 'resta'){
                 return $this->fail("잘못된 요청");
             }
-            
+
             $company = model(CompanyModel::class);
             $companySeq = $company->getCompaniesByName($this->advertiser);
             $ids = array_column($companySeq, 'id');
-            $arg['searchData']['company'] = implode("|", $ids);
-            $arg['searchData']['resta'] = $arg['searchData']['company'];
+            $ids = implode("|", $ids);
+            $arg['searchData']['resta'] = $ids;
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
