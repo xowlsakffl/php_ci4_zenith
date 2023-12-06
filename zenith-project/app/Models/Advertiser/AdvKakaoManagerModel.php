@@ -145,6 +145,10 @@ class AdvKakaoManagerModel extends Model
 			$builder->whereIn('E.id', explode("|",$data['account']));
         }
 
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('sub.name', $data['stx']);
@@ -208,6 +212,10 @@ class AdvKakaoManagerModel extends Model
 
         if(!empty($data['account'])){
 			$builder->whereIn('E.id', explode("|",$data['account']));
+        }
+
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 
         if(!empty($data['stx'])){
@@ -277,6 +285,10 @@ class AdvKakaoManagerModel extends Model
 			$builder->whereIn('E.id', explode("|",$data['account']));
         }
 
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('sub.name', $data['stx']);
@@ -333,6 +345,10 @@ class AdvKakaoManagerModel extends Model
 			}
         }
 
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+        
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }

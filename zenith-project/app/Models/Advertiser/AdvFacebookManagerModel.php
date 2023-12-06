@@ -73,6 +73,10 @@ class AdvFacebookManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+		
 		if(!empty($data['facebookCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
@@ -148,6 +152,10 @@ class AdvFacebookManagerModel extends Model
 			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
         }
 
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+		
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('sub.name', $data['stx']);
@@ -216,6 +224,10 @@ class AdvFacebookManagerModel extends Model
 
 		if(!empty($data['account'])){
 			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
+        }
+
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 
         if(!empty($data['stx'])){
@@ -289,6 +301,10 @@ class AdvFacebookManagerModel extends Model
 			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
         }
 
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('sub.name', $data['stx']);
@@ -356,6 +372,10 @@ class AdvFacebookManagerModel extends Model
 
 		if(!empty($data['account'])){
 			$builder->whereIn('E.ad_account_id', explode("|",$data['account']));
+        }
+		
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 		
         $builder->groupBy('A.date');

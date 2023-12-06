@@ -166,6 +166,10 @@ class AdvGoogleManagerModel extends Model
 			$builder->whereIn('E.customerId', explode("|",$data['account']));
         }
 
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('sub.name', $data['stx']);
@@ -234,6 +238,10 @@ class AdvGoogleManagerModel extends Model
 
 		if(!empty($data['account'])){
 			$builder->whereIn('E.customerId', explode("|",$data['account']));
+        }
+
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 
         if(!empty($data['stx'])){
@@ -307,6 +315,10 @@ class AdvGoogleManagerModel extends Model
 
 		if(!empty($data['account'])){
 			$builder->whereIn('E.customerId', explode("|",$data['account']));
+        }
+
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 
         if(!empty($data['stx'])){
@@ -491,6 +503,10 @@ class AdvGoogleManagerModel extends Model
 
 		if(!empty($data['account'])){
 			$builder->whereIn('E.customerId', explode("|",$data['account']));
+        }
+		
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
 		
         $builder->groupBy('A.date');
