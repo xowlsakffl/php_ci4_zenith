@@ -155,6 +155,17 @@ class CompanyModel extends Model
         return $result;
     }
 
+    public function getCompaniesByName($names)
+    {
+        $builder = $this->zenith->table('companies');
+        $builder->select('id');
+        $builder->where('status !=', 0);
+        $builder->whereIn('name', $names);
+
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
     public function createCompany($data, $agency)
     {
         $this->zenith->transStart();

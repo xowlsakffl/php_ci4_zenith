@@ -8,6 +8,7 @@ use App\Models\Advertiser\AdvFacebookManagerModel;
 use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AdvKakaoManagerModel;
 use App\Models\Advertiser\AdvManagerModel;
+use App\Models\Api\CompanyModel;
 use CodeIgniter\API\ResponseTrait;
 
 class RestaController extends BaseController
@@ -34,6 +35,10 @@ class RestaController extends BaseController
                 return $this->fail("잘못된 요청");
             }
             
+            $company = model(CompanyModel::class);
+            $companySeq = $company->getCompaniesByName($this->advertiser);
+            $ids = array_column($companySeq, 'id');
+            $arg['searchData']['company'] = implode("|", $ids);
             switch ($arg['searchData']['type']) {
                 case 'ads':
                     $result = $this->getAds($arg);
