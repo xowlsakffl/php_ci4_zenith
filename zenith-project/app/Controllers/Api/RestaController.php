@@ -39,6 +39,7 @@ class RestaController extends BaseController
             $companySeq = $company->getCompaniesByName($this->advertiser);
             $ids = array_column($companySeq, 'id');
             $ids = implode("|", $ids);
+            $arg['searchData']['company'] = $ids;
             $arg['searchData']['resta'] = $ids;
             switch ($arg['searchData']['type']) {
                 case 'ads':
