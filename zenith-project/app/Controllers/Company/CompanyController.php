@@ -160,14 +160,15 @@ class CompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->company->getSearchAdAccounts($param['stx']);
-            foreach($result as &$row){
-                if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
-                    $row['status'] = '활성';
-                }else{
-                    $row['status'] = '비활성';
-                }
-            }
-
+			if(!empty($result)){
+				foreach($result as &$row){
+					if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
+						$row['status'] = '활성';
+					}else{
+						$row['status'] = '비활성';
+					}
+				}
+			}
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -179,14 +180,16 @@ class CompanyController extends \CodeIgniter\Controller
         if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->company->getCompanyAdAccounts($param);
-            foreach($result as &$row){
-                if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
-                    $row['status'] = '활성';
-                }else{
-                    $row['status'] = '비활성';
-                }
-            }
-
+			if(!empty($result)){
+				foreach($result as &$row){
+					if($row['status'] == 'ENABLED' || $row['status'] == 1 || $row['status'] == 'ON'){
+						$row['status'] = '활성';
+					}else{
+						$row['status'] = '비활성';
+					}
+				}
+			}
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

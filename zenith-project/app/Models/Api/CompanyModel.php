@@ -237,6 +237,10 @@ class CompanyModel extends Model
 
     public function getSearchAdAccounts($stx = NULL)
     {
+		if(!$this->facebook->tableExists('fb_ad_account') || !$this->google->tableExists('aw_ad_account') || !$this->kakao->tableExists('mm_ad_account')){
+			return false;
+		}
+
         $facebookBuilder = $this->facebook->table('fb_ad_account');
         $kakaoBuilder = $this->kakao->table('mm_ad_account');
         $googleBuilder = $this->google->table('aw_ad_account');
@@ -260,6 +264,10 @@ class CompanyModel extends Model
 
     public function getCompanyAdAccounts($data)
     {
+		if(!$this->facebook->tableExists('fb_ad_account') || !$this->google->tableExists('aw_ad_account') || !$this->kakao->tableExists('mm_ad_account')){
+			return false;
+		}
+
         $zenithBuilder = $this->zenith->table('company_adaccounts AS ca');
 
         $facebookBuilder = clone $zenithBuilder;

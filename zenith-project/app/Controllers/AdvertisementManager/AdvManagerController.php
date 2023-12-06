@@ -35,6 +35,11 @@ class AdvManagerController extends BaseController
     public function getData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+	
+			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
+				$arg['external'] = 'resta';
+				return $this->getCareLabsData($arg);
+			}	
 
             switch ($arg['searchData']['type']) {
                 case 'ads':
@@ -50,38 +55,41 @@ class AdvManagerController extends BaseController
                     return $this->fail("잘못된 요청");
             }
             
-            $orderBy = [];
-            if(!empty($arg['order'])) {
-                foreach($arg['order'] as $row) {
-                    if($row['dir'] == 'desc'){
-                        $sort = SORT_DESC;
-                    }else{
-                        $sort = SORT_ASC;
-                    }
-                    $col = $arg['columns'][$row['column']]['data'];
-                    if($col) $orderBy[$col] = $sort;
-                }
-                array_sort_by_multiple_keys($result['data'], $orderBy);
-            }
+			if(!empty($result)){
+				$orderBy = [];
+				if(!empty($arg['order'])) {
+					foreach($arg['order'] as $row) {
+						if($row['dir'] == 'desc'){
+							$sort = SORT_DESC;
+						}else{
+							$sort = SORT_ASC;
+						}
+						$col = $arg['columns'][$row['column']]['data'];
+						if($col) $orderBy[$col] = $sort;
+					}
+					array_sort_by_multiple_keys($result['data'], $orderBy);
+				}
 
-            foreach ($result['data'] as &$value) {
-                $value['budget'] = number_format($value['budget']);
-                $value['impressions'] = number_format($value['impressions']);
-                $value['click'] = number_format($value['click']);
-                $value['spend'] = number_format($value['spend']);
-                $value['sales'] = number_format($value['sales']);
-                $value['unique_total'] = number_format($value['unique_total']);
-                $value['margin'] = number_format($value['margin']);
-                $value['margin_ratio'] = number_format($value['margin_ratio']);
-                $value['cpa'] = number_format($value['cpa']);
-                $value['cpc'] = number_format($value['cpc']);
-            }
-            if(isset($arg['noLimit'])) {
-                return $this->respond($result['data']);
-            }
-            $result['accounts'] = $this->getAccounts($arg);
-            $result['media_accounts'] = $this->getMediaAccounts($arg);
-            $result['report'] = $this->getReport($arg);
+				foreach ($result['data'] as &$value) {
+					$value['budget'] = number_format($value['budget']);
+					$value['impressions'] = number_format($value['impressions']);
+					$value['click'] = number_format($value['click']);
+					$value['spend'] = number_format($value['spend']);
+					$value['sales'] = number_format($value['sales']);
+					$value['unique_total'] = number_format($value['unique_total']);
+					$value['margin'] = number_format($value['margin']);
+					$value['margin_ratio'] = number_format($value['margin_ratio']);
+					$value['cpa'] = number_format($value['cpa']);
+					$value['cpc'] = number_format($value['cpc']);
+				}
+				if(isset($arg['noLimit'])) {
+					return $this->respond($result['data']);
+				}
+				$result['accounts'] = $this->getAccounts($arg);
+				$result['media_accounts'] = $this->getMediaAccounts($arg);
+				$result['report'] = $this->getReport($arg);
+			}
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -276,7 +284,11 @@ class AdvManagerController extends BaseController
     private function getCampaigns($arg)
     {
         $campaigns = $this->admanager->getCampaigns($arg);
-        $campaigns = $this->setData($campaigns);
+		if(!empty($campaigns)){
+			$campaigns = $this->setData($campaigns);
+		}else{
+			return false;
+		}
 
         $total = $this->getTotal($campaigns);
         
@@ -291,9 +303,14 @@ class AdvManagerController extends BaseController
     private function getAdSets($arg)
     {
         $result  = [];    
-        $campaigns = $this->admanager->getAdSets($arg);
-        $campaigns = $this->setData($campaigns);
-        $result = array_merge($result, $campaigns); 
+        $adsets = $this->admanager->getAdSets($arg);
+		if(!empty($adsets)){
+			$adsets = $this->setData($adsets);
+		}else{
+			return false;
+		}
+    
+        $result = array_merge($result, $adsets); 
 
         $total = $this->getTotal($result);
         
@@ -308,9 +325,14 @@ class AdvManagerController extends BaseController
     private function getAds($arg)
     {
         $result  = [];    
-        $campaigns = $this->admanager->getAds($arg);
-        $campaigns = $this->setData($campaigns);
-        $result = array_merge($result, $campaigns); 
+        $ads = $this->admanager->getAds($arg);
+		if(!empty($ads)){
+			$ads = $this->setData($ads);
+		}else{
+			return false;
+		}
+        $ads = $this->setData($ads);
+        $result = array_merge($result, $ads); 
 
         $total = $this->getTotal($result);
         
@@ -952,5 +974,18 @@ class AdvManagerController extends BaseController
             return $this->fail("잘못된 요청");
         }
     }
+
+	private function getCareLabsData($arg)
+	{
+		$url = "https://carezenith.co.kr/resta/get-adv?".http_build_query($arg);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($ch);
+		curl_close($ch);
+
+		return $response;
+	}
 }
  

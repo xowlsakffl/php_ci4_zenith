@@ -646,7 +646,8 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "12%",
                 "render": function(data, type, row) {
-                    adv_name = '<div class="landing-box"><button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+(data ? data : '')+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="https://event.hotblood.co.kr/'+row.seq+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button></div>';
+					console.log(data,type,row);
+                    adv_name = '<div class="landing-box"><button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+(data ? data : '')+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="'+row.event_url+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button></div>';
                     return adv_name;
                 }
             },

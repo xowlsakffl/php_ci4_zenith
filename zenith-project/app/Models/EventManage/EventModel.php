@@ -6,6 +6,14 @@ use CodeIgniter\Model;
 
 class EventModel extends Model
 {
+	public function __construct()
+    {
+        $this->db = \Config\Database::connect();
+        $this->facebook = \Config\Database::connect('facebook');
+        $this->google = \Config\Database::connect('google');
+        $this->kakao = \Config\Database::connect('kakao');
+    }
+
     public function getInformation($data)
     {
         $srch = $data['searchData'];
@@ -72,6 +80,10 @@ class EventModel extends Model
 
     public function getEnabledAds()
 	{
+		if($this->facebook->getConnection() == false || $this->google->getConnection() == false || $this->kakao->getConnection() == false){
+			return false;
+		}
+
         $fbSubQuery = $this->db->table('z_facebook.fb_ad AS ad');
         $fbSubQuery->select('ad.ad_name AS name, cr.link AS link');
         $fbSubQuery->join('z_facebook.fb_adcreative AS cr', 'cr.ad_id = ad.ad_id', 'left');

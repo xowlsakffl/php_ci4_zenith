@@ -38,7 +38,6 @@ class IntegrateController extends BaseController
             }
             //list
             $list = $this->integrate->getEventLead($arg);
-
             foreach($list['data'] as &$d){
                 $etc = [];
                 if(!empty($d['email'])) {

@@ -27,6 +27,7 @@ class EventController extends BaseController
             $arg = $this->request->getGet();
             $result = $this->event->getInformation($arg);
             $ads = $this->event->getEnabledAds();
+			if(empty($ads)){$ads = [];}
             foreach ($result['data'] as &$data) {   
                 if($data['is_stop']){
                     $data['is_stop'] = '사용중지';
@@ -60,6 +61,7 @@ class EventController extends BaseController
                     $data['impressions'] = 0;
                 }
 
+				$data['event_url'] = getenv('EVENT_SERVER_URL').$data['seq'];
                 $data['db_price'] = number_format($data['db_price']);
             }
 

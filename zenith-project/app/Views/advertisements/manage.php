@@ -59,6 +59,24 @@
     .dt-buttons{
         position: initial !important;
     }
+	#carelabs_btn{
+		width: 150px;
+		height: 43px;
+		padding: 2px 7px;
+		white-space: normal;
+		text-align: left;
+		line-height: 1.1;
+		border: 1px solid #c3c3c3;
+		border-radius: 5px;
+		background: #fff;
+		overflow-y: hidden;
+		font-size: 85%;
+	}
+	#carelabs_btn.active{
+		color: #ce1922;
+		border-color: #ce1922;
+	}
+
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
@@ -105,7 +123,12 @@
             </div> 
         </div>
     </div>
-    <div class="section reset-btn-wrap">
+    <div class="section reset-btn-wrap d-flex">
+		<?php if(getenv('MY_SERVER_NAME') === 'resta'){?>
+		<div class="col">
+			<div class="inner"><button type="button" value="carelabs" id="carelabs_btn" class="carelabs_btn">케어랩스</button></div>
+		</div>
+		<?php }?>
         <div class="reset-btn-box">
             <button type="button" class="reset-btn">필터 초기화</button>
         </div>
@@ -400,6 +423,12 @@ function setSearchData() {
     if(data.searchData.account){
         data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
     }
+	
+	if(data.searchData.carelabs == 1){
+		$("#carelabs_btn").addClass("active")
+	}else{
+		$("#carelabs_btn").removeClass("active")
+	}
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
@@ -508,6 +537,7 @@ function getList(data = []){
             //data.memoView = $('.btns-memo.active').val();
             //if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
+					'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
                     'stx': $('#stx').val(),
@@ -1049,6 +1079,19 @@ $('body').on('click', '#media_btn, #company_btn, #media_account_btn', function()
     dataTable.state.save();
     dataTable.draw();
 });
+<?php if(getenv('MY_SERVER_NAME') === 'resta'){?>
+$('body').on('click', '#carelabs_btn', function() {
+    $(this).toggleClass('active');
+	if (!$(this).hasClass('active')) {
+		$('.advertiser .row').empty();
+		$('.media-advertiser .row').empty();
+        $('.reset-btn').trigger('click');
+    }
+    debug('필터링 탭 클릭');
+    dataTable.state.save();
+    dataTable.draw();
+});
+<?php }?>
 $('body').on('click', '.tab-link', function() {
     $('.tab-link').removeClass('active');
     $(this).addClass('active');
@@ -1558,7 +1601,7 @@ $(".dataTable").on("click", '.codeBtn', function(){
 
 $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
-    $('#media_btn, #business_btn, #company_btn, .tab-link, #media_account_btn').removeClass('active');
+    $('#media_btn, #business_btn, #company_btn, .tab-link, #media_account_btn, #carelabs_btn').removeClass('active');
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#total td').empty();
     $('#stx').val('');

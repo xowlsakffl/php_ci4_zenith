@@ -68,7 +68,7 @@ class IntegrateModel extends Model
         $builder->where('el.is_deleted', 0);
         $builder->where('DATE(el.reg_date) >=', $srch['sdate']);
         $builder->where('DATE(el.reg_date) <=', $srch['edate']);
-        
+
         if(!empty($srch['stx'])){
             $builder->groupStart();
             $builder->like('adv.name', $srch['stx']);
@@ -100,7 +100,7 @@ class IntegrateModel extends Model
             $status = array_map(function($v){return $this->leads_status[$v];}, explode("|",$srch['status']));
             $builder->whereIn('el.status', $status);
         }
-
+        
         // limit 적용한 쿼리
         $builder->groupBy(['el.seq','lm.leads_seq'], true);
         // limit 적용하지 않은 쿼리
