@@ -33,17 +33,13 @@ use Exception;
 
 class ZenithFB
 {
-    private $app_id = '718087176708750'; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
-    private $app_secret = '81b9a694a853428e88f7c6f144efc080'; //'881a2a6c6edcc9a5291e829278cb91e2';
-    private $access_token = 'EAAKNGLMV4o4BOwsm2HN5fK8UXl7ujZBZBSuFAwGDZCQSNL70wLYRHh9YeyQrjJf4TdMZCMZAjuD4iiKl5UyE8LKRsZAZAOvcin4FKjjOI2VYvnJ5WkHJwyWr9ZBCl3aWQcnJy6M0PLxiD6bba8Ao2nVZBTeAbfiAlZAa98QLMvoZC3ny2b7ZBPpDxYX20EQn0zrHwX4tXbn9JcIP0DFQgaJMAZCyJzrzS8PoDPZCoZD';
-    private $longLivedAccessToken = 'EAAKNGLMV4o4BO9TZBwhZCPsTCz2N39rgNaxagnHy7EZBZBI44SG1MZCwbI9WbnmoY6K848H58QvAGvmg1WuVlTuSJvhsaE0hbGUOLhNF6cZAUkcfffIrwjM8fbagU4Y0bCIb8wp9SYXpzRvcEVlWQn9ItqRmaZCZCBOgpvMZBJrOe1O9lOqKPZCw2ZAYovwIqpDfZAvf';
+    private $app_id; //(주)케어랩스 //'318448081868728'; // 열혈패밀리_ver3
+    private $app_secret; //'881a2a6c6edcc9a5291e829278cb91e2';
+    private $access_token;
+    private $longLivedAccessToken;
     private $db;
     private $fb;
-    private $business_id_list = [
-        '213123902836946' //케어랩스7
-        ,'2859468974281473' //케어랩스5
-        ,'316991668497111' //열혈패밀리
-    ];
+    private $business_id_list;
     private $business_id;
     private $account_id;
     private $campaign_id;
@@ -58,6 +54,13 @@ class ZenithFB
         @set_exception_handler(array($this, 'exception_handler'));
 
         try {
+            include __DIR__."/config.php";
+            $this->app_id = $config['app_id'];
+            $this->app_secret = $config['app_secret'];
+            $this->access_token = $config['access_token'];
+            $this->longLivedAccessToken = $config['longLivedAccessToken'];
+            $this->business_id_list = $config['business_id_list'];
+
             $this->db = new FBDB();
             $this->access_token = $this->longLivedAccessToken ?? $this->access_token;
             Api::init($this->app_id, $this->app_secret, $this->access_token, false);

@@ -246,3 +246,5 @@ $routes->get('hr/(:any)', 'HumanResource\HumanResourceController::$1');
 
 $routes->match(['get', 'post'], 'jira/(:any)', 'Api\JiraController::$1');
 $routes->match(['get', 'post'], 'interlock/(:any)', 'Api\TestController::$1');
+
+$routes->get('resta/get-adv', 'Api\RestaController::getList');

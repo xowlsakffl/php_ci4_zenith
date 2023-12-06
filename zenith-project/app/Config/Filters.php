@@ -34,7 +34,7 @@ class Filters extends BaseConfig
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'session' => ['except' => ['login*', 'register', 'auth/a/*', 'slack/*', 'jira/*', 'interlock']],
+            'session' => ['except' => ['login*', 'register', 'auth/a/*', 'slack/*', 'jira/*', 'interlock', 'resta/*']],
             'forcePasswordReset' => ['except' => ['login*', 'set-password*', 'logout']],
         ],
         'after' => [

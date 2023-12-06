@@ -369,7 +369,7 @@ var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
-let loadData = false;
+let loadedData = false;
 //if(typeof tableParam != 'undefined'){
     $('.tab-link[value="campaigns"]').addClass('active');
 
@@ -404,6 +404,7 @@ function setSearchData() {
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
+    console.log(data.searchData);
     if(typeof dataTable != 'undefined') dataTable.state.save();
 }
 function setDrawData() {
@@ -450,7 +451,6 @@ function setDrawData() {
                 $('#advertisement-tab .selected').fadeOut();
         }
     }
-    setSearchData();
 }
 
 $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serverside export
@@ -473,6 +473,7 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
 } );
 
 function getList(data = []){
+    loadedData = false;
     dataTable = $('#adv-table').DataTable({
         "dom": '<Bfrip<t>>',
         "fixedHeader": {
@@ -515,6 +516,7 @@ function getList(data = []){
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
                 };
+                console.log(tableParam.searchData);
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 debug(tableParam.searchData);
@@ -712,12 +714,14 @@ function getList(data = []){
             debug('ajax loaded');
             setReport(data.report);
             setAccount(data.accounts);
-            setMediaAccount(data.media_accounts)
+            setMediaAccount(data.media_accounts);
             setTotal(data);
             setDate();
+            setSearchData();
         }
     }).on('draw', function() {
         debug('draw');
+        loadedData = true;
         setDrawData();
     })
 }
