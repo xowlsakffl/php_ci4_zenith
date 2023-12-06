@@ -73,6 +73,10 @@ class AdvKakaoManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
         
+        if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+        
         if(!empty($data['kakaoCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
@@ -348,7 +352,7 @@ class AdvKakaoManagerModel extends Model
         if(!empty($data['resta'])){
 			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
-        
+
         if(!empty($data['company'])){
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }

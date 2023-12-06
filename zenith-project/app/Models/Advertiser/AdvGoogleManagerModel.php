@@ -89,6 +89,10 @@ class AdvGoogleManagerModel extends Model
 			$builder->whereIn('G.id', explode("|",$data['company']));
         }
 		
+		if(!empty($data['resta'])){
+			$builder->whereIn('G.id', explode("|",$data['resta']));
+        }
+		
 		if(!empty($data['googleCheck'])){
 			switch ($data['type']) {
 				case 'campaigns':
@@ -508,7 +512,7 @@ class AdvGoogleManagerModel extends Model
 		if(!empty($data['resta'])){
 			$builder->whereIn('G.id', explode("|",$data['resta']));
         }
-		
+
         $builder->groupBy('A.date');
 		
 		return $builder;
