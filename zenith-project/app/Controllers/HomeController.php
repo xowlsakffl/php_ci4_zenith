@@ -34,10 +34,10 @@ class HomeController extends BaseController
             $googleDB = \Config\Database::connect('google');
             $kakaoDB = \Config\Database::connect('kakao');
 
-            if(!$facebookDB->tableExists('fb_ad_account') || !$googleDB->tableExists('aw_ad_account') || !$kakaoDB->tableExists('mm_ad_account')){
-                return false;
+            if(!$facebookDB->tableExists('wad') || !$googleDB->tableExists('aw_ad_report_history') || !$kakaoDB->tableExists('mm_creative_report_basic')){
+                return $this->respond([]);
             }
-            
+
             $result = [];
             $facebook = new AdvFacebookManagerController;
             $result['facebookReport'] = $facebook->getReport();
