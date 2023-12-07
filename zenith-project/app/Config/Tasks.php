@@ -43,5 +43,8 @@ class Tasks extends BaseConfig
         }
         
         $schedule->command('Automation')->everyMinute(1)->named('aaCheck');
+
+        $schedule->command('EventDataUpdateCron')->everyMinute(60)->named('eventUpdate');
+        $schedule->command('PreparingIssueMessage')->everyMinute(60)->named('preparingIssue');
     }
 }

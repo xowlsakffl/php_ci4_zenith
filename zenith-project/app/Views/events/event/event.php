@@ -163,7 +163,8 @@
                         <th scope="col">유효DB</th>
                         <th scope="col">DB단가</th>
                         <th scope="col">작성자</th>
-                        <th scope="col">작업자</th>
+                        <th scope="col">디자이너</th>
+                        <th scope="col">개발자</th>
                         <th scope="col">작성일</th>
                     </tr>
                 </thead>
@@ -652,7 +653,7 @@ function getList(){
             },
             { "data": "media_name", "width": "8%"},
             { "data": "title", "width": "18%"},
-            { "data": "description","width": "21%"},
+            { "data": "description","width": "16%"},
             { "data": "interlock", "width": "4%"},
             { 
                 "data": "is_stop",
@@ -687,21 +688,10 @@ function getList(){
                     return db;
                 }
             },
-            { "data": "db_price", "width": "6%"},
+            { "data": "db_price", "width": "5%"},
             { "data": "username", "width": "5%"},
-            { 
-                "data": "worker", "width": "5%",
-                "render": function(data, type, row) {
-                    name = '';
-                    /* if(data.designer){
-                        name += data.designer+" / ";
-                    }
-                    if(data.developer){
-                        name += data.developer;
-                    } */
-                    return '<a href="" target="_blank">'+name+'</a>';
-                }
-            },
+            { "data": "designer", "width": "5%"},
+            { "data": "developer", "width": "5%"},
             { 
                 "data": "ei_datetime", 
                 "width": "7%",

@@ -8,6 +8,7 @@ use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueService;
 use JiraRestApi\Project\ProjectService;
 use JiraRestApi\JiraException;
+use JiraRestApi\Status\StatusService;
 use JiraRestApi\User\UserService;
 
 class ZenithJira
@@ -50,14 +51,14 @@ class ZenithJira
         }
     }
 
-    public function getDevelopIssues()
+    public function getDevelopIssues($status)
     {
         try {
             $issueService = new IssueService($this->iss);
 
-            $jql = 'project = "DEV" and status=Done';
+            $jql = 'project = "DEV" and status="'.$status.'"';
             $startAt = 0;
-            $maxResults = 20;
+            $maxResults = 200;
 
             $issues = $issueService->search($jql, $startAt, $maxResults);
             
@@ -84,7 +85,7 @@ class ZenithJira
                 ]
             ];
                     
-            $issue = $issueService->get('DEV-1016', $queryParam);
+            $issue = $issueService->get('DEV-1228', $queryParam);
             
             return $issue;
         } catch (JiraException $e) {
@@ -126,6 +127,17 @@ class ZenithJira
 
             // get the user info.
             $users = $us->findUsers($paramArray);
+        } catch (JiraException $e) {
+            print_r("에러 발생 : ".$e->getMessage());
+        }
+    }
+
+    public function testRequest()
+    {
+        try {
+            $statusService = new StatusService($this->iss);
+            $statuses = $statusService->getAll();
+            dd($statuses);
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }

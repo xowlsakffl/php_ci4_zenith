@@ -69,8 +69,9 @@ class EventModel extends Model
     {
         $builder = $this->db->table('event_information AS info');
         $builder->select('*');
-        $builder->where('designer', null);
-        $builder->orWhere('developer', null);
+        $builder->where('(designer IS NULL OR designer = "") OR (developer IS NULL OR developer = "")');
+        $builder->orderBy('seq', 'desc');
+        $builder->limit(200);
         $result = $builder->get()->getResultArray();
         return $result;
     }
@@ -207,6 +208,17 @@ class EventModel extends Model
             
             return $result;
         }
+    }
+
+    public function updateEventWorker($data, $seq)
+    {
+        $this->db->transStart();
+        $builder = $this->db->table('event_information');
+        $builder->where('seq', $seq);
+        $builder->update($data);
+        $result = $this->db->transComplete();
+        
+        return $result;
     }
 
     public function copyEvent($seq)

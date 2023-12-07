@@ -10,6 +10,7 @@ use App\Models\EventManage\EventModel;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\jira_api\ZenithJira;
 use CodeIgniter\CLI\CLI;
+use DateTime;
 use Exception;
 
 class JiraController extends BaseController
@@ -40,6 +41,12 @@ class JiraController extends BaseController
         dd($result);
     } */
 
+    public function testRequest()
+    {
+        $result = $this->jira->testRequest();
+        dd($result);
+    }
+
     public function getProjects()
     {
         $result = $this->jira->getProjects();
@@ -55,16 +62,73 @@ class JiraController extends BaseController
     public function getIssueEventData()
     {
         $events = $this->event->getInformationAll();
-        $developIssues = $this->jira->getDevelopIssues();
+        $developIssues = $this->jira->getDevelopIssues("Done");
         if(!empty($events)){
             foreach ($developIssues as $issue) {
-                $type = $issue->fields->customfield_10172->value ?? '';
+                $type = $issue->fields->customfield_10172->value ?? null;
                 if(isset($type) && $type == '1.1 신규 랜딩제작'){
-                    foreach ($events as $event) {
-                    
+                    $designer = $issue->fields->customfield_10179[0]->displayName ?? null;
+                    $developer = $issue->fields->assignee->displayName ?? null;
+                    $eventUrls = $issue->fields->customfield_10188 ?? null;
+                    if(!empty($eventUrls) && (!empty($designer) || !empty($developer))){
+                        preg_match_all('/\/(\d+)\b/', $eventUrls, $matches);
+                        foreach ($matches[1] as $eventSeq) {
+                            $data = [
+                                'designer' => $designer,
+                                'developer' => $developer
+                            ];
+                            foreach ($events as $event) {
+                                if($eventSeq == $event['seq']){
+                                    $result = $this->event->updateEventWorker($data, $event['seq']);
+                                    
+                                    if(isset($result)){print_r($event['seq']." 완료".PHP_EOL);}
+                                }
+                            }
+                        }
                     }
                 }
                 
+            }
+        }
+    }
+
+    public function getIssuePreparing()
+    {
+        $developIssues = $this->jira->getDevelopIssues("요청 준비 중");
+        if(!empty($developIssues)){
+            foreach ($developIssues as $issue) {
+                $created = $issue->fields->created;
+                $subject = $issue->fields->summary;
+                
+                $now = new DateTime();
+                $interval = $now->diff($created);
+                $passHour = $interval->h;
+                $passMinute = $interval->i;
+                $passTime = $passHour."시간 ".$passMinute."분";
+                if ($interval->h >= 1) {
+                    $creator = $issue->fields->creator->displayName;
+                    $issueKey = $issue->key ?? null;
+                    $userModel = new UserModel();
+                    $userData = $userModel->getUserByName($creator);
+
+                    $slack = new SlackChat();
+                    $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/DEV/board?selectedIssue=' . $issueKey;
+                    $slackMessage = [
+                        'channel' => $slack->config['UserID'][$userData['nickname']],
+                        'blocks' => [
+                            [
+                                'type' => 'section',
+                                'text' => [
+                                    'type' => 'mrkdwn',
+                                    'text' => sprintf('[개발요청판][%s] 요청 준비중 %s 경과하였습니다. %s', $subject, $passTime, $issueLink),
+                                ],
+                                "block_id" => "text1"
+                            ],
+                        ],
+                    ];
+                    
+                    $slackResult = $slack->sendMessage($slackMessage);
+                }
             }
         }
     }
@@ -79,7 +143,7 @@ class JiraController extends BaseController
                     $issueFields = $param->issue->fields ?? null;
                     $issueKey = $param->issue->key ?? '';
                     $actionUser = $param->user->displayName ?? '';
-                    $reporterName = $issueFields->reporter->displayName ?? '';
+                    $reporterName = $issueFields->reporter->displayName ?? null;
                     $projectName = $issueFields->project->name ?? '';
                     $projectKey = $issueFields->project->key ?? '';
                     $issueSummary = $issueFields->summary ?? '';
