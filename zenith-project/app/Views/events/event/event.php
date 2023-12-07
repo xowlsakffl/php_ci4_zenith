@@ -104,7 +104,7 @@
         background:#FF0000;
     }
     .btn_landing.hide{
-        display: none;
+        display: none !important;
     }
     .create-btn-wrap, .update-btn-wrap{
         display: none;
@@ -639,7 +639,7 @@ function getList(){
                     if(row.config == 'enabled'){
                         config = '<span class="ads_status '+row.config+'" title="광고 운영중"></span>';
                     }
-                    return config+'<button data-text="https://event.hotblood.co.kr/'+data+'" class="event_seq">'+data+'</button>';
+                    return config+'<button data-text="'+row.event_url+'" class="event_seq">'+data+'</button>';
                 }
             },
             { 
@@ -802,10 +802,11 @@ function setDate(){
 }
 
 function fileCheck() {
-    $.getJSON("https://event.hotblood.co.kr/getfiles", function(response) {
+    $.getJSON("<?php echo getenv('EVENT_SERVER_URL')?>getfiles", function(response) {
         $('.btn_landing').each(function(i, obj) {
             var filename = $(obj).data('filename') + '.php';
             if ($.inArray(filename, response) != -1) {
+                console.log(response);
                 $(obj).removeClass('hide');
             }
         });
