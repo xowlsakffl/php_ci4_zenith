@@ -62,7 +62,7 @@ class ZenithFB
             $this->business_id_list = $config['business_id_list'];
 
             $this->db = new FBDB();
-            $this->access_token = $this->longLivedAccessToken ?? $this->access_token;
+            $this->access_token = $this->longLivedAccessToken == "" ? $this->access_token : $this->longLivedAccessToken;
             Api::init($this->app_id, $this->app_secret, $this->access_token, false);
             $this->fb = new Facebook([
                 'app_id' => $this->app_id,
