@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 use CodeIgniter\API\ResponseTrait;
 use App\Libraries\slack_api\SlackChat;
 use App\Models\Api\UserModel;
-
+use App\Models\EventManage\EventModel;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\jira_api\ZenithJira;
 use CodeIgniter\CLI\CLI;
@@ -16,11 +16,12 @@ class JiraController extends BaseController
 {
     use ResponseTrait;
     
-    private $jira;
+    private $jira, $event;
 
     public function __construct()
     {
         $this->jira = new ZenithJira(); 
+        $this->event = model(EventModel::class);
     }
 
     /* public function getCode()
@@ -53,28 +54,18 @@ class JiraController extends BaseController
 
     public function getIssueEventData()
     {
-        try {
-            $this->writeLog($this->request, null, 'issue_test_log');
-            $param = $this->request->getVar();
-            if(!empty($param)){
-                $issueFields = $param->issue->fields ?? null;
-                if(!empty($issueFields)){
-                    $projectKey = $issueFields->project->key ?? null;
-                    $landingType = $issueFields->customfield_10172->value ?? null;
-                    if((!empty($projectKey) && $projectKey == 'DEV') && (!empty($landingType) && ($landingType == '1.1 신규 랜딩제작' || $landingType == '1.3 랜딩 복사'))){
-                        $reporterName = $issueFields->reporter->displayName ?? null;
-                        
-
+        $events = $this->event->getInformationAll();
+        $developIssues = $this->jira->getDevelopIssues();
+        if(!empty($events)){
+            foreach ($developIssues as $issue) {
+                $type = $issue->fields->customfield_10172->value ?? '';
+                if(isset($type) && $type == '1.1 신규 랜딩제작'){
+                    foreach ($events as $event) {
+                    
                     }
-                }else{
-                    throw new Exception("이슈 필드 빈값 오류");
                 }
-            }else{
-                throw new Exception("요청 데이터 오류");
+                
             }
-        } catch (Exception $e) {
-            $logText = "오류 메세지: ".$e->getMessage();
-            $this->writeLog($this->request, $logText, 'issue_test_log');
         }
     }
 

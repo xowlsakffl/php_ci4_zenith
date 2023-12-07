@@ -50,6 +50,23 @@ class ZenithJira
         }
     }
 
+    public function getDevelopIssues()
+    {
+        try {
+            $issueService = new IssueService($this->iss);
+
+            $jql = 'project = "DEV" and status=Done';
+            $startAt = 0;
+            $maxResults = 20;
+
+            $issues = $issueService->search($jql, $startAt, $maxResults);
+            
+            return $issues->getIssues();
+        } catch (JiraException $e) {
+            print_r("에러 발생 : ".$e->getMessage());
+        }
+    }
+
     public function getIssue()
     {
         try {
@@ -112,43 +129,5 @@ class ZenithJira
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
-    }
-
-    protected function curl($url, $data, $type = "GET")
-    {
-        $headers = [];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        switch ($type) {
-            case 'POST':
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                $headers[] = 'Content-type: application/json';
-                break;
-            case 'GET':
-                break;
-            case 'PUT':
-                $headers[] = 'Content-type: application/json';
-            default:
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                break;
-        }
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-        $result = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        $result = json_decode($result, true);
-
-        if (isset($result['error'])) {
-            dd($result);
-        }
-
-        curl_close($ch);
-
-        return $result;
     }
 }

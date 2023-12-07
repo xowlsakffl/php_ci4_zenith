@@ -30,6 +30,14 @@ class HomeController extends BaseController
     public function getReports()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $facebookDB = \Config\Database::connect('facebook');
+            $googleDB = \Config\Database::connect('google');
+            $kakaoDB = \Config\Database::connect('kakao');
+
+            if(!$facebookDB->tableExists('fb_ad_account') || !$googleDB->tableExists('aw_ad_account') || !$kakaoDB->tableExists('mm_ad_account')){
+                return false;
+            }
+            
             $result = [];
             $facebook = new AdvFacebookManagerController;
             $result['facebookReport'] = $facebook->getReport();

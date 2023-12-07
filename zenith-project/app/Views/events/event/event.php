@@ -646,7 +646,6 @@ function getList(){
                 "data": "advertiser_name", 
                 "width": "12%",
                 "render": function(data, type, row) {
-					console.log(data,type,row);
                     adv_name = '<div class="landing-box"><button type="button" id="updateBtn" data-bs-toggle="modal" data-bs-target="#regiModal">'+(data ? data : '')+'</button>'+'<button data-bs-target="#landingView" data-bs-toggle="modal" data-link="'+row.event_url+'" class="btn_landing hide" data-filename="v_'+row.seq+'">[랜딩보기]</button></div>';
                     return adv_name;
                 }
@@ -691,7 +690,7 @@ function getList(){
             { "data": "db_price", "width": "6%"},
             { "data": "username", "width": "5%"},
             { 
-                "data": "mantis", "width": "5%",
+                "data": "worker", "width": "5%",
                 "render": function(data, type, row) {
                     name = '';
                     /* if(data.designer){

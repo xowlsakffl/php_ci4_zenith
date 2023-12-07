@@ -65,6 +65,16 @@ class EventModel extends Model
         ];
     }
 
+    public function getInformationAll()
+    {
+        $builder = $this->db->table('event_information AS info');
+        $builder->select('*');
+        $builder->where('designer', null);
+        $builder->orWhere('developer', null);
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
+
     public function getIssuesFromMantis()
 	{
         $builder = $this->db->table('mantis.mantis_bug_table AS A');
