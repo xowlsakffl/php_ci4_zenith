@@ -220,9 +220,6 @@ function getReport(){
                 $('#'+ key + ' #per_sum').text(value.per_sum);
                 $('#'+ key + ' #price_01_sum').text(value.price_sum);
             });
-        },
-        error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
         }
     });
 }
