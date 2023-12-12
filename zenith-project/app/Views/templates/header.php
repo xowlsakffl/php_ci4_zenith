@@ -21,6 +21,7 @@
     <script src="/static/js/ui.js"></script>
     <script src="/static/js/index.js"></script>
     <?=$this->renderSection('header')?>
+    <!--Developer An Minseong(LUPUS) -->
 </head>
 <body>
 <?=$this->renderSection('guestContent')?>

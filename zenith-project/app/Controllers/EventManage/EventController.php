@@ -223,6 +223,7 @@ class EventController extends BaseController
             $seq = $this->request->getGet('seq');
             $result = $this->event->getEvent($seq);
             $result['keywords'] = explode(',', $result['keywords']);
+            $result['event_url'] = getenv('EVENT_SERVER_URL').$result['seq'];
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

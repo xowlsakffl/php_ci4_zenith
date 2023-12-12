@@ -942,7 +942,7 @@ function setEvent(data){
     $('input[name="advertiser"]').val(data.advertiser);
     $('input[name="media"]').val(data.media);
     $('.landing_info_num').text(data.seq);
-    $('.landing_info_link').attr('href', 'https://event.hotblood.co.kr/'+data.seq).text('https://event.hotblood.co.kr/'+data.seq);
+    $('.landing_info_link').attr('href', data.event_url).text(data.event_url);
     $('input[name="adv_name"]').val(data.advertiser_name).attr('disabled', true);
     $('input[name="media_name"]').val(data.media_name);
     $('input[name="description"]').val(data.description);
