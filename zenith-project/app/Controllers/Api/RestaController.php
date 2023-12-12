@@ -26,7 +26,8 @@ class RestaController extends BaseController
         '하루플란트치과의원광고주',
         '한나이브성형외과의원',
         '강남애프터치과의원',
-        '참좋은치과의원' 
+        '참좋은치과의원',
+        '보가치과의원'
     ];
     public function __construct() 
     {
