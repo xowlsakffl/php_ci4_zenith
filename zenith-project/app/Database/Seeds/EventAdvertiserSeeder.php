@@ -8,6 +8,7 @@ class EventAdvertiserSeeder extends Seeder
 {
     public function run()
     {
+        //companies와 event_advertiser name 같은것 company_seq 연결
         $db = \Config\Database::connect();
         $builder = $db->table('companies');
         $builder->select('id, name');

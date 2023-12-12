@@ -17,7 +17,15 @@ class RestaController extends BaseController
     
     protected $admanager, $facebook, $google, $kakao;
     private $advertiser = [
-        '그랜드성형외과', '다이트한의원'
+        '더스퀘어치과의원', 
+        '메이드영성형외과의원',
+        '모아만의원',
+        '모우림의원',
+        '열정치과의원','우리들40플란트치과의원',
+        '하루플란트치과의원광고주',
+        '한나이브성형외과의원',
+        '강남애프터치과의원',
+        '참좋은치과의원' 
     ];
     public function __construct() 
     {
