@@ -73,7 +73,7 @@ class UserController extends \CodeIgniter\Controller
     }
 
     public function getUsers(){
-        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $param = $this->request->getGet();
             $result = $this->user->getUsers($param);
             foreach ($result['data'] as &$row) {
@@ -216,7 +216,7 @@ class UserController extends \CodeIgniter\Controller
 
     public function setPasswordChangedAtAjax()
     {
-        if (/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get') {
+        if ($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get') {
             $result = $this->setPasswordChangedAt(false);
 
             return $this->respond($result);

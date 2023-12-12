@@ -159,7 +159,7 @@
                                                 </div>                                    
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <th scope="row">세부권한</th>
                                             <td id="userPermission">
                                                 <div class="form-check form-check-inline">
@@ -219,7 +219,7 @@
                                                     <label for="advertiserDelete" class="form-check-label">광고주 삭제</label>
                                                 </div>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
                                             <th scope="row">생성일</th>
                                             <td id="userCreatedAt"></td>
