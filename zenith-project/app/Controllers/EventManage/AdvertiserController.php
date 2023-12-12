@@ -23,7 +23,7 @@ class AdvertiserController extends BaseController
 
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->advertiser->getAdvertisers($arg);
             $list = $result['data'];
@@ -129,6 +129,14 @@ class AdvertiserController extends BaseController
                 return $this->failValidationErrors($errors);
             }
             
+            if(empty($arg['company_id'])){
+                $advertiser = $this->advertiser->getAdvertiserByName($data);
+                if(empty($advertiser)){
+                    $error = ['advertiser' => '광고주명에 해당하는 소속 광고주가 존재하지 않습니다.'];
+                    return $this->failValidationErrors($error);
+                }
+            }
+
             $result = $this->advertiser->createAdv($data);
             return $this->respond($result);
         }else{

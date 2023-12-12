@@ -3,6 +3,7 @@
 namespace App\Controllers\EventManage;
 
 use App\Controllers\BaseController;
+use App\Models\EventManage\AdvertiserModel;
 use App\Models\EventManage\EventModel;
 use CodeIgniter\API\ResponseTrait;
 
@@ -10,10 +11,11 @@ class EventController extends BaseController
 {
     use ResponseTrait;
     
-    protected $event;
+    protected $event, $advertiser;
     public function __construct() 
     {
         $this->event = model(EventModel::class);
+        $this->advertiser = model(AdvertiserModel::class);
     }
     
     public function index()
@@ -105,6 +107,7 @@ class EventController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $arg = $this->request->getRawInput();
             $data = $this->setArg($arg);
+            
             $data['advertiser'] = $arg['advertiser'];
             $data['keyword'] = $arg['keyword'];
             $data['ei_datetime'] = date('Y-m-d H:i:s');
@@ -125,6 +128,15 @@ class EventController extends BaseController
             if (!$validation->run($data)) {
                 $errors = $validation->getErrors();
                 return $this->failValidationErrors($errors);
+            }
+
+            $adData = [
+                'seq' => $arg['advertiser']
+            ];
+            $advertiser = $this->advertiser->getAdvertiser($adData);
+            if(empty($advertiser['company_seq']) || $advertiser['company_seq'] == 0){
+                $error = ['advertiser' => '소속이 지정되지 않은 광고주입니다.'];
+                return $this->failValidationErrors($error);
             }
 
             $result = $this->event->createEvent($data);

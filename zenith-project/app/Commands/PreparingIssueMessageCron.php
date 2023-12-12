@@ -57,6 +57,9 @@ class PreparingIssueMessageCron extends BaseCommand
      */
     public function run(array $params)
     {
+        $hour = date('G');
+        $week = date('w');
+        if($hour < "10" || $hour >= "19" || $week == "0" || $week == "6") return;
         $jira = new JiraController;
         $jira->getIssuePreparing();
     }

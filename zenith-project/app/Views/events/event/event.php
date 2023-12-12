@@ -796,7 +796,6 @@ function fileCheck() {
         $('.btn_landing').each(function(i, obj) {
             var filename = $(obj).data('filename') + '.php';
             if ($.inArray(filename, response) != -1) {
-                console.log(response);
                 $(obj).removeClass('hide');
             }
         });

@@ -120,7 +120,7 @@ class JiraController extends BaseController
                                 'type' => 'section',
                                 'text' => [
                                     'type' => 'mrkdwn',
-                                    'text' => sprintf('[개발요청판][%s] 요청 준비중 %s 경과하였습니다. %s', $subject, $passTime, $issueLink),
+                                    'text' => sprintf('[개발요청판]<%s|[%s:%s]> "요청 준비중" 상태로 %s 경과하였습니다.'.PHP_EOL.'해당 이슈를 확인하신 후 자료가 준비되었으면 "요청" 상태로 변경해주십시오.', $issueLink, $issueKey, $subject, $passTime),
                                 ],
                                 "block_id" => "text1"
                             ],
