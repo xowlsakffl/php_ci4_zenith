@@ -15,7 +15,7 @@ class IntegrateController extends BaseController
     public function __construct() 
     {
         $this->integrate = model(IntegrateModel::class);
-        if(auth()->user()->inGroup('superadmin','admin','developer')) {
+        if(auth()->user()->inGroup('superadmin','admin','developer', 'agency', 'advertiser')) {
             $this->is_pravate_perm = true;
         }
     }
