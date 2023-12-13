@@ -231,9 +231,12 @@ class IntegrateController extends BaseController
 
     public function setStatus() {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
+            if(!auth()->user()->hasPermission('integrate.status')){
+                return $this->fail("권한이 없습니다.");
+            }
             $arg = $this->request->getPost();
             $result = $this->integrate->setStatus($arg);
-
+                
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

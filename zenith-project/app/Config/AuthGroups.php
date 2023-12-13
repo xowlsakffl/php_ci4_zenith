@@ -88,6 +88,8 @@ class AuthGroups extends ShieldAuthGroups
         'advertiser.create'   => '광고주 생성',
         'advertiser.edit'     => '광고주 수정',
         'advertiser.delete'   => '광고주 삭제',
+
+        'integrate.status' => '인정기준 변경 권한'
     ];
 
     /**
@@ -103,6 +105,7 @@ class AuthGroups extends ShieldAuthGroups
             'users.*',
             'agency.*',
             'advertiser.*',
+            'integrate.*',
         ],
         'admin' => [
             'admin.access',
@@ -111,12 +114,14 @@ class AuthGroups extends ShieldAuthGroups
             'users.delete',
             'agency.*',
             'advertiser.*',
+            'integrate.*',
         ],
         'developer' => [
             'admin.access',
             'admin.settings',
             'users.create',
             'users.edit',
+            'integrate.*',
         ],
         'agency' => [
             'agency.advertisers',

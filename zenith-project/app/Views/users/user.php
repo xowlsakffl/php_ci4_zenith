@@ -159,10 +159,14 @@
                                                 </div>                                    
                                             </td>
                                         </tr>
-                                        <!-- <tr>
+                                        <tr>
                                             <th scope="row">세부권한</th>
                                             <td id="userPermission">
                                                 <div class="form-check form-check-inline">
+                                                    <input type="checkbox" name="permission[]" value="integrate.status" class="form-check-input" id="adminAccess"> 
+                                                    <label for="adminAccess" class="form-check-label">인정기준 변경</label>
+                                                </div>
+                                                <!-- <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="permission[]" value="admin.access" class="form-check-input" id="adminAccess"> 
                                                     <label for="adminAccess" class="form-check-label">관리자만 가능한 페이지 접근 가능</label>
                                                 </div>
@@ -217,9 +221,9 @@
                                                 <div class="form-check form-check-inline">
                                                     <input type="checkbox" name="permission[]" value="advertiser.delete" class="form-check-input" id="advertiserDelete"> 
                                                     <label for="advertiserDelete" class="form-check-label">광고주 삭제</label>
-                                                </div>
+                                                </div> -->
                                             </td>
-                                        </tr> -->
+                                        </tr>
                                         <tr>
                                             <th scope="row">생성일</th>
                                             <td id="userCreatedAt"></td>

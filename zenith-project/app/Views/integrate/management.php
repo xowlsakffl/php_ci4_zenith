@@ -319,7 +319,11 @@ function getList(data = []) { //리스트 세팅
             { 
                 "data": 'status', "width": "60px",
                 "render": function (data, type, row) {
+                    <?php if(auth()->user()->hasPermission('integrate.status')){?>
                     return '<select class="lead-status form-select form-select-sm data-del"><option value="1" '+(data=="1"?" selected":"")+'>인정</option><option value="2" '+(data=="2"?" selected":"")+'>중복</option><option value="3" '+(data=="3"?" selected":"")+'>성별불량</option><option value="4" '+(data=="4"?" selected":"")+'>나이불량</option><option value="6" '+(data=="6"?" selected":"")+'>번호불량</option><option value="7" '+(data=="7"?" selected":"")+'>테스트</option><option value="5" '+(data=="5"?" selected":"")+'>콜불량</option><option value="8" '+(data=="8"?" selected":"")+'>이름불량</option><option value="9" '+(data=="9"?" selected":"")+'>지역불량</option><option value="10" '+(data=="10"?" selected":"")+'>업체불량</option><option value="11" '+(data=="11"?" selected":"")+'>미성년자</option><option value="12" '+(data=="12"?" selected":"")+'>본인아님</option><option value="13" '+(data=="13"?" selected":"")+'>쿠키중복</option><option value="99" '+(data=="99"?" selected":"")+'>확인</option></select>';
+                    <?php }else{?>
+                        return '<span>' + (data == "1" ? '인정' : (data == "2" ? '중복' : (data == "3" ? '성별불량' : (data == "4" ? '나이불량' : (data == "5" ? '콜불량' : (data == "6" ? '번호불량' : (data == "7" ? '테스트' : (data == "8" ? '이름불량' : (data == "9" ? '지역불량' : (data == "10" ? '업체불량' : (data == "11" ? '미성년자' : (data == "12" ? '본인아님' : (data == "13" ? '쿠키중복' : (data == "99" ? '확인' : '')))))))))))))) + '</span>';
+                    <?php }?>
                 }
             },
         ],
