@@ -16,12 +16,9 @@ class HomeController extends BaseController
         $data = [];
         $data['password_check'] = false;
         $password_check = auth()->user()->getEmailIdentity()->password_changed_at;
-        if(empty($password_check)){
+
+        if(!empty($password_check) && (strtotime($password_check) < strtotime('-90 days'))){
             $data['password_check'] = true;
-        }else{
-            if(strtotime($password_check) < strtotime('-90 days')){
-                $data['password_check'] = true;
-            }
         }
 
         return view('pages/home', $data);
