@@ -10,11 +10,13 @@
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
@@ -190,19 +192,19 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
                 var phone = row.dec_phone.replace(regex, '$1');
                 var name = row.name.replace(regex, '$1');
 
-                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, lead_status[row.status]]);
+                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
             });
         },
         "async": false
     });
     // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
-    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","인정기준"]};
+    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"]};
 } );
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
         "fixedHeader": true,
-        "autoWidth": false,
+        "autoWidth": true,
         "order": [[12,'desc']],
         "processing" : true,
         "serverSide" : true,

@@ -296,7 +296,7 @@ class GADB
 	public function updateAd($data = null)
 	{
 		if (is_null($data)) return false;
-
+		$this->db->transStart();
 		$sql = "INSERT INTO aw_ad(adgroupId, id, name, status, reviewStatus, approvalStatus, policyTopic, code, adType, mediaType, assets, imageUrl, finalUrl, create_time)
 				VALUES(
 					:adgroupId:, 
@@ -343,7 +343,6 @@ class GADB
 		];
 		if ($result = $this->db->query($sql, $params)) {
 			if ($data['impressions']) {
-				$this->db->transStart();
 				$sql = "INSERT INTO aw_ad_report_history(ad_id, date, hour, impressions, clicks, cost, create_time)
                 VALUES(
                     :id:, 
@@ -367,10 +366,9 @@ class GADB
 					'cost' => (integer)$data['cost']
 				];
 				$this->db->query($sql, $params);
-				$result = $this->db->transComplete();
 			}
 		}
-		
+		$this->db->transComplete();
 		return $result;
 	}
 

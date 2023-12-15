@@ -783,25 +783,34 @@ class ZenithGG
         return $result;
     }
       
-    public function getAll($date = null)
+    public function getAll($date = null, $accounts = null)
     {
-        $this->getAccounts();
-        $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
+        if(is_null($accounts)) {
+            $this->getAccounts();
+            $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
+            $lists = $accounts->getResultArray();
+        } else {
+            $lists = $accounts;
+        }
+        $total = count($lists);
         $step = 1;
-        $total = $accounts->getNumRows();
         CLI::write("[".date("Y-m-d H:i:s")."]"."계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 시작합니다.", "light_red");
-        foreach ($accounts->getResultArray() as $account) {
+        $result = [];
+        foreach ($lists as $account) {
             CLI::showProgress($step++, $total);
             $this->getAccountBudgets($account['manageCustomer'], $account['customerId']);
             $assets = $this->getAsset($account['manageCustomer'], $account['customerId']);
             
             $campaigns = $this->getCampaigns($account['manageCustomer'], $account['customerId']);
-            
+            $result['campaign'][] = $campaigns;
             if (count($campaigns)) {
                 $adGroups = $this->getAdGroups($account['manageCustomer'], $account['customerId']);
                 $ads = $this->getAds($account['manageCustomer'], $account['customerId'], null, $date);
+                $result['adGroups'][] = $adGroups;
+                $result['ads'][] = $ads;
             }
         }
+        return $result;
     }
       
     public function setManualUpdate($campaigns)

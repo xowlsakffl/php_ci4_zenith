@@ -10,8 +10,10 @@
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <style>
     .ui-autocomplete{
         z-index: 10000000;
@@ -245,14 +247,15 @@ function setData() {
 function getList(){
     dataTable = $('#advertiser-table').DataTable({
         "order": [[0,'desc']],
-        "autoWidth": false,
+        "fixedHeader": true,
+        "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
         "searching": false,
         "ordering": true,
         "scrollX": true,
-        "scrollY": 500,
+        // "scrollY": 500,
         "scrollCollapse": true,
         "deferRender": true,
         "rowId": "seq",

@@ -10,8 +10,10 @@
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/static/js/tag-it.min.js"></script>
 <style>
     ul.tagit {
@@ -601,7 +603,8 @@ function setData() {
 
 function getList(){
     dataTable = $('#event-table').DataTable({
-        "autoWidth": false,
+        "autoWidth": true,
+        "fixedHeader": true,
         "order": [[0,'desc']],
         "processing" : true,
         "serverSide" : true,
@@ -609,7 +612,7 @@ function getList(){
         "searching": false,
         "ordering": true,
         "scrollX": true,
-        "scrollY": 500,
+        // "scrollY": 500,
         "scrollCollapse": true,
         "deferRender": true,
         "rowId": "seq",
@@ -626,6 +629,7 @@ function getList(){
         "columnDefs": [
             { targets: [10], orderable: false},
             { targets: [11], orderable: false},
+            { targets: [12], orderable: false},
         ],
         "columns": [
             { 

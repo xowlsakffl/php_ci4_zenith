@@ -4,6 +4,7 @@ namespace App\Controllers\Advertisement;
 use App\Controllers\BaseController;
 use App\ThirdParty\googleads_api\ZenithGG;
 use CodeIgniter\CLI\CLI;
+use Config\Paths;
 use DateInterval;
 use DatePeriod;
 
@@ -28,8 +29,12 @@ class GoogleAds extends BaseController
     {
         CLI::clearScreen();
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 진행합니다.", "light_red");
-        $this->chainsaw->getAll();
+        $result = $this->chainsaw->getAll();
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트 완료", "yellow");
+        $paths = new Paths();
+        $log_file = fopen($paths->writableDirectory . '/logs/GoogleAdsGetAll.txt', 'a');
+        fwrite($log_file, $result . "\r\n\r\n");
+        fclose($log_file);
     }
 
     public function updateDB($sdate = null, $edate = null) {
@@ -50,12 +55,17 @@ class GoogleAds extends BaseController
     }
 
     public function getCampaign() {
-        $campaigns = $this->chainsaw->getCampaigns('7523804427', '4023377096', '20686064765');
+        $campaigns = $this->chainsaw->getCampaigns('7177486093', '4658512480', '20760584050');
         dd($campaigns);
     }
 
     public function getAds() {
-        $ads = $this->chainsaw->getAds('7523804427', '4023377096', '157627335009', '2023-11-20');
+        $ads = $this->chainsaw->getAds('7177486093', '4658512480', '157027181682', '2023-12-14');
         dd($ads);
+    }
+
+    public function getData() {
+        $getAll = $this->chainsaw->getAll(null, [['manageCustomer'=>7177486093, 'customerId'=>9604111811]]);
+        dd($getAll);
     }
 }

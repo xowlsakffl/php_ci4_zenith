@@ -53,7 +53,12 @@ class IntegrateModel extends Model
         el.add4,
         el.add5,
         el.status,
-        count(lm.leads_seq) as memo_cnt
+        count(lm.leads_seq) as memo_cnt,
+        GROUP_CONCAT(
+            DISTINCT CONCAT(lm.memo,'[',lm.username,']','[',lm.reg_date,']') 
+            ORDER BY lm.reg_date DESC
+            SEPARATOR '\n'
+          ) AS memos
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
