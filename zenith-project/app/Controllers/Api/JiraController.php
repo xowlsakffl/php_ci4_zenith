@@ -137,7 +137,7 @@ class JiraController extends BaseController
     {  
         try {
             if (strtolower($this->request->getMethod()) === 'post') {
-                $param = $this->request->getJson();
+                $param = $this->request->getVar();
                 
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
