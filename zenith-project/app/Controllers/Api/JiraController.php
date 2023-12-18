@@ -139,9 +139,7 @@ class JiraController extends BaseController
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 
-                $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                $fw = fwrite($fp, print_r($param,true).PHP_EOL);
-                fclose($fp);
+                
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
@@ -150,6 +148,21 @@ class JiraController extends BaseController
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
                 $issueSummary = $issueFields->summary ?? '';
+
+                $data = [
+                    'changeItems' => $param->changelog->items,
+                    'issueFields' => $param->issue->fields ?? null,
+                    'issueKey' => $param->issue->key ?? '',
+                    'actionUser' => $param->user->displayName ?? '',
+                    'reporterName' => $issueFields->reporter->displayName ?? null,
+                    'projectName' => $issueFields->project->name ?? '',
+                    'projectKey' => $issueFields->project->key ?? '',
+                    'issueSummary' => $issueFields->summary ?? '',
+
+                ];
+                $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
+                $fw = fwrite($fp, print_r($data,true).PHP_EOL);
+                fclose($fp);
                 foreach ($changeItems as $item) {
                     $changeField = $item['field'];
                     $changeStatus = $item['to'];
