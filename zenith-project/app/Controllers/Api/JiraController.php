@@ -140,17 +140,25 @@ class JiraController extends BaseController
                 $param = $this->request->getVar();
                 
                 $changeItems = $param->changelog->items;
-                $this->writeLog($this->request, json_encode($changeItems), 'jira_test_log');
+                $this->writeLog($this->request, "changeItems:".json_encode($changeItems), 'test_log');
                 $issueFields = $param->issue->fields ?? null;
+                $this->writeLog($this->request, "issueFields:".json_encode($issueFields), 'test_log');
                 $issueKey = $param->issue->key ?? '';
+                $this->writeLog($this->request, "issueKey:".json_encode($issueFields), 'test_log');
                 $actionUser = $param->user->displayName ?? '';
+                $this->writeLog($this->request, "actionUser:".json_encode($issueFields), 'test_log');
                 $reporterName = $issueFields->reporter->displayName ?? null;
+                $this->writeLog($this->request, "reporterName:".json_encode($issueFields), 'test_log');
                 $projectName = $issueFields->project->name ?? '';
+                $this->writeLog($this->request, "projectName:".json_encode($issueFields), 'test_log');
                 $projectKey = $issueFields->project->key ?? '';
+                $this->writeLog($this->request, "projectKey:".json_encode($issueFields), 'test_log');
                 $issueSummary = $issueFields->summary ?? '';
+                $this->writeLog($this->request, "issueSummary:".json_encode($issueFields), 'test_log');
                 foreach ($changeItems as $item) {
                     $changeField = $item['field'];
                     $changeStatus = $item['to'];
+                    $this->writeLog($this->request, "changeField:".json_encode($changeField), 'test_log');
                     if($changeField == 'status' && $changeStatus == '10132'){
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
