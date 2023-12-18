@@ -139,10 +139,10 @@ class JiraController extends BaseController
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                 
-                $changeItems = $param->changelog->items;
                 $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                $fw = fwrite($fp, print_r("changeItems:".$changeItems,true).PHP_EOL);
+                $fw = fwrite($fp, print_r($param,true).PHP_EOL);
                 fclose($fp);
+                $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
                 $actionUser = $param->user->displayName ?? '';
