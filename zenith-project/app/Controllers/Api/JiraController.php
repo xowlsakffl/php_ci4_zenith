@@ -136,9 +136,10 @@ class JiraController extends BaseController
     public function getIssueComplete()
     {  
         try {
+            $this->writeLog($this->request, null, 'jira_test_log');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getJSON();
-                $this->writeLog($this->request, $param, 'jira_test_log');
+                
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
