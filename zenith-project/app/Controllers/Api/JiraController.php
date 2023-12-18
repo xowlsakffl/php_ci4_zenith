@@ -152,24 +152,24 @@ class JiraController extends BaseController
                     $changeField = $item->field;
                     $changeStatus = $item->to;
 
-                    $data = [
-                        'changeItems' => $param->changelog->items,
-                        'issueKey' => $param->issue->key ?? '',
-                        'actionUser' => $param->user->displayName ?? '',
-                        'reporterName' => $issueFields->reporter->displayName ?? null,
-                        'projectName' => $issueFields->project->name ?? '',
-                        'projectKey' => $issueFields->project->key ?? '',
-                        'issueSummary' => $issueFields->summary ?? '',
-                        'changeField' => $item->field,
-                        'changeStatus' => $item->to 
-                    ];
-                    $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                    $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                    fclose($fp);
-
                     if($changeField == 'status' && $changeStatus == '10132'){
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
+
+                        $data = [
+                            'changeItems' => $param->changelog->items,
+                            'issueKey' => $param->issue->key ?? '',
+                            'actionUser' => $param->user->displayName ?? '',
+                            'reporterName' => $issueFields->reporter->displayName ?? null,
+                            'projectName' => $issueFields->project->name ?? '',
+                            'projectKey' => $issueFields->project->key ?? '',
+                            'issueSummary' => $issueFields->summary ?? '',
+                            'changeField' => $item->field,
+                            'changeStatus' => $item->to 
+                        ];
+                        $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
+                        $fw = fwrite($fp, print_r($data,true).PHP_EOL);
+                        fclose($fp);
 
                         $slack = new SlackChat();
                         $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
