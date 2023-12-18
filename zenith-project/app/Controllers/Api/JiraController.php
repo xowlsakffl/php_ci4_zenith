@@ -143,7 +143,8 @@ class JiraController extends BaseController
                         if($changeStatus == '1'){//요청
                             
                         }else if($changeStatus == '10131'){//진행중
-
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 진행중으로 상태변경 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $this->sendSlackMessage($reporterName, $sendText);
                         }else if($changeStatus == '10136'){//검수중
                             $sendText = sprintf('[%s][%s] <%s|%s> %s님이 검수요청 하였습니다. 보고자 발신', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
                             $this->sendSlackMessage($reporterName, $sendText);
