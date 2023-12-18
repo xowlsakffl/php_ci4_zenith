@@ -133,7 +133,7 @@ class JiraController extends BaseController
         }
     }
 
-    public function getIssueComplete()
+    public function getIssueAction()
     {  
         try {
             $this->writeLog($this->request, null, 'issue_complete_log');
@@ -153,28 +153,32 @@ class JiraController extends BaseController
                     $changeField = $item->field;
                     $changeStatus = $item->to;
 
-                    if($changeField == 'status' && $changeStatus == '10132' && $projectKey == 'DEV'){
-                        $userModel = new UserModel();
-                        $userData = $userModel->getUserByName($reporterName);
+                    if($projectKey == 'DEV' && $changeField == 'status'){
+                        if($changeStatus == '10132'){
 
-                        $slack = new SlackChat();
-                        $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
-                        
-                        $slackMessage = [
-                            'channel' => $slack->config['UserID'][$userData['nickname']],
-                            'blocks' => [
-                                [
-                                    'type' => 'section',
-                                    'text' => [
-                                        'type' => 'mrkdwn',
-                                        'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+                        }else if($changeStatus == '10132'){//완료됨
+                            $userModel = new UserModel();
+                            $userData = $userModel->getUserByName($reporterName);
+    
+                            $slack = new SlackChat();
+                            $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
+                            
+                            $slackMessage = [
+                                'channel' => $slack->config['UserID'][$userData['nickname']],
+                                'blocks' => [
+                                    [
+                                        'type' => 'section',
+                                        'text' => [
+                                            'type' => 'mrkdwn',
+                                            'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+                                        ],
+                                        "block_id" => "text1"
                                     ],
-                                    "block_id" => "text1"
                                 ],
-                            ],
-                        ];
-                        
-                        $result = $slack->sendMessage($slackMessage);
+                            ];
+                            
+                            $result = $slack->sendMessage($slackMessage);
+                        }
                     }
                 }
             }else{
