@@ -138,7 +138,7 @@ class JiraController extends BaseController
         try {
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
-                $this->writeLog($this->request, "디버깅:".json_encode($param), 'jira_test_log');
+                
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
@@ -147,7 +147,7 @@ class JiraController extends BaseController
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
                 $issueSummary = $issueFields->summary ?? '';
-
+                $this->writeLog($this->request, "디버깅:".json_encode($changeItems), 'jira_test_log');
                 foreach ($changeItems as $item) {
                     $changeField = $item->field;
                     $changeStatus = $item->to;
