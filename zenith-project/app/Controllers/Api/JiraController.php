@@ -165,7 +165,8 @@ class JiraController extends BaseController
                             'projectKey' => $issueFields->project->key ?? '',
                             'issueSummary' => $issueFields->summary ?? '',
                             'changeField' => $item->field,
-                            'changeStatus' => $item->to 
+                            'changeStatus' => $item->to,
+                            'userData' => $userData, 
                         ];
                         $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
                         $fw = fwrite($fp, print_r($data,true).PHP_EOL);
