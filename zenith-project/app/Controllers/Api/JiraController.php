@@ -156,22 +156,6 @@ class JiraController extends BaseController
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
 
-                        $data = [
-                            'changeItems' => $param->changelog->items,
-                            'issueKey' => $param->issue->key ?? '',
-                            'actionUser' => $param->user->displayName ?? '',
-                            'reporterName' => $issueFields->reporter->displayName ?? null,
-                            'projectName' => $issueFields->project->name ?? '',
-                            'projectKey' => $issueFields->project->key ?? '',
-                            'issueSummary' => $issueFields->summary ?? '',
-                            'changeField' => $item->field,
-                            'changeStatus' => $item->to,
-                            'userData' => $userData, 
-                        ];
-                        $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                        $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                        fclose($fp);
-
                         $slack = new SlackChat();
                         $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
                         
@@ -189,7 +173,25 @@ class JiraController extends BaseController
                             ],
                         ];
                         
-                        $slack->sendMessage($slackMessage);
+                        $result = $slack->sendMessage($slackMessage);
+
+                        $data = [
+                            'changeItems' => $param->changelog->items,
+                            'issueKey' => $param->issue->key ?? '',
+                            'actionUser' => $param->user->displayName ?? '',
+                            'reporterName' => $issueFields->reporter->displayName ?? null,
+                            'projectName' => $issueFields->project->name ?? '',
+                            'projectKey' => $issueFields->project->key ?? '',
+                            'issueSummary' => $issueFields->summary ?? '',
+                            'changeField' => $item->field,
+                            'changeStatus' => $item->to,
+                            'userData' => $userData, 
+                            'result' => $result
+                        ];
+
+                        $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
+                        $fw = fwrite($fp, print_r($data,true).PHP_EOL);
+                        fclose($fp);
                         break;
                     }
                 }
