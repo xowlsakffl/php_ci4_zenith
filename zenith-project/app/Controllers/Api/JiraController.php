@@ -138,8 +138,7 @@ class JiraController extends BaseController
         try {
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
-                
-                
+                       
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
@@ -148,24 +147,26 @@ class JiraController extends BaseController
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
                 $issueSummary = $issueFields->summary ?? '';
-
-                $data = [
-                    'changeItems' => $param->changelog->items,
-                    'issueFields' => $param->issue->fields ?? null,
-                    'issueKey' => $param->issue->key ?? '',
-                    'actionUser' => $param->user->displayName ?? '',
-                    'reporterName' => $issueFields->reporter->displayName ?? null,
-                    'projectName' => $issueFields->project->name ?? '',
-                    'projectKey' => $issueFields->project->key ?? '',
-                    'issueSummary' => $issueFields->summary ?? '',
-
-                ];
-                $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                fclose($fp);
+ 
                 foreach ($changeItems as $item) {
-                    $changeField = $item['field'];
-                    $changeStatus = $item['to'];
+                    $changeField = $item->field;
+                    $changeStatus = $item->to;
+
+                    $data = [
+                        'changeItems' => $param->changelog->items,
+                        'issueKey' => $param->issue->key ?? '',
+                        'actionUser' => $param->user->displayName ?? '',
+                        'reporterName' => $issueFields->reporter->displayName ?? null,
+                        'projectName' => $issueFields->project->name ?? '',
+                        'projectKey' => $issueFields->project->key ?? '',
+                        'issueSummary' => $issueFields->summary ?? '',
+                        'changeField' => $item->field,
+                        'changeStatus' => $item->to 
+                    ];
+                    $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
+                    $fw = fwrite($fp, print_r($data,true).PHP_EOL);
+                    fclose($fp);
+
                     if($changeField == 'status' && $changeStatus == '10132'){
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
