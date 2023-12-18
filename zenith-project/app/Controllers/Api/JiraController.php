@@ -108,26 +108,10 @@ class JiraController extends BaseController
                 if ($interval->h >= 1) {
                     $creator = $issue->fields->creator->displayName;
                     $issueKey = $issue->key ?? null;
-                    $userModel = new UserModel();
-                    $userData = $userModel->getUserByName($creator);
-
-                    $slack = new SlackChat();
                     $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/DEV/board?selectedIssue=' . $issueKey;
-                    $slackMessage = [
-                        'channel' => $slack->config['UserID'][$userData['nickname']],
-                        'blocks' => [
-                            [
-                                'type' => 'section',
-                                'text' => [
-                                    'type' => 'mrkdwn',
-                                    'text' => sprintf('[개발요청판]<%s|[%s:%s]> "요청 준비중" 상태로 %s 경과하였습니다.'.PHP_EOL.'해당 이슈를 확인하신 후 자료가 준비되었으면 "요청" 상태로 변경해주십시오.', $issueLink, $issueKey, $subject, $passTime),
-                                ],
-                                "block_id" => "text1"
-                            ],
-                        ],
-                    ];
+                    $text = sprintf('[개발요청판]<%s|[%s:%s]> "요청 준비중" 상태로 %s 경과하였습니다.'.PHP_EOL.'해당 이슈를 확인하신 후 자료가 준비되었으면 "요청" 상태로 변경해주십시오.', $issueLink, $issueKey, $subject, $passTime);
                     
-                    $slackResult = $slack->sendMessage($slackMessage);
+                    $result = $this->sendSlackMessage($creator, $text);
                 }
             }
         }
@@ -145,72 +129,32 @@ class JiraController extends BaseController
                 $issueKey = $param->issue->key ?? '';
                 $actionUser = $param->user->displayName ?? '';
                 $reporterName = $issueFields->reporter->displayName ?? null;
+                $designerName = $issueFields->customfield_10179[0]->displayName ?? null;
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
                 $issueSummary = $issueFields->summary ?? '';
- 
+                
                 foreach ($changeItems as $item) {
                     $changeField = $item->field;
                     $changeStatus = $item->to;
 
                     if($projectKey == 'DEV' && $changeField == 'status'){
-                        $data = [
-                            'changeItems' => $param->changelog->items,
-                            'issueKey' => $param->issue->key ?? '',
-                            'actionUser' => $param->user->displayName ?? '',
-                            'reporterName' => $issueFields->reporter->displayName ?? null,
-                            'projectName' => $issueFields->project->name ?? '',
-                            'projectKey' => $issueFields->project->key ?? '',
-                            'issueSummary' => $issueFields->summary ?? '',
-                            'changeField' => $item->field,
-                            'changeStatus' => $item->to,
-                        ];
-
-                        $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                        $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                        fclose($fp);
-                        if($changeStatus == '10132'){
+                        $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
+                        if($changeStatus == '1'){//요청
                             
+                        }else if($changeStatus == '10131'){//진행중
+
+                        }else if($changeStatus == '10136'){//검수중
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 검수요청 하였습니다. 보고자 발신', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $this->sendSlackMessage($reporterName, $sendText);
+
+                            if(!empty($designerName)){
+                                $sendText = sprintf('[%s][%s] <%s|%s> %s님이 검수요청 하였습니다. 디자이너 발신', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                                $this->sendSlackMessage($designerName, $sendText);
+                            }
                         }else if($changeStatus == '10132'){//완료됨
-                            /* $userModel = new UserModel();
-                            $userData = $userModel->getUserByName($reporterName);
-    
-                            $slack = new SlackChat();
-                            $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
-                            
-                            $slackMessage = [
-                                'channel' => $slack->config['UserID'][$userData['nickname']],
-                                'blocks' => [
-                                    [
-                                        'type' => 'section',
-                                        'text' => [
-                                            'type' => 'mrkdwn',
-                                            'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
-                                        ],
-                                        "block_id" => "text1"
-                                    ],
-                                ],
-                            ];
-                            
-                            $result = $slack->sendMessage($slackMessage);
-
-                            $data = [
-                                'changeItems' => $param->changelog->items,
-                                'issueKey' => $param->issue->key ?? '',
-                                'actionUser' => $param->user->displayName ?? '',
-                                'reporterName' => $issueFields->reporter->displayName ?? null,
-                                'projectName' => $issueFields->project->name ?? '',
-                                'projectKey' => $issueFields->project->key ?? '',
-                                'issueSummary' => $issueFields->summary ?? '',
-                                'changeField' => $item->field,
-                                'changeStatus' => $item->to,
-                                'userData' => $userData, 
-                                'result' => $result
-                            ];
-    
-                            $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                            $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                            fclose($fp); */
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $result = $this->sendSlackMessage($reporterName, $sendText);
                         }
                     }
                 }
@@ -221,6 +165,30 @@ class JiraController extends BaseController
             $logText = "오류 메세지: ".$e->getMessage();
             $this->writeLog($this->request, $logText, 'issue_complete_log');
         }
+    }
+
+    public function sendSlackMessage($username, $text)
+    {
+        $userModel = new UserModel();
+        $userData = $userModel->getUserByName($username);
+
+        $slack = new SlackChat();
+        
+        $slackMessage = [
+            'channel' => $slack->config['UserID'][$userData['nickname']],
+            'blocks' => [
+                [
+                    'type' => 'section',
+                    'text' => [
+                        'type' => 'mrkdwn',
+                        'text' => $text,
+                    ],
+                    "block_id" => "text1"
+                ],
+            ],
+        ];
+        
+        $slack->sendMessage($slackMessage);
     }
 
     public function writeLog($request = null, $addLog = null, $filename = null) 
