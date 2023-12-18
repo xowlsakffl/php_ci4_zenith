@@ -136,6 +136,7 @@ class JiraController extends BaseController
     public function getIssueComplete()
     {  
         try {
+            $this->writeLog($this->request, null, 'issue_complete_log');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                        
@@ -174,25 +175,6 @@ class JiraController extends BaseController
                         ];
                         
                         $result = $slack->sendMessage($slackMessage);
-
-                        $data = [
-                            'changeItems' => $param->changelog->items,
-                            'issueKey' => $param->issue->key ?? '',
-                            'actionUser' => $param->user->displayName ?? '',
-                            'reporterName' => $issueFields->reporter->displayName ?? null,
-                            'projectName' => $issueFields->project->name ?? '',
-                            'projectKey' => $issueFields->project->key ?? '',
-                            'issueSummary' => $issueFields->summary ?? '',
-                            'changeField' => $item->field,
-                            'changeStatus' => $item->to,
-                            'userData' => $userData, 
-                            'result' => $result
-                        ];
-
-                        $fp = fopen(WRITEPATH.'/logs/test_log', 'a+');
-                        $fw = fwrite($fp, print_r($data,true).PHP_EOL);
-                        fclose($fp);
-                        break;
                     }
                 }
             }else{
