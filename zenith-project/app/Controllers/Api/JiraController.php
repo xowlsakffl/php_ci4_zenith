@@ -150,12 +150,9 @@ class JiraController extends BaseController
                 foreach ($changeItems as $item) {
                     $changeField = $item['field'];
                     $changeStatus = $item['to'];
-                    $this->writeLog($this->request, "디버깅:".json_encode($issueFields), 'jira_test_log');
                     if($changeField == 'status' && $changeStatus == '10132'){
-                        if(empty($reporterName)) return $this->fail("보고자 이름 오류");
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
-                        if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
 
                         $slack = new SlackChat();
                         $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
