@@ -147,10 +147,10 @@ class JiraController extends BaseController
                 $projectName = $issueFields->project->name ?? '';
                 $projectKey = $issueFields->project->key ?? '';
                 $issueSummary = $issueFields->summary ?? '';
-                $this->writeLog($this->request, "디버깅:".json_encode(d($changeItems)), 'jira_test_log');
                 foreach ($changeItems as $item) {
                     $changeField = $item->field;
                     $changeStatus = $item->to;
+                    $this->writeLog($this->request, "디버깅:".json_encode($changeStatus), 'jira_test_log');
                     if($changeField == 'status' && $changeStatus == '10132'){
                         if(empty($reporterName)) return $this->fail("보고자 이름 오류");
                         $userModel = new UserModel();
