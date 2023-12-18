@@ -136,45 +136,46 @@ class JiraController extends BaseController
     public function getIssueComplete()
     {  
         try {
-            $this->writeLog($this->request, null, 'issue_complete_log');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
-                $this->writeLog($param, null, 'issue_complete_log');
-                if(!empty($param)){
-                    $issueFields = $param->issue->fields ?? null;
-                    $issueKey = $param->issue->key ?? '';
-                    $actionUser = $param->user->displayName ?? '';
-                    $reporterName = $issueFields->reporter->displayName ?? null;
-                    $projectName = $issueFields->project->name ?? '';
-                    $projectKey = $issueFields->project->key ?? '';
-                    $issueSummary = $issueFields->summary ?? '';
-                    
-                    if(empty($reporterName)) return $this->fail("보고자 이름 오류");
-                    $userModel = new UserModel();
-                    $userData = $userModel->getUserByName($reporterName);
-                    
-                    if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
-    
-                    $slack = new SlackChat();
-                    $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
-                    
-                    $slackMessage = [
-                        'channel' => $slack->config['UserID'][$userData['nickname']],
-                        'blocks' => [
-                            [
-                                'type' => 'section',
-                                'text' => [
-                                    'type' => 'mrkdwn',
-                                    'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+                $changeItems = $param->changelog->items;
+                $issueFields = $param->issue->fields ?? null;
+                $issueKey = $param->issue->key ?? '';
+                $actionUser = $param->user->displayName ?? '';
+                $reporterName = $issueFields->reporter->displayName ?? null;
+                $projectName = $issueFields->project->name ?? '';
+                $projectKey = $issueFields->project->key ?? '';
+                $issueSummary = $issueFields->summary ?? '';
+
+                foreach ($changeItems as $item) {
+                    $changeField = $item->field;
+                    $changeStatus = $item->to;
+                    if($changeField == 'status' && $changeStatus == '10132'){
+                        if(empty($reporterName)) return $this->fail("보고자 이름 오류");
+                        $userModel = new UserModel();
+                        $userData = $userModel->getUserByName($reporterName);
+                        if(empty($userData)) return $this->fail("일치하는 사용자 없음 ".$reporterName);
+
+                        $slack = new SlackChat();
+                        $issueLink = 'https://carelabs-dm.atlassian.net/jira/core/projects/' . $projectKey . '/board?selectedIssue=' . $issueKey;
+                        
+                        $slackMessage = [
+                            'channel' => $slack->config['UserID'][$userData['nickname']],
+                            'blocks' => [
+                                [
+                                    'type' => 'section',
+                                    'text' => [
+                                        'type' => 'mrkdwn',
+                                        'text' => sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser),
+                                    ],
+                                    "block_id" => "text1"
                                 ],
-                                "block_id" => "text1"
                             ],
-                        ],
-                    ];
-                    
-                    $slackResult = $slack->sendMessage($slackMessage);
-                }else{
-                    throw new Exception("요청 데이터 오류");
+                        ];
+                        
+                        $slack->sendMessage($slackMessage);
+                        break;
+                    }
                 }
             }else{
                 throw new Exception("요청 메소드 오류");

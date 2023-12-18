@@ -400,7 +400,7 @@ $(document).on('click', '.regi-form button', function(e) { //메모 작성
     if(type == 'table') {
         data['leads_seq'] =  $(this).parents('tr').prev('tr').attr('id');
     } else {
-        data['leads_seq'] = $('#modal-integrate-memo').data('seq');
+        data['leads_seq'] = $('#modal-integrate-memo').attr('data-seq');
     }
     registerMemo(data);
 });
