@@ -137,8 +137,8 @@ class JiraController extends BaseController
     {  
         try {
             if (strtolower($this->request->getMethod()) === 'post') {
-                $param = $this->request->getVar();
-                
+                $param = $this->request->getJson();
+                $this->writeLog($this->request, "디버깅:".$param, 'jira_test_log');
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
@@ -150,7 +150,7 @@ class JiraController extends BaseController
                 foreach ($changeItems as $item) {
                     $changeField = $item['field'];
                     $changeStatus = $item['to'];
-                    $this->writeLog($this->request, "디버깅:".json_encode($issueSummary), 'jira_test_log');
+                    
                     if($changeField == 'status' && $changeStatus == '10132'){
                         if(empty($reporterName)) return $this->fail("보고자 이름 오류");
                         $userModel = new UserModel();
