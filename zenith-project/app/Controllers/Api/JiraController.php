@@ -139,7 +139,7 @@ class JiraController extends BaseController
             if (strtolower($this->request->getMethod()) === 'post') {
                 $this->writeLog($this->request, null, 'jira_test_log');
                 $param = $this->request->getVar();
-                $this->writeLog($this->request, $param, 'jira_test_log');
+                $this->writeLog($this->request, "디버깅:".json_encode($param), 'jira_test_log');
                 $changeItems = $param->changelog->items;
                 $issueFields = $param->issue->fields ?? null;
                 $issueKey = $param->issue->key ?? '';
