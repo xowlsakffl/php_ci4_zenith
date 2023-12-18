@@ -153,7 +153,7 @@ class JiraController extends BaseController
                     $changeField = $item->field;
                     $changeStatus = $item->to;
 
-                    if($changeField == 'status' && $changeStatus == '10132'){
+                    if($changeField == 'status' && $changeStatus == '10132' && $projectKey == 'DEV'){
                         $userModel = new UserModel();
                         $userData = $userModel->getUserByName($reporterName);
 
