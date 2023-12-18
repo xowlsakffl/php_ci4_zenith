@@ -154,7 +154,7 @@ class JiraController extends BaseController
                             }
                         }else if($changeStatus == '10132'){//완료됨
                             $sendText = sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
-                            $result = $this->sendSlackMessage($reporterName, $sendText);
+                            $this->sendSlackMessage($reporterName, $sendText);
                         }
                     }
                 }
