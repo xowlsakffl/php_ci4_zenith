@@ -61,24 +61,7 @@
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 분류
         </h3>
-        <div class="row" id="company-list">
-            <div class="col" data-name="케어랩스">
-                <div class="inner">
-                    <button type="button" value="케어랩스" style="white-space: normal; overflow-x: auto; font-size: 85%;">케어랩스</button>
-                    <div class="progress">
-                        <div class="txt"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col" data-name="테크랩스">
-                <div class="inner">
-                    <button type="button" value="테크랩스" style="white-space: normal; overflow-x: auto; font-size: 85%;">테크랩스</button>
-                    <div class="progress">
-                        <div class="txt"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="row" id="company-list"></div>
     </div>
     <?php }?>
     <div class="section client-list custom-margin-box-1" <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){echo 'id="advertiserBtn"'; }?>>

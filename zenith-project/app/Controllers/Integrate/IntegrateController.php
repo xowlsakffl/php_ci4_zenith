@@ -247,11 +247,31 @@ class IntegrateController extends BaseController
     private function setCount($leads, $type)
     {
         $data = [
+            'company' => [],
             'advertiser' => [],
             'media' => [],
             'event' => [],
         ];
         foreach($leads as $row) {
+            //분류 기준
+            if (!empty($row['company'])) {
+                if (!isset($data['company']['케어랩스'])) {
+                    $data['company']['케어랩스'][$type] = 0;
+                }
+
+                if (!isset($data['company']['테크랩스'])) {
+                    $data['company']['테크랩스'][$type] = 0;
+                }
+
+                if($row['status'] == 1 && $row['company'] == '케어랩스'){
+                    $data['company']['케어랩스'][$type]++;
+                }
+
+                if($row['status'] == 1 && $row['company'] == '테크랩스'){
+                    $data['company']['테크랩스'][$type]++;
+                }
+            }
+
             //광고주 기준
             if (!empty($row['advertiser'])) {
                 if (!isset($data['advertiser'][$row['advertiser']])) {

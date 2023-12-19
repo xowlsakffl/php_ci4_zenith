@@ -145,6 +145,7 @@ class IntegrateModel extends Model
         adv.name as advertiser,
         med.media as media,
         info.description as event,
+        info.partner_name as company
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
