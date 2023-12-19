@@ -294,6 +294,21 @@ function getList(data = []) { //리스트 세팅
         ],
         "columns": [
             { "data": null , "width": "35px"},
+            { 
+                "data": null , 
+                "width": "35px",
+                "render": function(data, type, row) {
+                    let company = '';
+                    if(row.company == '케어랩스'){
+                        company = '케어랩스';
+                    }
+
+                    if(row.company == '테크랩스'){
+                        company = '테크랩스';
+                    }
+                    return company;
+                }
+            },
             { "data": "seq" , "width": "40px"},
             { "data": "info_seq", "width": "45px",
                 "render": function(data) {

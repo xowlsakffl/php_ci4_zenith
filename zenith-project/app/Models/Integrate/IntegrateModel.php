@@ -37,6 +37,7 @@ class IntegrateModel extends Model
         adv.name AS advertiser, 
         med.media, adv.is_stop, 
         info.description AS tab_name, 
+        info.partner_name as company,
         dec_data(el.phone) as dec_phone, 
         el.seq,
         el.name,
