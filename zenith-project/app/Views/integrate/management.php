@@ -210,14 +210,14 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         "async": false
     });
     // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
-    return {body: arr , header: ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"]};
+    return {body: arr , header: ["고유번호","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"]};
 } );
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
         "dom": '<Bfr<t>ip>',
         "fixedHeader": true,
         "autoWidth": true,
-        "order": [[12,'desc']],
+        "order": [[13,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
