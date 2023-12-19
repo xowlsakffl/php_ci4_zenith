@@ -30,6 +30,7 @@ class IntegrateController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
+            $event_url = getenv('EVENT_SERVER_URL');
             if(!isset($arg['searchData'])) {
                 $arg['searchData'] = [
                     'sdate'=> date('Y-m-d'),
@@ -61,10 +62,10 @@ class IntegrateController extends BaseController
                 for($i2=1;$i2<6;$i2++){
                     if(!empty($d['add'.$i2])){		
                         if(strpos($d['add'.$i2], "uploads")){
-                            $href = "<a href='".str_replace("./","https://event.hotblood.co.kr/uploads/",$d['add'.$i2])."' target='_blank'>[파일보기]</a>";
+                            $href = "<a href='".str_replace("./","{$event_url}uploads/",$d['add'.$i2])."' target='_blank'>[파일보기]</a>";
                             $etc[] = $href;
                         }else if(strpos($d['add'.$i2], "/v_")){
-                            $href = "<a href='https://event.hotblood.co.kr/img_viewer.php?data={$d['add'.$i2]}' target='_blank'>[파일보기]</a>";
+                            $href = "<a href='{$event_url}img_viewer.php?data={$d['add'.$i2]}' target='_blank'>[파일보기]</a>";
                             $etc[] = $href;
                         }
                         else{

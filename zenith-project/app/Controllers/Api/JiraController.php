@@ -143,18 +143,21 @@ class JiraController extends BaseController
                         if($changeStatus == '1'){//요청
                             
                         }else if($changeStatus == '10131'){//진행중
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 진행중으로 상태변경 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 요청하신 작업을 시작합니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
                             $this->sendSlackMessage($reporterName, $sendText);
+                            if(!empty($designerName) && $reporterName != $designerName){
+                                $this->sendSlackMessage($designerName, $sendText);
+                            }
                         }else if($changeStatus == '10136'){//검수중
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 검수요청 하였습니다. 보고자 발신', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'작업 결과물을 확인하신 후 Jira 이슈에 댓글로 피드백 남겨주세요.(피드백을 확인한 후 최종 완료로 처리됩니다.)', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName);
                             $this->sendSlackMessage($reporterName, $sendText);
 
-                            if(!empty($designerName)){
-                                $sendText = sprintf('[%s][%s] <%s|%s> %s님이 검수요청 하였습니다. 디자이너 발신', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            if(!empty($designerName) && $reporterName != $designerName){
+                                $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 디자인 검수를 요청하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $designerName);
                                 $this->sendSlackMessage($designerName, $sendText);
                             }
                         }else if($changeStatus == '10132'){//완료됨
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 완료처리 하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
+                            $sendText = sprintf('[%s][%s] <%s|%s> 요청하신 작업이 검수가 완료되어 해당 이슈가 종료되었습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser);
                             $this->sendSlackMessage($reporterName, $sendText);
                         }
                     }

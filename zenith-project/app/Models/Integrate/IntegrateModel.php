@@ -90,6 +90,10 @@ class IntegrateModel extends Model
             $builder->groupEnd();
         }
 
+        if(!empty($srch['company'])){
+            $builder->whereIn('info.partner_name', explode("|",$srch['company']));
+        }
+
         if(!empty($srch['advertiser'])){
             $builder->whereIn('adv.name', explode("|",$srch['advertiser']));
         }
@@ -140,7 +144,7 @@ class IntegrateModel extends Model
         el.status,
         adv.name as advertiser,
         med.media as media,
-        info.description as event
+        info.description as event,
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
@@ -171,6 +175,10 @@ class IntegrateModel extends Model
             $builder->orLike('el.add4', $data['stx']);
             $builder->orLike('el.add5', $data['stx']);
             $builder->groupEnd();
+        }
+
+        if(!empty($data['company'])){
+            $builder->whereIn('info.partner_name', explode("|",$data['company']));
         }
 
         if(!empty($data['advertiser'])){
@@ -240,6 +248,10 @@ class IntegrateModel extends Model
             $builder->orLike('el.add4', $data['stx']);
             $builder->orLike('el.add5', $data['stx']);
             $builder->groupEnd();
+        }
+
+        if(!empty($data['company'])){
+            $builder->whereIn('info.partner_name', explode("|",$data['company']));
         }
 
         if(!empty($data['advertiser'])){

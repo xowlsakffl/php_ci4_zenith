@@ -56,6 +56,31 @@
             <button type="button" class="reset-btn">필터 초기화</button>
         </div>
     </div>
+    <?php if(getenv('MY_SERVER_NAME') === 'resta'){?>
+    <div class="section client-list">
+        <h3 class="content-title toggle">
+            <i class="bi bi-chevron-up"></i> 분류
+        </h3>
+        <div class="row" id="company-list">
+            <div class="col" data-name="케어랩스">
+                <div class="inner">
+                    <button type="button" value="케어랩스" style="white-space: normal; overflow-x: auto; font-size: 85%;">케어랩스</button>
+                    <div class="progress">
+                        <div class="txt"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col" data-name="테크랩스">
+                <div class="inner">
+                    <button type="button" value="테크랩스" style="white-space: normal; overflow-x: auto; font-size: 85%;">테크랩스</button>
+                    <div class="progress">
+                        <div class="txt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php }?>
     <div class="section client-list custom-margin-box-1" <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){echo 'id="advertiserBtn"'; }?>>
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 광고주
@@ -153,8 +178,11 @@ let dataTable, tableParam = {};
 getList();
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
-    $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
+    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData == 'undefined') return;
+    if(typeof data.searchData.company != 'undefined') {
+        data.searchData.company.split('|').map(function(txt){ $(`#company-list button[value="${txt}"]`).addClass('active'); });
+    }
     if(typeof data.searchData.advertiser != 'undefined') {
         data.searchData.advertiser.split('|').map(function(txt){ $(`#advertiser-list button[value="${txt}"]`).addClass('active'); });
     }
@@ -224,6 +252,7 @@ function getList(data = []) { //리스트 세팅
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
                     'stx': $('#stx').val(),
+                    'company' : $('#company-list button.active').map(function(){return $(this).val();}).get().join('|'),
                     'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
                     'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
                     'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
@@ -604,7 +633,7 @@ function setDate(){
     });
 }
 
-$('body').on('click', '#advertiser-list button, #media-list button, #event-list button', function() {
+$('body').on('click', '#company-list button, #advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
     dataTable.state.save();
@@ -627,7 +656,7 @@ $('.statusCount').on('click', 'dl', function(e) {
 
 $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
-    $('#advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
+    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     $('#stx').val('');
     dataTable.state.clear();
     dataTable.state.save();
