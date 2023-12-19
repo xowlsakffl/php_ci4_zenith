@@ -290,11 +290,13 @@ function getList(data = []) { //리스트 세팅
         "columnDefs": [
             { targets: [0], orderable: false},
             { targets: [1], visible: false},
+            { targets: [2], visible: false},
             { targets: '_all', visible: true },
             { targets: [6], className: ''}
         ],
         "columns": [
             { "data": null , "width": "35px"},
+            { "data": "seq" , "width": "40px"},
             { 
                 "data": null , 
                 "width": "35px",
@@ -310,7 +312,6 @@ function getList(data = []) { //리스트 세팅
                     return company;
                 }
             },
-            { "data": "seq" , "width": "40px"},
             { "data": "info_seq", "width": "45px",
                 "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
