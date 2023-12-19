@@ -99,6 +99,7 @@
                     <tr>
                         <th class="first">#</th>
                         <th>SEQ</th>
+                        <th>분류</th>
                         <th>이벤트</th>
                         <th>광고주</th>
                         <th>매체</th>
