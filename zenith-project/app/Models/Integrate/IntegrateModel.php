@@ -37,7 +37,7 @@ class IntegrateModel extends Model
         adv.name AS advertiser, 
         med.media, adv.is_stop, 
         info.description AS tab_name, 
-        info.partner_name as company,
+        info.partner_company as company,
         dec_data(el.phone) as dec_phone, 
         el.seq,
         el.name,
@@ -93,9 +93,11 @@ class IntegrateModel extends Model
 
         if(!empty($srch['company'])){
             $company = explode("|",$srch['company']);
-            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
-                $builder->whereIn('info.partner_name', $company);
+            $index = array_search('리스타', $company);
+            if($index !== false){
+                $company[$index] = '';
             }
+            $builder->whereIn('info.partner_company', $company);
         }
 
         if(!empty($srch['advertiser'])){
@@ -149,7 +151,7 @@ class IntegrateModel extends Model
         adv.name as advertiser,
         med.media as media,
         info.description as event,
-        info.partner_name as company
+        info.partner_company as company
         ");
         $builder->join('event_information as info', "info.seq = el.event_seq", 'left');
         $builder->join('event_advertiser as adv', "info.advertiser = adv.seq AND adv.is_stop = 0", 'left');
@@ -184,9 +186,11 @@ class IntegrateModel extends Model
 
         if(!empty($data['company'])){
             $company = explode("|",$data['company']);
-            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
-                $builder->whereIn('info.partner_name', $company);
+            $index = array_search('리스타', $company);
+            if($index !== false){
+                $company[$index] = '';
             }
+            $builder->whereIn('info.partner_company', $company);
         }
 
         if(!empty($data['advertiser'])){
@@ -260,12 +264,11 @@ class IntegrateModel extends Model
 
         if(!empty($data['company'])){
             $company = explode("|",$data['company']);
-            $company = array_filter($company, function($value) {
-                return strpos($value, '리스타') === false;
-            });
-            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
-                $builder->whereIn('info.partner_name', $company);
+            $index = array_search('리스타', $company);
+            if($index !== false){
+                $company[$index] = '';
             }
+            $builder->whereIn('info.partner_company', $company);
         }
 
         if(!empty($data['advertiser'])){
