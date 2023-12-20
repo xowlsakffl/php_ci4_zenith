@@ -28,7 +28,7 @@ class IntegrateController extends BaseController
 
     public function getList()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $event_url = getenv('EVENT_SERVER_URL');
             if(!isset($arg['searchData'])) {
@@ -253,25 +253,33 @@ class IntegrateController extends BaseController
             'event' => [],
         ];
         foreach($leads as $row) {
+            if(getenv('MY_SERVER_NAME') === 'resta'){
             //분류 기준
-            if (!empty($row['company'])) {
-                if (!isset($data['company']['케어랩스'])) {
-                    $data['company']['케어랩스'][$type] = 0;
+                if (!isset($data['company']['리스타'])) {
+                    $data['company']['리스타'][$type] = 0;
+                }
+                if($row['status'] == 1 && ($row['company'] != '케어랩스' && $row['company'] != '테크랩스')){
+                    $data['company']['리스타'][$type]++;
                 }
 
-                if (!isset($data['company']['테크랩스'])) {
-                    $data['company']['테크랩스'][$type] = 0;
-                }
+                if (!empty($row['company'])) {
+                    if (!isset($data['company']['케어랩스'])) {
+                        $data['company']['케어랩스'][$type] = 0;
+                    }
 
-                if($row['status'] == 1 && $row['company'] == '케어랩스'){
-                    $data['company']['케어랩스'][$type]++;
-                }
+                    if (!isset($data['company']['테크랩스'])) {
+                        $data['company']['테크랩스'][$type] = 0;
+                    }
 
-                if($row['status'] == 1 && $row['company'] == '테크랩스'){
-                    $data['company']['테크랩스'][$type]++;
+                    if($row['status'] == 1 && $row['company'] == '케어랩스'){
+                        $data['company']['케어랩스'][$type]++;
+                    }
+
+                    if($row['status'] == 1 && $row['company'] == '테크랩스'){
+                        $data['company']['테크랩스'][$type]++;
+                    }
                 }
             }
-
             //광고주 기준
             if (!empty($row['advertiser'])) {
                 if (!isset($data['advertiser'][$row['advertiser']])) {
