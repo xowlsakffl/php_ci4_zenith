@@ -28,7 +28,7 @@ class IntegrateController extends BaseController
 
     public function getList()
     {
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $event_url = getenv('EVENT_SERVER_URL');
             if(!isset($arg['searchData'])) {
@@ -262,7 +262,7 @@ class IntegrateController extends BaseController
                     $data['company']['리스타'][$type]++;
                 }
 
-                if (!empty($row['company'])) {
+                if (isset($row['company'])) {
                     if (!isset($data['company']['케어랩스'])) {
                         $data['company']['케어랩스'][$type] = 0;
                     }
