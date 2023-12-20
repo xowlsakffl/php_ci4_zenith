@@ -93,9 +93,6 @@ class IntegrateModel extends Model
 
         if(!empty($srch['company'])){
             $company = explode("|",$srch['company']);
-            $company = array_filter($company, function($value) {
-                return strpos($value, '리스타') === false;
-            });
             if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
                 $builder->whereIn('info.partner_name', $company);
             }
@@ -187,9 +184,6 @@ class IntegrateModel extends Model
 
         if(!empty($data['company'])){
             $company = explode("|",$data['company']);
-            $company = array_filter($company, function($value) {
-                return strpos($value, '리스타') === false;
-            });
             if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
                 $builder->whereIn('info.partner_name', $company);
             }
