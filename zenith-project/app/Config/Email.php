@@ -6,7 +6,7 @@ use CodeIgniter\Config\BaseConfig;
 
 class Email extends BaseConfig
 {
-    public string $fromEmail  = 'noreply@chainsaw.co.kr';
+    public string $fromEmail;
     public string $fromName   = 'Zenith';
     public string $recipients = '';
 
@@ -114,4 +114,11 @@ class Email extends BaseConfig
      * Enable notify message from server
      */
     public bool $DSN = false;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->fromEmail = getenv('EMAIL');
+    }
 }
