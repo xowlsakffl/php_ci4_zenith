@@ -276,7 +276,7 @@ class IntegrateController extends BaseController
                 }
 
                 if($row['status'] == 1 && ($row['company'] != '케어랩스' && $row['company'] != '테크랩스')){
-                    $data['company']['테크랩스'][$type]++;
+                    $data['company']['리스타'][$type]++;
                 }
             }
 
