@@ -23,7 +23,7 @@ class AutomationModel extends Model
         aa.mod_datetime as aa_mod_datetime, 
         aar.exec_timestamp as aar_exec_timestamp
         ');
-        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+        $builder->join('aa_result aar', 'aar.idx = aa.seq AND aar.result = "success"', 'left');
 
         if(!empty($data['searchData']['sdate']) && !empty($data['searchData']['edate'])){
             $builder->where('DATE(aa.mod_datetime) >=', $data['searchData']['sdate']);
