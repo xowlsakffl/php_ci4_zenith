@@ -92,8 +92,12 @@ class IntegrateModel extends Model
         }
 
         if(!empty($srch['company'])){
-            if($srch['company'] == '케어랩스' || $srch['company'] == '테크랩스'){
-                $builder->whereIn('info.partner_name', explode("|",$srch['company']));
+            $company = explode("|",$srch['company']);
+            $company = array_filter($company, function($value) {
+                return strpos($value, '리스타') === false;
+            });
+            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
+                $builder->whereIn('info.partner_name', $company);
             }
         }
 
@@ -182,8 +186,12 @@ class IntegrateModel extends Model
         }
 
         if(!empty($data['company'])){
-            if($data['company'] == '케어랩스' || $data['company'] == '테크랩스'){
-                $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            $company = explode("|",$data['company']);
+            $company = array_filter($company, function($value) {
+                return strpos($value, '리스타') === false;
+            });
+            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
+                $builder->whereIn('info.partner_name', $company);
             }
         }
 
@@ -257,8 +265,12 @@ class IntegrateModel extends Model
         }
 
         if(!empty($data['company'])){
-            if($data['company'] == '케어랩스' || $data['company'] == '테크랩스'){
-                $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            $company = explode("|",$data['company']);
+            $company = array_filter($company, function($value) {
+                return strpos($value, '리스타') === false;
+            });
+            if(in_array('케어랩스', $company) || in_array('테크랩스', $company)){
+                $builder->whereIn('info.partner_name', $company);
             }
         }
 
