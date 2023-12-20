@@ -263,20 +263,12 @@ class IntegrateController extends BaseController
                     $data['company']['테크랩스'][$type] = 0;
                 }
 
-                if (!isset($data['company']['리스타'])) {
-                    $data['company']['리스타'][$type] = 0;
-                }
-
                 if($row['status'] == 1 && $row['company'] == '케어랩스'){
                     $data['company']['케어랩스'][$type]++;
                 }
 
                 if($row['status'] == 1 && $row['company'] == '테크랩스'){
                     $data['company']['테크랩스'][$type]++;
-                }
-
-                if($row['status'] == 1 && ($row['company'] != '케어랩스' && $row['company'] != '테크랩스')){
-                    $data['company']['리스타'][$type]++;
                 }
             }
 
