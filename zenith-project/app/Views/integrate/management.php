@@ -518,7 +518,7 @@ function setLeadCount(data) { //Filter Count 표시
             if(v.count != v.total) cnt_txt = v.count + "/" + v.total;
             button = $(`#${type}-list .col[data-name="${v.label}"] button`);
             button.siblings('.progress').children('.txt').text(`${cnt_txt}`);
-            if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
+            if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.company == "" && tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
             if(v.count) button.addClass('on');
         });
     });
