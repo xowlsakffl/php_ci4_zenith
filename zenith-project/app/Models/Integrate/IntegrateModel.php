@@ -92,7 +92,9 @@ class IntegrateModel extends Model
         }
 
         if(!empty($srch['company'])){
-            $builder->whereIn('info.partner_name', explode("|",$srch['company']));
+            if($srch['company'] == '케어랩스' || $srch['company'] == '테크랩스'){
+                $builder->whereIn('info.partner_name', explode("|",$srch['company']));
+            }
         }
 
         if(!empty($srch['advertiser'])){
@@ -180,7 +182,9 @@ class IntegrateModel extends Model
         }
 
         if(!empty($data['company'])){
-            $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            if($data['company'] == '케어랩스' || $data['company'] == '테크랩스'){
+                $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            }
         }
 
         if(!empty($data['advertiser'])){
@@ -253,7 +257,9 @@ class IntegrateModel extends Model
         }
 
         if(!empty($data['company'])){
-            $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            if($data['company'] == '케어랩스' || $data['company'] == '테크랩스'){
+                $builder->whereIn('info.partner_name', explode("|",$data['company']));
+            }
         }
 
         if(!empty($data['advertiser'])){
