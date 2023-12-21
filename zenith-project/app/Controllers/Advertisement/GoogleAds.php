@@ -31,10 +31,10 @@ class GoogleAds extends BaseController
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트를 진행합니다.", "light_red");
         $result = $this->chainsaw->getAll();
         CLI::write("계정/계정예산/에셋/캠페인/그룹/소재/보고서 업데이트 완료", "yellow");
-        $paths = new Paths();
-        $log_file = fopen($paths->writableDirectory . '/logs/GoogleAdsGetAll.txt', 'a');
-        fwrite($log_file, $result . "\r\n\r\n");
-        fclose($log_file);
+        // $paths = new Paths();
+        // $log_file = fopen($paths->writableDirectory . '/logs/GoogleAdsGetAll.txt', 'a');
+        // fwrite($log_file, $result . "\r\n\r\n");
+        // fclose($log_file);
     }
 
     public function updateDB($sdate = null, $edate = null) {

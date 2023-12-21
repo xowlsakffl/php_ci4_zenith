@@ -149,11 +149,11 @@ class JiraController extends BaseController
                                 $this->sendSlackMessage($designerName, $sendText);
                             }
                         }else if($changeStatus == '10136'){//검수중
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'작업 결과물을 확인하신 후 Jira 이슈에 댓글로 피드백 남겨주세요.(피드백을 확인한 후 최종 완료로 처리됩니다.)', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName);
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName);
                             $this->sendSlackMessage($reporterName, $sendText);
 
                             if(!empty($designerName) && $reporterName != $designerName){
-                                $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 디자인 검수를 요청하였습니다.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $designerName);
+                                $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 디자인 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $designerName);
                                 $this->sendSlackMessage($designerName, $sendText);
                             }
                         }else if($changeStatus == '10132'){//완료됨
