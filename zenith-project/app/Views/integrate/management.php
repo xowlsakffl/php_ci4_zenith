@@ -56,7 +56,7 @@
             <button type="button" class="reset-btn">필터 초기화</button>
         </div>
     </div>
-    <?php if(getenv('MY_SERVER_NAME') === 'resta'){?>
+    <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
     <div class="section client-list">
         <h3 class="content-title toggle">
             <i class="bi bi-chevron-up"></i> 분류
@@ -99,7 +99,9 @@
                     <tr>
                         <th class="first">#</th>
                         <th>SEQ</th>
+                        <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
                         <th>분류</th>
+                        <?php }?></php>
                         <th>이벤트</th>
                         <th>광고주</th>
                         <th>매체</th>
@@ -204,13 +206,24 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
                 var phone = row.dec_phone.replace(regex, '$1');
                 var name = row.name.replace(regex, '$1');
 
-                arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
+                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
+                    arr.push([row.seq, row.company, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
+                <?php }else{?>
+                    arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
+                <?php }?>
             });
         },
         "async": false
     });
+    let headerArray = [];
+    <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
+        headerArray = ["고유번호","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+    <?php }else{?>
+        headerArray = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+    <?php }?>
+    
     // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
-    return {body: arr , header: ["고유번호","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"]};
+    return {body: arr , header: headerArray};
 } );
 function getList(data = []) { //리스트 세팅
     dataTable = $('#deviceTable').DataTable({
@@ -232,6 +245,7 @@ function getList(data = []) { //리스트 세팅
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
             //if($('#advertiser-list>div').is(':visible')) {
+                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
                 data.searchData = {
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
@@ -242,6 +256,17 @@ function getList(data = []) { //리스트 세팅
                     'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
                     'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
                 };
+                <?php }else{?>
+                data.searchData = {
+                    'sdate': $('#sdate').val(),
+                    'edate': $('#edate').val(),
+                    'stx': $('#stx').val(),
+                    'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+                };
+                <?php }?>
                 tableParam = data;
                 debug(tableParam.searchData);
             //}
@@ -297,6 +322,7 @@ function getList(data = []) { //리스트 세팅
         "columns": [
             { "data": null , "width": "35px"},
             { "data": "seq" , "width": "40px"},
+            <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
             { 
                 "data": null , 
                 "width": "35px",
@@ -312,6 +338,7 @@ function getList(data = []) { //리스트 세팅
                     return company;
                 }
             },
+            <?php }?>
             { "data": "info_seq", "width": "45px",
                 "render": function(data) {
                 return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';

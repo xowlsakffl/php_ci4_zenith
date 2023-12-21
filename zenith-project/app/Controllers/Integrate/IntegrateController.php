@@ -247,13 +247,15 @@ class IntegrateController extends BaseController
     private function setCount($leads, $type)
     {
         $data = [
-            'company' => [],
             'advertiser' => [],
             'media' => [],
             'event' => [],
         ];
+        if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
+            $data['company'] = [];
+        }
         foreach($leads as $row) {
-            if(getenv('MY_SERVER_NAME') === 'resta'){
+            if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){
             //분류 기준
                 if (!isset($data['company']['리스타'])) {
                     $data['company']['리스타'][$type] = 0;
