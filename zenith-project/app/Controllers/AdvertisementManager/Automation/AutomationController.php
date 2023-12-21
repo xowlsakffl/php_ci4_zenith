@@ -190,6 +190,14 @@ class AutomationController extends BaseController
                     break;
             }
 
+            foreach ($result['data'] as &$row) {
+                if(isset($row['status']) && $row['status'] == 1 || $row['status'] == 'ON' || $row['status'] == 'ENABLED' || $row['status'] == 'ACTIVE'){
+                    $row['status'] = '활성';
+                }else{
+                    $row['status'] = '비활성';
+                }
+            }
+
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],

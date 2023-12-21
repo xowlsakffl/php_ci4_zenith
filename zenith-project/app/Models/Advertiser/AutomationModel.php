@@ -82,7 +82,7 @@ class AutomationModel extends Model
         }
 
         $builder = $this->zenith->table('companies A');
-        $builder->select('A.id, "광고주" AS media, A.type, A.name, IF(A.status = 1, "활성", "비활성") AS status');
+        $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
 
         if(!empty($seq)){
             $builder->where('A.id', $seq);
@@ -182,7 +182,7 @@ class AutomationModel extends Model
         }
 
         $facebookBuilder = $this->zenith->table('z_facebook.fb_ad_account A');
-        $facebookBuilder->select('A.ad_account_id AS id, "페이스북" AS media, "매체광고주" AS type, A.name AS name, IF(A.status = 1, "활성", "비활성") AS status');
+        $facebookBuilder->select('A.ad_account_id AS id, "페이스북" AS media, "매체광고주" AS type, A.name AS name, A.status AS status');
         if(!empty($seq)){
             $facebookBuilder->where('A.ad_account_id', $seq);
         }
@@ -218,7 +218,7 @@ class AutomationModel extends Model
         }
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_ad_account A');
-        $googleBuilder->select('A.customerId as id, "구글" AS media, "매체광고주" AS type, A.name, IF(A.status = "ENABLED", "활성", "비활성") AS status');
+        $googleBuilder->select('A.customerId as id, "구글" AS media, "매체광고주" AS type, A.name, A.status AS status');
         if(!empty($seq)){
             $googleBuilder->where('A.customerId', $seq);
         }
@@ -254,7 +254,7 @@ class AutomationModel extends Model
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_ad_account A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, IF(A.config = "ON", "활성", "비활성") AS status');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, A.config AS status');
         if(!empty($seq)){
             $kakaoBuilder->where('A.id', $seq);
         }
@@ -325,7 +325,7 @@ class AutomationModel extends Model
         }
 
         $facebookBuilder = $this->zenith->table('z_facebook.fb_campaign A');
-        $facebookBuilder->select('A.campaign_id AS id, "페이스북" AS media, "캠페인" AS type, A.campaign_name AS name, IF(A.status = "ACTIVE", "활성", "비활성") AS status');
+        $facebookBuilder->select('A.campaign_id AS id, "페이스북" AS media, "캠페인" AS type, A.campaign_name AS name, A.status AS status');
         if(!empty($seq)){
             $facebookBuilder->where('A.campaign_id', $seq);
         }
@@ -362,7 +362,7 @@ class AutomationModel extends Model
         }
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_campaign A');
-        $googleBuilder->select('A.id, "구글" AS media, "캠페인" AS type, A.name, IF(A.status = "ENABLED", "활성", "비활성") AS status');
+        $googleBuilder->select('A.id, "구글" AS media, "캠페인" AS type, A.name, A.status AS status');
         if(!empty($seq)){
             $googleBuilder->where('A.id', $seq);
         }
@@ -399,7 +399,7 @@ class AutomationModel extends Model
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_campaign A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "캠페인" AS type, A.name, IF(A.config = "ON", "활성", "비활성") AS status');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "캠페인" AS type, A.name, A.config AS status');
         if(!empty($seq)){
             $kakaoBuilder->where('A.id', $seq);
         }
@@ -471,7 +471,7 @@ class AutomationModel extends Model
         }
 
         $facebookBuilder = $this->zenith->table('z_facebook.fb_adset A');
-        $facebookBuilder->select('A.adset_id AS id, "페이스북" AS media, "광고그룹" AS type, A.adset_name AS name, IF(A.status = "ACTIVE", "활성", "비활성") AS status');
+        $facebookBuilder->select('A.adset_id AS id, "페이스북" AS media, "광고그룹" AS type, A.adset_name AS name, A.status AS status');
         if(!empty($seq)){
             $facebookBuilder->where('A.adset_id', $seq);
         }
@@ -510,7 +510,7 @@ class AutomationModel extends Model
         }
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_adgroup A');
-        $googleBuilder->select('A.id, "구글" AS media, "광고그룹" AS type, A.name, IF(A.status = "ENABLED", "활성", "비활성") AS status');
+        $googleBuilder->select('A.id, "구글" AS media, "광고그룹" AS type, A.name, A.status AS status');
         if(!empty($seq)){
             $googleBuilder->where('A.id', $seq);
         }
@@ -549,7 +549,7 @@ class AutomationModel extends Model
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_adgroup A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "광고그룹" AS type, A.name, IF(A.config = "ON", "활성", "비활성") AS status');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "광고그룹" AS type, A.name, A.config AS status');
         if(!empty($seq)){
             $kakaoBuilder->where('A.id', $seq);
         }
@@ -622,7 +622,7 @@ class AutomationModel extends Model
         }
 
         $facebookBuilder = $this->zenith->table('z_facebook.fb_ad A');
-        $facebookBuilder->select('A.ad_id AS id, "페이스북" AS media, "광고" AS type, A.ad_name AS name, IF(A.status = "ACTIVE", "활성", "비활성") AS status');
+        $facebookBuilder->select('A.ad_id AS id, "페이스북" AS media, "광고" AS type, A.ad_name AS name, A.status AS status');
         if(!empty($seq)){
             $facebookBuilder->where('A.ad_id', $seq);
         }
@@ -662,7 +662,7 @@ class AutomationModel extends Model
         }
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_ad A');
-        $googleBuilder->select('A.id, "구글" AS media, "광고" AS type, A.name, IF(A.status = "ENABLED", "활성", "비활성") AS status');
+        $googleBuilder->select('A.id, "구글" AS media, "광고" AS type, A.name, A.status AS status');
         if(!empty($seq)){
             $googleBuilder->where('A.id', $seq);
         }
@@ -701,7 +701,7 @@ class AutomationModel extends Model
         }
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_creative A');
-        $kakaoBuilder->select('A.id, "카카오" AS media, "광고" AS type, A.name, IF(A.config = "ON", "활성", "비활성") AS status');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "광고" AS type, A.name, A.config AS status');
         if(!empty($seq)){
             $kakaoBuilder->where('A.id', $seq);
         }
