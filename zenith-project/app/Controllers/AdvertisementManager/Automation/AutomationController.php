@@ -168,22 +168,41 @@ class AutomationController extends BaseController
     {
         if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
-            dd($arg);
             switch ($arg['tab']) {
                 case 'advertiser':
-                    $result = $this->automation->getSearchCompanies($arg, null);                
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchCompaniesWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchCompanies($arg);  
+                    }
                     break;
                 case 'account':
-                    $result = $this->automation->getSearchAccounts($arg, null);                
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAccountsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAccounts($arg);  
+                    }              
                     break;
                 case 'campaign':
-                    $result = $this->automation->getSearchCampaigns($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchCampaignsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchCampaigns($arg);  
+                    } 
                     break;
                 case 'adgroup':
-                    $result = $this->automation->getSearchAdsets($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAdsetsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAdsets($arg);  
+                    } 
                     break;
                 case 'ad':
-                    $result = $this->automation->getSearchAds($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAdsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAds($arg);  
+                    } 
                     break;
                 default:
                     return $this->fail("잘못된 요청");

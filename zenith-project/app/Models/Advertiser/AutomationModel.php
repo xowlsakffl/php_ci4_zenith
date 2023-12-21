@@ -77,10 +77,6 @@ class AutomationModel extends Model
 
     public function getSearchCompanies($data = null)
     {
-        if(!empty($data['adv'])){
-            list($media, $type, $id) = explode("_", $data['adv']);
-        }
-
         $builder = $this->zenith->table('companies A');
         $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
 
@@ -89,61 +85,6 @@ class AutomationModel extends Model
             $builder->like('A.name', $data['stx']);
             $builder->orLike('A.id', $data['stx']);
             $builder->groupEnd();
-        }
-
-        if(!empty($data['adv'])){
-            if($media == '광고주'){
-                $builder->where('A.id', $id);
-            }else{
-                $builder->join('company_adaccounts AS B', 'A.id = B.company_id');
-                if($media == '페이스북'){
-                    $builder->join('z_facebook.fb_ad_account AS C', 'B.ad_account_id = C.ad_account_id', 'left');
-                    $builder->join('z_facebook.fb_campaign AS D', 'C.ad_account_id = D.account_id', 'left');
-                    $builder->join('z_facebook.fb_adset AS E', 'D.campaign_id = E.campaign_id', 'left');
-                    $builder->join('z_facebook.fb_ad AS F', 'E.adset_id = F.adset_id', 'left');
-                    if($type == '매체광고주'){
-                        $builder->where('C.ad_account_id', $id);
-                    }else if($type == '캠페인'){
-                        $builder->where('D.campaign_id', $id);
-                    }else if($type == '광고그룹'){
-                        $builder->where('E.adset_id', $id);
-                    }else if($type == '광고'){
-                        $builder->where('F.ad_id', $id);
-                    }
-                }
-                
-                if($media == '구글'){
-                    $builder->join('z_adwords.aw_ad_account AS C', 'B.ad_account_id = C.customerId', 'left');
-                    $builder->join('z_adwords.aw_campaign AS D', 'C.customerId = D.customerId', 'left');
-                    $builder->join('z_adwords.aw_adgroup AS E', 'D.id = E.campaignId', 'left');
-                    $builder->join('z_adwords.aw_ad AS F', 'E.id = F.adgroupId', 'left');
-                    if($type == '매체광고주'){
-                        $builder->where('C.customerId', $id);
-                    }else if($type == '캠페인'){
-                        $builder->where('D.id', $id);
-                    }else if($type == '광고그룹'){
-                        $builder->where('E.id', $id);
-                    }else if($type == '광고'){
-                        $builder->where('F.id', $id);
-                    }
-                }
-
-                if($media == '카카오'){
-                    $builder->join('z_moment.mm_ad_account AS C', 'B.ad_account_id = C.id', 'left');
-                    $builder->join('z_moment.mm_campaign AS D', 'C.id = D.ad_account_id', 'left');
-                    $builder->join('z_moment.mm_adgroup AS E', 'D.id = E.campaign_id', 'left');
-                    $builder->join('z_moment.mm_creative AS F', 'E.id = F.adgroup_id', 'left');
-                    if($type == '매체광고주'){
-                        $builder->where('C.id', $id);
-                    }else if($type == '캠페인'){
-                        $builder->where('D.id', $id);
-                    }else if($type == '광고그룹'){
-                        $builder->where('E.id', $id);
-                    }else if($type == '광고'){
-                        $builder->where('F.id', $id);
-                    }
-                }
-            }
         }
         
         $builder->groupBy('A.id');
@@ -167,11 +108,11 @@ class AutomationModel extends Model
         ];
     }
 
-    public function getSearchCompaniesById($seq)
+    public function getSearchCompaniesById($id)
     {
         $builder = $this->zenith->table('companies A');
         $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
-        $builder->where('A.id', $seq);
+        $builder->where('A.id', $id);
 
         $result = $builder->get()->getRowArray();
         return $result;
@@ -188,11 +129,6 @@ class AutomationModel extends Model
 
             $builder = $this->zenith->table('companies A');
             $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
-
-            $builder->groupStart();
-            $builder->like('A.name', $data['stx']);
-            $builder->orLike('A.id', $data['stx']);
-            $builder->groupEnd();
         
             if($media == '광고주'){
                 $builder->where('A.id', $id);
@@ -294,9 +230,6 @@ class AutomationModel extends Model
 
         $facebookBuilder = $this->zenith->table('z_facebook.fb_ad_account A');
         $facebookBuilder->select('A.ad_account_id AS id, "페이스북" AS media, "매체광고주" AS type, A.name AS name, A.status AS status');
-        if(!empty($seq)){
-            $facebookBuilder->where('A.ad_account_id', $seq);
-        }
         if(!empty($data['adv'])){
             if($type == '광고주'){
                 $facebookBuilder->join('zenith.company_adaccounts AS E', 'A.ad_account_id = E.ad_account_id', 'left');
@@ -330,9 +263,6 @@ class AutomationModel extends Model
 
         $googleBuilder = $this->zenith->table('z_adwords.aw_ad_account A');
         $googleBuilder->select('A.customerId as id, "구글" AS media, "매체광고주" AS type, A.name, A.status AS status');
-        if(!empty($seq)){
-            $googleBuilder->where('A.customerId', $seq);
-        }
         if(!empty($data['adv'])){ 
             if($type == '광고주'){
                 $googleBuilder->join('zenith.company_adaccounts AS E', 'A.customerId = E.ad_account_id', 'left');
@@ -366,9 +296,6 @@ class AutomationModel extends Model
 
         $kakaoBuilder = $this->zenith->table('z_moment.mm_ad_account A');
         $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, A.config AS status');
-        if(!empty($seq)){
-            $kakaoBuilder->where('A.id', $seq);
-        }
         if(!empty($data['adv'])){
             if($type == '광고주'){
                 $kakaoBuilder->join('zenith.company_adaccounts AS E', 'A.id = E.ad_account_id', 'left');
@@ -406,11 +333,6 @@ class AutomationModel extends Model
 
         $resultQuery->groupBy('adv.id');
 
-        if(!empty($seq)){
-            $result = $resultQuery->get()->getRowArray();
-            return $result;
-        }
-
         $builderNoLimit = clone $resultQuery;
         $orderBy = [];
         if(!empty($data['order'])) {
@@ -427,6 +349,174 @@ class AutomationModel extends Model
             'data' => $result,
             'allCount' => $resultNoLimit
         ];
+    }
+
+    public function getSearchAccountsById($id)
+    {
+        $facebookBuilder = $this->zenith->table('z_facebook.fb_ad_account A');
+        $facebookBuilder->select('A.ad_account_id AS id, "페이스북" AS media, "매체광고주" AS type, A.name AS name, A.status AS status');
+        $facebookBuilder->where('A.ad_account_id', $id);
+
+        $googleBuilder = $this->zenith->table('z_adwords.aw_ad_account A');
+        $googleBuilder->select('A.customerId as id, "구글" AS media, "매체광고주" AS type, A.name, A.status AS status');
+        $googleBuilder->where('A.customerId', $id);
+        
+        $kakaoBuilder = $this->zenith->table('z_moment.mm_ad_account A');
+        $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, A.config AS status');
+        $kakaoBuilder->where('A.id', $id);
+
+        $facebookBuilder->union($googleBuilder)->union($kakaoBuilder);
+        $resultQuery = $this->zenith->newQuery()->fromSubquery($facebookBuilder, 'adv');
+
+        $resultQuery->groupBy('adv.id');
+
+        $result = $resultQuery->get()->getRowArray();
+        return $result;
+        
+    }
+
+    public function getSearchAccountsWithAdv($data)
+    {
+        if(empty($data['adv'])){return false;}
+
+        $builders = [];
+        foreach ($data['adv'] as $adv) {
+            list($media, $type, $id) = explode("_", $adv);
+
+            $facebookBuilder = $this->zenith->table('z_facebook.fb_ad_account A');
+            $facebookBuilder->select('A.ad_account_id AS id, "페이스북" AS media, "매체광고주" AS type, A.name AS name, A.status AS status');
+            if($type == '광고주'){
+                $facebookBuilder->join('zenith.company_adaccounts AS E', 'A.ad_account_id = E.ad_account_id', 'left');
+                $facebookBuilder->where('E.company_id', $id);
+            }else{
+                $facebookBuilder->join('z_facebook.fb_campaign AS B', 'A.ad_account_id = B.account_id', 'left');
+                $facebookBuilder->join('z_facebook.fb_adset AS C', 'B.campaign_id = C.campaign_id', 'left');
+                $facebookBuilder->join('z_facebook.fb_ad AS D', 'C.adset_id = D.adset_id', 'left');
+
+                if($media == '페이스북'){
+                    if($type == '매체광고주'){
+                        $facebookBuilder->where('A.ad_account_id', $id);
+                    }else if($type == '캠페인'){
+                        $facebookBuilder->where('B.campaign_id', $id);
+                    }else if($type == '광고그룹'){
+                        $facebookBuilder->where('C.adset_id', $id);
+                    }else if($type == '광고'){
+                        $facebookBuilder->where('D.ad_id', $id);
+                    }
+                }else{
+                    $facebookBuilder->where('1 = 2');
+                }
+            }
+            
+            if(!empty($data['stx'])){
+                $facebookBuilder->groupStart();
+                $facebookBuilder->like('A.name', $data['stx']);
+                $facebookBuilder->orLike('A.ad_account_id', $data['stx']);
+                $facebookBuilder->groupEnd();
+            }
+
+            $googleBuilder = $this->zenith->table('z_adwords.aw_ad_account A');
+            $googleBuilder->select('A.customerId as id, "구글" AS media, "매체광고주" AS type, A.name, A.status AS status');
+            if($type == '광고주'){
+                $googleBuilder->join('zenith.company_adaccounts AS E', 'A.customerId = E.ad_account_id', 'left');
+                $googleBuilder->where('E.company_id', $id);
+            }else{
+                $googleBuilder->join('z_adwords.aw_campaign AS B', 'A.customerId = B.customerId', 'left');
+                $googleBuilder->join('z_adwords.aw_adgroup AS C', 'B.id = C.campaignId', 'left');
+                $googleBuilder->join('z_adwords.aw_ad AS D', 'C.id = D.adgroupId', 'left');
+
+                if($media == '구글'){
+                    if($type == '매체광고주'){
+                        $googleBuilder->where('A.customerId', $id);
+                    }else if($type == '캠페인'){
+                        $googleBuilder->where('B.id', $id);
+                    }else if($type == '광고그룹'){
+                        $googleBuilder->where('C.id', $id);
+                    }else if($type == '광고'){
+                        $googleBuilder->where('D.id', $id);
+                    }
+                }else{
+                    $googleBuilder->where('1 = 2');
+                }
+            }
+            
+            if(!empty($data['stx'])){
+                $googleBuilder->groupStart();
+                $googleBuilder->like('A.name', $data['stx']);
+                $googleBuilder->orLike('A.customerId', $data['stx']);
+                $googleBuilder->groupEnd();
+            }
+
+            $kakaoBuilder = $this->zenith->table('z_moment.mm_ad_account A');
+            $kakaoBuilder->select('A.id, "카카오" AS media, "매체광고주" AS type, A.name, A.config AS status');
+            if($type == '광고주'){
+                $kakaoBuilder->join('zenith.company_adaccounts AS E', 'A.id = E.ad_account_id', 'left');
+                $kakaoBuilder->where('E.company_id', $id);
+            }else{
+                $kakaoBuilder->join('z_moment.mm_campaign AS B', 'A.id = B.ad_account_id', 'left');
+                $kakaoBuilder->join('z_moment.mm_adgroup AS C', 'B.id = C.campaign_id', 'left');
+                $kakaoBuilder->join('z_moment.mm_creative AS D', 'C.id = D.adgroup_id', 'left');
+
+                if($media == '카카오'){
+                    if($type == '매체광고주'){
+                        $kakaoBuilder->where('A.id', $id);
+                    }else if($type == '캠페인'){
+                        $kakaoBuilder->where('B.id', $id);
+                    }else if($type == '광고그룹'){
+                        $kakaoBuilder->where('C.id', $id);
+                    }else if($type == '광고'){
+                        $kakaoBuilder->where('D.id', $id);
+                    }
+                }else{
+                    $kakaoBuilder->where('1 = 2');
+                }
+            }
+            
+
+            if(!empty($data['stx'])){
+                $kakaoBuilder->groupStart();
+                $kakaoBuilder->like('A.name', $data['stx']);
+                $kakaoBuilder->orLike('A.id', $data['stx']);
+                $kakaoBuilder->groupEnd();
+            }
+
+            $builders[] = $builder;
+        }
+        
+        $unionBuilder = null;
+        foreach ($builders as $builder) {
+            if ($unionBuilder) {
+                $unionBuilder->union($builder);
+                
+            } else {
+                $unionBuilder = $builder;
+            }
+        }
+
+        if($unionBuilder){
+            $resultQuery = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
+            $resultQuery->groupBy('A.id');
+
+            $builderNoLimit = clone $resultQuery;
+            $orderBy = [];
+            if(!empty($data['order'])) {
+                foreach($data['order'] as $row) {
+                    $col = $data['columns'][$row['column']]['data'];
+                    if($col) $orderBy[] = "{$col} {$row['dir']}";
+                }
+            }
+            $resultQuery->orderBy(implode(",", $orderBy),'',true);
+            if($data['length'] > 0) $resultQuery->limit($data['length'], $data['start']);
+            $result = $resultQuery->get()->getResultArray();
+            $resultNoLimit = $builderNoLimit->countAllResults();
+    
+            return [
+                'data' => $result,
+                'allCount' => $resultNoLimit
+            ];
+        }else{
+            return null;
+        }
     }
 
     public function getSearchCampaigns($data = null, $seq = null)
@@ -910,22 +1000,22 @@ class AutomationModel extends Model
                     $result['aat_status'] = $target['status'];
                     break;
                 case 'account':
-                    $target = $this->getSearchAccounts(null, $result['aat_id']);
+                    $target = $this->getSearchAccountsById($result['aat_id']);
                     $result['aat_name'] = $target['name'];
                     $result['aat_status'] = $target['status'];
                     break;
                 case 'campaign':
-                    $target = $this->getSearchCampaigns(null, $result['aat_id']);
+                    $target = $this->getSearchCampaignsById($result['aat_id']);
                     $result['aat_name'] = $target['name'];
                     $result['aat_status'] = $target['status'];
                     break;
                 case 'adgroup':
-                    $target = $this->getSearchAdsets(null, $result['aat_id']);
+                    $target = $this->getSearchAdsetsById($result['aat_id']);
                     $result['aat_name'] = $target['name'];
                     $result['aat_status'] = $target['status'];
                     break;
                 case 'ad':
-                    $target = $this->getSearchAds(null, $result['aat_id']);
+                    $target = $this->getSearchAdsById($result['aat_id']);
                     $result['aat_name'] = $target['name'];
                     $result['aat_status'] = $target['status'];
                     break;
@@ -946,17 +1036,17 @@ class AutomationModel extends Model
             foreach ($result['executions'] as &$execution) {
                 switch ($execution['type']) {
                     case 'campaign':
-                        $executionResult = $this->getSearchCampaigns(null, $execution['id']);
+                        $executionResult = $this->getSearchCampaignsById($execution['id']);
                         $execution['name'] = $executionResult['name'];
                         $execution['status'] = $executionResult['status'];
                         break;
                     case 'adgroup':
-                        $executionResult = $this->getSearchAdsets(null, $execution['id']);
+                        $executionResult = $this->getSearchAdsetsById($execution['id']);
                         $execution['name'] = $executionResult['name'];
                         $execution['status'] = $executionResult['status'];
                         break;
                     case 'ad':
-                        $executionResult = $this->getSearchAds(null, $execution['id']);
+                        $executionResult = $this->getSearchAdsById($execution['id']);
                         $execution['name'] = $executionResult['name'];
                         $execution['status'] = $executionResult['status'];
                         break;
