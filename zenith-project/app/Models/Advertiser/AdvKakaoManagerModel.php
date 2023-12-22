@@ -201,6 +201,7 @@ class AdvKakaoManagerModel extends Model
         sub.name AS name, 
         sub.status AS status, 
         sub.budget AS budget, 
+        "" AS biddingStrategyType,
         sub.bidamount AS bidamount, 
 		"" AS bidamount_type,
         sub.impressions, 

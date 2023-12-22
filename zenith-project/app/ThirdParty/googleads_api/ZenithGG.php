@@ -416,7 +416,7 @@ class ZenithGG
     {
         self::setCustomerId($loginCustomerId);
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
-        $query = 'SELECT campaign.id, ad_group.id, ad_group.name, ad_group.status, ad_group.type, bidding_strategy.id, ad_group.cpc_bid_micros, ad_group.cpm_bid_micros, ad_group.target_cpa_micros FROM ad_group WHERE ad_group.status IN ("ENABLED","PAUSED","REMOVED") ';
+        $query = 'SELECT campaign.id, ad_group.id, ad_group.name, ad_group.status, ad_group.type, bidding_strategy.id, campaign.bidding_strategy_type, ad_group.cpc_bid_micros, ad_group.cpm_bid_micros, ad_group.target_cpa_micros FROM ad_group WHERE ad_group.status IN ("ENABLED","PAUSED","REMOVED") ';
         if ($campaignId !== null) {
             $query .= " AND campaign.id = $campaignId";
         }
@@ -425,6 +425,11 @@ class ZenithGG
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $g = $googleAdsRow->getAdGroup();
             $c = $googleAdsRow->getCampaign();
+            $biddingStrategyType = '';
+            if ($c->getBiddingStrategyType()) {
+                $biddingStrategyType = BiddingStrategyType::name($c->getBiddingStrategyType());
+            }
+
             //$bid = $googleAdsRow->getBiddingStrategy();
             $cpcBidAmount = 0;
             $cpmBidAmount = 0;
@@ -436,13 +441,14 @@ class ZenithGG
                 $cpmBidAmount = $g->getCpmBidMicros() / 1000000;
             }
 
+            
             $data = [
                 'campaignId' => $c->getId(), 
                 'id' => $g->getId(), 
                 'name' => $g->getName(), 
                 'status' => AdGroupStatus::name($g->getStatus()), 
                 'adGroupType' => AdGroupType::name($g->getType()),
-                'biddingStrategyType' => $c->getCampaignBiddingStrategy() ?? '', 
+                'biddingStrategyType' => $biddingStrategyType, 
                 'cpcBidAmount' => $cpcBidAmount,
                 'cpcBidSource' => '',
                 'cpmBidAmount' => $cpmBidAmount,

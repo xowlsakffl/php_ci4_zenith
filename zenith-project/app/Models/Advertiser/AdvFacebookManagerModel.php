@@ -204,6 +204,7 @@ class AdvFacebookManagerModel extends Model
 			sub.name AS name, 
 			sub.status AS status, 
 			sub.budget AS budget, 
+			"" AS biddingStrategyType,
 			0 AS bidamount, 
 			"" AS bidamount_type,
 			sub.impressions, 

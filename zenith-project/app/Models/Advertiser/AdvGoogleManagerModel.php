@@ -197,14 +197,15 @@ class AdvGoogleManagerModel extends Model
 		C.id AS id, 
 		C.name AS name, 
 		C.status AS status, 
+		C.biddingStrategyType AS biddingStrategyType,
 		CASE 
-			WHEN C.cpcBidAmount <> 0 THEN C.cpcBidAmount
-			WHEN C.cpaBidAmount <> 0 THEN C.cpaBidAmount
+			WHEN C.cpcBidAmount >= C.cpmBidAmount THEN C.cpcBidAmount
+			WHEN C.cpcBidAmount < C.cpmBidAmount THEN C.cpmBidAmount
 			ELSE 0
 		END AS bidamount,
 		CASE 
-			WHEN C.cpcBidAmount <> 0 THEN "cpc"
-			WHEN C.cpaBidAmount <> 0 THEN "cpa"
+			WHEN C.cpcBidAmount >= C.cpmBidAmount THEN "cpc"
+			WHEN C.cpcBidAmount < C.cpmBidAmount THEN "cpm"
 			ELSE ""
 		END AS bidamount_type,
 		SUM(A.impressions) AS impressions, 
@@ -233,6 +234,7 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.status,
 		0 AS budget,
+		sub.biddingStrategyType AS biddingStrategyType,
 		sub.bidamount AS bidamount,
 		sub.bidamount_type,
 		sub.impressions, 
