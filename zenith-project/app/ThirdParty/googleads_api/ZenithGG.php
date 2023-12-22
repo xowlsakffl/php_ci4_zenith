@@ -252,9 +252,9 @@ class ZenithGG
         $result = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $c = $googleAdsRow->getCampaign();
-            $targetCpa = 0;
-            if(!empty($c->getTargetCpa()->getTargetCpaMicros())){
-                $targetCpa = $c->getTargetCpa()->getTargetCpaMicros() / 1000000;
+            $targetCpa = $c->getTargetCpa()->getTargetCpaMicros() ?? 0;
+            if(!empty($targetCpa)){
+                $targetCpa = $targetCpa / 1000000;
             }
             $budget = $googleAdsRow->getCampaignBudget();
             $advertisingChannelType = ($c->getAdvertisingChannelType() <= 11) ? AdvertisingChannelType::name($c->getAdvertisingChannelType()) : $c->getAdvertisingChannelType();
