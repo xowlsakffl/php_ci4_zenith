@@ -185,7 +185,7 @@ class GADB
 			'advertisingChannelType' => $data['advertisingChannelType'],
 			'advertisingChannelSubType' => $data['advertisingChannelSubType'],
 			'adServingOptimizationStatus' => $data['adServingOptimizationStatus'],
-			'cpaBidAmount' => (integer)$data['cpaBidAmount'],
+			'cpaBidAmount' => (integer)$data['cpaBidAmount'] ?? 0,
 		];
 
 		$result = $this->db->query($sql, $params);
