@@ -76,7 +76,14 @@
 		color: #ce1922;
 		border-color: #ce1922;
 	}
-
+    .bidamount_type{
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 10px;
+        color: blue;
+        font-weight: bold;
+    }
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
@@ -216,6 +223,7 @@
                                 <th scope="col">상태</th>
                                 <th scope="col">ID</th>
                                 <th scope="col">예산</th>
+                                <th scope="col">입찰가</th>
                                 <th scope="col">현재<br>DB단가</th>
                                 <th scope="col">유효<br>DB</th>
                                 <th scope="col">지출액</th>
@@ -233,6 +241,7 @@
                                 <td id="total-count"></td>
                                 <td colspan="2"></td>
                                 <td id="total-budget"></td>
+                                <td id="total-bidamount"></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -651,6 +660,17 @@ function getList(data = []){
                 },
             },
             { 
+                "data": "bidamount", //입찰가
+                "width": "80px",
+                "render": function (data, type, row) {
+                    bidamount = '<div class="bidamount">'+(row.bidamount == 0 ? '-' : '<p data-editable="true">\u20A9'+row.bidamount+'</p>')+'</div>';
+                    if(row.bidamount_type){
+                        bidamount+= '<div class="bidamount_type">'+row.bidamount_type+'</div>';
+                    }
+                    return bidamount;
+                },
+            },
+            { 
                 "data": "cpa", //현재 DB단가
                 "width": "70px",
                 "render": function (data, type, row) {
@@ -773,7 +793,8 @@ function setTotal(res){
         }
 
         $('#total-count').text(res.data.length+"건 결과");
-        $(' #total-budget').text('\u20A9'+res.total.budget);//예산
+        $('#total-budget').text('\u20A9'+res.total.budget);//예산
+        $(' #total-bidamount').text('\u20A9'+res.total.bidamount);//입찰가
         $('#avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
         $('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
         $('#total-spend').text('\u20A9'+res.total.spend);
@@ -1518,6 +1539,98 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                             $('.budget p').attr("data-editable", "true");
                             var $new_p = $('<p data-editable="true">');
                             $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                            $input.replaceWith($new_p);
+                        }
+                    },
+                    error: function(error, status, msg){
+                        alert("상태코드 " + status + "에러메시지" + msg );
+                    }
+                });
+            }
+        }
+    });
+});
+
+$(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){  
+    $this = $(this);
+    $id = $this.closest("tr").data('id');
+    $customer = $this.closest("tr").data('customerid');
+    $amount_type = $this.closest("tr").find('.bidamount_type').text();
+    console.log($amount_type);
+    budgetTxt = $this.text();
+    c_bidamount = budgetTxt.replace(/[^0-9,]/g, "");
+    if (!c_bidamount) return;
+
+    $('.bidamount p[data-editable="true"]').attr("data-editable", "false");
+    $input = $('<input type="text" style="width:100%">');
+    $input.val(c_bidamount);
+    $(this).replaceWith($input);
+    $input.focus();
+    $input.on('keydown blur', function(e) {
+        if (e.type === 'keydown') {
+            $input.number(true);
+            if (e.keyCode == 27) {
+                // ESC Key
+                $('.bidamount p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_bidamount, $input);
+            } else if (e.keyCode == 13) {
+                new_bidamount = $input.val();
+                data = {
+                    'id': $id,
+                    'customer': $customer,
+                    'tab': $('.tab-link.active').val(),
+                    'bidamount': new_bidamount,
+                    'bidamount_type': $amount_type ? $amount_type : '',
+                };
+
+                if (c_bidamount.replace(",", "") === new_bidamount) {
+                    $('.bidamount p').attr("data-editable", "true");
+                    restoreElement('\u20A9'+c_bidamount, $input);
+                } else {
+                    $.ajax({
+                        type: "put",
+                        url: "<?=base_url()?>/advertisements/set-bidamount",
+                        data: data,
+                        dataType: "json",
+                        success: function(response){  
+                            if(response == true) {
+                                $('.bidamount p').attr("data-editable", "true");
+                                var $new_p = $('<p data-editable="true">');
+                                $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                                $input.replaceWith($new_p);
+                            }
+                        },
+                        error: function(error, status, msg){
+                            alert("상태코드 " + status + "에러메시지" + msg );
+                        }
+                    });
+                }
+            }
+        } else if (e.type === 'blur') {
+            $input.number(true);
+            new_bidamount = $input.val();
+            data = {
+                'id': $id,
+                'customer': $customer,
+                'tab': $('.tab-link.active').val(),
+                'bidamount': new_bidamount,
+                'bidamount_type': $amount_type ? $amount_type : '',
+            };
+
+            if (c_bidamount.replace(",", "") === new_bidamount) {
+                $('.bidamount p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_bidamount, $input);
+            } else {
+                $.ajax({
+                    type: "put",
+                    url: "<?=base_url()?>/advertisements/set-bidamount",
+                    data: data,
+                    dataType: "json",
+                    success: function(response){  
+                        if(response == true) {
+                            $('.bidamount p').attr("data-editable", "true");
+                            var $new_p = $('<p data-editable="true">');
+                            $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
                     },

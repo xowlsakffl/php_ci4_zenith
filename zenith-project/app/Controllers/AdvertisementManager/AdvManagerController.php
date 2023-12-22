@@ -71,6 +71,7 @@ class AdvManagerController extends BaseController
 				}
 
 				foreach ($result['data'] as &$value) {
+                    $value['bidamount'] = number_format($value['bidamount']);
 					$value['budget'] = number_format($value['budget']);
 					$value['impressions'] = number_format($value['impressions']);
 					$value['click'] = number_format($value['click']);
@@ -89,7 +90,7 @@ class AdvManagerController extends BaseController
 				$result['media_accounts'] = $this->getMediaAccounts($arg);
 				$result['report'] = $this->getReport($arg);
 			}
-            
+
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -424,6 +425,7 @@ class AdvManagerController extends BaseController
         $total['unique_total'] = 0;
         $total['sales'] = 0;
         $total['budget'] = 0;
+        $total['bidamount'] = 0;
         $total['cpc'] = 0;
         $total['ctr'] = 0;
         $total['cpa'] = 0;
@@ -441,6 +443,7 @@ class AdvManagerController extends BaseController
             $total['margin'] +=$data['margin'];
             $total['unique_total'] +=$data['unique_total'];
             $total['sales'] +=$data['sales'];
+            $total['bidamount'] +=$data['bidamount'];
             $total['budget'] +=$data['budget'];
             $total['cpc'] +=$data['cpc'];
             $total['ctr'] +=$data['ctr'];
@@ -481,6 +484,7 @@ class AdvManagerController extends BaseController
         }
 
         $total['impressions'] = number_format($total['impressions']);
+        $total['bidamount'] = number_format($total['bidamount']);
         $total['budget'] = number_format($total['budget']);
         $total['click'] = number_format($total['click']);
         $total['spend'] = number_format($total['spend']);
@@ -804,6 +808,95 @@ class AdvManagerController extends BaseController
                                     'media' => 'google'
                                 ];
                             }
+                            break;
+                        default:
+                            return $this->fail("지원하지 않습니다.");
+                    }
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
+
+            if(!empty($result) && $result['id'] == $data['id']){
+                $result = true;
+                return $this->respond($result);
+            }else{
+                return $this->fail("잘못된 요청");
+            }
+
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function updateBidAmount()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $param = $this->request->getRawInput(); 
+            $sliceId = explode("_", $param['id']);
+            $data = [
+                'media' => $sliceId[0],
+                'id' => $sliceId[1],
+                'customer' => $param['customer'],
+                'tab' => $param['tab'],
+                'bidamount' => $param['bidamount'],
+                'bidamount_type' => $param['bidamount_type'] ?? null,
+            ];
+
+            switch ($data['tab']) {
+                case 'ads':
+                    return $this->fail("지원하지 않습니다.");
+                    break;
+                case 'adsets':
+                    switch ($data['media']) {
+                        case 'kakao':
+                            $data['type'] = 'adgroup';
+                            $zenith = new ZenithKM();
+                            $result = $zenith->setAdgroupBidAmount($data['id'], $data['bidamount']);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'kakao'
+                                ];
+                            }
+                            break;
+                        case 'google':
+                            if(!empty($data['bidamount_type'])){
+                                $updateArray = [];
+                                if($data['bidamount_type'] == 'cpc'){
+                                    $updateArray['cpcBidAmount'] = $data['bidamount'];
+                                }else if($data['bidamount_type'] == 'cpm'){
+                                    $updateArray['cpmBidAmount'] = $data['bidamount'];
+                                }
+
+                                $zenith = new ZenithGG();
+                                $result = $zenith->updateAdGroup($data['customer'], $data['id'], $updateArray);
+                                dd($result);
+                                if(!empty($result)){
+                                    $result = [
+                                        'id' => $result,
+                                        'media' => 'google'
+                                    ];
+                                }
+                            };
+
+                            break;
+                        default:
+                        return $this->fail("지원하지 않습니다.");
+                    }
+                    break;
+                case 'campaigns':
+                    switch ($data['media']) {
+                        case 'google':
+                            /* $param = ['budget' => $data['budget']];
+                            $zenith = new ZenithGG();
+                            $result = $zenith->updateCampaignBidAmount($data['customer'], $data['id'], $param);
+                            if(!empty($result)){
+                                $result = [
+                                    'id' => $result,
+                                    'media' => 'google'
+                                ];
+                            } */
                             break;
                         default:
                             return $this->fail("지원하지 않습니다.");

@@ -494,6 +494,14 @@ class ZenithGG
             $data['name'] = $param['name'];
         }
 
+        if(isset($param['cpcBidAmount'])){
+            $data['cpc_bid_micros'] = $param['cpcBidAmount'];
+        }
+
+        if(isset($param['cpmBidAmount'])){
+            $data['cpm_bid_micros'] = $param['cpmBidAmount'];
+        }
+
         $adGroup = new AdGroup($data);
       
         $adGroupOperation = new AdGroupOperation();
@@ -520,7 +528,15 @@ class ZenithGG
             if(isset($data['name'])){
                 $setData['name'] = $adGroupInfo->getName();
             }
+            
+            if(isset($data['cpc_bid_micros'])){
+                $setData['cpcBidAmount'] = $adGroupInfo->getCpcBidMicros();
+            }
 
+            if(isset($data['cpm_bid_micros'])){
+                $setData['cpmBidAmount'] = $adGroupInfo->getCpmBidMicros();
+            }
+            
             $this->db->updateAdgroupField($setData);
             return $setData;
         };

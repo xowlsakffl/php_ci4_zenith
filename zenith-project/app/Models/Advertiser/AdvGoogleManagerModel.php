@@ -121,6 +121,7 @@ class AdvGoogleManagerModel extends Model
 		D.name AS name, 
 		D.status AS status, 
 		D.amount AS budget, 
+		D.cpaBidAmount AS bidamount, 
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
@@ -147,6 +148,8 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.status,
 		sub.budget,
+		sub.bidamount,
+		"" AS bidamount_type,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 
@@ -194,13 +197,23 @@ class AdvGoogleManagerModel extends Model
 		C.id AS id, 
 		C.name AS name, 
 		C.status AS status, 
+		CASE 
+			WHEN C.cpcBidAmount <> 0 THEN C.cpcBidAmount
+			WHEN C.cpaBidAmount <> 0 THEN C.cpaBidAmount
+			ELSE 0
+		END AS bidamount,
+		CASE 
+			WHEN C.cpcBidAmount <> 0 THEN "cpc"
+			WHEN C.cpaBidAmount <> 0 THEN "cpa"
+			ELSE ""
+		END AS bidamount_type,
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
 		SUM(A.sales) AS sales, 
 		SUM(A.db_count) AS unique_total, 
-		SUM(A.margin) AS margin, 
-		');
+		SUM(A.margin) AS margin
+		', false);
 		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
         $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
 		if(!empty($data['sdate']) && !empty($data['edate'])){
@@ -220,6 +233,8 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.status,
 		0 AS budget,
+		sub.bidamount AS bidamount,
+		sub.bidamount_type,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 
@@ -295,6 +310,8 @@ class AdvGoogleManagerModel extends Model
 		sub.code AS code,
 		sub.status AS status, 
 		0 AS budget, 
+		0 AS bidamount,
+		"" AS bidamount_type,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 
