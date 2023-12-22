@@ -129,7 +129,7 @@ class GADB
 	{
 		if (is_null($data)) return false;
 		//print_r($data);exit;
-		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, cpaBiaAmount, create_time)
+		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, cpaBidAmount, create_time)
 				VALUES(
 					:customerId:,
 					:id:,
@@ -147,7 +147,7 @@ class GADB
 					:advertisingChannelType:,
 					:advertisingChannelSubType:,
 					:adServingOptimizationStatus:,
-					:cpaBiaAmount:,
+					:cpaBidAmount:,
 					 NOW())
 				ON DUPLICATE KEY UPDATE
 					name = :name:,
@@ -164,7 +164,7 @@ class GADB
 					advertisingChannelType = :advertisingChannelType:,
 					advertisingChannelSubType = :advertisingChannelSubType:,
 					AdServingOptimizationStatus = :adServingOptimizationStatus:,
-					cpaBiaAmount = :cpaBiaAmount:,
+					cpaBidAmount = :cpaBidAmount:,
 					is_updating = 0,
 					update_time = NOW()";
 
@@ -185,7 +185,7 @@ class GADB
 			'advertisingChannelType' => $data['advertisingChannelType'],
 			'advertisingChannelSubType' => $data['advertisingChannelSubType'],
 			'adServingOptimizationStatus' => $data['adServingOptimizationStatus'],
-			'cpaBiaAmount' => (integer)$data['cpaBiaAmount'],
+			'cpaBidAmount' => (integer)$data['cpaBidAmount'],
 		];
 
 		$result = $this->db->query($sql, $params);
