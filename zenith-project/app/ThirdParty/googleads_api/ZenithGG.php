@@ -252,6 +252,10 @@ class ZenithGG
         $result = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $c = $googleAdsRow->getCampaign();
+            $targetCpa = 0;
+            if(!empty($c->getTargetCpa()->getTargetCpaMicros())){
+                $targetCpa = $c->getTargetCpa()->getTargetCpaMicros() / 1000000;
+            }
             $budget = $googleAdsRow->getCampaignBudget();
             $advertisingChannelType = ($c->getAdvertisingChannelType() <= 11) ? AdvertisingChannelType::name($c->getAdvertisingChannelType()) : $c->getAdvertisingChannelType();
             $data = [
@@ -270,7 +274,8 @@ class ZenithGG
                 'budgetReferenceCount' => $budget->getReferenceCount(), 
                 'budgetStatus' => BudgetStatus::name($budget->getStatus()), 
                 'budgetAmount' => ($budget->getAmountMicros() / 1000000), 
-                'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod())
+                'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod()),
+                'cpaBidAmount' => $targetCpa
                 //,'targetCpa' => $c->getTargetCpa()
             ];
             //echo '<pre>'.print_r($data,1).'</pre>';
@@ -573,7 +578,7 @@ class ZenithGG
         if ($date == null)
             $date = date('Y-m-d');
 
-        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.policy_topic_entries, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
+        $query = 'SELECT ad_group_ad.ad.responsive_display_ad.business_name, ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.policy_topic_entries, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
 
         if ($adGroupId !== null) {
             $query .= " AND ad_group.id = $adGroupId";

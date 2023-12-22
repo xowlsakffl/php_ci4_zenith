@@ -76,6 +76,9 @@
 		color: #ce1922;
 		border-color: #ce1922;
 	}
+    .bidamount{
+        margin-top:4px;
+    }
     .bidamount_type{
         position: absolute;
         top: 0;
@@ -83,6 +86,9 @@
         font-size: 10px;
         color: blue;
         font-weight: bold;
+    }
+    .bidamount_strategy{
+        font-size: 9px;
     }
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
@@ -667,6 +673,10 @@ function getList(data = []){
                     if(row.bidamount_type){
                         bidamount+= '<div class="bidamount_type">'+row.bidamount_type+'</div>';
                     }
+                    if(row.bidamount_type){
+                        bidamount+= '<div class="bidamount_strategy">'+row.biddingStrategyType+'</div>';
+                    }
+
                     return bidamount;
                 },
             },
