@@ -426,6 +426,15 @@ class ZenithGG
             $g = $googleAdsRow->getAdGroup();
             $c = $googleAdsRow->getCampaign();
             //$bid = $googleAdsRow->getBiddingStrategy();
+            $cpcBidAmount = 0;
+            $cpmBidAmount = 0;
+            if(!empty($g->getCpcBidMicros())){
+                $cpcBidAmount = $g->getCpcBidMicros() / 1000000;
+            }
+
+            if(!empty($g->getCpmBidMicros())){
+                $cpmBidAmount = $g->getCpmBidMicros() / 1000000;
+            }
 
             $data = [
                 'campaignId' => $c->getId(), 
@@ -434,9 +443,9 @@ class ZenithGG
                 'status' => AdGroupStatus::name($g->getStatus()), 
                 'adGroupType' => AdGroupType::name($g->getType()),
                 'biddingStrategyType' => $c->getCampaignBiddingStrategy() ?? '', 
-                'cpcBidAmount' => $g->getCpcBidMicros() ?? 0,
+                'cpcBidAmount' => $cpcBidAmount,
                 'cpcBidSource' => '',
-                'cpmBidAmount' => $g->getCpmBidMicros() ?? 0,
+                'cpmBidAmount' => $cpmBidAmount,
                 'cpmBidSource' => '',
                 //'cpaBidAmount' => $g->getEffectiveTargetCpaMicros() ?? 0,
                 //'cpaBidSource' => $g->getEffectiveTargetCpaSource() ?? ''
@@ -495,11 +504,11 @@ class ZenithGG
         }
 
         if(isset($param['cpcBidAmount'])){
-            $data['cpc_bid_micros'] = $param['cpcBidAmount'];
+            $data['cpc_bid_micros'] = intval($param['cpcBidAmount']) * 1000000;
         }
 
         if(isset($param['cpmBidAmount'])){
-            $data['cpm_bid_micros'] = $param['cpmBidAmount'];
+            $data['cpm_bid_micros'] = intval($param['cpmBidAmount']) * 1000000;
         }
 
         $adGroup = new AdGroup($data);
@@ -516,6 +525,7 @@ class ZenithGG
 
         $updatedAdGroup = $response->getResults()[0];
         $adGroupInfo = $updatedAdGroup ->getAdGroup();
+
         if(!empty($adGroupInfo)){
             $setData = [
                 'id' => $adGroupInfo->getId(),
@@ -530,13 +540,21 @@ class ZenithGG
             }
             
             if(isset($data['cpc_bid_micros'])){
-                $setData['cpcBidAmount'] = $adGroupInfo->getCpcBidMicros();
+                if(!empty($adGroupInfo->getCpcBidMicros())){
+                    $setData['cpcBidAmount'] = $adGroupInfo->getCpcBidMicros() / 1000000;
+                }else{
+                    $setData['cpcBidAmount'] = 0;
+                }
             }
 
             if(isset($data['cpm_bid_micros'])){
-                $setData['cpmBidAmount'] = $adGroupInfo->getCpmBidMicros();
+                if(!empty($adGroupInfo->getCpmBidMicros())){
+                    $setData['cpmBidAmount'] = $adGroupInfo->getCpmBidMicros() / 1000000;
+                }else{
+                    $setData['cpmBidAmount'] = 0;
+                }
             }
-            
+
             $this->db->updateAdgroupField($setData);
             return $setData;
         };

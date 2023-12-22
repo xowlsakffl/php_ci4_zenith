@@ -871,10 +871,10 @@ class AdvManagerController extends BaseController
 
                                 $zenith = new ZenithGG();
                                 $result = $zenith->updateAdGroup($data['customer'], $data['id'], $updateArray);
-                                dd($result);
+                                
                                 if(!empty($result)){
                                     $result = [
-                                        'id' => $result,
+                                        'id' => $result['id'],
                                         'media' => 'google'
                                     ];
                                 }
