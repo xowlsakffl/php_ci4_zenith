@@ -19,6 +19,7 @@ use App\ThirdParty\googleads_api\lib\Utils\Helper;
 use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClient;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClientBuilder;
+use Google\Ads\GoogleAds\V13\Common\TargetCpa;
 use Google\Ads\GoogleAds\V13\Resources\CustomerClient;
 use Google\Ads\GoogleAds\V13\Services\CustomerServiceClient;
 use Google\Ads\GoogleAds\V13\Services\GoogleAdsRow;
@@ -310,6 +311,10 @@ class ZenithGG
             $data['name'] = $param['name'];
         }
 
+        if(isset($param['cpaBidAmount'])){
+            $data['target_cpa'] = new TargetCpa(['target_cpa_micros' => intval($param['cpaBidAmount']) * 1000000]);
+        }
+
         $campaign = new Campaign($data);
         $campaignOperation = new CampaignOperation();
         $campaignOperation->setUpdate($campaign);
@@ -323,6 +328,7 @@ class ZenithGG
         );
         $updatedCampaign = $response->getResults()[0];
         $campaignInfo = $updatedCampaign->getCampaign();
+        
         if(!empty($campaignInfo)){
             $setData = [
                 'id' => $campaignInfo->getId(),
@@ -336,6 +342,13 @@ class ZenithGG
                 $setData['name'] = $campaignInfo->getName();
             }
 
+            if(isset($data['target_cpa'])){
+                if(!empty($campaignInfo->getTargetCpa()->getTargetCpaMicros())){
+                    $setData['cpaBidAmount'] = $campaignInfo->getTargetCpa()->getTargetCpaMicros() / 1000000;
+                }else{
+                    $setData['cpaBidAmount'] = 0;
+                }
+            }
             $this->db->updateCampaignField($setData);
             return $setData;
         };

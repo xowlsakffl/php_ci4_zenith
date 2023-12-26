@@ -236,6 +236,7 @@ class AdvGoogleManagerModel extends Model
 		0 AS budget,
 		sub.biddingStrategyType AS biddingStrategyType,
 		sub.bidamount AS bidamount,
+		D.cpaBidAmount AS campaign_bidamount,
 		sub.bidamount_type,
 		sub.impressions, 
 		sub.click, 

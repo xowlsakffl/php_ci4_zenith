@@ -87,7 +87,7 @@
         color: blue;
         font-weight: bold;
     }
-    .bidamount_strategy{
+    .bidamount_strategy, .campaign_bidamount{
         font-size: 9px;
     }
     /* 업데이트 애니메이션 */
@@ -675,6 +675,9 @@ function getList(data = []){
                     }
                     if(row.bidamount_type){
                         bidamount+= '<div class="bidamount_strategy">'+row.biddingStrategyType+'</div>';
+                    }
+                    if(row.campaign_bidamount && row.campaign_bidamount > 0){
+                        bidamount+= '<div class="campaign_bidamount">캠페인 입찰가 사용</div>';
                     }
 
                     return bidamount;

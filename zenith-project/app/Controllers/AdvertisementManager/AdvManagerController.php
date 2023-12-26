@@ -928,15 +928,15 @@ class AdvManagerController extends BaseController
                 case 'campaigns':
                     switch ($data['media']) {
                         case 'google':
-                            /* $param = ['budget' => $data['budget']];
+                            $updateArray = ['cpaBidAmount' => $data['bidamount']];
                             $zenith = new ZenithGG();
-                            $result = $zenith->updateCampaignBidAmount($data['customer'], $data['id'], $param);
+                            $result = $zenith->updateCampaign($data['customer'], $data['id'], $updateArray);
                             if(!empty($result)){
                                 $result = [
-                                    'id' => $result,
+                                    'id' => $result['id'],
                                     'media' => 'google'
                                 ];
-                            } */
+                            }
                             break;
                         default:
                             return $this->fail("지원하지 않습니다.");
