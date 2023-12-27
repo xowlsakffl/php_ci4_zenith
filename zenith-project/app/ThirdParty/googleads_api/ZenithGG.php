@@ -459,7 +459,7 @@ class ZenithGG
             if(!empty($g->getCpmBidMicros())){
                 $cpmBidAmount = $g->getCpmBidMicros() / 1000000;
             }
-            dd($g->getTargetCpaMicros());
+
             if(!empty($g->getTargetCpaMicros())){
                 $cpaBidAmount = $g->getTargetCpaMicros() / 1000000;
             }
