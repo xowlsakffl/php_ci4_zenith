@@ -341,7 +341,7 @@ function getList(data = []) { //리스트 세팅
             <?php }?>
             { "data": "info_seq", "width": "45px",
                 "render": function(data) {
-                return data?'<a href="https://event.hotblood.co.kr/'+data+'" target="event_pop">'+data+'</a>':'';
+                return data?'<a href="<?php echo env('app.eventURL')?>'+data+'" target="event_pop">'+data+'</a>':'';
                 }
             },
             { "data": "advertiser","width": "100px",
