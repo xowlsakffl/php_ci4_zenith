@@ -246,7 +246,7 @@ class GADB
 					:cpcBidSource:, 
 					:cpmBidAmount:, 
 					:cpmBidSource:, 
-					0, 
+					:cpaBidAmount:, 
 					'', NOW())
 				ON DUPLICATE KEY UPDATE
 					name = :name:,
@@ -257,7 +257,7 @@ class GADB
 					cpcBidSource = :cpcBidSource:,
 					cpmBidAmount = :cpmBidAmount:,
 					cpmBidSource = :cpmBidSource:,
-					cpaBidAmount = 0,
+					cpaBidAmount = :cpaBidAmount:,
 					cpaBidSource = '',
 					update_time = NOW()";
 		$params = [
@@ -270,7 +270,8 @@ class GADB
 			'cpcBidAmount' => (integer)$data['cpcBidAmount'] ?? 0,
 			'cpcBidSource' => $data['cpcBidSource'],
 			'cpmBidAmount' => (integer)$data['cpmBidAmount'] ?? 0,
-			'cpmBidSource' => $data['cpmBidSource']
+			'cpmBidSource' => $data['cpmBidSource'],
+			'cpaBidAmount' => (integer)$data['cpaBidAmount'] ?? 0,
 		];
 		
 		$result = $this->db->query($sql, $params);

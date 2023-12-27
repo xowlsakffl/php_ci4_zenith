@@ -133,6 +133,7 @@ class AdvKakaoManagerModel extends Model
 		sub.budget,
         0 AS bidamount, 
 		"" AS bidamount_type,
+        "" AS biddingStrategyType,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 

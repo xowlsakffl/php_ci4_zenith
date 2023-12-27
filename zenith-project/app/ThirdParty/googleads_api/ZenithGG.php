@@ -451,8 +451,7 @@ class ZenithGG
             }
 
             //$bid = $googleAdsRow->getBiddingStrategy();
-            $cpcBidAmount = 0;
-            $cpmBidAmount = 0;
+            $cpcBidAmount = $cpmBidAmount = $cpaBidAmount = 0;
             if(!empty($g->getCpcBidMicros())){
                 $cpcBidAmount = $g->getCpcBidMicros() / 1000000;
             }
@@ -460,8 +459,11 @@ class ZenithGG
             if(!empty($g->getCpmBidMicros())){
                 $cpmBidAmount = $g->getCpmBidMicros() / 1000000;
             }
+            dd($g->getTargetCpaMicros());
+            if(!empty($g->getTargetCpaMicros())){
+                $cpaBidAmount = $g->getTargetCpaMicros() / 1000000;
+            }
 
-            
             $data = [
                 'campaignId' => $c->getId(), 
                 'id' => $g->getId(), 
@@ -473,7 +475,7 @@ class ZenithGG
                 'cpcBidSource' => '',
                 'cpmBidAmount' => $cpmBidAmount,
                 'cpmBidSource' => '',
-                //'cpaBidAmount' => $g->getEffectiveTargetCpaMicros() ?? 0,
+                'cpaBidAmount' => $cpaBidAmount,
                 //'cpaBidSource' => $g->getEffectiveTargetCpaSource() ?? ''
             ];
             

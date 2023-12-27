@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 	
 			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
@@ -357,45 +357,52 @@ class AdvManagerController extends BaseController
 			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
 			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
 
-            switch(!empty($row['biddingStrategyType'])) {
-				case 'TARGET_CPA' :
-					$row['biddingStrategyType'] = '타겟 CPA';
-					break;
-				case 'TARGET_ROAS' :
-					$row['biddingStrategyType'] = '타겟 광고 투자수익(ROAS)';
-					break;
-				case 'TARGET_SPEND' :
-					$row['biddingStrategyType'] = '클릭수 최대화';
-					break;
-				case 'MAXIMIZE_CONVERSIONS' :
-					$row['biddingStrategyType'] = '전환수 최대화';
-					break;
-				/* //값이 뭔지 모름ㅠㅠ
-				case '' :
-					$row['biddingStrategyType'] = '검색 결과 위치 타겟';
-					break;
-				case '' :
-					$row['biddingStrategyType'] = '경쟁 광고보다 내 광고가 높은 순위에 게재되는 비율 타겟';
-					break;
-				case '' :
-					$row['biddingStrategyType'] = '타겟 노출 점유율';
-					break;
-				*/
-				case 'PAGE_ONE_PROMOTED' :
-					$row['biddingStrategyType'] = '향상된 CPC 입찰기능';
-					break;
-				case 'MANUAL_CPM' :
-					$row['biddingStrategyType'] = '수동 입찰 전략';
-					break;
-				case 'MANUAL_CPC' :
-					$row['biddingStrategyType'] = '수동 CPC';
-					break;
-				case 'UNKNOWN' :
-					$row['biddingStrategyType'] = '알수없음';
-					break;
-				default :
-					break;
-			}
+            if($row['bidamount_type'] == 'cpm' && $row['bidamount'] <= 1){
+                $row['bidamount_type'] = '';
+                $row['bidamount'] = 0;
+            }
+
+            if(!empty($row['biddingStrategyType'])){
+                switch($row['biddingStrategyType']) {
+                    case 'TARGET_CPA' :
+                        $row['biddingStrategyType'] = '타겟 CPA';
+                        break;
+                    case 'TARGET_ROAS' :
+                        $row['biddingStrategyType'] = '타겟 광고 투자수익(ROAS)';
+                        break;
+                    case 'TARGET_SPEND' :
+                        $row['biddingStrategyType'] = '클릭수 최대화';
+                        break;
+                    case 'MAXIMIZE_CONVERSIONS' :
+                        $row['biddingStrategyType'] = '전환수 최대화';
+                        break;
+                    /* //값이 뭔지 모름ㅠㅠ
+                    case '' :
+                        $row['biddingStrategyType'] = '검색 결과 위치 타겟';
+                        break;
+                    case '' :
+                        $row['biddingStrategyType'] = '경쟁 광고보다 내 광고가 높은 순위에 게재되는 비율 타겟';
+                        break;
+                    case '' :
+                        $row['biddingStrategyType'] = '타겟 노출 점유율';
+                        break;
+                    */
+                    case 'PAGE_ONE_PROMOTED' :
+                        $row['biddingStrategyType'] = '향상된 CPC 입찰기능';
+                        break;
+                    case 'MANUAL_CPM' :
+                        $row['biddingStrategyType'] = '수동 입찰 전략';
+                        break;
+                    case 'MANUAL_CPC' :
+                        $row['biddingStrategyType'] = '수동 CPC';
+                        break;
+                    case 'UNKNOWN' :
+                        $row['biddingStrategyType'] = '알수없음';
+                        break;
+                    default :
+                        break;
+                }
+            }
         }
         return $result;
     }

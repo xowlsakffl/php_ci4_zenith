@@ -673,7 +673,7 @@ function getList(data = []){
                     if(row.bidamount_type){
                         bidamount+= '<div class="bidamount_type">'+row.bidamount_type+'</div>';
                     }
-                    if(row.bidamount_type){
+                    if(row.biddingStrategyType){
                         bidamount+= '<div class="bidamount_strategy">'+row.biddingStrategyType+'</div>';
                     }
                     if(row.campaign_bidamount && row.campaign_bidamount > 0){
