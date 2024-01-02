@@ -121,6 +121,8 @@ class AdvGoogleManagerModel extends Model
 		D.name AS name, 
 		D.status AS status, 
 		D.amount AS budget, 
+		D.cpaBidAmount AS bidamount, 
+		C.biddingStrategyType AS biddingStrategyType,
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
@@ -147,6 +149,9 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.status,
 		sub.budget,
+		sub.bidamount,
+		"" AS bidamount_type,
+		sub.biddingStrategyType AS biddingStrategyType,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 
@@ -194,13 +199,24 @@ class AdvGoogleManagerModel extends Model
 		C.id AS id, 
 		C.name AS name, 
 		C.status AS status, 
+		C.biddingStrategyType AS biddingStrategyType,
+		CASE 
+			WHEN C.biddingStrategyType = "TARGET_CPA" THEN C.cpaBidAmount
+			WHEN C.biddingStrategyType = "MANUAL_CPC" THEN C.cpcBidAmount
+			ELSE 0
+		END AS bidamount,
+		CASE 
+			WHEN C.biddingStrategyType = "TARGET_CPA" THEN "cpa"
+			WHEN C.biddingStrategyType = "MANUAL_CPC" THEN "cpc"
+			ELSE ""
+		END AS bidamount_type,
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
 		SUM(A.sales) AS sales, 
 		SUM(A.db_count) AS unique_total, 
-		SUM(A.margin) AS margin, 
-		');
+		SUM(A.margin) AS margin
+		', false);
 		$subQuery->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
         $subQuery->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
 		if(!empty($data['sdate']) && !empty($data['edate'])){
@@ -220,6 +236,10 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.status,
 		0 AS budget,
+		sub.biddingStrategyType AS biddingStrategyType,
+		sub.bidamount AS bidamount,
+		D.cpaBidAmount AS campaign_bidamount,
+		sub.bidamount_type,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 
@@ -295,6 +315,8 @@ class AdvGoogleManagerModel extends Model
 		sub.code AS code,
 		sub.status AS status, 
 		0 AS budget, 
+		0 AS bidamount,
+		"" AS bidamount_type,
 		sub.impressions, 
 		sub.click, 
 		sub.spend, 

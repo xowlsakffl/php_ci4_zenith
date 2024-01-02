@@ -76,7 +76,23 @@
 		color: #ce1922;
 		border-color: #ce1922;
 	}
-
+    .bidamount{
+        margin-top:4px;
+    }
+    .bidamount_type{
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 10px;
+        color: blue;
+        font-weight: bold;
+    }
+    .bidamount_strategy, .campaign_bidamount{
+        font-size: 9px;
+    }
+    .modify_tag:hover{
+        cursor: pointer;
+    }
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
@@ -216,6 +232,7 @@
                                 <th scope="col">상태</th>
                                 <th scope="col">ID</th>
                                 <th scope="col">예산</th>
+                                <th scope="col">입찰가</th>
                                 <th scope="col">현재<br>DB단가</th>
                                 <th scope="col">유효<br>DB</th>
                                 <th scope="col">지출액</th>
@@ -233,6 +250,7 @@
                                 <td id="total-count"></td>
                                 <td colspan="2"></td>
                                 <td id="total-budget"></td>
+                                <td id="total-bidamount"></td>
                                 <td id="avg-cpa"></td>
                                 <td id="total-unique_total"></td>
                                 <td id="total-spend"></td>
@@ -619,9 +637,9 @@ function getList(data = []){
                 "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
-                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }else{
-                        name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }
 
                     
@@ -644,10 +662,38 @@ function getList(data = []){
                 "data": "budget", //예산
                 "width": "80px",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget+'</p>')+'</div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true" class="modify_tag">\u20A9'+row.budget+'</p>')+'</div>';
                     if(row.budget != 0)
                         budget += '<div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
+                },
+            },
+            { 
+                "data": "bidamount", //입찰가
+                "width": "80px",
+                "render": function (data, type, row) {
+                    bidamount = '';
+                    if(row.bidamount == 0){
+                        if(row.biddingStrategyType != '타겟 CPA'){
+                            bidamount = '<div class="bidamount">-</div>';
+                        }else{
+                            bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
+                        }
+                    }else{
+                        bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
+                    }
+                    
+                    if(row.bidamount_type){
+                        bidamount+= '<div class="bidamount_type">'+row.bidamount_type+'</div>';
+                    }
+                    if(row.biddingStrategyType){
+                        bidamount+= '<div class="bidamount_strategy">'+row.biddingStrategyType+'</div>';
+                    }
+                    if(row.campaign_bidamount && row.campaign_bidamount > 0){
+                        bidamount+= '<div class="campaign_bidamount">캠페인 입찰가 사용</div>';
+                    }
+
+                    return bidamount;
                 },
             },
             { 
@@ -773,7 +819,8 @@ function setTotal(res){
         }
 
         $('#total-count').text(res.data.length+"건 결과");
-        $(' #total-budget').text('\u20A9'+res.total.budget);//예산
+        $('#total-budget').text('\u20A9'+res.total.budget);//예산
+        $(' #total-bidamount').text('\u20A9'+res.total.bidamount);//입찰가
         $('#avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
         $('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
         $('#total-spend').text('\u20A9'+res.total.spend);
@@ -1007,7 +1054,7 @@ function sendName(data, inputElement) {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true">');
+                var $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.name);
                 inputElement.replaceWith($new_p);
             }
@@ -1019,7 +1066,7 @@ function sendName(data, inputElement) {
 }
 
 function restoreElement(text, inputElement) {
-    var $old_p = $('<p data-editable="true">');
+    var $old_p = $('<p data-editable="true" class="modify_tag">');
     $old_p.text(text);
     inputElement.replaceWith($old_p);
 }
@@ -1483,7 +1530,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                         success: function(response){  
                             if(response == true) {
                                 $('.budget p').attr("data-editable", "true");
-                                var $new_p = $('<p data-editable="true">');
+                                var $new_p = $('<p data-editable="true" class="modify_tag">');
                                 $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                                 $input.replaceWith($new_p);
                             }
@@ -1516,8 +1563,100 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                     success: function(response){  
                         if(response == true) {
                             $('.budget p').attr("data-editable", "true");
-                            var $new_p = $('<p data-editable="true">');
+                            var $new_p = $('<p data-editable="true" class="modify_tag">');
                             $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                            $input.replaceWith($new_p);
+                        }
+                    },
+                    error: function(error, status, msg){
+                        alert("상태코드 " + status + "에러메시지" + msg );
+                    }
+                });
+            }
+        }
+    });
+});
+
+$(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){  
+    $this = $(this);
+    $id = $this.closest("tr").data('id');
+    $customer = $this.closest("tr").data('customerid');
+    $amount_type = $this.closest("tr").find('.bidamount_type').text();
+    console.log($amount_type);
+    budgetTxt = $this.text();
+    c_bidamount = budgetTxt.replace(/[^0-9,]/g, "");
+    if (!c_bidamount) return;
+
+    $('.bidamount p[data-editable="true"]').attr("data-editable", "false");
+    $input = $('<input type="text" style="width:100%">');
+    $input.val(c_bidamount);
+    $(this).replaceWith($input);
+    $input.focus();
+    $input.on('keydown blur', function(e) {
+        if (e.type === 'keydown') {
+            $input.number(true);
+            if (e.keyCode == 27) {
+                // ESC Key
+                $('.bidamount p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_bidamount, $input);
+            } else if (e.keyCode == 13) {
+                new_bidamount = $input.val();
+                data = {
+                    'id': $id,
+                    'customer': $customer,
+                    'tab': $('.tab-link.active').val(),
+                    'bidamount': new_bidamount,
+                    'bidamount_type': $amount_type ? $amount_type : '',
+                };
+
+                if (c_bidamount.replace(",", "") === new_bidamount) {
+                    $('.bidamount p').attr("data-editable", "true");
+                    restoreElement('\u20A9'+c_bidamount, $input);
+                } else {
+                    $.ajax({
+                        type: "put",
+                        url: "<?=base_url()?>/advertisements/set-bidamount",
+                        data: data,
+                        dataType: "json",
+                        success: function(response){  
+                            if(response == true) {
+                                $('.bidamount p').attr("data-editable", "true");
+                                var $new_p = $('<p data-editable="true" class="modify_tag">');
+                                $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+                                $input.replaceWith($new_p);
+                            }
+                        },
+                        error: function(error, status, msg){
+                            alert("상태코드 " + status + "에러메시지" + msg );
+                        }
+                    });
+                }
+            }
+        } else if (e.type === 'blur') {
+            $input.number(true);
+            new_bidamount = $input.val();
+            data = {
+                'id': $id,
+                'customer': $customer,
+                'tab': $('.tab-link.active').val(),
+                'bidamount': new_bidamount,
+                'bidamount_type': $amount_type ? $amount_type : '',
+            };
+
+            if (c_bidamount.replace(",", "") === new_bidamount) {
+                $('.bidamount p').attr("data-editable", "true");
+                restoreElement('\u20A9'+c_bidamount, $input);
+            } else {
+                $.ajax({
+                    type: "put",
+                    url: "<?=base_url()?>/advertisements/set-bidamount",
+                    data: data,
+                    dataType: "json",
+                    success: function(response){  
+                        if(response == true) {
+                            $('.bidamount p').attr("data-editable", "true");
+                            var $new_p = $('<p data-editable="true" class="modify_tag">');
+                            $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
                     },
@@ -1540,7 +1679,7 @@ function sendCode(data, inputElement) {
         success: function(data) {
             console.log(data);
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true">');
+                var $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.code);
                 inputElement.replaceWith($new_p);
             }

@@ -449,8 +449,8 @@ class ZenithKM
                         continue;
                         //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                     }
+                    $this->db->updateAdGroups($data);
                 }
-                $this->db->updateAdGroups($data);
                 $result = array_merge($result, $data);
             } else {
                 print_r($adGroupList); exit;

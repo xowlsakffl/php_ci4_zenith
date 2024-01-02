@@ -129,7 +129,7 @@ class GADB
 	{
 		if (is_null($data)) return false;
 		//print_r($data);exit;
-		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, create_time)
+		$sql = "INSERT INTO aw_campaign(customerId, id, name, status, servingStatus, startDate, endDate, budgetId, budgetName, budgetReferenceCount, budgetStatus, amount, deliveryMethod, advertisingChannelType, advertisingChannelSubType, AdServingOptimizationStatus, cpaBidAmount, create_time)
 				VALUES(
 					:customerId:,
 					:id:,
@@ -146,7 +146,9 @@ class GADB
 					:budgetDeliveryMethod:,
 					:advertisingChannelType:,
 					:advertisingChannelSubType:,
-					:adServingOptimizationStatus:, NOW())
+					:adServingOptimizationStatus:,
+					:cpaBidAmount:,
+					 NOW())
 				ON DUPLICATE KEY UPDATE
 					name = :name:,
 					status = :status:,
@@ -162,6 +164,7 @@ class GADB
 					advertisingChannelType = :advertisingChannelType:,
 					advertisingChannelSubType = :advertisingChannelSubType:,
 					AdServingOptimizationStatus = :adServingOptimizationStatus:,
+					cpaBidAmount = :cpaBidAmount:,
 					is_updating = 0,
 					update_time = NOW()";
 
@@ -181,7 +184,8 @@ class GADB
 			'budgetDeliveryMethod' => $data['budgetDeliveryMethod'],
 			'advertisingChannelType' => $data['advertisingChannelType'],
 			'advertisingChannelSubType' => $data['advertisingChannelSubType'],
-			'adServingOptimizationStatus' => $data['adServingOptimizationStatus']
+			'adServingOptimizationStatus' => $data['adServingOptimizationStatus'],
+			'cpaBidAmount' => (integer)$data['cpaBidAmount'] ?? 0,
 		];
 
 		$result = $this->db->query($sql, $params);
@@ -205,6 +209,9 @@ class GADB
 		}
 		if (isset($data['amount'])) {
 			$updateData['amount'] = $data['amount'];
+		}
+		if (isset($data['cpaBidAmount'])) {
+			$updateData['cpaBidAmount'] = $data['cpaBidAmount'];
 		}
 
 		$builder->set($updateData);
@@ -239,7 +246,7 @@ class GADB
 					:cpcBidSource:, 
 					:cpmBidAmount:, 
 					:cpmBidSource:, 
-					0, 
+					:cpaBidAmount:, 
 					'', NOW())
 				ON DUPLICATE KEY UPDATE
 					name = :name:,
@@ -250,7 +257,7 @@ class GADB
 					cpcBidSource = :cpcBidSource:,
 					cpmBidAmount = :cpmBidAmount:,
 					cpmBidSource = :cpmBidSource:,
-					cpaBidAmount = 0,
+					cpaBidAmount = :cpaBidAmount:,
 					cpaBidSource = '',
 					update_time = NOW()";
 		$params = [
@@ -263,7 +270,8 @@ class GADB
 			'cpcBidAmount' => (integer)$data['cpcBidAmount'] ?? 0,
 			'cpcBidSource' => $data['cpcBidSource'],
 			'cpmBidAmount' => (integer)$data['cpmBidAmount'] ?? 0,
-			'cpmBidSource' => $data['cpmBidSource']
+			'cpmBidSource' => $data['cpmBidSource'],
+			'cpaBidAmount' => (integer)$data['cpaBidAmount'] ?? 0,
 		];
 		
 		$result = $this->db->query($sql, $params);
@@ -284,6 +292,15 @@ class GADB
 		}
 		if (isset($data['status'])) {
 			$updateData['status'] = $data['status'];
+		}
+		if (isset($data['cpcBidAmount'])) {
+			$updateData['cpcBidAmount'] = $data['cpcBidAmount'];
+		}
+		if (isset($data['cpmBidAmount'])) {
+			$updateData['cpmBidAmount'] = $data['cpmBidAmount'];
+		}
+		if (isset($data['cpaBidAmount'])) {
+			$updateData['cpaBidAmount'] = $data['cpaBidAmount'];
 		}
 
 		$builder->set($updateData);

@@ -19,6 +19,7 @@ use App\ThirdParty\googleads_api\lib\Utils\Helper;
 use Google\Ads\GoogleAds\Lib\OAuth2TokenBuilder;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClient;
 use Google\Ads\GoogleAds\Lib\V13\GoogleAdsClientBuilder;
+use Google\Ads\GoogleAds\V13\Common\TargetCpa;
 use Google\Ads\GoogleAds\V13\Resources\CustomerClient;
 use Google\Ads\GoogleAds\V13\Services\CustomerServiceClient;
 use Google\Ads\GoogleAds\V13\Services\GoogleAdsRow;
@@ -252,6 +253,12 @@ class ZenithGG
         $result = [];
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $c = $googleAdsRow->getCampaign();
+            $targetCpa = $c->getTargetCpa();
+            $cpaBidAmount = 0;
+            if(!empty($targetCpa)){
+                $cpaBidAmount = $targetCpa->getTargetCpaMicros() / 1000000;
+            }
+            
             $budget = $googleAdsRow->getCampaignBudget();
             $advertisingChannelType = ($c->getAdvertisingChannelType() <= 11) ? AdvertisingChannelType::name($c->getAdvertisingChannelType()) : $c->getAdvertisingChannelType();
             $data = [
@@ -270,7 +277,8 @@ class ZenithGG
                 'budgetReferenceCount' => $budget->getReferenceCount(), 
                 'budgetStatus' => BudgetStatus::name($budget->getStatus()), 
                 'budgetAmount' => ($budget->getAmountMicros() / 1000000), 
-                'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod())
+                'budgetDeliveryMethod' => BudgetDeliveryMethod::name($budget->getDeliveryMethod()),
+                'cpaBidAmount' => $cpaBidAmount
                 //,'targetCpa' => $c->getTargetCpa()
             ];
             //echo '<pre>'.print_r($data,1).'</pre>';
@@ -303,6 +311,10 @@ class ZenithGG
             $data['name'] = $param['name'];
         }
 
+        if(isset($param['cpaBidAmount'])){
+            $data['target_cpa'] = new TargetCpa(['target_cpa_micros' => intval($param['cpaBidAmount']) * 1000000]);
+        }
+
         $campaign = new Campaign($data);
         $campaignOperation = new CampaignOperation();
         $campaignOperation->setUpdate($campaign);
@@ -316,6 +328,7 @@ class ZenithGG
         );
         $updatedCampaign = $response->getResults()[0];
         $campaignInfo = $updatedCampaign->getCampaign();
+        
         if(!empty($campaignInfo)){
             $setData = [
                 'id' => $campaignInfo->getId(),
@@ -329,6 +342,13 @@ class ZenithGG
                 $setData['name'] = $campaignInfo->getName();
             }
 
+            if(isset($data['target_cpa'])){
+                if(!empty($campaignInfo->getTargetCpa()->getTargetCpaMicros())){
+                    $setData['cpaBidAmount'] = $campaignInfo->getTargetCpa()->getTargetCpaMicros() / 1000000;
+                }else{
+                    $setData['cpaBidAmount'] = 0;
+                }
+            }
             $this->db->updateCampaignField($setData);
             return $setData;
         };
@@ -416,7 +436,7 @@ class ZenithGG
     {
         self::setCustomerId($loginCustomerId);
         $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
-        $query = 'SELECT campaign.id, ad_group.id, ad_group.name, ad_group.status, ad_group.type, bidding_strategy.id, ad_group.cpc_bid_micros, ad_group.cpm_bid_micros, ad_group.target_cpa_micros FROM ad_group WHERE ad_group.status IN ("ENABLED","PAUSED","REMOVED") ';
+        $query = 'SELECT campaign.id, ad_group.id, ad_group.name, ad_group.status, ad_group.type, bidding_strategy.id, campaign.bidding_strategy_type, ad_group.cpc_bid_micros, ad_group.cpm_bid_micros, ad_group.target_cpa_micros FROM ad_group WHERE ad_group.status IN ("ENABLED","PAUSED","REMOVED") ';
         if ($campaignId !== null) {
             $query .= " AND campaign.id = $campaignId";
         }
@@ -425,7 +445,24 @@ class ZenithGG
         foreach ($stream->iterateAllElements() as $googleAdsRow) {
             $g = $googleAdsRow->getAdGroup();
             $c = $googleAdsRow->getCampaign();
+            $biddingStrategyType = '';
+            if ($c->getBiddingStrategyType()) {
+                $biddingStrategyType = BiddingStrategyType::name($c->getBiddingStrategyType());
+            }
+
             //$bid = $googleAdsRow->getBiddingStrategy();
+            $cpcBidAmount = $cpmBidAmount = $cpaBidAmount = 0;
+            if(!empty($g->getCpcBidMicros())){
+                $cpcBidAmount = $g->getCpcBidMicros() / 1000000;
+            }
+
+            if(!empty($g->getCpmBidMicros())){
+                $cpmBidAmount = $g->getCpmBidMicros() / 1000000;
+            }
+
+            if(!empty($g->getTargetCpaMicros())){
+                $cpaBidAmount = $g->getTargetCpaMicros() / 1000000;
+            }
 
             $data = [
                 'campaignId' => $c->getId(), 
@@ -433,12 +470,12 @@ class ZenithGG
                 'name' => $g->getName(), 
                 'status' => AdGroupStatus::name($g->getStatus()), 
                 'adGroupType' => AdGroupType::name($g->getType()),
-                'biddingStrategyType' => $c->getCampaignBiddingStrategy() ?? '', 
-                'cpcBidAmount' => $g->getCpcBidMicros() ?? 0,
+                'biddingStrategyType' => $biddingStrategyType, 
+                'cpcBidAmount' => $cpcBidAmount,
                 'cpcBidSource' => '',
-                'cpmBidAmount' => $g->getCpmBidMicros() ?? 0,
+                'cpmBidAmount' => $cpmBidAmount,
                 'cpmBidSource' => '',
-                //'cpaBidAmount' => $g->getEffectiveTargetCpaMicros() ?? 0,
+                'cpaBidAmount' => $cpaBidAmount,
                 //'cpaBidSource' => $g->getEffectiveTargetCpaSource() ?? ''
             ];
             
@@ -494,6 +531,18 @@ class ZenithGG
             $data['name'] = $param['name'];
         }
 
+        if(isset($param['cpcBidAmount'])){
+            $data['cpc_bid_micros'] = intval($param['cpcBidAmount']) * 1000000;
+        }
+
+        if(isset($param['cpmBidAmount'])){
+            $data['cpm_bid_micros'] = intval($param['cpmBidAmount']) * 1000000;
+        }
+
+        if(isset($param['cpaBidAmount'])){
+            $data['target_cpa_micros'] = intval($param['cpaBidAmount']) * 1000000;
+        }
+
         $adGroup = new AdGroup($data);
       
         $adGroupOperation = new AdGroupOperation();
@@ -508,6 +557,7 @@ class ZenithGG
 
         $updatedAdGroup = $response->getResults()[0];
         $adGroupInfo = $updatedAdGroup ->getAdGroup();
+
         if(!empty($adGroupInfo)){
             $setData = [
                 'id' => $adGroupInfo->getId(),
@@ -519,6 +569,30 @@ class ZenithGG
 
             if(isset($data['name'])){
                 $setData['name'] = $adGroupInfo->getName();
+            }
+            
+            if(isset($data['cpc_bid_micros'])){
+                if(!empty($adGroupInfo->getCpcBidMicros())){
+                    $setData['cpcBidAmount'] = $adGroupInfo->getCpcBidMicros() / 1000000;
+                }else{
+                    $setData['cpcBidAmount'] = 0;
+                }
+            }
+
+            if(isset($data['cpm_bid_micros'])){
+                if(!empty($adGroupInfo->getCpmBidMicros())){
+                    $setData['cpmBidAmount'] = $adGroupInfo->getCpmBidMicros() / 1000000;
+                }else{
+                    $setData['cpmBidAmount'] = 0;
+                }
+            }
+
+            if(isset($data['target_cpa_micros'])){
+                if(!empty($adGroupInfo->getTargetCpaMicros())){
+                    $setData['cpaBidAmount'] = $adGroupInfo->getTargetCpaMicros() / 1000000;
+                }else{
+                    $setData['cpaBidAmount'] = 0;
+                }
             }
 
             $this->db->updateAdgroupField($setData);
@@ -533,7 +607,7 @@ class ZenithGG
         if ($date == null)
             $date = date('Y-m-d');
 
-        $query = 'SELECT ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.policy_topic_entries, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
+        $query = 'SELECT ad_group_ad.ad.responsive_display_ad.business_name, ad_group.id, ad_group_ad.ad.id, ad_group_ad.ad.name, ad_group_ad.status, ad_group_ad.policy_summary.policy_topic_entries, ad_group_ad.policy_summary.review_status, ad_group_ad.policy_summary.approval_status, ad_group_ad.ad.type, ad_group_ad.ad.image_ad.image_url, ad_group_ad.ad.final_urls, ad_group_ad.ad.url_collections, ad_group_ad.ad.video_responsive_ad.call_to_actions, ad_group_ad.ad.image_ad.mime_type, ad_group_ad.ad.responsive_display_ad.marketing_images, ad_group_ad.ad.video_responsive_ad.videos, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date = "' . $date . '" ';
 
         if ($adGroupId !== null) {
             $query .= " AND ad_group.id = $adGroupId";

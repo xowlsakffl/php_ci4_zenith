@@ -55,12 +55,17 @@ class GoogleAds extends BaseController
     }
 
     public function getCampaign() {
-        $campaigns = $this->chainsaw->getCampaigns('7177486093', '4658512480', '20760584050');
+        $campaigns = $this->chainsaw->getCampaigns('7792262348', '5577144141', '20882987900');
         dd($campaigns);
     }
 
+    public function getAdGroups() {
+        $adgroups = $this->chainsaw->getAdGroups('5980790227', '3931611101', '20581900068');
+        dd($adgroups);
+    }
+
     public function getAds() {
-        $ads = $this->chainsaw->getAds('7177486093', '4658512480', '157027181682', '2023-12-14');
+        $ads = $this->chainsaw->getAds('5980790227', '3288458378', '130392657290', '2023-12-22');
         dd($ads);
     }
 

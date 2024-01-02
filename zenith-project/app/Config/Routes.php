@@ -93,6 +93,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
         $routes->put('set-budget', 'AdvertisementManager\AdvManagerController::updateBudget');
+        $routes->put('set-bidamount', 'AdvertisementManager\AdvManagerController::updateBidAmount');
         $routes->put('set-adv', 'AdvertisementManager\AdvManagerController::updateAdv');
         $routes->put('set-code', 'AdvertisementManager\AdvManagerController::updateCode');
         $routes->get('getmemo', 'AdvertisementManager\AdvManagerController::getMemo');
