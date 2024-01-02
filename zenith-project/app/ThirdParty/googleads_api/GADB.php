@@ -299,6 +299,9 @@ class GADB
 		if (isset($data['cpmBidAmount'])) {
 			$updateData['cpmBidAmount'] = $data['cpmBidAmount'];
 		}
+		if (isset($data['cpaBidAmount'])) {
+			$updateData['cpaBidAmount'] = $data['cpaBidAmount'];
+		}
 
 		$builder->set($updateData);
 		$builder->where('id', $data['id']);

@@ -90,6 +90,9 @@
     .bidamount_strategy, .campaign_bidamount{
         font-size: 9px;
     }
+    .modify_tag:hover{
+        cursor: pointer;
+    }
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
@@ -634,9 +637,9 @@ function getList(data = []){
                 "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
-                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }else{
-                        name = '<div class="mediaName"><p data-editable="true">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }
 
                     
@@ -659,7 +662,7 @@ function getList(data = []){
                 "data": "budget", //예산
                 "width": "80px",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true">\u20A9'+row.budget+'</p>')+'</div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true" class="modify_tag">\u20A9'+row.budget+'</p>')+'</div>';
                     if(row.budget != 0)
                         budget += '<div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
@@ -669,7 +672,17 @@ function getList(data = []){
                 "data": "bidamount", //입찰가
                 "width": "80px",
                 "render": function (data, type, row) {
-                    bidamount = '<div class="bidamount">'+(row.bidamount == 0 ? '-' : '<p data-editable="true">\u20A9'+row.bidamount+'</p>')+'</div>';
+                    bidamount = '';
+                    if(row.bidamount == 0){
+                        if(row.biddingStrategyType != '타겟 CPA'){
+                            bidamount = '<div class="bidamount">-</div>';
+                        }else{
+                            bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
+                        }
+                    }else{
+                        bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
+                    }
+                    
                     if(row.bidamount_type){
                         bidamount+= '<div class="bidamount_type">'+row.bidamount_type+'</div>';
                     }
@@ -1041,7 +1054,7 @@ function sendName(data, inputElement) {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true">');
+                var $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.name);
                 inputElement.replaceWith($new_p);
             }
@@ -1053,7 +1066,7 @@ function sendName(data, inputElement) {
 }
 
 function restoreElement(text, inputElement) {
-    var $old_p = $('<p data-editable="true">');
+    var $old_p = $('<p data-editable="true" class="modify_tag">');
     $old_p.text(text);
     inputElement.replaceWith($old_p);
 }
@@ -1517,7 +1530,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                         success: function(response){  
                             if(response == true) {
                                 $('.budget p').attr("data-editable", "true");
-                                var $new_p = $('<p data-editable="true">');
+                                var $new_p = $('<p data-editable="true" class="modify_tag">');
                                 $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                                 $input.replaceWith($new_p);
                             }
@@ -1550,7 +1563,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                     success: function(response){  
                         if(response == true) {
                             $('.budget p').attr("data-editable", "true");
-                            var $new_p = $('<p data-editable="true">');
+                            var $new_p = $('<p data-editable="true" class="modify_tag">');
                             $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
@@ -1608,7 +1621,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                         success: function(response){  
                             if(response == true) {
                                 $('.bidamount p').attr("data-editable", "true");
-                                var $new_p = $('<p data-editable="true">');
+                                var $new_p = $('<p data-editable="true" class="modify_tag">');
                                 $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                                 $input.replaceWith($new_p);
                             }
@@ -1642,7 +1655,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                     success: function(response){  
                         if(response == true) {
                             $('.bidamount p').attr("data-editable", "true");
-                            var $new_p = $('<p data-editable="true">');
+                            var $new_p = $('<p data-editable="true" class="modify_tag">');
                             $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
@@ -1666,7 +1679,7 @@ function sendCode(data, inputElement) {
         success: function(data) {
             console.log(data);
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true">');
+                var $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.code);
                 inputElement.replaceWith($new_p);
             }

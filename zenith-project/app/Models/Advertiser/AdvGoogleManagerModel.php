@@ -201,13 +201,13 @@ class AdvGoogleManagerModel extends Model
 		C.status AS status, 
 		C.biddingStrategyType AS biddingStrategyType,
 		CASE 
-			WHEN C.cpcBidAmount >= C.cpmBidAmount THEN C.cpcBidAmount
-			WHEN C.cpcBidAmount < C.cpmBidAmount THEN C.cpmBidAmount
+			WHEN C.biddingStrategyType = "TARGET_CPA" THEN C.cpaBidAmount
+			WHEN C.biddingStrategyType = "MANUAL_CPC" THEN C.cpcBidAmount
 			ELSE 0
 		END AS bidamount,
 		CASE 
-			WHEN C.cpcBidAmount >= C.cpmBidAmount THEN "cpc"
-			WHEN C.cpcBidAmount < C.cpmBidAmount THEN "cpm"
+			WHEN C.biddingStrategyType = "TARGET_CPA" THEN "cpa"
+			WHEN C.biddingStrategyType = "MANUAL_CPC" THEN "cpc"
 			ELSE ""
 		END AS bidamount_type,
 		SUM(A.impressions) AS impressions, 

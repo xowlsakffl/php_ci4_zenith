@@ -914,6 +914,8 @@ class AdvManagerController extends BaseController
                                     $updateArray['cpcBidAmount'] = $data['bidamount'];
                                 }else if($data['bidamount_type'] == 'cpm'){
                                     $updateArray['cpmBidAmount'] = $data['bidamount'];
+                                }else if($data['bidamount_type'] == 'cpa'){
+                                    $updateArray['cpaBidAmount'] = $data['bidamount'];
                                 }
 
                                 $zenith = new ZenithGG();
