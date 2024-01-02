@@ -539,7 +539,7 @@ function setLeadCount(data) { //Filter Count 표시
             <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
                 if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.company == "" && tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
             <?php }else{?>
-                if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.company == "" && tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
+                if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
             <?php }?>
             if(v.count) button.addClass('on');
         });
