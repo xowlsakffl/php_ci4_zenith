@@ -91,11 +91,6 @@ class IntegrateController extends BaseController
                 $d['add'][] = $add;
             }
             if(isset($arg['noLimit'])) {
-                $totalRecords = count($list['data']);
-                foreach ($list['data'] as $index => &$value) {
-                    $seqNumber = $totalRecords - $index;
-                    $value['turn'] = $seqNumber;
-                }
                 return $this->respond($list['data']);
             }
 
