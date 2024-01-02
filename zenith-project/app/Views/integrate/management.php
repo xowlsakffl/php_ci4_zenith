@@ -245,6 +245,18 @@ function getList(data = []) { //리스트 세팅
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
             //if($('#advertiser-list>div').is(':visible')) {
+                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
+                data.searchData = {
+                    'sdate': $('#sdate').val(),
+                    'edate': $('#edate').val(),
+                    'stx': $('#stx').val(),
+                    'company' : $('#company-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+                    'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+                };
+                <?php }else{?>
                 data.searchData = {
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
@@ -254,8 +266,6 @@ function getList(data = []) { //리스트 세팅
                     'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
                     'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
                 };
-                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
-                    data.searchData.company = $('#company-list button.active').map(function(){return $(this).val();}).get().join('|');
                 <?php }?>
                 tableParam = data;
                 debug(tableParam.searchData);
