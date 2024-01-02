@@ -201,15 +201,15 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         "success": function (result) {
             $.each(result, function(i,row) {
                 // arr.push(Object.keys(result[key]).map(function(k) {  return result[key][k] }));
-
+                
                 var regex = /<i[^>]*>([^<]+)<\/i>/g;
                 var phone = row.dec_phone.replace(regex, '$1');
                 var name = row.name.replace(regex, '$1');
 
                 <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
-                    arr.push([row.seq, row.company, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
+                    arr.push([row.turn, row.company, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
                 <?php }else{?>
-                    arr.push([row.seq, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
+                    arr.push([row.turn, row.info_seq, row.advertiser, row.media, row.tab_name, name, phone, row.age, row.gender, row.add, row.site, row.reg_date, row.memos, lead_status[row.status]]);
                 <?php }?>
             });
         },
@@ -217,9 +217,9 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
     });
     let headerArray = [];
     <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
-        headerArray = ["고유번호","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+        headerArray = ["#","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
     <?php }else{?>
-        headerArray = ["고유번호","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+        headerArray = ["#","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
     <?php }?>
     
     // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
@@ -535,7 +535,12 @@ function setLeadCount(data) { //Filter Count 표시
             if(v.count != v.total) cnt_txt = v.count + "/" + v.total;
             button = $(`#${type}-list .col[data-name="${v.label}"] button`);
             button.siblings('.progress').children('.txt').text(`${cnt_txt}`);
-            if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.company == "" && tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
+            
+            <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
+                if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.company == "" && tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
+            <?php }else{?>
+                if(typeof tableParam.searchData == 'undefined' || (tableParam.searchData.advertiser == "" && tableParam.searchData.media == "" && tableParam.searchData.event == "")) return true;
+            <?php }?>
             if(v.count) button.addClass('on');
         });
     });
