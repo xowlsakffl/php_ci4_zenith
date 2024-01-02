@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 	
 			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
