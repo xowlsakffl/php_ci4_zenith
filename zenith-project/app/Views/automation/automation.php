@@ -295,7 +295,6 @@
                                 </tbody>
                             </table>
                             <table class="table tbl-header w-100 mt-4" id="targetSelectTable">
-                                <input type="hidden" name="adv_info" id="advInfo">
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="5"  class="text-center">적용 항목</th>
@@ -451,7 +450,7 @@
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="8"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -900,7 +899,7 @@ function getTargetAdvs(searchData){
                 "data": null, 
                 "width": "7%",
                 "render": function(){
-                    let button = '<button class="target-btn">적용</button></div>';
+                    let button = '<button class="target-btn">적용</button>';
                     return button;
                 }
             },
@@ -1191,16 +1190,16 @@ function setModalData(data){
         $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
     }
 
-    if(data.aat_id){
-        var selectedData = '<tr><td>' + data.aat_media + '</td><td>' + data.aat_type + '</td><td>' 
-        + data.aat_id + '</td><td>' + data.aat_name + '</td><td>'
-        + data.aat_status  +'</td></tr>';
-        $('#targetSelectTable tbody').append(selectedData);
-        $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
-        var rowMedia = $('#targetSelectTable tbody tr').children('td').eq(0).text();
-        var rowType = $('#targetSelectTable tbody tr').children('td').eq(1).text();
-        var rowName = $('#targetSelectTable tbody tr').children('td').eq(3).text();
-        ////$('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+    if(data.targets){
+        data.targets.forEach(function(target, index) {
+            let targetIndex = index+1;
+            let targetData = '<tr data-id="'+target.media+"_"+target.type+"_"+target.id+'" id="target-'+targetIndex+'"><td>' + target.media + '</td><td>' + target.type + '</td><td>' 
+        + target.id + '</td><td>' + target.name + '</td><td>'
+        + target.status  +'<button class="set_target_except_btn"><i class="fa fa-times"></i></button></td></tr>';
+            let newTargetText = '<p id="text-target-'+targetIndex+'">'+target.media+'<br>'+target.type+'<br>'+target.name+'</p>';
+            $('#targetSelectTable tbody').append(targetData);
+            $('#target-tab').append(newTargetText);
+        });
     }
 
     //조건
@@ -1254,7 +1253,13 @@ function setModalData(data){
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
             var execIndex = index+1;
-            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
+            /* var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
+                + execution.type  +'</td><td>'
+                + execution.id  +'</td><td>'
+                + execution.name  +'</td><td>'
+                + execution.status  +'</td><td>'
+                + execution.exec_type  +'</td><td><span>'+execution.exec_value+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>'; */
+            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td>' + execution.media + '</td><td>'
                 + execution.type  +'</td><td>'
                 + execution.id  +'</td><td>'
                 + execution.name  +'</td><td>'
@@ -1343,13 +1348,25 @@ function setProcData(){
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
     let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-    let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
-    let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
-    let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
+    
     let operation = $('input[name=operation]:checked').val();
 
+    let $targets = [];
     let $conditions = [];
     let $executions = [];
+
+    $('#targetSelectTable tbody tr').each(function(){
+        let $row = $(this);
+        let media = $row.find('td:eq(0)').text();
+        let type = $row.find('td:eq(1)').text();
+        let id = $row.find('td:eq(2)').text();
+
+        $targets.push({
+            media: media,
+            type: type,
+            id: id,
+        });
+    });
 
     $('#conditionTable tbody tr[id^="condition-"]').each(function(){
         let $row = $(this);
@@ -1376,15 +1393,15 @@ function setProcData(){
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
-        let order = $row.find('td:eq(0) input').val();
-        let media = $row.find('td:eq(1)').text();
-        let type = $row.find('td:eq(2)').text();
-        let id = $row.find('td:eq(3)').text();
-        let exec_type = $row.find('td:eq(6)').text();
-        let exec_value = $row.find('td:eq(7)').text();
+        //let order = $row.find('td:eq(0) input').val();
+        let media = $row.find('td:eq(0)').text();
+        let type = $row.find('td:eq(1)').text();
+        let id = $row.find('td:eq(2)').text();
+        let exec_type = $row.find('td:eq(5)').text();
+        let exec_value = $row.find('td:eq(6)').text();
 
         $executions.push({
-            order: order,
+            //order: order,
             media: media,
             type: type,
             id: id,
@@ -1420,14 +1437,10 @@ function setProcData(){
     };
 
     if ($('#targetSelectTable tbody tr').length > 0) {
-        $data['target'] = {
-            'type': $target_type,
-            'media': $target_media,
-            'id': $target_id,
-        };
+        $data['target'] = $targets;
         $data['condition'] = $conditions;
     }
-
+    console.log($data);
     return $data;
 }
 //검색
@@ -1584,25 +1597,27 @@ $('body').on('click', '#execTable tbody tr', function(){
             $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
             $('#execConditionTable input[name=exec_condition_value]').val('').hide();
             $('#execConditionTable select[name=exec_condition_value_status]').show();
-        }else{
+        }/* else{
             $('#execConditionTable select[name=exec_condition_type] option').show();
             $('#execConditionTable input[name=exec_condition_value]').show();
             $('#execConditionTable select[name=exec_condition_value_status]').hide();
-        }
+        } */
     }
 });
 
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
     $(this).addClass('active');
-    if($('#targetCheckedTable tbody tr').length > 0){
-        let $selectRow = $('#targetCheckedTable tbody tr').data('id');
+    let $selectRow = $('#targetCheckedTable tbody tr').data('id');
+    let $selectRowCount = $('#targetCheckedTable tbody tr').length;
+
+    if($selectRowCount > 0){
         let adv = [];
         adv.push($selectRow);
         let data = {
-            'tab': $('#targetTab li.active').data('tab'),
-            'adv': adv
-        }
+        'tab': $('#targetTab li.active').data('tab'),
+        'adv': adv
+    }
 
         getTargetAdvs(data);
     }
@@ -1688,7 +1703,7 @@ $('body').on('click', '#execConditionBtn', function() {
             var trId = tr.data('id');
             var cloneRow = tr.clone();
             var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
-            cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
+            //cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
             cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
 
             var selectedMediaTd = tr.children('td').eq(0).text();
@@ -1740,10 +1755,10 @@ $('body').on('click', '#createAutomationBtn', function() {
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
-                if(data == true){
+                /* if(data == true){
                     dataTable.draw();
                     $('#automationModal').modal('hide');
-                }
+                } */
             },
             error: function(error, status, msg){
                 var errorMessages = error.responseJSON.messages.msg;

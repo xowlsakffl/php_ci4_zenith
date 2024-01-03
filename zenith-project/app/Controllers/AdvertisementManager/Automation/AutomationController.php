@@ -52,51 +52,53 @@ class AutomationController extends BaseController
 
     public function getAutomation()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
-            if(!empty($result['aat_id'])){
-                if($result['aat_status'] == 1 || $result['aat_status'] == 'ON' || $result['aat_status'] == 'ENABLED' || $result['aat_status'] == 'ACTIVE'){
-                    $result['aat_status'] = '활성';
-                }else{
-                    $result['aat_status'] = '비활성';
-                }
+            if(!empty($result['targets'])){
+                foreach ($result['targets'] as &$target) {
+                    switch ($target['media']) {
+                        case 'company':
+                            $target['media'] = '광고주';
+                            break;
+                        case 'facebook':
+                            $target['media'] = '페이스북';
+                            break;
+                        case 'google':
+                            $target['media'] = '구글';
+                            break;
+                        case 'kakao':
+                            $target['media'] = '카카오';
+                            break;
+                        default:
+                            break;
+                    }
     
-                switch ($result['aat_type']) {
-                    case 'advertiser':
-                        $result['aat_type'] = '광고주';
-                        break;
-                    case 'account':
-                        $result['aat_type'] = '매체광고주';
-                        break;
-                    case 'campaign':
-                        $result['aat_type'] = '캠페인';
-                        break;
-                    case 'adgroup':
-                        $result['aat_type'] = '광고그룹';
-                        break;
-                    case 'ad':
-                        $result['aat_type'] = '광고';
-                        break;
-                    default:
-                        break;
-                }
+                    switch ($target['type']) {
+                        case 'advertiser':
+                            $target['type'] = '광고주';
+                            break;
+                        case 'account':
+                            $target['type'] = '매체광고주';
+                            break;
+                        case 'campaign':
+                            $target['type'] = '캠페인';
+                            break;
+                        case 'adgroup':
+                            $target['type'] = '광고그룹';
+                            break;
+                        case 'ad':
+                            $target['type'] = '광고';
+                            break;
+                        default:
+                            break;
+                    }
     
-                switch ($result['aat_media']) {
-                    case 'company':
-                        $result['aat_media'] = '광고주';
-                        break;
-                    case 'facebook':
-                        $result['aat_media'] = '페이스북';
-                        break;
-                    case 'google':
-                        $result['aat_media'] = '구글';
-                        break;
-                    case 'kakao':
-                        $result['aat_media'] = '카카오';
-                        break;
-                    default:
-                        break;
+                    if($target['status'] == 1 || $target['status'] == 'ON' || $target['status'] == 'ENABLED' || $target['status'] == 'ACTIVE'){
+                        $target['status'] = '활성';
+                    }else{
+                        $target['status'] = '비활성';
+                    }
                 }
             }
             
@@ -166,7 +168,7 @@ class AutomationController extends BaseController
 
     public function getAdv()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             switch ($arg['tab']) {
                 case 'advertiser':
@@ -314,8 +316,10 @@ class AutomationController extends BaseController
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             
             if(!empty($data['target'])) {
-                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
-                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
+                foreach ($data['target'] as &$target) {
+                    $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
+                    $target['type'] = $typeMapping[$target['type']] ?? $target['type'];
+                }
             }
 
             if(!empty($data['execution'])) {
@@ -361,8 +365,10 @@ class AutomationController extends BaseController
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             
             if(!empty($data['target'])) {
-                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
-                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
+                foreach ($data['target'] as &$target) {
+                    $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
+                    $target['type'] = $typeMapping[$target['type']] ?? $target['type'];
+                }
             }
 
             if(!empty($data['execution'])) {
@@ -482,12 +488,12 @@ class AutomationController extends BaseController
         }else{
             foreach ($data['execution'] as $execution) {
                 $validationRules      = [
-                    'order' => 'required',
+                    //'order' => 'required',
                     'exec_type' => 'required',
                     'exec_value' => 'required',
                 ];
                 $validationMessages   = [
-                    'order' => ['required' => '순서는 필수 항목입니다.'],
+                    //'order' => ['required' => '순서는 필수 항목입니다.'],
                     'exec_type' => ['required' => '실행항목은 필수 항목입니다.'],
                     'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
                 ];
