@@ -424,6 +424,7 @@ class Auth extends ShieldAuth
      */
     public function groupDeniedRedirect(): string
     {
+        dd(2);
         if(auth()->user()->inGroup('guest')){
             dd(1);
             return $this->getUrl('/guest');
