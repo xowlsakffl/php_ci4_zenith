@@ -9,7 +9,7 @@ return [
     'unknownAuthenticator'  => '{0} is not a valid authenticator.',
     'unknownUserProvider'   => 'Unable to determine the User Provider to use.',
     'invalidUser'           => 'Unable to locate the specified user.',
-    'badAttempt'            => 'Unable to log you in. Please check your credentials.',
+    'badAttempt'            => '아이디 및 비밀번호를 확인해주세요.',
     'noPassword'            => 'Cannot validate a user without a password.',
     'invalidPassword'       => '아이디 및 비밀번호를 확인해주세요.',
     'noToken'               => 'Every request must have a bearer token in the {0} header.',
