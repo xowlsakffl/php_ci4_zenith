@@ -38,7 +38,7 @@ class Filters extends BaseConfig
             'forcePasswordReset' => ['except' => ['login*', 'set-password*', 'logout']],
         ],
         'after' => [
-            // 'toolbar',
+            'toolbar',
             // 'honeypot',
             // 'secureheaders',
         ],
