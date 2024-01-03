@@ -10,6 +10,7 @@ use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Authentication\Authenticators\Session;
 use CodeIgniter\Shield\Config\Auth;
+use CodeIgniter\Shield\Models\LoginModel;
 use CodeIgniter\Shield\Models\UserIdentityModel;
 
 class MagicLinkController extends ShieldMagicLinkController
