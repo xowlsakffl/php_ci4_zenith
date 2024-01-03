@@ -63,7 +63,7 @@ class EventController extends BaseController
                     $data['impressions'] = 0;
                 }
 
-				$data['event_url'] = getenv('EVENT_SERVER_URL').$data['seq'];
+				$data['event_url'] = getenv('app.eventURL').$data['seq'];
                 $data['db_price'] = number_format($data['db_price']);
             }
 
@@ -223,7 +223,7 @@ class EventController extends BaseController
             $seq = $this->request->getGet('seq');
             $result = $this->event->getEvent($seq);
             $result['keywords'] = explode(',', $result['keywords']);
-            $result['event_url'] = getenv('EVENT_SERVER_URL').$result['seq'];
+            $result['event_url'] = getenv('app.eventURL').$result['seq'];
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
