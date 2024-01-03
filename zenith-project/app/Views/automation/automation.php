@@ -561,7 +561,7 @@ function setData() {
 function getList(){
     dataTable = $('#automation-table').DataTable({
         "autoWidth": false,
-        "order": [[2,'desc']],
+        "order": [[3,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -1755,10 +1755,10 @@ $('body').on('click', '#createAutomationBtn', function() {
             dataType: "json",
             contentType: 'application/json; charset=utf-8',
             success: function(data){  
-                /* if(data == true){
+                if(data == true){
                     dataTable.draw();
                     $('#automationModal').modal('hide');
-                } */
+                }
             },
             error: function(error, status, msg){
                 var errorMessages = error.responseJSON.messages.msg;

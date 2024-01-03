@@ -534,24 +534,31 @@ class AutomationController extends BaseController
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
+            if($automation['aa_seq'] != '77'){
+                continue;
+            }
             $result = [];
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
+                
                 if($schedulePassData['result'] == false){
                     /* $logIdx = $this->recordResult($schedulePassData);
                     $this->recordLog($result, $logIdx); */
                     continue;
                 }else{
-                    //대상 있을 시
-                    if(!empty($automation['aat_idx'])){
-                        $targetData = $this->getAutomationTarget($schedulePassData['seq']);
-                        $result['target'] = $targetData;
-                        if($targetData['result'] == false){
-                            $logIdx = $this->recordResult($targetData);
-                            $this->recordLog($result, $logIdx);
-                            continue;
+                    $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
+                    if(!empty($targets)){
+                        foreach ($targets as $target) {
+                            $targetData = $this->checkAutomationTarget($target);
+                            $result['target'] = $targetData;
+                            if($targetData['result'] == false){
+                                $logIdx = $this->recordResult($targetData);
+                                $this->recordLog($result, $logIdx);
+                                continue;
+                            }
                         }
+                        
                         
                         if($targetData['result'] == true && !empty($targetData['target'])){
                             $conditionPassData = $this->checkAutomationCondition($targetData);
@@ -571,8 +578,8 @@ class AutomationController extends BaseController
                 }
             }
         }
-
-        if(!empty($seqs)){
+        die;
+        /* if(!empty($seqs)){
             $executionData = [];
             foreach ($seqs as $seq) {
                 CLI::showProgress($step++, $total);
@@ -598,7 +605,7 @@ class AutomationController extends BaseController
                     }
                 }
             }
-        }
+        } */
 
         CLI::write("자동화 실행 완료", "light_red");
     }
@@ -769,9 +776,8 @@ class AutomationController extends BaseController
         return $resultArray;
     }
 
-    public function getAutomationTarget($seq)
+    public function checkAutomationTarget($target)
     {
-        $target = $this->automation->getTarget($seq);
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         //값 별로 메소드 매칭
@@ -779,11 +785,12 @@ class AutomationController extends BaseController
             $methodName = "getTarget" . ucfirst($target['aat_media']);
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
+                dd($data);
                 $data = $this->setData($data);
                 return  [
                     'result' => true,
                     'msg' => '대상 일치',
-                    'seq' => $seq,
+                    'seq' => $target['aat_idx'],
                     'target' => $data,
                 ];
             }
@@ -792,7 +799,7 @@ class AutomationController extends BaseController
                 'result' => false,
                 'status' => 'failed',
                 'msg' => '대상 메소드 매칭 오류',
-                'seq' => $seq,
+                'seq' => $target['aat_idx'],
             ];
         }
     }

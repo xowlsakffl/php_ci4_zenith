@@ -1148,11 +1148,9 @@ class AutomationModel extends Model
         aas.month_day as aas_month_day, 
         aas.month_week as aas_month_week, 
         aas.reg_datetime as aas_reg_datetime, 
-        aat.idx as aat_idx,
         aar_sub.aar_exec_timestamp as aar_exec_timestamp,
         ');
         $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
-        $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
         $builder->join("({$subQueryBuilder->getCompiledSelect()}) aar_sub", 'aar_sub.idx = aa.seq', 'left');
         $builder->where('aa.status', 1);
         $builder->groupBy('aa.seq');
@@ -1160,19 +1158,17 @@ class AutomationModel extends Model
         return $result;
     }
 
-    public function getTarget($seq)
+    public function getAutomationTargets($seq)
     {   
-        $builder = $this->zenith->table('aa_target as aat');
+        $builder = $this->zenith->table('aa_target');
         $builder->select('
-        aa.seq as aa_seq,
-        aat.idx as aat_idx,
-        aat.type as aat_type,
-        aat.media as aat_media,
-        aat.id as aat_id
+        idx as aat_idx,
+        type as aat_type,
+        media as aat_media,
+        id as aat_id
         ');
-        $builder->join('admanager_automation aa', 'aat.idx = aa.seq');
-        $builder->where('aat.idx', $seq);
-        $result = $builder->get()->getRowArray();
+        $builder->where('idx', $seq);
+        $result = $builder->get()->getResultArray();
 
         return $result;
     }
@@ -1185,6 +1181,7 @@ class AutomationModel extends Model
         $companyBuilder->where('c.id', $data['aat_id']);
         $companyBuilder->groupBy('ca.media');
         $companies = $companyBuilder->get()->getResultArray();
+        dd($companies);
         $builders = [];
         foreach ($companies as $company) {
             switch ($company['media']) {
