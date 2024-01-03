@@ -130,3 +130,5 @@ nb-configuration.xml
 node_modules/*
 
 ThirdParty/*/config.php
+
+examples
