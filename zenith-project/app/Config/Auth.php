@@ -410,7 +410,17 @@ class Auth extends ShieldAuth
      */
     public function permissionDeniedRedirect(): string
     {
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if(auth()->user()->inGroup('guest')){
+            return $this->getUrl('/guest');
+        }
+        
+        if(auth()->user()->inGroup('advertiser', 'agency')){
+            return $this->getUrl('/integrate');
+        }
+        
+        $url = setting('Auth.redirects')['permission_denied'];
+
+        return $this->getUrl($url);
     }
 
     /**
@@ -419,7 +429,17 @@ class Auth extends ShieldAuth
      */
     public function groupDeniedRedirect(): string
     {
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if(auth()->user()->inGroup('guest')){
+            return $this->getUrl('/guest');
+        }
+
+        if(auth()->user()->inGroup('advertiser', 'agency')){
+            return $this->getUrl('/integrate');
+        }
+
+        $url = setting('Auth.redirects')['group_denied'];
+
+        return $this->getUrl($url);
     }
 
 
