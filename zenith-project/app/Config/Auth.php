@@ -410,7 +410,7 @@ class Auth extends ShieldAuth
      */
     public function permissionDeniedRedirect(): string
     {
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(ㅊ);
+        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
 
     /**
