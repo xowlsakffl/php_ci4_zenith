@@ -57,6 +57,8 @@ class Auth extends ShieldAuth
         'login'    => '/',
         'logout'   => 'login',
         'force_reset' => '/set-password',
+        'permission_denied' => '/',
+        'group_denied'      => '/',
     ];
 
     /**
@@ -390,6 +392,48 @@ class Auth extends ShieldAuth
 
         return $this->getUrl($url);
     }
+
+    /**
+     * Returns the URL the user should be redirected to
+     * if force_reset identity is set to true.
+     */
+    public function forcePasswordResetRedirect(): string
+    {
+        $url = setting('Auth.redirects')['force_reset'];
+
+        return $this->getUrl($url);
+    }
+
+    /**
+     * Returns the URL the user should be redirected to
+     * if permission denied.
+     */
+    public function permissionDeniedRedirect(): string
+    {
+        if(auth()->user()->inGroup('guest')){
+            return '/guest';
+        }
+        
+        $url = setting('Auth.redirects')['permission_denied'];
+
+        return $this->getUrl($url);
+    }
+
+    /**
+     * Returns the URL the user should be redirected to
+     * if group denied.
+     */
+    public function groupDeniedRedirect(): string
+    {
+        if(auth()->user()->inGroup('guest')){
+            return '/guest';
+        }
+
+        $url = setting('Auth.redirects')['group_denied'];
+
+        return $this->getUrl($url);
+    }
+
 
     /**
      * Accepts a string which can be an absolute URL or
