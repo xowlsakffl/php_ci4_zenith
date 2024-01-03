@@ -57,8 +57,7 @@ class Auth extends ShieldAuth
         'login'    => '/',
         'logout'   => 'login',
         'force_reset' => '/set-password',
-        'permission_denied' => '/',
-        'group_denied'      => '/',
+ 
     ];
 
     /**
@@ -411,7 +410,7 @@ class Auth extends ShieldAuth
     public function permissionDeniedRedirect(): string
     {
         if(auth()->user()->inGroup('guest')){
-            return '/guest';
+            return $this->getUrl('/guest');
         }
         
         $url = setting('Auth.redirects')['permission_denied'];
@@ -426,7 +425,7 @@ class Auth extends ShieldAuth
     public function groupDeniedRedirect(): string
     {
         if(auth()->user()->inGroup('guest')){
-            return '/guest';
+            return $this->getUrl('/guest');
         }
 
         $url = setting('Auth.redirects')['group_denied'];
