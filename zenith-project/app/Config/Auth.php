@@ -57,7 +57,8 @@ class Auth extends ShieldAuth
         'login'    => '/',
         'logout'   => 'login',
         'force_reset' => '/set-password',
- 
+        'permission_denied' => '/',
+        'group_denied'      => '/denied',
     ];
 
     /**
@@ -355,11 +356,11 @@ class Auth extends ShieldAuth
     public function loginRedirect(): string
     {
         if(auth()->user()->inGroup('guest')){
-            return '/guest';
+            return $this->getUrl('/guest');
         }
 
         if(auth()->user()->inGroup('advertiser', 'agency')){
-            return '/integrate';
+            return $this->getUrl('/integrate');
         }
 
         $url = setting('Auth.redirects')['login'];
@@ -385,7 +386,7 @@ class Auth extends ShieldAuth
     public function registerRedirect(): string
     {
         if(auth()->user()->inGroup('guest')){
-            return '/guest';
+            return $this->getUrl('/guest');
         }
         $url = setting('Auth.redirects')['register'];
 
@@ -409,13 +410,7 @@ class Auth extends ShieldAuth
      */
     public function permissionDeniedRedirect(): string
     {
-        if(auth()->user()->inGroup('guest')){
-            return $this->getUrl('/guest');
-        }
-        
-        $url = setting('Auth.redirects')['permission_denied'];
-
-        return $this->getUrl($url);
+        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(ㅊ);
     }
 
     /**
@@ -424,15 +419,7 @@ class Auth extends ShieldAuth
      */
     public function groupDeniedRedirect(): string
     {
-        dd(2);
-        if(auth()->user()->inGroup('guest')){
-            dd(1);
-            return $this->getUrl('/guest');
-        }
-
-        $url = setting('Auth.redirects')['group_denied'];
-
-        return $this->getUrl($url);
+        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
 
 
