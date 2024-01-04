@@ -59,7 +59,7 @@ class IntegrateController extends BaseController
                         }
                     }
                 }
-                for($i2=1;$i2<6;$i2++){
+                for($i2=1;$i2<7;$i2++){
                     if(!empty($d['add'.$i2])){		
                         if(strpos($d['add'.$i2], "uploads")){
                             $href = "<a href='".str_replace("./","{$event_url}uploads/",$d['add'.$i2])."' target='_blank'>[파일보기]</a>";
