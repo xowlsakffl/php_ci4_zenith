@@ -53,6 +53,7 @@ class IntegrateModel extends Model
         el.add3,
         el.add4,
         el.add5,
+        el.add6,
         el.status,
         count(lm.leads_seq) as memo_cnt,
         GROUP_CONCAT(

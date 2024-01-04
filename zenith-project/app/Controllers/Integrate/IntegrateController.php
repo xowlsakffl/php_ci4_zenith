@@ -30,7 +30,7 @@ class IntegrateController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
-            $event_url = getenv('EVENT_SERVER_URL');
+            $event_url = getenv('app.eventURL');
             if(!isset($arg['searchData'])) {
                 $arg['searchData'] = [
                     'sdate'=> date('Y-m-d'),

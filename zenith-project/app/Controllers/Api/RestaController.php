@@ -79,6 +79,7 @@ class RestaController extends BaseController
             }
 
             foreach ($result['data'] as &$value) {
+                $value['bidamount'] = number_format($value['bidamount']);
                 $value['budget'] = number_format($value['budget']);
                 $value['impressions'] = number_format($value['impressions']);
                 $value['click'] = number_format($value['click']);
@@ -233,6 +234,53 @@ class RestaController extends BaseController
 			$row['ctr'] = Calc::ctr($row['click'], $row['impressions']);	// 클릭율 (노출 대비 클릭한 비율)
 			$row['cpa'] = Calc::cpa($row['unique_total'], $row['spend']);	//DB단가(전환당 비용)
 			$row['cvr'] = Calc::cvr($row['unique_total'], $row['click']);	//전환율
+
+            if($row['bidamount_type'] == 'cpm' && $row['bidamount'] <= 1){
+                $row['bidamount_type'] = '';
+                $row['bidamount'] = 0;
+            }
+
+            if(!empty($row['biddingStrategyType'])){
+                switch($row['biddingStrategyType']) {
+                    case 'TARGET_CPA' :
+                        $row['biddingStrategyType'] = '타겟 CPA';
+                        break;
+                    case 'TARGET_ROAS' :
+                        $row['biddingStrategyType'] = '타겟 광고 투자수익(ROAS)';
+                        break;
+                    case 'TARGET_SPEND' :
+                        $row['biddingStrategyType'] = '클릭수 최대화';
+                        break;
+                    case 'MAXIMIZE_CONVERSIONS' :
+                        $row['biddingStrategyType'] = '전환수 최대화';
+                        break;
+                    /* //값이 뭔지 모름ㅠㅠ
+                    case '' :
+                        $row['biddingStrategyType'] = '검색 결과 위치 타겟';
+                        break;
+                    case '' :
+                        $row['biddingStrategyType'] = '경쟁 광고보다 내 광고가 높은 순위에 게재되는 비율 타겟';
+                        break;
+                    case '' :
+                        $row['biddingStrategyType'] = '타겟 노출 점유율';
+                        break;
+                    */
+                    case 'PAGE_ONE_PROMOTED' :
+                        $row['biddingStrategyType'] = '향상된 CPC 입찰기능';
+                        break;
+                    case 'MANUAL_CPM' :
+                        $row['biddingStrategyType'] = '수동 입찰 전략';
+                        break;
+                    case 'MANUAL_CPC' :
+                        $row['biddingStrategyType'] = '수동 CPC';
+                        break;
+                    case 'UNKNOWN' :
+                        $row['biddingStrategyType'] = '알수없음';
+                        break;
+                    default :
+                        break;
+                }
+            }
         }
         return $result;
     }
@@ -302,6 +350,7 @@ class RestaController extends BaseController
         $total['unique_total'] = 0;
         $total['sales'] = 0;
         $total['budget'] = 0;
+        $total['bidamount'] = 0;
         $total['cpc'] = 0;
         $total['ctr'] = 0;
         $total['cpa'] = 0;
@@ -319,6 +368,7 @@ class RestaController extends BaseController
             $total['margin'] +=$data['margin'];
             $total['unique_total'] +=$data['unique_total'];
             $total['sales'] +=$data['sales'];
+            $total['bidamount'] +=$data['bidamount'];
             $total['budget'] +=$data['budget'];
             $total['cpc'] +=$data['cpc'];
             $total['ctr'] +=$data['ctr'];
@@ -359,6 +409,7 @@ class RestaController extends BaseController
         }
 
         $total['impressions'] = number_format($total['impressions']);
+        $total['bidamount'] = number_format($total['bidamount']);
         $total['budget'] = number_format($total['budget']);
         $total['click'] = number_format($total['click']);
         $total['spend'] = number_format($total['spend']);
