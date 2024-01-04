@@ -1181,7 +1181,6 @@ class AutomationModel extends Model
         $companyBuilder->where('c.id', $data['aat_id']);
         $companyBuilder->groupBy('ca.media');
         $companies = $companyBuilder->get()->getResultArray();
-        dd($companies);
         $builders = [];
         foreach ($companies as $company) {
             switch ($company['media']) {
@@ -1212,7 +1211,7 @@ class AutomationModel extends Model
         }
         $builder = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
         $result = $builder->get()->getResultArray();
-
+        dd($result);
         return $result;
     }
 
@@ -1239,6 +1238,7 @@ class AutomationModel extends Model
 
         $facebookBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $facebookBuilder->select('
+            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 
@@ -1280,6 +1280,7 @@ class AutomationModel extends Model
 
         $googleBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $googleBuilder->select('
+            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 
@@ -1321,6 +1322,7 @@ class AutomationModel extends Model
 
         $kakaoBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $kakaoBuilder->select('
+            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 

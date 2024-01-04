@@ -549,6 +549,7 @@ class AutomationController extends BaseController
                 }else{
                     $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
                     if(!empty($targets)){
+                        $checkTargets = [];
                         foreach ($targets as $target) {
                             $targetData = $this->checkAutomationTarget($target);
                             $result['target'] = $targetData;
@@ -557,9 +558,12 @@ class AutomationController extends BaseController
                                 $this->recordLog($result, $logIdx);
                                 continue;
                             }
+                            var_dump($targetData['target']);
+                            $checkTargets[] = $targetData['target'];
                         }
                         
-                        
+                        dd($checkTargets);
+
                         if($targetData['result'] == true && !empty($targetData['target'])){
                             $conditionPassData = $this->checkAutomationCondition($targetData);
                             $result['conditions'] = $conditionPassData;
@@ -786,7 +790,6 @@ class AutomationController extends BaseController
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
                 dd($data);
-                $data = $this->setData($data);
                 return  [
                     'result' => true,
                     'msg' => '대상 일치',
