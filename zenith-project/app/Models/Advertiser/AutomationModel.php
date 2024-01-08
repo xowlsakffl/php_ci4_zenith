@@ -79,7 +79,7 @@ class AutomationModel extends Model
     {
         $builder = $this->zenith->table('companies A');
         $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
-
+        $builder->join('company_adaccounts AS B', 'A.id = B.company_id');
         if(!empty($data['stx'])){
             $builder->groupStart();
             $builder->like('A.name', $data['stx']);
@@ -127,7 +127,6 @@ class AutomationModel extends Model
 
         $builder = $this->zenith->table('companies A');
         $builder->select('A.id, "광고주" AS media, A.type, A.name, A.status AS status');
-    
         if($media == '광고주'){
             $builder->where('A.id', $id);
         }else{
@@ -1183,35 +1182,37 @@ class AutomationModel extends Model
         $companies = $companyBuilder->get()->getResultArray();
         $builders = [];
         foreach ($companies as $company) {
-            switch ($company['media']) {
-                case 'facebook':
-                    $facebookBuilder = $this->getFacebookByCompany($data, $company);
-                    $builders[] = $facebookBuilder;
-                    break;
-                case 'google':
-                    $googleBuilder = $this->getGoogleByCompany($data, $company);
-                    $builders[] = $googleBuilder;
-                    break;
-                case 'kakao':
-                    $kakaoBuilder = $this->getKakaoByCompany($data, $company);
-                    $builders[] = $kakaoBuilder;
-                    break;
-                default:
-                    break;
+            if(!empty($company['media'])){
+                switch ($company['media']) {
+                    case 'facebook':
+                        $facebookBuilder = $this->getFacebookByCompany($data, $company);
+                        $builders[] = $facebookBuilder;
+                        break;
+                    case 'google':
+                        $googleBuilder = $this->getGoogleByCompany($data, $company);
+                        $builders[] = $googleBuilder;
+                        break;
+                    case 'kakao':
+                        $kakaoBuilder = $this->getKakaoByCompany($data, $company);
+                        $builders[] = $kakaoBuilder;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
+        if(empty($builders)){return false;}
         $unionBuilder = null;
         foreach ($builders as $builder) {
             if ($unionBuilder) {
                 $unionBuilder->union($builder);
-                
             } else {
                 $unionBuilder = $builder;
             }
         }
         $builder = $this->zenith->newQuery()->fromSubquery($unionBuilder, 'adv');
         $result = $builder->get()->getResultArray();
-        dd($result);
         return $result;
     }
 
@@ -1238,7 +1239,6 @@ class AutomationModel extends Model
 
         $facebookBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $facebookBuilder->select('
-            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 
@@ -1277,10 +1277,9 @@ class AutomationModel extends Model
         $subQuery->where('DATE(A.date) >=', date('Y-m-d'));
         $subQuery->where('DATE(A.date) <=', date('Y-m-d'));
         $subQuery->groupBy('D.id');
-
+        
         $googleBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $googleBuilder->select('
-            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 
@@ -1322,7 +1321,6 @@ class AutomationModel extends Model
 
         $kakaoBuilder = $this->zenith->newQuery()->fromSubquery($subQuery, 'sub');
         $kakaoBuilder->select('
-            G.status as status,
             SUM(sub.budget) as budget,
             SUM(sub.unique_total) as unique_total, 
             SUM(sub.spend) as spend, 
@@ -1731,7 +1729,6 @@ class AutomationModel extends Model
             foreach ($aacGetResult as $condition) {
                 $aacData = [
                     'idx' => $seq,
-                    'order' => $condition['order'] ?? 0,
                     'type' => $condition['type'],
                     'type_value' => $condition['type_value'] ?? '',
                     'compare' => $condition['compare'],

@@ -336,17 +336,17 @@
                                     <tr id="condition-1">
                                         <td>
                                             <div class="form-flex">
-                                                <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3">
+                                                <!-- <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"> -->
                                                 <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
-                                                    <option value="status">상태</option>
+                                                    <!-- <option value="status">상태</option> -->
                                                     <option value="budget">예산</option>
                                                     <option value="dbcost">DB단가</option>
-                                                    <option value="dbcount">유효DB</option>
-                                                    <option value="cost">지출액</option>
+                                                    <option value="unique_total">유효DB</option>
+                                                    <option value="spend">지출액</option>
                                                     <option value="margin">수익</option>
                                                     <option value="margin_rate">수익률</option>
-                                                    <option value="sale">매출액</option>
+                                                    <option value="sales">매출액</option>
                                                     <!-- <option value="impression">노출수</option>
                                                     <option value="click">링크클릭</option>
                                                     <option value="cpc">CPC</option>
@@ -354,11 +354,11 @@
                                                     <option value="conversion">DB전환률</option>
                                                 </select>
                                            
-                                                <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
+                                                <!-- <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
                                                     <option value="">상태값 선택</option>
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
-                                                </select>
+                                                </select> -->
                                                 <input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값">
                                             </div>
                                         </td>
@@ -450,7 +450,7 @@
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="8"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -830,11 +830,11 @@ function conditionText($this)
         $("#text-"+trId+" .typeText").html(value);
     }
     
-    if(name == 'type_value_status'){
+    /* if(name == 'type_value_status'){
         $("#text-"+trId+" .typeValueText").text('');
         value = $this.find('option:selected').text();
         $("#text-"+trId+" .typeValueText").html(value);
-    }
+    } */
 
     if(name == 'type_value'){
         $("#text-"+trId+" .typeValueText").text('');
@@ -852,11 +852,11 @@ function conditionText($this)
 function addConditionRow(uniqueId){
     /* var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
-        </tr>`; */
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        </tr>`;  */
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sales">매출액</option><option value="conversion">DB전환률</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`; 
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span></p>`;
     $('#conditionTable tbody').append(row);
@@ -1047,19 +1047,19 @@ function validationData(){
         var eachValid = true;
         $('tr[id^="condition-"]').each(function() {
             var $row = $(this);
-            var $conditionOrder = $row.find('input[name=order]').val();
+            //var $conditionOrder = $row.find('input[name=order]').val();
             var $conditionType = $row.find('select[name=type]').val();
             var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
             var $conditionTypeValue = $row.find('input[name=type_value]').val();
             var $conditionCompare = $row.find('select[name=compare]').val();
 
-            if(!$conditionOrder){
+            /* if(!$conditionOrder){
                 alert('순서를 입력해주세요.');
                 $('#condition-tab').trigger('click');
                 $row.find('input[name=order]').focus();
                 eachValid = false;
                 return false;
-            }
+            } */
 
             if(!$conditionType){
                 alert('조건항목을 선택해주세요.');
@@ -1069,7 +1069,14 @@ function validationData(){
                 return false;
             }
 
-            if($conditionType == 'status'){
+            if(!$conditionTypeValue){
+                alert('조건값을 입력해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('input[name=type_value]').focus();
+                eachValid = false;
+                return false;
+            }
+            /* if($conditionType == 'status'){
                 if(!$conditionTypeValueStatus){
                     alert('상태값을 선택해주세요.');
                     $('#condition-tab').trigger('click');
@@ -1078,14 +1085,8 @@ function validationData(){
                     return false;
                 }
             }else{
-                if(!$conditionTypeValue){
-                    alert('조건값을 입력해주세요.');
-                    $('#condition-tab').trigger('click');
-                    $row.find('input[name=type_value]').focus();
-                    eachValid = false;
-                    return false;
-                }
-            }
+                
+            } */
 
             if(!$conditionCompare){
                 alert('일치여부를 선택해주세요.');
@@ -1214,7 +1215,7 @@ function setModalData(data){
                 $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionType').val(condition.type);
-                if(condition.type == 'status'){
+                /* if(condition.type == 'status'){
                     $('#condition-1 .conditionTypeValue').hide();
                     $('#condition-1 .conditionTypeValueStatus').val(condition.type_value).show();
                     var conditionTypeValueText = $('#condition-1 .conditionTypeValueStatus option:selected').text();
@@ -1222,8 +1223,11 @@ function setModalData(data){
                     $('#condition-1 .conditionTypeValueStatus').hide();
                     $('#condition-1 .conditionTypeValue').val(condition.type_value).show();
                     var conditionTypeValueText = $('#condition-1 .conditionTypeValue').val();
-                }
+                } */
                 
+                $('#condition-1 .conditionTypeValue').val(condition.type_value);
+                var conditionTypeValueText = $('#condition-1 .conditionTypeValue').val();
+
                 $('#condition-1 .conditionCompare').val(condition.compare);
                 $("#text-condition-1 .typeText").html($('#condition-1 .conditionType option:selected').text());
                 $("#text-condition-1 .typeValueText").html(conditionTypeValueText);
@@ -1231,9 +1235,9 @@ function setModalData(data){
             } else { // 그 외의 항목일 경우
                 var uniqueId = 'condition-' + (index + 1);
                 addConditionRow(uniqueId);
-                $(`#${uniqueId} .conditionOrder`).val(condition.order);
+                //$(`#${uniqueId} .conditionOrder`).val(condition.order);
                 $(`#${uniqueId} .conditionType`).val(condition.type);
-                if(condition.type == 'status'){
+                /* if(condition.type == 'status'){
                     $(`#${uniqueId} .conditionTypeValue`).hide();
                     $(`#${uniqueId} .conditionTypeValueStatus`).val(condition.type_value).show();
                     var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValueStatus option:selected").text();
@@ -1241,7 +1245,10 @@ function setModalData(data){
                     $(`#${uniqueId} .conditionTypeValueStatus`).hide();
                     $(`#${uniqueId} .conditionTypeValue`).val(condition.type_value).show();
                     var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
-                }
+                } */
+                $(`#${uniqueId} .conditionTypeValue`).val(condition.type_value);
+                var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
+
                 $(`#${uniqueId} .conditionCompare`).val(condition.compare);
                 $("#text-"+uniqueId+" .typeText").html($("#"+uniqueId+" .conditionType option:selected").text());
                 $("#text-"+uniqueId+" .typeValueText").html(conditionTypeValueText);
@@ -1253,13 +1260,7 @@ function setModalData(data){
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
             var execIndex = index+1;
-            /* var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
-                + execution.type  +'</td><td>'
-                + execution.id  +'</td><td>'
-                + execution.name  +'</td><td>'
-                + execution.status  +'</td><td>'
-                + execution.exec_type  +'</td><td><span>'+execution.exec_value+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>'; */
-            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td>' + execution.media + '</td><td>'
+            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
                 + execution.type  +'</td><td>'
                 + execution.id  +'</td><td>'
                 + execution.name  +'</td><td>'
@@ -1298,8 +1299,8 @@ function setModalData(data){
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
-    $('#condition-1 input[name=type_value]').show();
-    $('#condition-1 select[name=type_value_status]').hide();
+    /* $('#condition-1 input[name=type_value]').show();
+    $('#condition-1 select[name=type_value_status]').hide(); */
     $('#myTab li').each(function(index){
         let $pTags = $(this).find('p');
         if(index === 1 || index === 3){
@@ -1370,19 +1371,21 @@ function setProcData(){
 
     $('#conditionTable tbody tr[id^="condition-"]').each(function(){
         let $row = $(this);
-        let order = $row.find('input[name=order]').val();
+        //let order = $row.find('input[name=order]').val();
         let type = $row.find('select[name=type]').val();
-        let type_value = '';
+        /* let type_value = '';
         if(type == 'status'){
             type_value = $row.find('select[name=type_value_status]').val();
         }else{
             type_value = $row.find('input[name=type_value]').val();
-        }
+        } */
+
+        let type_value = $row.find('input[name=type_value]').val();
         let compare = $row.find('select[name=compare]').val();
         
         if(type){
             $conditions.push({
-                order: order,
+                //order: order,
                 type: type,
                 type_value: type_value,
                 compare: compare,
@@ -1393,15 +1396,15 @@ function setProcData(){
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
-        //let order = $row.find('td:eq(0) input').val();
-        let media = $row.find('td:eq(0)').text();
-        let type = $row.find('td:eq(1)').text();
-        let id = $row.find('td:eq(2)').text();
-        let exec_type = $row.find('td:eq(5)').text();
-        let exec_value = $row.find('td:eq(6)').text();
+        let order = $row.find('td:eq(0) input').val();
+        let media = $row.find('td:eq(1)').text();
+        let type = $row.find('td:eq(2)').text();
+        let id = $row.find('td:eq(3)').text();
+        let exec_type = $row.find('td:eq(6)').text();
+        let exec_value = $row.find('td:eq(7)').text();
 
         $executions.push({
-            //order: order,
+            order: order,
             media: media,
             type: type,
             id: id,
@@ -1440,7 +1443,7 @@ function setProcData(){
         $data['target'] = $targets;
         $data['condition'] = $conditions;
     }
-    console.log($data);
+
     return $data;
 }
 //검색
@@ -1587,8 +1590,7 @@ $('body').on('click', '#execTable tbody tr', function(){
         $('#execConditionTable select[name=exec_condition_type] option').show();
         $('#execConditionTable input[name=exec_condition_value]').show();
         $('#execConditionTable select[name=exec_condition_value_status]').hide();
-    }
-    else {
+    }else {
         $(this).addClass('selected');
         let media = $(this).children('td').eq(0).text();
         let type = $(this).children('td').eq(1).text();
@@ -1597,11 +1599,11 @@ $('body').on('click', '#execTable tbody tr', function(){
             $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
             $('#execConditionTable input[name=exec_condition_value]').val('').hide();
             $('#execConditionTable select[name=exec_condition_value_status]').show();
-        }/* else{
+        }else{
             $('#execConditionTable select[name=exec_condition_type] option').show();
             $('#execConditionTable input[name=exec_condition_value]').show();
             $('#execConditionTable select[name=exec_condition_value_status]').hide();
-        } */
+        }
     }
 });
 
@@ -1636,21 +1638,21 @@ $('body').on('click', '#conditionTable .btn-add', function(){
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
     //상태 선택
-    var type = $(this).val();
+    //var type = $(this).val();
     var rowId = $(this).closest('tr').attr('id');
-    if(type == 'status'){
+    /* if(type == 'status'){
         $('#text-'+rowId+" .typeValueText").text('');
         $(this).siblings('input[name=type_value]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option:not([value="equal"], [value="not_equal"])').hide();
         $(this).siblings('select[name=type_value_status]').show();
-    }else{
+    }else{ */
         if($('#text-'+rowId+" .typeValueText").text() == 'ON' || $('#text-'+rowId+" .typeValueText").text() == 'OFF'){
             $('#text-'+rowId+" .typeValueText").text('');
         }
         $(this).siblings('select[name=type_value_status]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option').show();   
         $(this).siblings('input[name=type_value]').show();   
-    }
+    //}
 });
 
 $('body').on('change', '#conditionTable input, #conditionTable select', function() {
@@ -1703,7 +1705,7 @@ $('body').on('click', '#execConditionBtn', function() {
             var trId = tr.data('id');
             var cloneRow = tr.clone();
             var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
-            //cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
+            cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
             cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
 
             var selectedMediaTd = tr.children('td').eq(0).text();

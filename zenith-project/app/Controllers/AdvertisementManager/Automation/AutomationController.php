@@ -52,7 +52,7 @@ class AutomationController extends BaseController
 
     public function getAutomation()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
             if(!empty($result['targets'])){
@@ -456,14 +456,14 @@ class AutomationController extends BaseController
         if(!empty($data['target'])){
             foreach ($data['condition'] as $condition) {
                 $validationRules      = [
-                    'order' => 'required',
+                    //'order' => 'required',
                     'type' => 'required',
                     'type_value' => 'required',
                     'compare' => 'required',
                     'operation' => 'required',
                 ];
                 $validationMessages   = [
-                    'order' => ['required' => '순서는 필수 항목입니다.'],
+                    //'order' => ['required' => '순서는 필수 항목입니다.'],
                     'type' => ['required' => '조건 항목은 필수 항목입니다.'],
                     'type_value' => ['required' => '조건 값은 필수 항목입니다.'],
                     'compare' => ['required' => '일치여부는 필수 항목입니다.'],
@@ -488,12 +488,12 @@ class AutomationController extends BaseController
         }else{
             foreach ($data['execution'] as $execution) {
                 $validationRules      = [
-                    //'order' => 'required',
+                    'order' => 'required',
                     'exec_type' => 'required',
                     'exec_value' => 'required',
                 ];
                 $validationMessages   = [
-                    //'order' => ['required' => '순서는 필수 항목입니다.'],
+                    'order' => ['required' => '실행순서는 필수 항목입니다.'],
                     'exec_type' => ['required' => '실행항목은 필수 항목입니다.'],
                     'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
                 ];
@@ -534,7 +534,7 @@ class AutomationController extends BaseController
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
-            if($automation['aa_seq'] != '77'){
+            if($automation['aa_seq'] != '81'){
                 continue;
             }
             $result = [];
@@ -552,20 +552,19 @@ class AutomationController extends BaseController
                         $checkTargets = [];
                         foreach ($targets as $target) {
                             $targetData = $this->checkAutomationTarget($target);
-                            $result['target'] = $targetData;
                             if($targetData['result'] == false){
                                 $logIdx = $this->recordResult($targetData);
                                 $this->recordLog($result, $logIdx);
-                                continue;
+                                //선택 대상중 하나라도 데이터를 못가져오면 실행 안함
+                                continue 2;
                             }
-                            var_dump($targetData['target']);
                             $checkTargets[] = $targetData['target'];
                         }
-                        
-                        dd($checkTargets);
-
-                        if($targetData['result'] == true && !empty($targetData['target'])){
-                            $conditionPassData = $this->checkAutomationCondition($targetData);
+                        $targetDatas = $this->setData($checkTargets);
+                        $result['target'] = $targetDatas;
+                        d($targetDatas);
+                        if(!empty($targetDatas)){
+                            $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
                             if($conditionPassData['result'] == false){
                                 $logIdx = $this->recordResult($conditionPassData);
@@ -582,8 +581,8 @@ class AutomationController extends BaseController
                 }
             }
         }
-        die;
-        /* if(!empty($seqs)){
+
+        if(!empty($seqs)){
             $executionData = [];
             foreach ($seqs as $seq) {
                 CLI::showProgress($step++, $total);
@@ -609,7 +608,7 @@ class AutomationController extends BaseController
                     }
                 }
             }
-        } */
+        }
 
         CLI::write("자동화 실행 완료", "light_red");
     }
@@ -789,7 +788,15 @@ class AutomationController extends BaseController
             $methodName = "getTarget" . ucfirst($target['aat_media']);
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
-                dd($data);
+                if(empty($data)){
+                    return [
+                        'result' => false,
+                        'status' => 'failed',
+                        'msg' => '비교 대상 데이터를 가져오는데 실패하였습니다.',
+                        'seq' => $target['aat_idx'],
+                    ];
+                }
+                $data = $this->sumData($data);
                 return  [
                     'result' => true,
                     'msg' => '대상 일치',
@@ -807,16 +814,16 @@ class AutomationController extends BaseController
         }
     }
 
-    public function checkAutomationCondition($target)
+    public function checkAutomationCondition($targetData, $seq)
     {
-        $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
-        $conditions = $this->automation->getAutomationConditionBySeq($target['seq']);
+        $types = ['budget', 'dbcost', 'unique_total', 'spend', 'margin', 'margin_rate', 'sales', 'conversion'];
+        $conditions = $this->automation->getAutomationConditionBySeq($seq);
         if(empty($conditions)){
             return [            
                 "result" => false,
                 'status' => 'failed',
                 "msg" => '조건이 존재하지 않음',
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }
 
@@ -826,49 +833,48 @@ class AutomationController extends BaseController
         foreach ($conditions as $condition) {       
             $conditionMatched = false;       
             $message = "일치하는 조건이 없습니다.";
-            if ($condition['type'] === 'status') {//status 비교
-                if ($target['target']['status'] == $condition['type_value']) {
+            /* if ($condition['type'] === 'status') {//status 비교
+                if ($targetData['target']['status'] == $condition['type_value']) {
                     $conditionMatched = true;
                     $message = 'status 일치';
                 }else{
                     $message = 'status가 일치하지 않습니다.';
                 }
-            }else{//그 외 필드 비교
-                foreach ($types as $type) {                     
-                    if ($condition['type'] === $type) {
-                        switch ($condition['compare']) {
-                            case 'less':
-                                $conditionMatched = $target['target'][$type] < $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'greater':
-                                $conditionMatched = $target['target'][$type] > $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'less_equal':
-                                $conditionMatched = $target['target'][$type] <= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'greater_equal':
-                                $conditionMatched = $target['target'][$type] >= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'equal':
-                                $conditionMatched = $target['target'][$type] == $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'not_equal':
-                                $conditionMatched = $target['target'][$type] != $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
-                                break;
-                            default:
-                                $conditionMatched = false;
-                                break;
-                        }
+            }else{//그 외 필드 비교 */
+            foreach ($types as $type) {                     
+                if ($condition['type'] === $type) {
+                    switch ($condition['compare']) {
+                        case 'less':
+                            $conditionMatched = $targetData[$type] < $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'greater':
+                            $conditionMatched = $targetData[$type] > $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'less_equal':
+                            $conditionMatched = $targetData[$type] <= $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'greater_equal':
+                            $conditionMatched = $targetData[$type] >= $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'equal':
+                            $conditionMatched = $targetData[$type] == $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'not_equal':
+                            $conditionMatched = $targetData[$type] != $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                            break;
+                        default:
+                            $conditionMatched = false;
+                            break;
                     }
                 }
             }
-
+            
             if($operation == 'or'){
                 if($conditionMatched){
                     $isTargetMatched = true;
@@ -889,14 +895,14 @@ class AutomationController extends BaseController
                 "result" => true,
                 'status' => 'success',
                 "msg" => $message,
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }else{
             return [
                 "result" => false,
                 'status' => 'not_execution',
                 "msg" => $message,
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }
     }
@@ -1464,49 +1470,60 @@ class AutomationController extends BaseController
     return $matchedArray;
     } */
 
+    private function sumData($data)
+    {
+        $formatData = [];
+        $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = 0;
+        foreach ($data as $d) {            
+            $formatData['budget'] += $d['budget'];
+            //$formatData['impressions'] += $d['impressions'];
+            $formatData['click'] += $d['click'];
+            $formatData['spend'] += $d['spend'];
+            $formatData['sales'] += $d['sales'];
+            $formatData['unique_total'] += $d['unique_total'];
+            $formatData['margin'] += $d['margin'];
+        }
+
+        return $formatData;
+    }
+
     private function setData($data)
     {
         $formatData = [];
-        $formatData['budget'] = $formatData['impression'] = $formatData['click'] = $formatData['cost'] = $formatData['sale'] = $formatData['dbcount'] = $formatData['margin'] = $formatData['cpc'] = $formatData['ctr'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
-        foreach ($data as $d) {
-            if(isset($d['status']) && in_array($d['status'], ['ON', '1', 'ACTIVE', 'ENABLED'])){
-                $formatData['status'] = 'ON';
-            }else{
-                $formatData['status'] = 'OFF';
-            }
-            
+        $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
+        foreach ($data as $d) {            
             $formatData['budget'] += $d['budget'];
-            $formatData['impression'] += $d['impressions'];
+            //$formatData['impressions'] += $d['impressions'];
             $formatData['click'] += $d['click'];
-            $formatData['cost'] += $d['spend'];
-            $formatData['sale'] += $d['sales'];
-            $formatData['dbcount'] += $d['unique_total'];
+            $formatData['spend'] += $d['spend'];
+            $formatData['sales'] += $d['sales'];
+            $formatData['unique_total'] += $d['unique_total'];
             $formatData['margin'] += $d['margin'];
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
-            if($formatData['click'] > 0){
-                $formatData['cpc'] = round($formatData['cost'] / $formatData['click']);
-            }
+            /* if($formatData['click'] > 0){
+                $formatData['cpc'] = round($formatData['spend'] / $formatData['click']);
+            } */
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
             
-            if($formatData['impression'] > 0){
-                $formatData['ctr'] = ($formatData['click'] / $formatData['impression']) * 100;
-            }
+            /* if($formatData['impressions'] > 0){
+                $formatData['ctr'] = ($formatData['click'] / $formatData['impressions']) * 100;
+            } */
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
-            if($formatData['dbcount'] > 0){
-                $formatData['dbcost'] = round($formatData['cost'] / $formatData['dbcount']);
+            if($formatData['unique_total'] > 0){
+                $formatData['dbcost'] = round($formatData['spend'] / $formatData['unique_total']);
             }
 
             //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
             if ($formatData['click'] > 0) {
-                $formatData['conversion'] = ($formatData['dbcount'] / $formatData['click']) * 100;
+                $formatData['conversion'] = ($formatData['unique_total'] / $formatData['click']) * 100;
             }
 
             //수익률 = (수익/매출액)*100
-            if ($formatData['sale'] > 0) {
-                $formatData['margin_rate'] = round(($formatData['margin'] / $formatData['sale']) * 100);
+            if ($formatData['sales'] > 0) {
+                $formatData['margin_rate'] = round(($formatData['margin'] / $formatData['sales']) * 100);
             } else {
                 $formatData['margin_rate'] = 0;
             } 
