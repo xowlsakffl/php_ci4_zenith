@@ -196,9 +196,8 @@ class GADB
 	public function updateCampaignField($data = null)
 	{
 		if (is_null($data)) return false;
-
 		$builder = $this->db->table('aw_campaign');
-
+		
 		$updateData = [];
 
 		if (isset($data['name'])) {

@@ -562,7 +562,7 @@ class AutomationController extends BaseController
                         }
                         $targetDatas = $this->setData($checkTargets);
                         $result['target'] = $targetDatas;
-                        d($targetDatas);
+
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
@@ -910,6 +910,7 @@ class AutomationController extends BaseController
     public function automationExecution($seq)
     {
         $executions = $this->automation->getExecution($seq);
+
         if(empty($executions)){
             return [            
                 "result" => false,
@@ -1216,7 +1217,7 @@ class AutomationController extends BaseController
                         default:
                             break;
                     }
-                    
+
                     if($return == true || (isset($return['http_code']) && $return['http_code'] == 200) || isset($return['id'])){
                         $result['log'][] = [
                             "result" => true,

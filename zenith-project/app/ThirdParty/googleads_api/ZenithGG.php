@@ -306,7 +306,7 @@ class ZenithGG
                 $data['status'] = CampaignStatus::PAUSED;
             }
         }
-        
+
         if(isset($param['name'])){
             $data['name'] = $param['name'];
         }
@@ -349,6 +349,7 @@ class ZenithGG
                     $setData['cpaBidAmount'] = 0;
                 }
             }
+
             $this->db->updateCampaignField($setData);
             return $setData;
         };
