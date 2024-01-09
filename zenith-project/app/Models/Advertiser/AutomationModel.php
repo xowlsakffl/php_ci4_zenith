@@ -1038,6 +1038,7 @@ class AutomationModel extends Model
         aa.slack_msg as aa_slack_msg,
         aas.exec_type as aas_exec_type,
         aas.type_value as aas_type_value,
+        DATE_FORMAT(aas.criteria_time, "%H:%i") as aas_criteria_time,
         DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
         DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time,
         DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time,
@@ -1140,6 +1141,7 @@ class AutomationModel extends Model
         aas.exec_type as aas_exec_type, 
         aas.type_value as aas_type_value, 
         DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time, 
+        DATE_FORMAT(aas.criteria_time, "%H:%i") as aas_criteria_time, 
         DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time, 
         DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time, 
         aas.exec_week as aas_exec_week, 
@@ -1560,6 +1562,15 @@ class AutomationModel extends Model
         $builder->where('idx', $seq);
         $builder->orderBy('order', 'asc');
         $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getAutomationResultCount($seq)
+    {   
+        $builder = $this->zenith->table('aa_result');
+        $builder->where('idx', $seq);
+        $result = $builder->countAllResults();
 
         return $result;
     }

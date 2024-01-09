@@ -230,6 +230,17 @@
                                         </select>
                                     </td>
                                 </tr>
+                                <tr id="criteriaTimeRow">
+                                    <th scope="row">기준 시간</th>
+                                    <td>
+                                        <div class="form-flex">
+                                            <select name="criteria_time" class="form-select middle">
+                                                <option value="" selected>선택</option>
+                                                <?php echo $timeOptions; ?>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <th scope="row">제외 시간</th>
                                     <td>
@@ -715,19 +726,23 @@ function chkSchedule()
     $('#weekdayRow, #nextDateRow, #timeRow').show();
 
     if (selectedValue === "minute" || selectedValue === "hour") {
+        $('#criteriaTimeRow').show();
         $('#weekdayRow, #nextDateRow, #timeRow').hide();
         $('input[name=exec_week]').prop('checked', false);
         $('#nextDateRow select').val('');
         $('#timeRow select').val('');
     } else if (selectedValue === "day") {
         $('#weekdayRow, #nextDateRow').hide();
+        $('#criteriaTimeRow').hide();
         $('input[name=exec_week]').prop('checked', false);
         $('#nextDateRow select').val('');
     } else if (selectedValue === "week") {
         $('#nextDateRow').hide();
+        $('#criteriaTimeRow').hide();
         $('#nextDateRow select').val('');
     } else if (selectedValue === "month"){
         $('#weekdayRow').hide();
+        $('#criteriaTimeRow').hide();
         $('input[name=exec_week]').prop('checked', false);
     }
 }
@@ -961,6 +976,7 @@ function getExecAdvs(data){
 //유효성 검사
 function validationData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
+    let $criteria_time = $('#scheduleTable select[name=criteria_time]').val();
     let $exec_type = $('#scheduleTable select[name=exec_type]').val();
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
@@ -980,6 +996,13 @@ function validationData(){
         alert('시간 조건값을 입력해주세요');
         $('#schedule-tab').trigger('click');
         $('#scheduleTable input[name=type_value]').focus();
+        return false;
+    }
+
+    if (($exec_type === 'minute' || $exec_type === 'hour') && !$criteria_time) {
+        alert('기준 시간을 선택해주세요.');
+        $('#schedule-tab').trigger('click');
+        $('#scheduleTable select[name=criteria_time]').focus();
         return false;
     }
 
@@ -1169,6 +1192,9 @@ function setModalData(data){
     $('#automationModal input[name=seq]').val(data.aa_seq);
     $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
     $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
+    if(data.aas_criteria_time){
+        $('#scheduleTable select[name=criteria_time]').val(data.aas_criteria_time);
+    }
     if(data.aas_exec_week){
         $('#scheduleTable input[name=exec_week][value="' + data.aas_exec_week + '"]').prop('checked', true);
     }
@@ -1342,6 +1368,7 @@ function reset(){
 function setProcData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
     let $exec_type = $('#scheduleTable select[name=exec_type]').val();
+    let $criteria_time = $('#scheduleTable select[name=criteria_time]').val();
     let $exec_week = $('#scheduleTable input[name=exec_week]:checked').val();
     let $month_type = $('#scheduleTable select[name=month_type]').val();
     let $month_day = $('#scheduleTable select[name=month_day]').val();
@@ -1422,6 +1449,7 @@ function setProcData(){
         'schedule': {
             'type_value': $type_value,
             'exec_type': $exec_type,
+            'criteria_time': $criteria_time,
             'exec_week': $exec_week,
             'month_type': $month_type,
             'month_day': $month_day,
