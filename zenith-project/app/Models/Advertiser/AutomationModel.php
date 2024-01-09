@@ -1836,11 +1836,11 @@ class AutomationModel extends Model
 
     public function recodeResult($data)
     {
-        $this->zenith->transStart();
+        //$this->zenith->transStart();
         $builder = $this->zenith->table('aa_result');
         $builder->insert($data);
         $seq = $this->zenith->insertID();
-        $this->zenith->transComplete();
+        //$this->zenith->transComplete();
        
         return $seq;
     }
