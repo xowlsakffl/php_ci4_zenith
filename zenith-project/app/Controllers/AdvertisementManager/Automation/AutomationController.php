@@ -1534,7 +1534,7 @@ class AutomationController extends BaseController
     {
         $resultData = [
             'idx' => $result['seq'],
-            'result' => $result['status'],
+            'result' => $result['status'] ?? '',
             'exec_timestamp' => date('Y-m-d H:i:s')
         ];
 
