@@ -1353,7 +1353,7 @@ class AutomationController extends BaseController
             $result['log'] = [
                 "result" => false,
                 'status' => 'failed',
-                'msg' => 'Api 오류 발생',
+                'msg' => $e->getMessage(),
                 "seq" => $seq,
             ];
             return $result;
