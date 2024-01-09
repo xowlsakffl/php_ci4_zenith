@@ -1535,7 +1535,7 @@ class AutomationController extends BaseController
     private function recordResult($result)
     {
         $resultData = [
-            'idx' => $result['seq'],
+            'idx' => $result['seq'] ?? 0,
             'result' => $result['status'] ?? '',
             'exec_timestamp' => date('Y-m-d H:i:s')
         ];
