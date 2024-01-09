@@ -249,6 +249,8 @@ class AutomationController extends BaseController
                     case 'not_execution':
                         $data['result'] = '실행되지 않음';
                         break;
+                    default:
+                        $data['result'] = '';
                 }
                 $descFields = ['schedule_desc', 'target_desc', 'conditions_desc', 'executions_desc'];
                 foreach($descFields as $field) {
@@ -277,10 +279,10 @@ class AutomationController extends BaseController
                                 
                             }else{
                                 if($decoded !== null) {
-                                    if($decoded['result'] === true) {
+                                    if(isset($decoded['result']) && $decoded['result'] === true) {
                                         $data[$field] = '통과';
                                     } else{
-                                        $data[$field] = '실패 - '.$decoded['msg'];
+                                        $data[$field] = '실패 - '.(isset($decoded['msg']) ? $decoded['msg'] : '');   
                                     }
                                 }
                             }
