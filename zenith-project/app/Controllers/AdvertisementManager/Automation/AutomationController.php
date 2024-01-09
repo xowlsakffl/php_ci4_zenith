@@ -832,44 +832,45 @@ class AutomationController extends BaseController
         foreach ($conditions as $condition) {       
             $conditionMatched = false;       
             $message = "일치하는 조건이 없습니다.";
-            /* if ($condition['type'] === 'status') {//status 비교
+            if ($condition['type'] === 'status') {//status 비교
                 if ($targetData['target']['status'] == $condition['type_value']) {
                     $conditionMatched = true;
                     $message = 'status 일치';
                 }else{
                     $message = 'status가 일치하지 않습니다.';
                 }
-            }else{//그 외 필드 비교 */
-            foreach ($types as $type) {                     
-                if ($condition['type'] === $type) {
-                    switch ($condition['compare']) {
-                        case 'less':
-                            $conditionMatched = $targetData[$type] < $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
-                            break;
-                        case 'greater':
-                            $conditionMatched = $targetData[$type] > $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
-                            break;
-                        case 'less_equal':
-                            $conditionMatched = $targetData[$type] <= $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
-                            break;
-                        case 'greater_equal':
-                            $conditionMatched = $targetData[$type] >= $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
-                            break;
-                        case 'equal':
-                            $conditionMatched = $targetData[$type] == $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
-                            break;
-                        case 'not_equal':
-                            $conditionMatched = $targetData[$type] != $condition['type_value'];
-                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
-                            break;
-                        default:
-                            $conditionMatched = false;
-                            break;
+            }else{//그 외 필드 비교
+                foreach ($types as $type) {                     
+                    if ($condition['type'] === $type) {
+                        switch ($condition['compare']) {
+                            case 'less':
+                                $conditionMatched = $targetData[$type] < $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
+                                break;
+                            case 'greater':
+                                $conditionMatched = $targetData[$type] > $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
+                                break;
+                            case 'less_equal':
+                                $conditionMatched = $targetData[$type] <= $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
+                                break;
+                            case 'greater_equal':
+                                $conditionMatched = $targetData[$type] >= $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
+                                break;
+                            case 'equal':
+                                $conditionMatched = $targetData[$type] == $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
+                                break;
+                            case 'not_equal':
+                                $conditionMatched = $targetData[$type] != $condition['type_value'];
+                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                                break;
+                            default:
+                                $conditionMatched = false;
+                                break;
+                        }
                     }
                 }
             }

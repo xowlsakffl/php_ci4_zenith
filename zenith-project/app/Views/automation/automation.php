@@ -339,7 +339,7 @@
                                                 <!-- <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"> -->
                                                 <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
-                                                    <!-- <option value="status">상태</option> -->
+                                                    <option value="status">상태</option>
                                                     <option value="budget">예산</option>
                                                     <option value="dbcost">DB단가</option>
                                                     <option value="unique_total">유효DB</option>
@@ -354,11 +354,11 @@
                                                     <option value="conversion">DB전환률</option>
                                                 </select>
                                            
-                                                <!-- <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
+                                                <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
                                                     <option value="">상태값 선택</option>
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
-                                                </select> -->
+                                                </select>
                                                 <input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값">
                                             </div>
                                         </td>
@@ -830,11 +830,11 @@ function conditionText($this)
         $("#text-"+trId+" .typeText").html(value);
     }
     
-    /* if(name == 'type_value_status'){
+    if(name == 'type_value_status'){
         $("#text-"+trId+" .typeValueText").text('');
         value = $this.find('option:selected').text();
         $("#text-"+trId+" .typeValueText").html(value);
-    } */
+    }
 
     if(name == 'type_value'){
         $("#text-"+trId+" .typeValueText").text('');
@@ -850,14 +850,14 @@ function conditionText($this)
 }
 
 function addConditionRow(uniqueId){
-    /* var row = `
-        <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
-        </tr>`;  */
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sales">매출액</option><option value="conversion">DB전환률</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`; 
+    /* var row = `
+        <tr id="${uniqueId}">
+        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sales">매출액</option><option value="conversion">DB전환률</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        </tr>`;  */
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span></p>`;
     $('#conditionTable tbody').append(row);
     $('#condition-tab').append(rowText);
@@ -1069,14 +1069,7 @@ function validationData(){
                 return false;
             }
 
-            if(!$conditionTypeValue){
-                alert('조건값을 입력해주세요.');
-                $('#condition-tab').trigger('click');
-                $row.find('input[name=type_value]').focus();
-                eachValid = false;
-                return false;
-            }
-            /* if($conditionType == 'status'){
+            if($conditionType == 'status'){
                 if(!$conditionTypeValueStatus){
                     alert('상태값을 선택해주세요.');
                     $('#condition-tab').trigger('click');
@@ -1085,8 +1078,14 @@ function validationData(){
                     return false;
                 }
             }else{
-                
-            } */
+                if(!$conditionTypeValue){
+                    alert('조건값을 입력해주세요.');
+                    $('#condition-tab').trigger('click');
+                    $row.find('input[name=type_value]').focus();
+                    eachValid = false;
+                    return false;
+                }
+            }
 
             if(!$conditionCompare){
                 alert('일치여부를 선택해주세요.');
@@ -1299,8 +1298,8 @@ function setModalData(data){
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
-    /* $('#condition-1 input[name=type_value]').show();
-    $('#condition-1 select[name=type_value_status]').hide(); */
+    $('#condition-1 input[name=type_value]').show();
+    $('#condition-1 select[name=type_value_status]').hide();
     $('#myTab li').each(function(index){
         let $pTags = $(this).find('p');
         if(index === 1 || index === 3){
@@ -1373,14 +1372,14 @@ function setProcData(){
         let $row = $(this);
         //let order = $row.find('input[name=order]').val();
         let type = $row.find('select[name=type]').val();
-        /* let type_value = '';
+        let type_value = '';
         if(type == 'status'){
             type_value = $row.find('select[name=type_value_status]').val();
         }else{
             type_value = $row.find('input[name=type_value]').val();
-        } */
+        }
 
-        let type_value = $row.find('input[name=type_value]').val();
+        //let type_value = $row.find('input[name=type_value]').val();
         let compare = $row.find('select[name=compare]').val();
         
         if(type){
@@ -1638,21 +1637,21 @@ $('body').on('click', '#conditionTable .btn-add', function(){
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
     //상태 선택
-    //var type = $(this).val();
+    var type = $(this).val();
     var rowId = $(this).closest('tr').attr('id');
-    /* if(type == 'status'){
+    if(type == 'status'){
         $('#text-'+rowId+" .typeValueText").text('');
         $(this).siblings('input[name=type_value]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option:not([value="equal"], [value="not_equal"])').hide();
         $(this).siblings('select[name=type_value_status]').show();
-    }else{ */
+    }else{
         if($('#text-'+rowId+" .typeValueText").text() == 'ON' || $('#text-'+rowId+" .typeValueText").text() == 'OFF'){
             $('#text-'+rowId+" .typeValueText").text('');
         }
         $(this).siblings('select[name=type_value_status]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option').show();   
         $(this).siblings('input[name=type_value]').show();   
-    //}
+    }
 });
 
 $('body').on('change', '#conditionTable input, #conditionTable select', function() {
