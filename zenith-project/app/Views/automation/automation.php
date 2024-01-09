@@ -25,6 +25,16 @@
         overflow-y: auto; /* prevent horizontal scrollbar */
         overflow-x: hidden;
     }
+
+    .target-btn{
+        background-color: #ce1922;
+        color:#fff;
+        border-radius: 5px;
+    }
+
+    .set_target_except_btn{
+        margin-left: 10px;
+    }
 </style>
 <?=$this->endSection();?>
 
@@ -87,7 +97,6 @@
                             </li>
                             <li class="tab-link" role="presentation" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">
                                 <strong>대상</strong>   
-                                <p id="targetText"></p>
                             </li>
                             <li class="tab-link" role="presentation" id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" role="tab" aria-controls="condition" aria-selected="false">
                                 <strong>조건</strong>
@@ -258,7 +267,7 @@
                             <table class="table tbl-header w-100" id="targetCheckedTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="5"  class="text-center">선택된 항목</th>
+                                        <th scope="col" colspan="5"  class="text-center">선택 항목(선택 후 상단 탭 클릭 시 소속 항목 조회가 가능합니다)</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -286,7 +295,6 @@
                                 </tbody>
                             </table>
                             <table class="table tbl-header w-100 mt-4" id="targetSelectTable">
-                                <input type="hidden" name="adv_info" id="advInfo">
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="5"  class="text-center">적용 항목</th>
@@ -328,29 +336,29 @@
                                     <tr id="condition-1">
                                         <td>
                                             <div class="form-flex">
-                                                <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3">
+                                                <!-- <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"> -->
                                                 <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
-                                                    <option value="status">상태</option>
+                                                    <!-- <option value="status">상태</option> -->
                                                     <option value="budget">예산</option>
                                                     <option value="dbcost">DB단가</option>
-                                                    <option value="dbcount">유효DB</option>
-                                                    <option value="cost">지출액</option>
+                                                    <option value="unique_total">유효DB</option>
+                                                    <option value="spend">지출액</option>
                                                     <option value="margin">수익</option>
                                                     <option value="margin_rate">수익률</option>
-                                                    <option value="sale">매출액</option>
-                                                    <option value="impression">노출수</option>
+                                                    <option value="sales">매출액</option>
+                                                    <!-- <option value="impression">노출수</option>
                                                     <option value="click">링크클릭</option>
                                                     <option value="cpc">CPC</option>
-                                                    <option value="ctr">CTR</option>
+                                                    <option value="ctr">CTR</option> -->
                                                     <option value="conversion">DB전환률</option>
                                                 </select>
                                            
-                                                <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
+                                                <!-- <select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;">
                                                     <option value="">상태값 선택</option>
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
-                                                </select>
+                                                </select> -->
                                                 <input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값">
                                             </div>
                                         </td>
@@ -553,7 +561,7 @@ function setData() {
 function getList(){
     dataTable = $('#automation-table').DataTable({
         "autoWidth": false,
-        "order": [[2,'desc']],
+        "order": [[3,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -822,11 +830,11 @@ function conditionText($this)
         $("#text-"+trId+" .typeText").html(value);
     }
     
-    if(name == 'type_value_status'){
+    /* if(name == 'type_value_status'){
         $("#text-"+trId+" .typeValueText").text('');
         value = $this.find('option:selected').text();
         $("#text-"+trId+" .typeValueText").html(value);
-    }
+    } */
 
     if(name == 'type_value'){
         $("#text-"+trId+" .typeValueText").text('');
@@ -842,10 +850,14 @@ function conditionText($this)
 }
 
 function addConditionRow(uniqueId){
+    /* var row = `
+        <tr id="${uniqueId}">
+        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        </tr>`;  */
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><input type="text" name="order" placeholder="순서(1~)"class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="dbcount">유효DB</option><option value="cost">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="impression">노출수</option><option value="click">링크클릭</option><option value="cpc">CPC</option><option value="ctr">CTR</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
-        </tr>`;
+        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sales">매출액</option><option value="conversion">DB전환률</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        </tr>`; 
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span></p>`;
     $('#conditionTable tbody').append(row);
     $('#condition-tab').append(rowText);
@@ -887,7 +899,7 @@ function getTargetAdvs(searchData){
                 "data": null, 
                 "width": "7%",
                 "render": function(){
-                    let button = '<button class="target-btn">적용</button></div>';
+                    let button = '<button class="target-btn">적용</button>';
                     return button;
                 }
             },
@@ -1035,19 +1047,19 @@ function validationData(){
         var eachValid = true;
         $('tr[id^="condition-"]').each(function() {
             var $row = $(this);
-            var $conditionOrder = $row.find('input[name=order]').val();
+            //var $conditionOrder = $row.find('input[name=order]').val();
             var $conditionType = $row.find('select[name=type]').val();
             var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
             var $conditionTypeValue = $row.find('input[name=type_value]').val();
             var $conditionCompare = $row.find('select[name=compare]').val();
 
-            if(!$conditionOrder){
+            /* if(!$conditionOrder){
                 alert('순서를 입력해주세요.');
                 $('#condition-tab').trigger('click');
                 $row.find('input[name=order]').focus();
                 eachValid = false;
                 return false;
-            }
+            } */
 
             if(!$conditionType){
                 alert('조건항목을 선택해주세요.');
@@ -1057,7 +1069,14 @@ function validationData(){
                 return false;
             }
 
-            if($conditionType == 'status'){
+            if(!$conditionTypeValue){
+                alert('조건값을 입력해주세요.');
+                $('#condition-tab').trigger('click');
+                $row.find('input[name=type_value]').focus();
+                eachValid = false;
+                return false;
+            }
+            /* if($conditionType == 'status'){
                 if(!$conditionTypeValueStatus){
                     alert('상태값을 선택해주세요.');
                     $('#condition-tab').trigger('click');
@@ -1066,14 +1085,8 @@ function validationData(){
                     return false;
                 }
             }else{
-                if(!$conditionTypeValue){
-                    alert('조건값을 입력해주세요.');
-                    $('#condition-tab').trigger('click');
-                    $row.find('input[name=type_value]').focus();
-                    eachValid = false;
-                    return false;
-                }
-            }
+                
+            } */
 
             if(!$conditionCompare){
                 alert('일치여부를 선택해주세요.');
@@ -1178,16 +1191,16 @@ function setModalData(data){
         $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
     }
 
-    if(data.aat_id){
-        var selectedData = '<tr><td>' + data.aat_media + '</td><td>' + data.aat_type + '</td><td>' 
-        + data.aat_id + '</td><td>' + data.aat_name + '</td><td>'
-        + data.aat_status  +'</td></tr>';
-        $('#targetSelectTable tbody').append(selectedData);
-        $('#targetSelectTable input[name=adv_info]').val(data.aat_media+"_"+data.aat_type+"_"+data.aat_id);
-        var rowMedia = $('#targetSelectTable tbody tr').children('td').eq(0).text();
-        var rowType = $('#targetSelectTable tbody tr').children('td').eq(1).text();
-        var rowName = $('#targetSelectTable tbody tr').children('td').eq(3).text();
-        $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
+    if(data.targets){
+        data.targets.forEach(function(target, index) {
+            let targetIndex = index+1;
+            let targetData = '<tr data-id="'+target.media+"_"+target.type+"_"+target.id+'" id="target-'+targetIndex+'"><td>' + target.media + '</td><td>' + target.type + '</td><td>' 
+        + target.id + '</td><td>' + target.name + '</td><td>'
+        + target.status  +'<button class="set_target_except_btn"><i class="fa fa-times"></i></button></td></tr>';
+            let newTargetText = '<p id="text-target-'+targetIndex+'">'+target.media+'<br>'+target.type+'<br>'+target.name+'</p>';
+            $('#targetSelectTable tbody').append(targetData);
+            $('#target-tab').append(newTargetText);
+        });
     }
 
     //조건
@@ -1202,7 +1215,7 @@ function setModalData(data){
                 $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionOrder').val(condition.order);
                 $('#condition-1 .conditionType').val(condition.type);
-                if(condition.type == 'status'){
+                /* if(condition.type == 'status'){
                     $('#condition-1 .conditionTypeValue').hide();
                     $('#condition-1 .conditionTypeValueStatus').val(condition.type_value).show();
                     var conditionTypeValueText = $('#condition-1 .conditionTypeValueStatus option:selected').text();
@@ -1210,8 +1223,11 @@ function setModalData(data){
                     $('#condition-1 .conditionTypeValueStatus').hide();
                     $('#condition-1 .conditionTypeValue').val(condition.type_value).show();
                     var conditionTypeValueText = $('#condition-1 .conditionTypeValue').val();
-                }
+                } */
                 
+                $('#condition-1 .conditionTypeValue').val(condition.type_value);
+                var conditionTypeValueText = $('#condition-1 .conditionTypeValue').val();
+
                 $('#condition-1 .conditionCompare').val(condition.compare);
                 $("#text-condition-1 .typeText").html($('#condition-1 .conditionType option:selected').text());
                 $("#text-condition-1 .typeValueText").html(conditionTypeValueText);
@@ -1219,9 +1235,9 @@ function setModalData(data){
             } else { // 그 외의 항목일 경우
                 var uniqueId = 'condition-' + (index + 1);
                 addConditionRow(uniqueId);
-                $(`#${uniqueId} .conditionOrder`).val(condition.order);
+                //$(`#${uniqueId} .conditionOrder`).val(condition.order);
                 $(`#${uniqueId} .conditionType`).val(condition.type);
-                if(condition.type == 'status'){
+                /* if(condition.type == 'status'){
                     $(`#${uniqueId} .conditionTypeValue`).hide();
                     $(`#${uniqueId} .conditionTypeValueStatus`).val(condition.type_value).show();
                     var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValueStatus option:selected").text();
@@ -1229,7 +1245,10 @@ function setModalData(data){
                     $(`#${uniqueId} .conditionTypeValueStatus`).hide();
                     $(`#${uniqueId} .conditionTypeValue`).val(condition.type_value).show();
                     var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
-                }
+                } */
+                $(`#${uniqueId} .conditionTypeValue`).val(condition.type_value);
+                var conditionTypeValueText = $("#"+uniqueId+" .conditionTypeValue").val();
+
                 $(`#${uniqueId} .conditionCompare`).val(condition.compare);
                 $("#text-"+uniqueId+" .typeText").html($("#"+uniqueId+" .conditionType option:selected").text());
                 $("#text-"+uniqueId+" .typeValueText").html(conditionTypeValueText);
@@ -1280,14 +1299,15 @@ function setModalData(data){
 function reset(){
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
-    $('#condition-1 input[name=type_value]').show();
-    $('#condition-1 select[name=type_value_status]').hide();
+    /* $('#condition-1 input[name=type_value]').show();
+    $('#condition-1 select[name=type_value_status]').hide(); */
     $('#myTab li').each(function(index){
         let $pTags = $(this).find('p');
-        if (index === 2 || index === 4) {
+        if(index === 1 || index === 3){
+            $pTags.remove();
+        }else if (index === 2 || index === 4) {
             $pTags.first().find('span').text('');
-            
-        } else {
+        }else{
             $pTags.first().text('');
         }
         $pTags.not(':first').remove();
@@ -1304,7 +1324,6 @@ function reset(){
     $('#searchAll').prop('checked', false);
     $('#showTargetAdv').prop('disabled', false);
     
-    $('#targetText').show();
     $('#condition-tab p').show();
     
     if ($.fn.DataTable.isDataTable('#targetTable')) {
@@ -1330,29 +1349,43 @@ function setProcData(){
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
     let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-    let $target_media = $('#targetSelectTable tbody tr').find('td').eq(0).text();
-    let $target_type = $('#targetSelectTable tbody tr').find('td').eq(1).text();
-    let $target_id = $('#targetSelectTable tbody tr').find('td').eq(2).text();
+    
     let operation = $('input[name=operation]:checked').val();
 
+    let $targets = [];
     let $conditions = [];
     let $executions = [];
 
+    $('#targetSelectTable tbody tr').each(function(){
+        let $row = $(this);
+        let media = $row.find('td:eq(0)').text();
+        let type = $row.find('td:eq(1)').text();
+        let id = $row.find('td:eq(2)').text();
+
+        $targets.push({
+            media: media,
+            type: type,
+            id: id,
+        });
+    });
+
     $('#conditionTable tbody tr[id^="condition-"]').each(function(){
         let $row = $(this);
-        let order = $row.find('input[name=order]').val();
+        //let order = $row.find('input[name=order]').val();
         let type = $row.find('select[name=type]').val();
-        let type_value = '';
+        /* let type_value = '';
         if(type == 'status'){
             type_value = $row.find('select[name=type_value_status]').val();
         }else{
             type_value = $row.find('input[name=type_value]').val();
-        }
+        } */
+
+        let type_value = $row.find('input[name=type_value]').val();
         let compare = $row.find('select[name=compare]').val();
         
         if(type){
             $conditions.push({
-                order: order,
+                //order: order,
                 type: type,
                 type_value: type_value,
                 compare: compare,
@@ -1407,11 +1440,7 @@ function setProcData(){
     };
 
     if ($('#targetSelectTable tbody tr').length > 0) {
-        $data['target'] = {
-            'type': $target_type,
-            'media': $target_media,
-            'id': $target_id,
-        };
+        $data['target'] = $targets;
         $data['condition'] = $conditions;
     }
 
@@ -1496,19 +1525,25 @@ $('form[name="search-target-form"]').bind('submit', function() {
 });
 
 $('form[name="search-exec-form"]').bind('submit', function() {
-    var searchAll = $('#searchAll').is(':checked');
-    var advInfo = $('input[name=adv_info]').val();
+    let searchAll = $('#searchAll').is(':checked');
+    let targets = $('#targetSelectTable tbody tr').length;
+    let adv = [];
 
-    if (!searchAll && !advInfo) {
+    if (!searchAll && !targets) {
         alert('대상이 없을 경우 전체검색을 체크해주세요.');
         $('#searchAll').focus();
         return false;
     }
 
-    var data = {
+    $('#targetSelectTable tbody tr').each(function() {
+        let dataId = $(this).data('id');
+        adv.push(dataId);
+    });
+
+    let data = {
         'tab': $('#execTab li.active').data('tab'),
         'stx': $('#showExecAdv').val(),
-        'adv': searchAll ? null : advInfo,
+        'adv': searchAll ? null : adv,
     }
 
     getExecAdvs(data);
@@ -1517,7 +1552,7 @@ $('form[name="search-exec-form"]').bind('submit', function() {
 
 $('body').on('click', '#targetTable tbody tr', function(){
     if ($(this).hasClass('selected')) {
-         $(this).removeClass('selected');
+        $(this).removeClass('selected');
     }else {
         $('#targetTable tr.selected').removeClass('selected');
         $(this).addClass('selected');
@@ -1530,16 +1565,23 @@ $('body').on('click', '#targetTable tbody tr', function(){
 
 $('body').on('click', '.target-btn', function(e){
     e.stopPropagation();
-    $('#targetSelectTable tbody').empty();
     let targetId = $(this).closest('tr').data('id');
     let rowMedia = $(this).closest('tr').children('td').eq(0).text();
     let rowType = $(this).closest('tr').children('td').eq(1).text();
     let rowName = $(this).closest('tr').children('td').eq(3).text();
+    let newRowIdNumber = $('#targetSelectTable tbody tr').length + 1;
+    if ($('#targetSelectTable tbody td:contains("' + rowName + '")').length > 0) {
+        alert("이미 같은 제목의 행이 적용 항목에 존재합니다.");
+        return;
+    }
     let clonedRow = $(this).closest('tr').clone();
-    $('#targetSelectTable input[name=adv_info]').val(targetId);
-    $('#targetText').html(rowMedia+"<br>"+rowType+"<br>"+rowName);
     clonedRow.children('td:last').remove();
-    clonedRow.appendTo('#targetSelectTable');
+    clonedRow.find('td:last').append('<button class="set_target_except_btn"><i class="fa fa-times"></i></button>');
+    clonedRow.removeClass('selected');
+    clonedRow.attr('id', 'target-'+newRowIdNumber).appendTo('#targetSelectTable');
+
+    var newExecText = '<p id="text-target-'+newRowIdNumber+'">* '+rowType+' - '+rowMedia+'<br>'+rowName+'</p>';
+    $('#target-tab').append(newExecText);
 });
 
 $('body').on('click', '#execTable tbody tr', function(){
@@ -1548,8 +1590,7 @@ $('body').on('click', '#execTable tbody tr', function(){
         $('#execConditionTable select[name=exec_condition_type] option').show();
         $('#execConditionTable input[name=exec_condition_value]').show();
         $('#execConditionTable select[name=exec_condition_value_status]').hide();
-    }
-    else {
+    }else {
         $(this).addClass('selected');
         let media = $(this).children('td').eq(0).text();
         let type = $(this).children('td').eq(1).text();
@@ -1569,12 +1610,16 @@ $('body').on('click', '#execTable tbody tr', function(){
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
     $(this).addClass('active');
-    if($('#targetCheckedTable tbody tr').length > 0){
-        $selectRow = $('#targetCheckedTable tbody tr').data('id');
+    let $selectRow = $('#targetCheckedTable tbody tr').data('id');
+    let $selectRowCount = $('#targetCheckedTable tbody tr').length;
+
+    if($selectRowCount > 0){
+        let adv = [];
+        adv.push($selectRow);
         let data = {
-            'tab': $('#targetTab li.active').data('tab'),
-            'adv': $selectRow
-        }
+        'tab': $('#targetTab li.active').data('tab'),
+        'adv': adv
+    }
 
         getTargetAdvs(data);
     }
@@ -1593,21 +1638,21 @@ $('body').on('click', '#conditionTable .btn-add', function(){
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
     //상태 선택
-    var type = $(this).val();
+    //var type = $(this).val();
     var rowId = $(this).closest('tr').attr('id');
-    if(type == 'status'){
+    /* if(type == 'status'){
         $('#text-'+rowId+" .typeValueText").text('');
         $(this).siblings('input[name=type_value]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option:not([value="equal"], [value="not_equal"])').hide();
         $(this).siblings('select[name=type_value_status]').show();
-    }else{
+    }else{ */
         if($('#text-'+rowId+" .typeValueText").text() == 'ON' || $('#text-'+rowId+" .typeValueText").text() == 'OFF'){
             $('#text-'+rowId+" .typeValueText").text('');
         }
         $(this).siblings('select[name=type_value_status]').val('').hide();
         $(this).closest('tr').find('select[name=compare]').children('option').show();   
         $(this).siblings('input[name=type_value]').show();   
-    }
+    //}
 });
 
 $('body').on('change', '#conditionTable input, #conditionTable select', function() {
@@ -1674,25 +1719,31 @@ $('body').on('click', '#execConditionBtn', function() {
     }
 });
 
+$('body').on('click', '.set_target_except_btn', function() {
+    let rowId = $(this).closest('tr').attr('id');
+    $(this).closest('tr').remove();
+    $('#target-tab #text-'+rowId).remove();
+});
+
 $('body').on('click', '.exec_condition_except_btn', function() {
     $(this).closest('tr').remove();
-    var rowId = $(this).closest('tr').attr('id');
+    let rowId = $(this).closest('tr').attr('id');
     $('#preactice-tab #text-'+rowId).remove();
 });
 
 $('body').on('click', '.deleteBtn', function() {
     $(this).closest('tr').remove();
-    var rowId = $(this).closest('tr').attr('id');
+    let rowId = $(this).closest('tr').attr('id');
     $('#condition-tab #text-'+rowId).remove();
 });
 
 $('body').on('focusout', '#detailTable input[name=subject]', function() {
-    var detailTextSubject = $(this).val();
+    let detailTextSubject = $(this).val();
     $('#detailText #subjectText').text(detailTextSubject);
 });
 
 $('body').on('focusout', '#detailTable textarea[name=description]', function() {
-    var detailTextDescription = $(this).val();
+    let detailTextDescription = $(this).val();
     $('#detailText #descriptionText').text(detailTextDescription);
 });
 

@@ -55,48 +55,50 @@ class AutomationController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
-            if(!empty($result['aat_id'])){
-                if($result['aat_status'] == 1 || $result['aat_status'] == 'ON' || $result['aat_status'] == 'ENABLED' || $result['aat_status'] == 'ACTIVE'){
-                    $result['aat_status'] = '활성';
-                }else{
-                    $result['aat_status'] = '비활성';
-                }
+            if(!empty($result['targets'])){
+                foreach ($result['targets'] as &$target) {
+                    switch ($target['media']) {
+                        case 'company':
+                            $target['media'] = '광고주';
+                            break;
+                        case 'facebook':
+                            $target['media'] = '페이스북';
+                            break;
+                        case 'google':
+                            $target['media'] = '구글';
+                            break;
+                        case 'kakao':
+                            $target['media'] = '카카오';
+                            break;
+                        default:
+                            break;
+                    }
     
-                switch ($result['aat_type']) {
-                    case 'advertiser':
-                        $result['aat_type'] = '광고주';
-                        break;
-                    case 'account':
-                        $result['aat_type'] = '매체광고주';
-                        break;
-                    case 'campaign':
-                        $result['aat_type'] = '캠페인';
-                        break;
-                    case 'adgroup':
-                        $result['aat_type'] = '광고그룹';
-                        break;
-                    case 'ad':
-                        $result['aat_type'] = '광고';
-                        break;
-                    default:
-                        break;
-                }
+                    switch ($target['type']) {
+                        case 'advertiser':
+                            $target['type'] = '광고주';
+                            break;
+                        case 'account':
+                            $target['type'] = '매체광고주';
+                            break;
+                        case 'campaign':
+                            $target['type'] = '캠페인';
+                            break;
+                        case 'adgroup':
+                            $target['type'] = '광고그룹';
+                            break;
+                        case 'ad':
+                            $target['type'] = '광고';
+                            break;
+                        default:
+                            break;
+                    }
     
-                switch ($result['aat_media']) {
-                    case 'company':
-                        $result['aat_media'] = '광고주';
-                        break;
-                    case 'facebook':
-                        $result['aat_media'] = '페이스북';
-                        break;
-                    case 'google':
-                        $result['aat_media'] = '구글';
-                        break;
-                    case 'kakao':
-                        $result['aat_media'] = '카카오';
-                        break;
-                    default:
-                        break;
+                    if($target['status'] == 1 || $target['status'] == 'ON' || $target['status'] == 'ENABLED' || $target['status'] == 'ACTIVE'){
+                        $target['status'] = '활성';
+                    }else{
+                        $target['status'] = '비활성';
+                    }
                 }
             }
             
@@ -168,22 +170,41 @@ class AutomationController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
-
             switch ($arg['tab']) {
                 case 'advertiser':
-                    $result = $this->automation->getSearchCompanies($arg, null);                
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchCompaniesWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchCompanies($arg);  
+                    }
                     break;
                 case 'account':
-                    $result = $this->automation->getSearchAccounts($arg, null);                
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAccountsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAccounts($arg);  
+                    }              
                     break;
                 case 'campaign':
-                    $result = $this->automation->getSearchCampaigns($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchCampaignsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchCampaigns($arg);  
+                    } 
                     break;
                 case 'adgroup':
-                    $result = $this->automation->getSearchAdsets($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAdsetsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAdsets($arg);  
+                    } 
                     break;
                 case 'ad':
-                    $result = $this->automation->getSearchAds($arg, null);
+                    if(!empty($arg['adv'])){
+                        $result = $this->automation->getSearchAdsWithAdv($arg); 
+                    }else{
+                        $result = $this->automation->getSearchAds($arg);  
+                    } 
                     break;
                 default:
                     return $this->fail("잘못된 요청");
@@ -295,8 +316,10 @@ class AutomationController extends BaseController
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             
             if(!empty($data['target'])) {
-                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
-                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
+                foreach ($data['target'] as &$target) {
+                    $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
+                    $target['type'] = $typeMapping[$target['type']] ?? $target['type'];
+                }
             }
 
             if(!empty($data['execution'])) {
@@ -342,8 +365,10 @@ class AutomationController extends BaseController
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             
             if(!empty($data['target'])) {
-                $data['target']['media'] = $mediaMapping[$data['target']['media']] ?? $data['target']['media'];
-                $data['target']['type'] = $typeMapping[$data['target']['type']] ?? $data['target']['type'];
+                foreach ($data['target'] as &$target) {
+                    $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
+                    $target['type'] = $typeMapping[$target['type']] ?? $target['type'];
+                }
             }
 
             if(!empty($data['execution'])) {
@@ -431,14 +456,14 @@ class AutomationController extends BaseController
         if(!empty($data['target'])){
             foreach ($data['condition'] as $condition) {
                 $validationRules      = [
-                    'order' => 'required',
+                    //'order' => 'required',
                     'type' => 'required',
                     'type_value' => 'required',
                     'compare' => 'required',
                     'operation' => 'required',
                 ];
                 $validationMessages   = [
-                    'order' => ['required' => '순서는 필수 항목입니다.'],
+                    //'order' => ['required' => '순서는 필수 항목입니다.'],
                     'type' => ['required' => '조건 항목은 필수 항목입니다.'],
                     'type_value' => ['required' => '조건 값은 필수 항목입니다.'],
                     'compare' => ['required' => '일치여부는 필수 항목입니다.'],
@@ -468,7 +493,7 @@ class AutomationController extends BaseController
                     'exec_value' => 'required',
                 ];
                 $validationMessages   = [
-                    'order' => ['required' => '순서는 필수 항목입니다.'],
+                    'order' => ['required' => '실행순서는 필수 항목입니다.'],
                     'exec_type' => ['required' => '실행항목은 필수 항목입니다.'],
                     'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
                 ];
@@ -509,27 +534,37 @@ class AutomationController extends BaseController
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
+            if($automation['aa_seq'] != '81'){
+                continue;
+            }
             $result = [];
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
+                
                 if($schedulePassData['result'] == false){
                     $logIdx = $this->recordResult($schedulePassData);
                     $this->recordLog($result, $logIdx);
                     continue;
                 }else{
-                    //대상 있을 시
-                    if(!empty($automation['aat_idx'])){
-                        $targetData = $this->getAutomationTarget($schedulePassData['seq']);
-                        $result['target'] = $targetData;
-                        if($targetData['result'] == false){
-                            $logIdx = $this->recordResult($targetData);
-                            $this->recordLog($result, $logIdx);
-                            continue;
+                    $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
+                    if(!empty($targets)){
+                        $checkTargets = [];
+                        foreach ($targets as $target) {
+                            $targetData = $this->checkAutomationTarget($target);
+                            if($targetData['result'] == false){
+                                $logIdx = $this->recordResult($targetData);
+                                $this->recordLog($result, $logIdx);
+                                //선택 대상중 하나라도 데이터를 못가져오면 실행 안함
+                                continue 2;
+                            }
+                            $checkTargets[] = $targetData['target'];
                         }
-                        
-                        if($targetData['result'] == true && !empty($targetData['target'])){
-                            $conditionPassData = $this->checkAutomationCondition($targetData);
+                        $targetDatas = $this->setData($checkTargets);
+                        $result['target'] = $targetDatas;
+
+                        if(!empty($targetDatas)){
+                            $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
                             if($conditionPassData['result'] == false){
                                 $logIdx = $this->recordResult($conditionPassData);
@@ -744,9 +779,8 @@ class AutomationController extends BaseController
         return $resultArray;
     }
 
-    public function getAutomationTarget($seq)
+    public function checkAutomationTarget($target)
     {
-        $target = $this->automation->getTarget($seq);
         $types = ['advertiser', 'account', 'campaign', 'adgroup', 'ad'];
         $mediaTypes = ['company', 'facebook', 'google', 'kakao'];
         //값 별로 메소드 매칭
@@ -754,11 +788,19 @@ class AutomationController extends BaseController
             $methodName = "getTarget" . ucfirst($target['aat_media']);
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
-                $data = $this->setData($data);
+                if(empty($data)){
+                    return [
+                        'result' => false,
+                        'status' => 'failed',
+                        'msg' => '비교 대상 데이터를 가져오는데 실패하였습니다.',
+                        'seq' => $target['aat_idx'],
+                    ];
+                }
+                $data = $this->sumData($data);
                 return  [
                     'result' => true,
                     'msg' => '대상 일치',
-                    'seq' => $seq,
+                    'seq' => $target['aat_idx'],
                     'target' => $data,
                 ];
             }
@@ -767,21 +809,21 @@ class AutomationController extends BaseController
                 'result' => false,
                 'status' => 'failed',
                 'msg' => '대상 메소드 매칭 오류',
-                'seq' => $seq,
+                'seq' => $target['aat_idx'],
             ];
         }
     }
 
-    public function checkAutomationCondition($target)
+    public function checkAutomationCondition($targetData, $seq)
     {
-        $types = ['budget', 'dbcost', 'dbcount', 'cost', 'margin', 'margin_rate', 'sale', 'impression', 'click', 'cpc', 'ctr', 'conversion'];
-        $conditions = $this->automation->getAutomationConditionBySeq($target['seq']);
+        $types = ['budget', 'dbcost', 'unique_total', 'spend', 'margin', 'margin_rate', 'sales', 'conversion'];
+        $conditions = $this->automation->getAutomationConditionBySeq($seq);
         if(empty($conditions)){
             return [            
                 "result" => false,
                 'status' => 'failed',
                 "msg" => '조건이 존재하지 않음',
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }
 
@@ -791,49 +833,48 @@ class AutomationController extends BaseController
         foreach ($conditions as $condition) {       
             $conditionMatched = false;       
             $message = "일치하는 조건이 없습니다.";
-            if ($condition['type'] === 'status') {//status 비교
-                if ($target['target']['status'] == $condition['type_value']) {
+            /* if ($condition['type'] === 'status') {//status 비교
+                if ($targetData['target']['status'] == $condition['type_value']) {
                     $conditionMatched = true;
                     $message = 'status 일치';
                 }else{
                     $message = 'status가 일치하지 않습니다.';
                 }
-            }else{//그 외 필드 비교
-                foreach ($types as $type) {                     
-                    if ($condition['type'] === $type) {
-                        switch ($condition['compare']) {
-                            case 'less':
-                                $conditionMatched = $target['target'][$type] < $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'greater':
-                                $conditionMatched = $target['target'][$type] > $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'less_equal':
-                                $conditionMatched = $target['target'][$type] <= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'greater_equal':
-                                $conditionMatched = $target['target'][$type] >= $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'equal':
-                                $conditionMatched = $target['target'][$type] == $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
-                                break;
-                            case 'not_equal':
-                                $conditionMatched = $target['target'][$type] != $condition['type_value'];
-                                $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
-                                break;
-                            default:
-                                $conditionMatched = false;
-                                break;
-                        }
+            }else{//그 외 필드 비교 */
+            foreach ($types as $type) {                     
+                if ($condition['type'] === $type) {
+                    switch ($condition['compare']) {
+                        case 'less':
+                            $conditionMatched = $targetData[$type] < $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 큽니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'greater':
+                            $conditionMatched = $targetData[$type] > $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'less_equal':
+                            $conditionMatched = $targetData[$type] <= $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 크거나 같지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'greater_equal':
+                            $conditionMatched = $targetData[$type] >= $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값보다 작거나 같지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'equal':
+                            $conditionMatched = $targetData[$type] == $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 일치하지 않습니다.'."(".$condition['compare'].")";
+                            break;
+                        case 'not_equal':
+                            $conditionMatched = $targetData[$type] != $condition['type_value'];
+                            $message = $conditionMatched ? $type." ".$condition['compare'].' 조건 일치' : $type.'값이 조건값과 같습니다.'."(".$condition['compare'].")";
+                            break;
+                        default:
+                            $conditionMatched = false;
+                            break;
                     }
                 }
             }
-
+            
             if($operation == 'or'){
                 if($conditionMatched){
                     $isTargetMatched = true;
@@ -854,14 +895,14 @@ class AutomationController extends BaseController
                 "result" => true,
                 'status' => 'success',
                 "msg" => $message,
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }else{
             return [
                 "result" => false,
                 'status' => 'not_execution',
                 "msg" => $message,
-                "seq" => $target['seq'],
+                "seq" => $seq,
             ];
         }
     }
@@ -869,6 +910,7 @@ class AutomationController extends BaseController
     public function automationExecution($seq)
     {
         $executions = $this->automation->getExecution($seq);
+
         if(empty($executions)){
             return [            
                 "result" => false,
@@ -1175,7 +1217,7 @@ class AutomationController extends BaseController
                         default:
                             break;
                     }
-                    
+
                     if($return == true || (isset($return['http_code']) && $return['http_code'] == 200) || isset($return['id'])){
                         $result['log'][] = [
                             "result" => true,
@@ -1429,49 +1471,60 @@ class AutomationController extends BaseController
     return $matchedArray;
     } */
 
+    private function sumData($data)
+    {
+        $formatData = [];
+        $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = 0;
+        foreach ($data as $d) {            
+            $formatData['budget'] += $d['budget'];
+            //$formatData['impressions'] += $d['impressions'];
+            $formatData['click'] += $d['click'];
+            $formatData['spend'] += $d['spend'];
+            $formatData['sales'] += $d['sales'];
+            $formatData['unique_total'] += $d['unique_total'];
+            $formatData['margin'] += $d['margin'];
+        }
+
+        return $formatData;
+    }
+
     private function setData($data)
     {
         $formatData = [];
-        $formatData['budget'] = $formatData['impression'] = $formatData['click'] = $formatData['cost'] = $formatData['sale'] = $formatData['dbcount'] = $formatData['margin'] = $formatData['cpc'] = $formatData['ctr'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
-        foreach ($data as $d) {
-            if(isset($d['status']) && in_array($d['status'], ['ON', '1', 'ACTIVE', 'ENABLED'])){
-                $formatData['status'] = 'ON';
-            }else{
-                $formatData['status'] = 'OFF';
-            }
-            
+        $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
+        foreach ($data as $d) {            
             $formatData['budget'] += $d['budget'];
-            $formatData['impression'] += $d['impressions'];
+            //$formatData['impressions'] += $d['impressions'];
             $formatData['click'] += $d['click'];
-            $formatData['cost'] += $d['spend'];
-            $formatData['sale'] += $d['sales'];
-            $formatData['dbcount'] += $d['unique_total'];
+            $formatData['spend'] += $d['spend'];
+            $formatData['sales'] += $d['sales'];
+            $formatData['unique_total'] += $d['unique_total'];
             $formatData['margin'] += $d['margin'];
 
             //CPC(Cost Per Click: 클릭당단가 (1회 클릭당 비용)) = 지출액/링크클릭
-            if($formatData['click'] > 0){
-                $formatData['cpc'] = round($formatData['cost'] / $formatData['click']);
-            }
+            /* if($formatData['click'] > 0){
+                $formatData['cpc'] = round($formatData['spend'] / $formatData['click']);
+            } */
 
             //CTR(Click Through Rate: 클릭율 (노출 대비 클릭한 비율)) = (링크클릭/노출수)*100
             
-            if($formatData['impression'] > 0){
-                $formatData['ctr'] = ($formatData['click'] / $formatData['impression']) * 100;
-            }
+            /* if($formatData['impressions'] > 0){
+                $formatData['ctr'] = ($formatData['click'] / $formatData['impressions']) * 100;
+            } */
 
             //CPA(Cost Per Action: 현재 DB단가(전환당 비용)) = 지출액/유효db
-            if($formatData['dbcount'] > 0){
-                $formatData['dbcost'] = round($formatData['cost'] / $formatData['dbcount']);
+            if($formatData['unique_total'] > 0){
+                $formatData['dbcost'] = round($formatData['spend'] / $formatData['unique_total']);
             }
 
             //CVR(Conversion Rate:전환율 = (유효db / 링크클릭)*100
             if ($formatData['click'] > 0) {
-                $formatData['conversion'] = ($formatData['dbcount'] / $formatData['click']) * 100;
+                $formatData['conversion'] = ($formatData['unique_total'] / $formatData['click']) * 100;
             }
 
             //수익률 = (수익/매출액)*100
-            if ($formatData['sale'] > 0) {
-                $formatData['margin_rate'] = round(($formatData['margin'] / $formatData['sale']) * 100);
+            if ($formatData['sales'] > 0) {
+                $formatData['margin_rate'] = round(($formatData['margin'] / $formatData['sales']) * 100);
             } else {
                 $formatData['margin_rate'] = 0;
             } 
