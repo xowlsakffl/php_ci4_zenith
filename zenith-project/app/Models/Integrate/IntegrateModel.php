@@ -3,6 +3,7 @@
 namespace App\Models\Integrate;
 
 use CodeIgniter\Model;
+use CodeIgniter\Database\RawSql;
 
 class IntegrateModel extends Model
 {
@@ -83,6 +84,7 @@ class IntegrateModel extends Model
             $builder->orLike('med.media', $srch['stx']);
             $builder->orLike('info.description', $srch['stx']);
             $builder->orLike('el.name', $srch['stx']);
+            $builder->orWhere('el.phone', new RawSql("enc_data('{$srch['stx']}')"));
             $builder->orLike('el.branch', $srch['stx']);
             $builder->orLike('el.add1', $srch['stx']);
             $builder->orLike('el.add2', $srch['stx']);
@@ -131,7 +133,7 @@ class IntegrateModel extends Model
         $orderBy[] = "seq DESC";
         $builder->orderBy(implode(",", $orderBy),'',true);
         if(isset($data['length']) && !isset($data['noLimit'])) $builder->limit($data['length'], $data['start']);
-        // dd($builder->getCompiledSelect());
+        // echo ($builder->getCompiledSelect()); exit;
         // 결과 반환
         $result = $builder->get()->getResultArray();
         $resultNoLimit = $builderNoLimit->countAllResults();

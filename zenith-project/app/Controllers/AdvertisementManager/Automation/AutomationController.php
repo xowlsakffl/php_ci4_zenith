@@ -514,8 +514,8 @@ class AutomationController extends BaseController
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
                 if($schedulePassData['result'] == false){
-                    /* $logIdx = $this->recordResult($schedulePassData);
-                    $this->recordLog($result, $logIdx); */
+                    $logIdx = $this->recordResult($schedulePassData);
+                    $this->recordLog($result, $logIdx);
                     continue;
                 }else{
                     //대상 있을 시
