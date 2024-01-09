@@ -534,9 +534,6 @@ class AutomationController extends BaseController
         $step = 1;
         $total = count($automations);
         foreach ($automations as $automation) {
-            if($automation['aa_seq'] != '81'){
-                continue;
-            }
             $result = [];
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
