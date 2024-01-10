@@ -547,10 +547,10 @@ class AutomationController extends BaseController
                 $result['schedule'] = $schedulePassData;
                 
                 if($schedulePassData['result'] == false){
-                    $resultRow = $this->recordResult($schedulePassData);
+                    /* $resultRow = $this->recordResult($schedulePassData);
                     if(!empty($resultRow)){
                         $this->recordLog($result, $resultRow);
-                    }
+                    } */
                     continue;
                 }else{
                     $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
