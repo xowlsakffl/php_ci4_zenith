@@ -19,7 +19,9 @@ class Douzone extends BaseController {
             foreach($desc as $v) {
                 if(preg_match('/시간차/', $row['doc_title']) || preg_match('/시간차/', $v['reason'])) continue;
                 preg_match_all('/(오전|오후)/', $v['reason'], $matches);
-                if(isset($matches[1][0])) $v['type'] = $matches[1][0] . $v['type'];
+                preg_match_all('/(오전|오후)/', $row['doc_title'], $titles);
+                if(isset($matches[1][0]) && $matches[1][0]) $v['type'] = $matches[1][0] . $v['type'];
+                else if(isset($titles[1][0]) && $titles[1][0]) $v['type'] = $titles[1][0] . $v['type'];
                 $data = [
                     'email' => $row['email_addr'] . "@carelabs.co.kr",
                     'name' => preg_replace('/^.+_(.+)$/', '$1', $row['user_nm']),
