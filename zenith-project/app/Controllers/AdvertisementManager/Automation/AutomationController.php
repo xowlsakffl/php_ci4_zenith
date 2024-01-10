@@ -675,6 +675,14 @@ class AutomationController extends BaseController
                         'seq' => $automation['aa_seq'],
                     ];
                     return $resultArray;
+                }else{
+                    $resultArray = [
+                        'result' => false,
+                        'status' => 'not_execution',
+                        'msg' => '설정 시간 일치하지 않음',
+                        'seq' => $automation['aa_seq'],
+                    ];
+                    return $resultArray;
                 }
             }
             
@@ -704,6 +712,14 @@ class AutomationController extends BaseController
                         'result' => true,
                         'status' => 'success',
                         'msg' => '설정 시간 일치',
+                        'seq' => $automation['aa_seq'],
+                    ];
+                    return $resultArray;
+                }else{
+                    $resultArray = [
+                        'result' => false,
+                        'status' => 'not_execution',
+                        'msg' => '설정 시간 일치하지 않음',
                         'seq' => $automation['aa_seq'],
                     ];
                     return $resultArray;
