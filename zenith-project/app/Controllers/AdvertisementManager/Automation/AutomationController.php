@@ -414,7 +414,7 @@ class AutomationController extends BaseController
 
         if($data['schedule']['exec_type'] == 'minute' || $data['schedule']['exec_type'] == 'hour'){
             $validationRules['schedule.criteria_time'] = 'required';
-            $validationMessages['schedule.criteria_time'] = ['required' => '시작 시간은 필수 항목입니다.'];
+            $validationMessages['schedule.criteria_time'] = ['required' => '시작 일시는 필수 항목입니다.'];
         }
 
         if($data['schedule']['exec_type'] == 'day' || $data['schedule']['exec_type'] == 'week'){
@@ -542,6 +542,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            if($automation['aa_seq'] != '81'){
+                continue;
+            }
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -640,7 +643,7 @@ class AutomationController extends BaseController
         $ignoreEndTime = $automation['aas_ignore_end_time'] ?? null;
         
         $currentDate = new Time('now');
-        $currentTime = $currentDate->format('H:i');
+        $currentTime = $currentDate->format('Y-m-d H:i');
 
         //제외시간
         if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
@@ -662,9 +665,13 @@ class AutomationController extends BaseController
 
         //매n분
         if($automation['aas_exec_type'] === 'minute'){
+            $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
+            if(empty($resultCount)){
+                $lastExecTime = Time::parse($automation['aas_criteria_time']);
+            }
+            
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTime = $diffTime->getMinutes();
-            
             if($diffTime >= $automation['aas_type_value']){
                 $resultArray = [
                     'result' => true,
@@ -678,6 +685,11 @@ class AutomationController extends BaseController
 
         //매n시간 
         if($automation['aas_exec_type'] === 'hour'){
+            $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
+            if(empty($resultCount)){
+                $lastExecTime = Time::parse($automation['aas_criteria_time']);
+            }
+            
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTime = $diffTime->getHours();  
 

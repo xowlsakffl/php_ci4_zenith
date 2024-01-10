@@ -220,13 +220,10 @@
                                     </td>
                                 </tr>
                                 <tr id="criteriaTimeRow">
-                                    <th scope="row">시작 시간</th>
+                                    <th scope="row">시작 일시</th>
                                     <td>
                                         <div class="form-flex">
-                                            <select name="criteria_time" class="form-select middle">
-                                                <option value="" selected>선택</option>
-                                                <?php echo $timeOptions; ?>
-                                            </select>
+                                            <input type="text" name="criteria_time" class="form-control" readonly>
                                         </div>
                                     </td>
                                 </tr>
@@ -698,6 +695,22 @@ function setDate(){
     });
 }
 
+function setCriteriaTime(){
+    $('input[name=criteria_time]').daterangepicker({
+        singleDatePicker: true,
+        locale: {
+                "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
+                "applyLabel": "확인",                    // 확인 버튼 텍스트
+                "cancelLabel": "취소",                   // 취소 버튼 텍스트
+                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
+                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+        },
+        timePicker: true,
+        timePicker24Hour: true,
+        minDate: new Date(),
+    });
+}
+
 function setAutomationStatus(data)
 {
     $.ajax({
@@ -973,7 +986,7 @@ function getExecAdvs(data){
 //유효성 검사
 function validationData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
-    let $criteria_time = $('#scheduleTable select[name=criteria_time]').val();
+    let $criteria_time = $('#scheduleTable input[name=criteria_time]').val();
     let $exec_type = $('#scheduleTable select[name=exec_type]').val();
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
@@ -997,9 +1010,9 @@ function validationData(){
     }
 
     if (($exec_type === 'minute' || $exec_type === 'hour') && !$criteria_time) {
-        alert('시작 시간을 선택해주세요.');
+        alert('시작 일시를 입력해주세요.');
         $('#schedule-tab').trigger('click');
-        $('#scheduleTable select[name=criteria_time]').focus();
+        $('#scheduleTable input[name=criteria_time]').focus();
         return false;
     }
 
@@ -1189,7 +1202,7 @@ function setModalData(data){
     $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
     $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
     if(data.aas_criteria_time){
-        $('#scheduleTable select[name=criteria_time]').val(data.aas_criteria_time);
+        $('#scheduleTable input[name=criteria_time]').val(data.aas_criteria_time);
     }
     if(data.aas_exec_week){
         $('#scheduleTable input[name=exec_week][value="' + data.aas_exec_week + '"]').prop('checked', true);
@@ -1365,7 +1378,7 @@ function reset(){
 function setProcData(){
     let $type_value = $('#scheduleTable input[name=type_value]').val();
     let $exec_type = $('#scheduleTable select[name=exec_type]').val();
-    let $criteria_time = $('#scheduleTable select[name=criteria_time]').val();
+    let $criteria_time = $('#scheduleTable input[name=criteria_time]').val();
     let $exec_week = $('#scheduleTable input[name=exec_week]:checked').val();
     let $month_type = $('#scheduleTable select[name=month_type]').val();
     let $month_day = $('#scheduleTable select[name=month_day]').val();
@@ -1510,6 +1523,7 @@ $('body').on('change', '.ui-toggle input[name=status]', function() {
 
 //모달 보기
 $('#automationModal').on('show.bs.modal', function(e) {
+    setCriteriaTime();
     var $btn = $(e.relatedTarget);
     if ($btn.hasClass('updateBtn')) {
         var id = $btn.closest('tr').data('id');
