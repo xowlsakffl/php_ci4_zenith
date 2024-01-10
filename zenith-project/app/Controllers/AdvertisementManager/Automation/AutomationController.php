@@ -412,6 +412,11 @@ class AutomationController extends BaseController
             ],
         ];
 
+        if($data['schedule']['exec_type'] == 'minute' || $data['schedule']['exec_type'] == 'hour'){
+            $validationRules['schedule.criteria_time'] = 'required';
+            $validationMessages['schedule.criteria_time'] = ['required' => '기준 시간은 필수 항목입니다.'];
+        }
+
         if($data['schedule']['exec_type'] == 'day' || $data['schedule']['exec_type'] == 'week'){
             $validationRules['schedule.exec_time'] = 'required';
             $validationMessages['schedule.exec_time'] = ['required' => '시간은 필수 항목입니다.'];
@@ -633,6 +638,9 @@ class AutomationController extends BaseController
         if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
             $ignoreStartTime = Time::parse($ignoreStartTime);
             $ignoreEndTime = Time::parse($ignoreEndTime);
+            if ($ignoreStartTime->isAfter($ignoreEndTime)) {
+                $ignoreEndTime = $ignoreEndTime->addDays(1);
+            }
             if ($currentDate->isAfter($ignoreStartTime) && $currentDate->isBefore($ignoreEndTime)) {
                 $resultArray = [
                     'result' => false,
@@ -644,14 +652,27 @@ class AutomationController extends BaseController
             }
         }
 
-        //매n시간 매n분
-        if($automation['aas_exec_type'] === 'hour' || $automation['aas_exec_type'] === 'minute'){
+        //매n분
+        if($automation['aas_exec_type'] === 'minute'){
             $diffTime = $lastExecTime->difference($currentDate);
-            if($automation['aas_exec_type'] === 'hour'){
-                $diffTime = $diffTime->getHours();                  
-            }else{
-                $diffTime = $diffTime->getMinutes();
+            $diffTime = $diffTime->getMinutes();
+            
+            if($diffTime >= $automation['aas_type_value']){
+                $resultArray = [
+                    'result' => true,
+                    'status' => 'success',
+                    'msg' => '설정 시간 일치',
+                    'seq' => $automation['aa_seq'],
+                ];
+                return $resultArray;
             }
+        }
+        
+        //매n시간 
+        if($automation['aas_exec_type'] === 'hour'){
+            $diffTime = $lastExecTime->difference($currentDate);
+            $diffTime = $diffTime->getHours();  
+
             if($diffTime >= $automation['aas_type_value']){
                 $resultArray = [
                     'result' => true,
