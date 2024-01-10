@@ -1489,9 +1489,9 @@ function setProcData(){
 function conditionStatusHide(){
     let targetCount = $('#targetSelectTable tbody tr').length;
     if (targetCount > 1) {
-        $('select option[value=status]').hide();
+        $('#conditionTable select option[value=status]').hide();
     }else{
-        $('select option[value=status]').show();
+        $('#conditionTable select option[value=status]').show();
     }
 }
 
