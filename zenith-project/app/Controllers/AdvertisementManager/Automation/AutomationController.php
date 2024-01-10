@@ -143,7 +143,6 @@ class AutomationController extends BaseController
                     $execution['exec_type'] = '예산';
                 }
             }
-            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
