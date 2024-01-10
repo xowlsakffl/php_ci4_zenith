@@ -1844,24 +1844,30 @@ class AutomationModel extends Model
 
     public function recodeResult($data)
     {
-        //$this->zenith->transStart();
-        log_message('debug', '결과 기록건1: '.print_r($data, true)); 
+        $this->zenith->transStart();
         $builder = $this->zenith->table('aa_result');
-        $result = $builder->insert($data);
-        log_message('debug', '결과 기록건2: '.print_r($result, true)); 
+        $builder->insert($data);
         $seq = $this->zenith->insertID();
-        //$this->zenith->transComplete();
+        $result = $this->zenith->transComplete();
        
-        return $seq;
+        if($result == true){
+            $builder = $this->zenith->table('aa_result');
+            $builder->select('seq, reg_datetime');
+            $builder->where('seq', $seq);
+            $row = $builder->get()->getRowArray();
+        }else{
+            return false;
+        }
+
+        return $row;
     }
 
     public function recodeLog($data)
     {
-        //$this->zenith->transStart();
-        log_message('debug', '로그 기록건: '.print_r($data, true)); 
+        $this->zenith->transStart();
         $builder = $this->zenith->table('aa_result_logs');
-        $result = $builder->insert($data);
-        //$result = $this->zenith->transComplete();
+        $builder->insert($data);
+        $result = $this->zenith->transComplete();
         return $result;
     }
 

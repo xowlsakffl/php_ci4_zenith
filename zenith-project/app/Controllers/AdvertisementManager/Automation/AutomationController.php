@@ -547,8 +547,10 @@ class AutomationController extends BaseController
                 $result['schedule'] = $schedulePassData;
                 
                 if($schedulePassData['result'] == false){
-                    $logIdx = $this->recordResult($schedulePassData);
-                    $this->recordLog($result, $logIdx);
+                    $resultRow = $this->recordResult($schedulePassData);
+                    if(!empty($resultRow)){
+                        $this->recordLog($result, $resultRow);
+                    }
                     continue;
                 }else{
                     $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
@@ -557,9 +559,11 @@ class AutomationController extends BaseController
                         foreach ($targets as $target) {
                             $targetData = $this->checkAutomationTarget($target);
                             if($targetData['result'] == false){
-                                $logIdx = $this->recordResult($targetData);
+                                $resultRow = $this->recordResult($targetData);
                                 $result['target'] = $targetData;
-                                $this->recordLog($result, $logIdx);
+                                if(!empty($resultRow)){
+                                    $this->recordLog($result, $resultRow);
+                                }
                                 //선택 대상중 하나라도 데이터를 못가져오면 실행 안함
                                 continue 2;
                             }
@@ -577,8 +581,10 @@ class AutomationController extends BaseController
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
                             if($conditionPassData['result'] == false){
-                                $logIdx = $this->recordResult($conditionPassData);
-                                $this->recordLog($result, $logIdx);
+                                $resultRow = $this->recordResult($conditionPassData);
+                                if(!empty($resultRow)){
+                                    $this->recordLog($result, $resultRow);
+                                }
                                 continue;
                             }
                             $seqs[] = $conditionPassData['seq'];
@@ -600,11 +606,13 @@ class AutomationController extends BaseController
             }
 
             foreach ($executionData as $exec) {
-                $logIdx = $this->recordResult($exec['result']);
-                foreach ($logs as &$log) {
-                    if($log['schedule']['seq'] === $exec['result']['seq']){
-                        $log['executions'] = $exec['log'];
-                        $this->recordLog($log, $logIdx);
+                $resultRow = $this->recordResult($exec['result']);
+                if(!empty($resultRow)){
+                    foreach ($logs as &$log) {
+                        if($log['schedule']['seq'] === $exec['result']['seq']){
+                            $log['executions'] = $exec['log'];
+                            $this->recordLog($log, $resultRow);
+                        }
                     }
                 }
             }
@@ -1577,29 +1585,33 @@ class AutomationController extends BaseController
             'exec_timestamp' => date('Y-m-d H:i:s')
         ];
 
-        $seq = $this->automation->recodeResult($resultData);
-        return $seq;
+        $row = $this->automation->recodeResult($resultData);
+        return $row;
     }
 
-    private function recordLog($log, $seq)
+    private function recordLog($log, $resultRow)
     {
         $data = [];
         if(!empty($log['schedule'])){
-            $data['idx'] = $seq;
+            $data['idx'] = $resultRow['seq'];
+            $data['reg_datetime'] = $resultRow['reg_datetime'];
             $data['schedule_desc'] = json_encode($log['schedule'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['target'])) {
-            $data['idx'] = $seq;
+            $data['idx'] = $resultRow['seq'];
+            $data['reg_datetime'] = $resultRow['reg_datetime'];
             $data['target_desc'] = json_encode($log['target'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['conditions'])) {
-            $data['idx'] = $seq;
+            $data['idx'] = $resultRow['seq'];
+            $data['reg_datetime'] = $resultRow['reg_datetime'];
             $data['conditions_desc'] = json_encode($log['conditions'], JSON_UNESCAPED_UNICODE);
         }
 
         if(isset($log['executions'])) {
+            $data['reg_datetime'] = $resultRow['reg_datetime'];
             $data['executions_desc'] = json_encode($log['executions'], JSON_UNESCAPED_UNICODE);
         }
 
