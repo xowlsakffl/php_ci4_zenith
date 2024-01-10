@@ -1845,9 +1845,10 @@ class AutomationModel extends Model
     public function recodeResult($data)
     {
         //$this->zenith->transStart();
+        log_message('debug', '결과 기록건1: '.print_r($data, true)); 
         $builder = $this->zenith->table('aa_result');
         $result = $builder->insert($data);
-        d($result);
+        log_message('debug', '결과 기록건2: '.print_r($result, true)); 
         $seq = $this->zenith->insertID();
         //$this->zenith->transComplete();
        
@@ -1856,10 +1857,11 @@ class AutomationModel extends Model
 
     public function recodeLog($data)
     {
-        $this->zenith->transStart();
+        //$this->zenith->transStart();
+        log_message('debug', '로그 기록건: '.print_r($data, true)); 
         $builder = $this->zenith->table('aa_result_logs');
-        $builder->insert($data);
-        $result = $this->zenith->transComplete();
+        $result = $builder->insert($data);
+        //$result = $this->zenith->transComplete();
         return $result;
     }
 

@@ -220,7 +220,7 @@
                                     </td>
                                 </tr>
                                 <tr id="criteriaTimeRow">
-                                    <th scope="row">기준 시간</th>
+                                    <th scope="row">시작 시간</th>
                                     <td>
                                         <div class="form-flex">
                                             <select name="criteria_time" class="form-select middle">
@@ -997,7 +997,7 @@ function validationData(){
     }
 
     if (($exec_type === 'minute' || $exec_type === 'hour') && !$criteria_time) {
-        alert('기준 시간을 선택해주세요.');
+        alert('시작 시간을 선택해주세요.');
         $('#schedule-tab').trigger('click');
         $('#scheduleTable select[name=criteria_time]').focus();
         return false;

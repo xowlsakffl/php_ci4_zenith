@@ -414,7 +414,7 @@ class AutomationController extends BaseController
 
         if($data['schedule']['exec_type'] == 'minute' || $data['schedule']['exec_type'] == 'hour'){
             $validationRules['schedule.criteria_time'] = 'required';
-            $validationMessages['schedule.criteria_time'] = ['required' => '기준 시간은 필수 항목입니다.'];
+            $validationMessages['schedule.criteria_time'] = ['required' => '시작 시간은 필수 항목입니다.'];
         }
 
         if($data['schedule']['exec_type'] == 'day' || $data['schedule']['exec_type'] == 'week'){
@@ -667,7 +667,7 @@ class AutomationController extends BaseController
                 return $resultArray;
             }
         }
-        
+
         //매n시간 
         if($automation['aas_exec_type'] === 'hour'){
             $diffTime = $lastExecTime->difference($currentDate);
