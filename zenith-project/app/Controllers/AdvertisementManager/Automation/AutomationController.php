@@ -559,6 +559,8 @@ class AutomationController extends BaseController
                             }
                             $checkTargets[] = $targetData['target'];
                         }
+                        log_message('debug', 'Additional info1: '.print_r($result, true)); 
+                        log_message('debug', 'Additional info2: '.print_r($checkTargets, true)); 
                         $targetDatas = $this->setData($checkTargets);                    
                         $resultTarget = [
                             'result' => true,
@@ -567,7 +569,7 @@ class AutomationController extends BaseController
                             'target' => $targetDatas,
                         ];
                         $result['target'] = $resultTarget;
-                        log_message('debug', 'Additional info: '.print_r($result, true)); 
+                        log_message('debug', 'Additional info3: '.print_r($result, true)); 
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
