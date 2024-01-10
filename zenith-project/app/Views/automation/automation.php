@@ -698,6 +698,7 @@ function setDate(){
 function setCriteriaTime(){
     $('input[name=criteria_time]').daterangepicker({
         singleDatePicker: true,
+        autoUpdateInput: false,
         locale: {
                 "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
                 "applyLabel": "확인",                    // 확인 버튼 텍스트
