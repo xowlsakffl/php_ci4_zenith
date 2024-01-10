@@ -558,10 +558,10 @@ class AutomationController extends BaseController
                                 continue 2;
                             }
                             $checkTargets[] = $targetData['target'];
+                            $result['target'][] = $targetData;
                         }
                         $targetDatas = $this->setData($checkTargets);
-                        $result['target'] = $targetDatas;
-
+                        
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
@@ -791,7 +791,7 @@ class AutomationController extends BaseController
                     return [
                         'result' => false,
                         'status' => 'failed',
-                        'msg' => '비교 대상 데이터를 가져오는데 실패하였습니다.',
+                        'msg' => '비교 대상 데이터가 존재하지 않습니다.',
                         'seq' => $target['aat_idx'],
                     ];
                 }
@@ -1536,8 +1536,8 @@ class AutomationController extends BaseController
     private function recordResult($result)
     {
         $resultData = [
-            'idx' => $result['seq'] ?? 0,
-            'result' => $result['status'] ?? '',
+            'idx' => $result['seq'],
+            'result' => $result['status'],
             'exec_timestamp' => date('Y-m-d H:i:s')
         ];
 
