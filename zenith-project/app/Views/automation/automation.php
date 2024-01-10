@@ -19,22 +19,11 @@
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
 <style>
-    .ui-autocomplete{
-        z-index: 10000000;
-        max-height: 300px;
-        overflow-y: auto; /* prevent horizontal scrollbar */
-        overflow-x: hidden;
-    }
-
-    .target-btn{
-        background-color: #ce1922;
-        color:#fff;
-        border-radius: 5px;
-    }
-
-    .set_target_except_btn{
-        margin-left: 10px;
-    }
+    .ui-autocomplete{z-index: 10000000; max-height: 300px;overflow-y: auto;overflow-x: hidden;}
+    .target-btn{background-color: #ce1922;color:#fff;border-radius: 5px;}
+    .set_target_except_btn{margin-left: 10px;}
+    .log-search-wrap{margin-bottom:0;}
+    #logTable{margin-top: 0 !important;}
 </style>
 <?=$this->endSection();?>
 
@@ -513,6 +502,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="search-wrap log-search-wrap">
+                    <form name="log-search-form" class="search">
+                        <div class="input">
+                            <input type="text" name="log_stx" id="stx" placeholder="검색어를 입력하세요">
+                            <button class="btn-primary" id="search_btn" type="submit">조회</button>
+                        </div>
+                    </form>
+                </div>
                 <table class="table tbl-dark" id="logTable" style="width: 100%;">
                     <colgroup>
                         <col>
@@ -1455,6 +1452,7 @@ function conditionStatusHide(){
         $('select option[value=status]').show();
     }
 }
+
 //검색
 $('form[name="search-form"]').bind('submit', function() {
     dataTable.draw();
@@ -1868,6 +1866,9 @@ function getLogs(){
         "info": false,
         "ajax": {
             "url": "<?=base_url()?>/automation/logs",
+            "data": function(d) {
+                d.stx = $('input[name=log_stx]').val();
+            },
             "type": "GET",
             "contentType": "application/json",
             "dataType": "json",
@@ -1928,8 +1929,14 @@ $('#logModal').on('show.bs.modal', function(e) {
     getLogs();
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
+    $('input[name=log_stx]').val('');
     logTable = $('#logTable').DataTable();
     logTable.destroy();
+});
+
+$('form[name="log-search-form"]').bind('submit', function() {
+    logTable.draw();
+    return false;
 });
 
 $('body').on('click', '#logModal tbody tr', function(){

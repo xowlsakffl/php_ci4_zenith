@@ -1570,6 +1570,12 @@ class AutomationModel extends Model
         $builder->select('aa.seq, aa.subject, aa.nickname, aar.result, aar.exec_timestamp, aarl.schedule_desc, aarl.target_desc, aarl.conditions_desc, aarl.executions_desc');
         $builder->join('aa_result aar', 'aa.seq = aar.idx');
         $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx');
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('aa.subject', $data['stx']);
+            $builder->orLike('aa.nickname', $data['stx']);
+            $builder->groupEnd();
+        }
         $builder->groupBy('aar.seq');
         $builderNoLimit = clone $builder;
         $orderBy = [];
