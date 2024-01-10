@@ -663,8 +663,21 @@ class AutomationController extends BaseController
         //매n분
         if($automation['aas_exec_type'] === 'minute'){
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
+            //설정 일시 있을시
             if(empty($resultCount)){
                 $lastExecTime = Time::parse($automation['aas_criteria_time']);
+                $diffTime = $lastExecTime->difference($currentDate);
+                $diffTime = $diffTime->getMinutes();
+
+                if($diffTime >= 0){
+                    $resultArray = [
+                        'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
+                        'seq' => $automation['aa_seq'],
+                    ];
+                    return $resultArray;
+                }
             }
             
             $diffTime = $lastExecTime->difference($currentDate);
@@ -684,8 +697,21 @@ class AutomationController extends BaseController
         //매n시간 
         if($automation['aas_exec_type'] === 'hour'){
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
+            //설정 일시 있을시
             if(empty($resultCount)){
                 $lastExecTime = Time::parse($automation['aas_criteria_time']);
+                $diffTime = $lastExecTime->difference($currentDate);
+                $diffTime = $diffTime->getHours();
+
+                if($diffTime >= 0){
+                    $resultArray = [
+                        'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
+                        'seq' => $automation['aa_seq'],
+                    ];
+                    return $resultArray;
+                }
             }
 
             $diffTime = $lastExecTime->difference($currentDate);
