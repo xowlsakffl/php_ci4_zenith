@@ -567,7 +567,7 @@ class AutomationController extends BaseController
                             'target' => $targetDatas,
                         ];
                         $result['target'] = $resultTarget;
-
+                        log_message('debug', 'Additional info: '.print_r($result, true)); 
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
