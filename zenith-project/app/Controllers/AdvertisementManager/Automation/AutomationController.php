@@ -552,7 +552,6 @@ class AutomationController extends BaseController
                         foreach ($targets as $target) {
                             $targetData = $this->checkAutomationTarget($target);
                             if($targetData['result'] == false){
-                                log_message('debug', '로그 기록건: '.print_r($targetData, true)); 
                                 $logIdx = $this->recordResult($targetData);
                                 $result['target'] = $targetData;
                                 $this->recordLog($result, $logIdx);
