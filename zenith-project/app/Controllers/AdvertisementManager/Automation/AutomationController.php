@@ -558,10 +558,16 @@ class AutomationController extends BaseController
                                 continue 2;
                             }
                             $checkTargets[] = $targetData['target'];
-                            $result['target'][] = $targetData;
                         }
-                        $targetDatas = $this->setData($checkTargets);
-                        
+                        $targetDatas = $this->setData($checkTargets);                    
+                        $resultTarget = [
+                            'result' => true,
+                            'msg' => '대상이 일치합니다.',
+                            'seq' => $automation['aa_seq'],
+                            'target' => $targetDatas,
+                        ];
+                        $result['target'] = $resultTarget;
+
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
@@ -798,7 +804,6 @@ class AutomationController extends BaseController
                 $data = $this->sumData($data);
                 return  [
                     'result' => true,
-                    'msg' => '대상 일치',
                     'seq' => $target['aat_idx'],
                     'target' => $data,
                 ];
