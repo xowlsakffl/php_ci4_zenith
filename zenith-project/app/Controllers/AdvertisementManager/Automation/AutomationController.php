@@ -554,6 +554,7 @@ class AutomationController extends BaseController
                             if($targetData['result'] == false){
                                 log_message('debug', '로그 기록건: '.print_r($targetData, true)); 
                                 $logIdx = $this->recordResult($targetData);
+                                $result['target'] = $targetData;
                                 $this->recordLog($result, $logIdx);
                                 //선택 대상중 하나라도 데이터를 못가져오면 실행 안함
                                 continue 2;
