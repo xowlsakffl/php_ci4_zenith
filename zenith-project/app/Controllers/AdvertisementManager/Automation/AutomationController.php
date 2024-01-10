@@ -701,8 +701,7 @@ class AutomationController extends BaseController
             if(empty($resultCount)){
                 $lastExecTime = Time::parse($automation['aas_criteria_time']);
                 $diffTime = $lastExecTime->difference($currentDate);
-                $diffTime = $diffTime->getHours();
-
+                $diffTime = $diffTime->getMinutes();
                 if($diffTime >= 0){
                     $resultArray = [
                         'result' => true,
