@@ -542,6 +542,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            if($automation['aa_seq'] != '81'){
+                continue;
+            }
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -665,11 +668,9 @@ class AutomationController extends BaseController
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
-                $lastExecTime = Time::parse($automation['aas_criteria_time']);
-                $diffTime = $lastExecTime->difference($currentDate);
-                $diffTime = $diffTime->getMinutes();
-
-                if($diffTime >= 0){
+                $setTime = Time::parse($automation['aas_criteria_time']);
+                $chkTime = $setTime->equals($currentTime);
+                if($chkTime){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
@@ -699,10 +700,9 @@ class AutomationController extends BaseController
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
-                $lastExecTime = Time::parse($automation['aas_criteria_time']);
-                $diffTime = $lastExecTime->difference($currentDate);
-                $diffTime = $diffTime->getMinutes();
-                if($diffTime >= 0){
+                $setTime = Time::parse($automation['aas_criteria_time']);
+                $chkTime = $setTime->equals($currentTime);
+                if($chkTime){
                     $resultArray = [
                         'result' => true,
                         'status' => 'success',
