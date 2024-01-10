@@ -1175,7 +1175,7 @@ class AutomationModel extends Model
     public function getTargetCompany($data)
     {
         $companyBuilder = $this->zenith->table('companies c');
-        $companyBuilder->select('c.id, ca.media, GROUP_CONCAT(DISTINCT ca.ad_account_id) as ad_account_id');
+        $companyBuilder->select('c.id, c.status, ca.media, GROUP_CONCAT(DISTINCT ca.ad_account_id) as ad_account_id');
         $companyBuilder->join('company_adaccounts ca', 'c.id = ca.company_id');
         $companyBuilder->where('c.id', $data['aat_id']);
         $companyBuilder->groupBy('ca.media');

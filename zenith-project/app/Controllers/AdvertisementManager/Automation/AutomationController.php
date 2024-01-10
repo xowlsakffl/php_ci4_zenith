@@ -559,8 +559,6 @@ class AutomationController extends BaseController
                             }
                             $checkTargets[] = $targetData['target'];
                         }
-                        log_message('debug', 'Additional info1: '.print_r($result, true)); 
-                        log_message('debug', 'Additional info2: '.print_r($checkTargets, true)); 
                         $targetDatas = $this->setData($checkTargets);                    
                         $resultTarget = [
                             'result' => true,
@@ -569,7 +567,6 @@ class AutomationController extends BaseController
                             'target' => $targetDatas,
                         ];
                         $result['target'] = $resultTarget;
-                        log_message('debug', 'Additional info3: '.print_r($result, true)); 
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
@@ -822,7 +819,7 @@ class AutomationController extends BaseController
 
     public function checkAutomationCondition($targetData, $seq)
     {
-        $types = ['budget', 'dbcost', 'unique_total', 'spend', 'margin', 'margin_rate', 'sales', 'conversion'];
+        $types = ['status', 'budget', 'dbcost', 'unique_total', 'spend', 'margin', 'margin_rate', 'sales', 'conversion'];
         $conditions = $this->automation->getAutomationConditionBySeq($seq);
         if(empty($conditions)){
             return [            
@@ -840,7 +837,7 @@ class AutomationController extends BaseController
             $conditionMatched = false;       
             $message = "일치하는 조건이 없습니다.";
             if ($condition['type'] === 'status') {//status 비교
-                if ($targetData['target']['status'] == $condition['type_value']) {
+                if ($targetData['status'] == $condition['type_value']) {
                     $conditionMatched = true;
                     $message = 'status 일치';
                 }else{
@@ -1482,6 +1479,11 @@ class AutomationController extends BaseController
     {
         $formatData = [];
         $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = 0;
+        if(isset($data[0]['status']) && in_array($data[0]['status'], ['ON', '1', 'ACTIVE', 'ENABLED'])){
+            $formatData['status'] = 'ON';
+        }else{
+            $formatData['status'] = 'OFF';
+        }
         foreach ($data as $d) {            
             $formatData['budget'] += $d['budget'];
             //$formatData['impressions'] += $d['impressions'];
@@ -1499,6 +1501,11 @@ class AutomationController extends BaseController
     {
         $formatData = [];
         $formatData['budget'] = $formatData['click'] = $formatData['spend'] = $formatData['sales'] = $formatData['unique_total'] = $formatData['margin'] = $formatData['dbcost'] = $formatData['conversion']= $formatData['margin_rate'] = 0;
+        if(isset($data[0]['status']) && in_array($data[0]['status'], ['ON', '1', 'ACTIVE', 'ENABLED'])){
+            $formatData['status'] = 'ON';
+        }else{
+            $formatData['status'] = 'OFF';
+        }
         foreach ($data as $d) {            
             $formatData['budget'] += $d['budget'];
             //$formatData['impressions'] += $d['impressions'];
