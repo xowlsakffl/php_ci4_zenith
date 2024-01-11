@@ -550,6 +550,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            if($automation['aa_seq'] != '96'){
+                continue;
+            }
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -1168,12 +1171,8 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
-                                            if(isset($return['http_code'])){
-                                                if($return['http_code'] == 200){
-                                                    $return = true;
-                                                }else{
-                                                    throw new Exception("카카오 캠페인 예산 수정 오류 발생.");
-                                                }
+                                            if(isset($return['id'])){
+                                                $return = true;
                                             }else{
                                                 throw new Exception($return['msg']);
                                             }
@@ -1302,12 +1301,8 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
-                                            if(isset($return['http_code'])){
-                                                if($return['http_code'] == 200){
-                                                    $return = true;
-                                                }else{
-                                                    throw new Exception("카카오 광고그룹 예산 수정 오류 발생.");
-                                                }
+                                            if(isset($return['id'])){
+                                                $return = true;
                                             }else{
                                                 throw new Exception($return['msg']);
                                             }
