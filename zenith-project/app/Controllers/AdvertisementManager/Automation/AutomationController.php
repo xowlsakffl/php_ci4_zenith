@@ -1168,10 +1168,10 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
-                                            if(isset($return['id'])){
-                                                $return = true;
-                                            }else{
+                                            if(isset($return['code']) && isset($return['msg'])){
                                                 throw new Exception($return['msg']);
+                                            }else{
+                                                $return = true;                 
                                             }
                                         }else{
                                             $return = false;
@@ -1298,10 +1298,10 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
-                                            if(isset($return['id'])){
-                                                $return = true;
-                                            }else{
+                                            if(isset($return['code']) && isset($return['msg'])){
                                                 throw new Exception($return['msg']);
+                                            }else{
+                                                $return = true;                 
                                             }
                                         }else{
                                             $return = false;
