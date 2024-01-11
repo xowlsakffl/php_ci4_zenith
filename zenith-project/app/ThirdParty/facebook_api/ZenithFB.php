@@ -883,19 +883,44 @@ class ZenithFB
                 AdSetFields::ID,
                 AdSetFields::STATUS,
                 AdSetFields::DAILY_BUDGET,
+                AdSetFields::LIFETIME_BUDGET,
             ]
         ];
+
+        $row = $this->db->getAdSet($adset_id);
+        switch ($row['budget_type']) {
+            case 'lifetime':
+                $params[] = AdSetFields::LIFETIME_BUDGET;
+                break;
+            case 'daily':
+                $params[] = AdSetFields::DAILY_BUDGET;
+                break;
+            default: 
+                return null;
+        }
 
         $this->setAdsetId($adset_id);
         $adset = $this->adset->getSelf([], $params);
         $response = $adset->getData();
-
-        $result = [
-            'id' => $response['id'],
-            'budget' => $response['daily_budget'],
-            'status' => $response['status']
-        ];
-        return $result;
+        if ($response['success'] == 1) {
+            $result = [
+                'id' => $response['id'],
+                'status' => $response['status']
+            ];
+            switch ($row['budget_type']) {
+                case 'lifetime':
+                    $result['budget'] = $response['lifetime_budget'];
+                    break;
+                case 'daily':
+                    $result['budget'] = $response['daily_budget'];
+                    break;
+                default: 
+                    return null;
+            }
+            return $result;
+        }else{
+            return null;
+        }
     }
 
     public function setAdsetStatus($id, $status)
@@ -1003,11 +1028,12 @@ class ZenithFB
         }
         // 기본 정보 설정
         $adsetfields = [$field => $budget];
-
+        
         $adset = new AdSet($adset_id);
         // $adset->setData($adsetfields);
         $adset = $adset->updateSelf([], $adsetfields);
         $adset = $adset->getData();
+
         if ($adset['success'] == 1) {
             $this->db->updateAdSetBudget($adset_id, $budget);
             return $adset_id;

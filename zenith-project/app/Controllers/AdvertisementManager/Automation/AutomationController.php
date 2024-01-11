@@ -550,6 +550,7 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            //if($automation['aa_seq'] != '97'){continue;}
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -1398,6 +1399,8 @@ class AutomationController extends BaseController
                                 'exec_value' => $execution['exec_value'],
                             ]
                         ];
+                    }else{
+                        throw new Exception("Api 오류 발생.");
                     }
                 }
             }
