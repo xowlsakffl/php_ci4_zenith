@@ -436,7 +436,7 @@
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue" placeholder="예산" oninput="onlyNumber(this);">
+                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue" placeholder="예산">
                                                 <select name="exec_condition_type_budget" class="form-select" id="execConditionTypeBudget">
                                                     <option value="">단위 선택</option>
                                                     <option value="won">원</option>
