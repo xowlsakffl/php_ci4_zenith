@@ -1347,7 +1347,7 @@ class AutomationController extends BaseController
                         default:
                             break;
                     }
-                    if((!empty($return) && empty($return['code']) && empty($return['msg'])) || (isset($return['http_code']) && $return['http_code'] == 200)){
+                    if((!empty($return) && (empty($return['code']) && empty($return['msg']))) || (isset($return['http_code']) && $return['http_code'] == 200)){
                         $result['log'][] = [
                             "result" => true,
                             'status' => 'success',
