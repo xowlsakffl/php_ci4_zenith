@@ -1567,7 +1567,7 @@ class AutomationModel extends Model
     public function getExecution($seq)
     {   
         $builder = $this->zenith->table('aa_executions');
-        $builder->select('order, media, type, id, exec_type, exec_value');
+        $builder->select('order, media, type, id, exec_type, exec_value, exec_budget_type');
         $builder->where('idx', $seq);
         $builder->orderBy('order', 'asc');
         $result = $builder->get()->getResultArray();
@@ -1696,7 +1696,7 @@ class AutomationModel extends Model
         $aacGetResult  = $aacGetBuilder->get()->getResultArray();
 
         $aaeGetBuilder = $this->zenith->table('aa_executions');
-        $aaeGetBuilder->select('order, media, type, id, exec_type, exec_value');
+        $aaeGetBuilder->select('order, media, type, id, exec_type, exec_value, exec_budget_type');
         $aaeGetBuilder->where('idx', $data['seq']);
         $aaeGetResult  = $aaeGetBuilder->get()->getResultArray();
 
@@ -1765,6 +1765,7 @@ class AutomationModel extends Model
                 'id' => $execution['id'],
                 'exec_type' => $execution['exec_type'],
                 'exec_value' => $execution['exec_value'] ?? '',
+                'exec_budget_type' => $execution['exec_budget_type'] ?? '',
             ];
             $aaeBuilder = $this->zenith->table('aa_executions');
             $aaeBuilder->insert($aaeData);
@@ -1784,7 +1785,7 @@ class AutomationModel extends Model
             'mod_datetime' => date('Y-m-d H:i:s'),
         ];
 
-        //$this->zenith->transStart();
+        $this->zenith->transStart();
         $aaBuilder = $this->zenith->table('admanager_automation');
         $aaBuilder->where('seq', $data['seq']);
         $result = $aaBuilder->update($aaData);
@@ -1826,7 +1827,7 @@ class AutomationModel extends Model
                 $aaeBuilder->insert($execution);
             }
         }
-        //$result = $this->zenith->transComplete();
+        $result = $this->zenith->transComplete();
         return $result;
     }
 

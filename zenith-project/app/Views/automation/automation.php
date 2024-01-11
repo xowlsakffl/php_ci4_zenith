@@ -437,6 +437,11 @@
                                                     <option value="OFF">OFF</option>
                                                 </select>
                                                 <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue" placeholder="예산" oninput="onlyNumber(this);">
+                                                <select name="exec_condition_type_budget" class="form-select" id="execConditionTypeBudget">
+                                                    <option value="">단위 선택</option>
+                                                    <option value="won">원</option>
+                                                    <option value="percent">%</option>
+                                                </select>
                                                 <button class="btn-special" id="execConditionBtn">적용</button>
                                             </div>
                                         </td>
@@ -1295,14 +1300,20 @@ function setModalData(data){
     //실행
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
+            let execConditionBudgetTypeText = '';
+            if(execution.exec_budget_type == 'won'){
+                execConditionBudgetTypeText = '원';
+            }else if(execution.exec_budget_type == 'percent'){
+                execConditionBudgetTypeText = '%';
+            }
             var execIndex = index+1;
             var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
                 + execution.type  +'</td><td>'
                 + execution.id  +'</td><td>'
                 + execution.name  +'</td><td>'
                 + execution.status  +'</td><td>'
-                + execution.exec_type  +'</td><td><span>'+execution.exec_value+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>';
-            var newExecText = '<p id="text-exec-'+execIndex+'">* '+execution.type+' - '+execution.media+'<br>'+execution.name+'<br>'+execution.exec_type+' '+ execution.exec_value+'</p>';
+                + execution.exec_type  +'</td><td><span class="exec_value">'+execution.exec_value+'</span><span class="exec_condition_select_budget_type">'+execConditionBudgetTypeText+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>';
+            var newExecText = '<p id="text-exec-'+execIndex+'">* '+execution.type+' - '+execution.media+'<br>'+execution.name+'<br>'+execution.exec_type+' '+ execution.exec_value+execConditionBudgetTypeText+'</p>';
             $('#execSelectTable tbody').append(executionData);
             $('#preactice-tab').append(newExecText);
         });
@@ -1439,7 +1450,8 @@ function setProcData(){
         let type = $row.find('td:eq(2)').text();
         let id = $row.find('td:eq(3)').text();
         let exec_type = $row.find('td:eq(6)').text();
-        let exec_value = $row.find('td:eq(7)').text();
+        let exec_value = $row.find('td:eq(7) .exec_value').text();
+        let exec_budget_type = $row.find('td:eq(7) .exec_condition_select_budget_type').text();
 
         $executions.push({
             order: order,
@@ -1447,7 +1459,8 @@ function setProcData(){
             type: type,
             id: id,
             exec_type: exec_type,
-            exec_value: exec_value
+            exec_value: exec_value,
+            exec_budget_type: exec_budget_type
         });
     });
 
@@ -1643,7 +1656,8 @@ $('body').on('click', '#execTable tbody tr', function(){
         $(this).removeClass('selected');
         $('#execConditionTable select[name=exec_condition_type] option').show();
         $('#execConditionTable input[name=exec_condition_value]').show();
-        $('#execConditionTable select[name=exec_condition_value_status]').hide();
+        $('#execConditionTable select[name=exec_condition_type_budget]').show();
+        $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
     }else {
         $(this).addClass('selected');
         let media = $(this).children('td').eq(0).text();
@@ -1652,11 +1666,13 @@ $('body').on('click', '#execTable tbody tr', function(){
             $('#execConditionTable select').val('');
             $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
             $('#execConditionTable input[name=exec_condition_value]').val('').hide();
+            $('#execConditionTable select[name=exec_condition_type_budget]').val('').hide();
             $('#execConditionTable select[name=exec_condition_value_status]').show();
         }else{
             $('#execConditionTable select[name=exec_condition_type] option').show();
             $('#execConditionTable input[name=exec_condition_value]').show();
-            $('#execConditionTable select[name=exec_condition_value_status]').hide();
+            $('#execConditionTable select[name=exec_condition_type_budget]').show();
+            $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
         }
     }
 });
@@ -1719,10 +1735,12 @@ $('body').on('change', '#execConditionTable select[name=exec_condition_type]', f
     var type = $(this).val();
     if(type == 'status'){
         $(this).siblings('input[name=exec_condition_value]').val('').hide();
+        $(this).siblings('select[name=exec_condition_type_budget]').val('').hide();
         $(this).siblings('select[name=exec_condition_value_status]').show();
     }else{
-        $(this).siblings('select[name=exec_condition_value_status]').val('').hide();
+        $(this).siblings('select[name=exec_condition_value_status]').val('').hide();  
         $(this).siblings('input[name=exec_condition_value]').show();   
+        $(this).siblings('select[name=exec_condition_type_budget]').show();
     }
 });
 
@@ -1734,13 +1752,14 @@ $('body').on('click', '#execConditionBtn', function() {
         var execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
         var execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
         var execConditionValue = '';
+        var execConditionBudgetType = null;
         if(execConditionType == 'status'){
             execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
         }else{
             execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
+            execConditionBudgetType = $('#execConditionTable select[name=exec_condition_type_budget]').val();
         }
         var selectedCount = trs.length;
-
         if(!execConditionType){
             alert("실행항목을 선택해주세요.");
             $('#execConditionTable select[name=exec_condition_type]').focus();
@@ -1754,20 +1773,32 @@ $('body').on('click', '#execConditionBtn', function() {
             return false;
         }
 
+        if((execConditionType != 'status') && (!execConditionBudgetType)){
+            alert("단위를 선택해주세요");
+            $('#execConditionTable select[name=exec_condition_type_budget]').focus();
+            return false;
+        }
+
         trs.each(function() {
+            let execConditionBudgetTypeText = '';
+            if(execConditionBudgetType == 'won'){
+                execConditionBudgetTypeText = '원';
+            }else if(execConditionBudgetType == 'percent'){
+                execConditionBudgetTypeText = '%';
+            }
             var tr = $(this);
             var trId = tr.data('id');
             var cloneRow = tr.clone();
             var newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
             cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
-            cloneRow.append('<td>'+execConditionTypeText+'</td><td><span>'+execConditionValue+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
+            cloneRow.append('<td>'+execConditionTypeText+'</td><td><span class="exec_value">'+execConditionValue+'</span><span class="exec_condition_select_budget_type">'+execConditionBudgetTypeText+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
 
             var selectedMediaTd = tr.children('td').eq(0).text();
             var selectedTypeTd = tr.children('td').eq(1).text();
             var selectedNameTd = tr.children('td').eq(3).text();
             var selectedStatusTd = tr.children('td').eq(4).text();
 
-            var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+'</p>';
+            var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+execConditionBudgetTypeText+'</p>';
             $('#preactice-tab').append(newExecText);
         })
     }

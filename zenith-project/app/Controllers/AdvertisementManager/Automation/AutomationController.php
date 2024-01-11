@@ -315,7 +315,8 @@ class AutomationController extends BaseController
             $mediaMapping = ['광고주' => 'company', '페이스북' => 'facebook', '구글' => 'google', '카카오' => 'kakao'];
             $typeMapping = ['광고주' => 'advertiser', '매체광고주' => 'account', '캠페인' => 'campaign', '광고그룹' => 'adgroup', '광고' => 'ad'];
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
-            
+            $execBudgetTypeMapping = ['원' => 'won', '%' => 'percent'];
+
             if(!empty($data['target'])) {
                 foreach ($data['target'] as &$target) {
                     $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
@@ -328,6 +329,7 @@ class AutomationController extends BaseController
                     $execution['media'] = $mediaMapping[$execution['media']] ?? $execution['media'];
                     $execution['type'] = $typeMapping[$execution['type']] ?? $execution['type'];
                     $execution['exec_type'] = $execTypeMapping[$execution['exec_type']] ?? $execution['exec_type'];
+                    $execution['exec_budget_type'] = $execBudgetTypeMapping[$execution['exec_budget_type']] ?? $execution['exec_budget_type'];
                 }
             }
             
@@ -364,7 +366,8 @@ class AutomationController extends BaseController
             $mediaMapping = ['광고주' => 'company', '페이스북' => 'facebook', '구글' => 'google', '카카오' => 'kakao'];
             $typeMapping = ['광고주' => 'advertiser', '매체광고주' => 'account', '캠페인' => 'campaign', '광고그룹' => 'adgroup', '광고' => 'ad'];
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
-            
+            $execBudgetTypeMapping = ['원' => 'won', '%' => 'percent'];
+
             if(!empty($data['target'])) {
                 foreach ($data['target'] as &$target) {
                     $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
@@ -377,6 +380,7 @@ class AutomationController extends BaseController
                     $execution['media'] = $mediaMapping[$execution['media']] ?? $execution['media'];
                     $execution['type'] = $typeMapping[$execution['type']] ?? $execution['type'];
                     $execution['exec_type'] = $execTypeMapping[$execution['exec_type']] ?? $execution['exec_type'];
+                    $execution['exec_budget_type'] = $execBudgetTypeMapping[$execution['exec_budget_type']] ?? $execution['exec_budget_type'];
                 }
             }
 
@@ -504,6 +508,11 @@ class AutomationController extends BaseController
                     'exec_value' => ['required' => '세부항목은 필수 항목입니다.'],
                 ];
     
+                if($execution['exec_type'] == '예산'){
+                    $validationRules['exec_budget_type'] = 'required';
+                    $validationMessages['exec_budget_type'] = ['required' => '단위는 필수 항목입니다.'];
+                }
+
                 $validation->setRules($validationRules, $validationMessages);
                 if (!$validation->run($execution)) {
                     $result = [
@@ -1090,9 +1099,16 @@ class AutomationController extends BaseController
                                                 'id' => $execution['id'],
                                                 'budget' => $originalData['budget'] ?? 0,
                                             ];
+
+                                            if ($execution['exec_budget_type'] == 'percent') {
+                                                $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                            } else {
+                                                $adjustedBudget = $execution['exec_value'];
+                                            }
+
                                             $data = [
                                                 'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
+                                                'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->updateCampaignBudget($data);
                                         }else{
@@ -1107,7 +1123,14 @@ class AutomationController extends BaseController
                                                 'id' => $execution['id'],
                                                 'budget' => $originalData['budget'] ?? 0,
                                             ];
-                                            $return = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $execution['exec_value']]);
+
+                                            if ($execution['exec_budget_type'] == 'percent') {
+                                                $adjustedBudget = ($originalData['budget']) * (1 + ($execution['exec_value'] / 100));
+                                            } else {
+                                                $adjustedBudget = $execution['exec_value'];
+                                            }
+
+                                            $return = $zenith->updateCampaignBudget($customerId['customerId'], $execution['id'], ['budget' => $adjustedBudget]);
                                         }else{
                                             $return = false;
                                         }
@@ -1120,10 +1143,17 @@ class AutomationController extends BaseController
                                                 'id' => $execution['id'],
                                                 'budget' => $originalData['budget'] ?? 0,
                                             ];
+
+                                            if ($execution['exec_budget_type'] == 'percent') {
+                                                $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                            } else {
+                                                $adjustedBudget = $execution['exec_value'];
+                                            }
+
                                             $data = [
                                                 'type' => 'campaign',
                                                 'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
+                                                'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
                                         }else{
@@ -1203,9 +1233,16 @@ class AutomationController extends BaseController
                                                 'id' => $execution['id'],
                                                 'budget' => $originalData['budget'],
                                             ];
+                                            
+                                            if ($execution['exec_budget_type'] == 'percent') {
+                                                $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                            } else {
+                                                $adjustedBudget = $execution['exec_value'];
+                                            }
+
                                             $data = [
                                                 'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
+                                                'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->updateAdSetBudget($data);
                                         }else{
@@ -1220,10 +1257,17 @@ class AutomationController extends BaseController
                                                 'id' => $execution['id'],
                                                 'budget' => $originalData['budget'],
                                             ];
+
+                                            if ($execution['exec_budget_type'] == 'percent') {
+                                                $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                            } else {
+                                                $adjustedBudget = $execution['exec_value'];
+                                            }
+
                                             $data = [
                                                 'type' => 'adgroup',
                                                 'id' => $execution['id'],
-                                                'budget' => $execution['exec_value']
+                                                'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
                                         }else{
