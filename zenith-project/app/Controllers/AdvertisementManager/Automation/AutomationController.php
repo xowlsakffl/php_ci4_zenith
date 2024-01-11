@@ -550,6 +550,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            if($automation['aa_seq'] != '96'){
+                continue;
+            }
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -1084,6 +1087,15 @@ class AutomationController extends BaseController
                                                 'status' => $originalData['status'],
                                             ];
                                             $return = $zenith->setCampaignOnOff($execution['id'], $execution['exec_value']);
+                                            if(isset($return['http_code'])){
+                                                if($return['http_code'] == 200){
+                                                    $return = true;
+                                                }else{
+                                                    throw new Exception("카카오 캠페인 상태 수정 오류 발생.");
+                                                }
+                                            }else{
+                                                throw new Exception("카카오 캠페인 상태 수정 오류 발생.");
+                                            }
                                         }else{
                                             $return = false;
                                         }
@@ -1159,6 +1171,15 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
+                                            if(isset($return['http_code'])){
+                                                if($return['http_code'] == 200){
+                                                    $return = true;
+                                                }else{
+                                                    throw new Exception("카카오 캠페인 예산 수정 오류 발생.");
+                                                }
+                                            }else{
+                                                throw new Exception($return['msg']);
+                                            }
                                         }else{
                                             $return = false;
                                         }
@@ -1221,6 +1242,15 @@ class AutomationController extends BaseController
                                                 'status' => $originalData['status'],
                                             ];
                                             $return = $zenith->setAdGroupOnOff($execution['id'], $execution['exec_value']);
+                                            if(isset($return['http_code'])){
+                                                if($return['http_code'] == 200){
+                                                    $return = true;
+                                                }else{
+                                                    throw new Exception("카카오 광고그룹 상태 수정 오류 발생.");
+                                                }
+                                            }else{
+                                                throw new Exception("카카오 광고그룹 상태 수정 오류 발생.");
+                                            }
                                         }else{
                                             $return = false;
                                         }
@@ -1275,6 +1305,15 @@ class AutomationController extends BaseController
                                                 'budget' => $adjustedBudget
                                             ];
                                             $return = $zenith->setDailyBudgetAmount($data);
+                                            if(isset($return['http_code'])){
+                                                if($return['http_code'] == 200){
+                                                    $return = true;
+                                                }else{
+                                                    throw new Exception("카카오 광고그룹 예산 수정 오류 발생.");
+                                                }
+                                            }else{
+                                                throw new Exception($return['msg']);
+                                            }
                                         }else{
                                             $return = false;
                                         }
@@ -1337,6 +1376,15 @@ class AutomationController extends BaseController
                                                 'status' => $originalData['status'],
                                             ];
                                             $return = $zenith->setCreativeOnOff($execution['id'], $execution['exec_value']);
+                                            if(isset($return['http_code'])){
+                                                if($return['http_code'] == 200){
+                                                    $return = true;
+                                                }else{
+                                                    throw new Exception("카카오 광고그룹 상태 수정 오류 발생.");
+                                                }
+                                            }else{
+                                                throw new Exception("카카오 광고그룹 상태 수정 오류 발생.");
+                                            }
                                         }else{
                                             $return = false;
                                         } 
@@ -1347,7 +1395,7 @@ class AutomationController extends BaseController
                         default:
                             break;
                     }
-                    if((!empty($return) && (empty($return['code']) && empty($return['msg']))) || (isset($return['http_code']) && $return['http_code'] == 200)){
+                    if(!empty($return)){
                         $result['log'][] = [
                             "result" => true,
                             'status' => 'success',
