@@ -414,6 +414,8 @@ class ZenithGG
 
             $this->db->updateCampaignField($setData);
             return $setData['id'];
+        }else{
+            return false;
         };
     }
 
@@ -597,6 +599,8 @@ class ZenithGG
 
             $this->db->updateAdgroupField($setData);
             return $setData;
+        }else{
+            return false;
         };
     }
       
@@ -755,6 +759,8 @@ class ZenithGG
 
             $this->db->updateAdField($setData);
             return $setData;
+        }else{
+            return false;
         };
     }
 
