@@ -1209,6 +1209,8 @@ function setModalData(data){
     $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
     if(data.aas_criteria_time){
         $('#scheduleTable input[name=criteria_time]').val(data.aas_criteria_time);
+    }else{
+        $('#scheduleTable input[name=criteria_time]').val('');
     }
     if(data.aas_exec_week){
         $('#scheduleTable input[name=exec_week][value="' + data.aas_exec_week + '"]').prop('checked', true);
