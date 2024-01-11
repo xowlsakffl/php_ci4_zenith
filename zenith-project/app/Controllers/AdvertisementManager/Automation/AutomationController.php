@@ -550,6 +550,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
+            if($automation['aa_seq'] != '95'){
+                continue;
+            }
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -1102,6 +1105,7 @@ class AutomationController extends BaseController
 
                                             if ($execution['exec_budget_type'] == 'percent') {
                                                 $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                                $adjustedBudget = round($adjustedBudget);
                                             } else {
                                                 $adjustedBudget = $execution['exec_value'];
                                             }
@@ -1126,6 +1130,7 @@ class AutomationController extends BaseController
 
                                             if ($execution['exec_budget_type'] == 'percent') {
                                                 $adjustedBudget = ($originalData['budget']) * (1 + ($execution['exec_value'] / 100));
+                                                $adjustedBudget = round($adjustedBudget);
                                             } else {
                                                 $adjustedBudget = $execution['exec_value'];
                                             }
@@ -1146,6 +1151,7 @@ class AutomationController extends BaseController
 
                                             if ($execution['exec_budget_type'] == 'percent') {
                                                 $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                                $adjustedBudget = round($adjustedBudget);
                                             } else {
                                                 $adjustedBudget = $execution['exec_value'];
                                             }
@@ -1236,6 +1242,7 @@ class AutomationController extends BaseController
                                             
                                             if ($execution['exec_budget_type'] == 'percent') {
                                                 $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                                $adjustedBudget = round($adjustedBudget);
                                             } else {
                                                 $adjustedBudget = $execution['exec_value'];
                                             }
@@ -1260,6 +1267,7 @@ class AutomationController extends BaseController
 
                                             if ($execution['exec_budget_type'] == 'percent') {
                                                 $adjustedBudget = ($originalData['budget'] ?? 0) * (1 + ($execution['exec_value'] / 100));
+                                                $adjustedBudget = round($adjustedBudget);
                                             } else {
                                                 $adjustedBudget = $execution['exec_value'];
                                             }
