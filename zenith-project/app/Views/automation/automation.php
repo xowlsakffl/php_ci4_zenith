@@ -701,9 +701,10 @@ function setDate(){
 }
 
 function setCriteriaTime(){
+    var now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
     $('input[name=criteria_time]').daterangepicker({
         singleDatePicker: true,
-        autoUpdateInput: false,
         locale: {
                 "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
                 "applyLabel": "확인",                    // 확인 버튼 텍스트
@@ -713,7 +714,7 @@ function setCriteriaTime(){
         },
         timePicker: true,
         timePicker24Hour: true,
-        minDate: new Date(),
+        minDate: now,
     });
 }
 
