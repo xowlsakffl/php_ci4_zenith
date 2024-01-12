@@ -21,9 +21,29 @@ class AutomationModel extends Model
         aa.nickname as aa_nickname,
         aa.status as aa_status,
         aa.mod_datetime as aa_mod_datetime, 
-        aar.exec_timestamp as aar_exec_timestamp
+        aas.exec_type as aas_exec_type,
+        aas.type_value as aas_type_value,
+        DATE_FORMAT(aas.criteria_time, "%Y-%m-%d %H:%i") as aas_criteria_time,
+        DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
+        DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time,
+        DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time,
+        aas.exec_week as aas_exec_week,
+        aas.month_type as aas_month_type,
+        aas.month_day as aas_month_day,
+        aas.month_week as aas_month_week,
+        aas.reg_datetime as aas_reg_datetime,
+        (SELECT MAX(aar.exec_timestamp) 
+        FROM aa_result aar 
+        WHERE aar.idx = aa.seq AND aar.result = "success") as aar_exec_timestamp_success,
+        (SELECT MAX(aar.exec_timestamp) 
+        FROM aa_result aar 
+        WHERE aar.idx = aa.seq) as aar_exec_timestamp_latest,
+        (SELECT COUNT(*) 
+        FROM aa_result aar 
+        WHERE aar.idx = aa.seq) as aar_exec_timestamp_count
         ');
-        $builder->join('aa_result aar', 'aar.idx = aa.seq AND aar.result = "success"', 'left');
+        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
 
         if(!empty($data['searchData']['sdate']) && !empty($data['searchData']['edate'])){
             $builder->where('DATE(aa.mod_datetime) >=', $data['searchData']['sdate']);

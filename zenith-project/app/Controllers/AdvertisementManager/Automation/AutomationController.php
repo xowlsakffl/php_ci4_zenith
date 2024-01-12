@@ -34,9 +34,38 @@ class AutomationController extends BaseController
     
     public function getList()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomationList($arg);
+            /* foreach ($result['data'] as $d) {
+                if($d['aa_seq'] != '99'){continue;}
+                $d['expected_time'] = '';
+                if(!empty($d['aas_criteria_time']) && ($d['aas_exec_type'] == 'minute' || $d['aas_exec_type'] == 'hour') && empty($d['aar_exec_timestamp_count'])){
+                    $d['expected_time'] = $d['aas_criteria_time'];
+                }else{
+                    $calTime = Time::parse($d['aar_exec_timestamp_latest'] ?? $d['aas_reg_datetime']);
+
+                    switch ($d['aas_exec_type']) {
+                        case 'minute':
+                            $type_value = (int) $d['aas_type_value'];
+                            $d['expected_time'] = $calTime->addMinutes($type_value)->toDateTimeString();
+                            break;
+                        case 'hour':
+                            $type_value = (int) $d['aas_type_value'];
+                            $d['expected_time'] = $calTime->addHours($type_value)->toDateTimeString();
+                        case 'day':
+                            $type_value = (int) $d['aas_type_value'];
+                            $expectedTime = $calTime->addDays($type_value);
+                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
+                            $d['expected_time'] = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
+                            dd($d['expected_time']);
+
+                        default:
+                            # code...
+                            break;
+                    }
+                }
+            } */
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],
@@ -550,7 +579,7 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
-            //if($automation['aa_seq'] != '97'){continue;}
+            //if($automation['aa_seq'] != '101'){continue;}
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
@@ -573,8 +602,7 @@ class AutomationController extends BaseController
                                 if(!empty($resultRow)){
                                     $this->recordLog($result, $resultRow);
                                 }
-                                //선택 대상중 하나라도 데이터를 못가져오면 실행 안함
-                                continue 2;
+                                continue;
                             }
                             $checkTargets[] = $targetData['target'];
                         }

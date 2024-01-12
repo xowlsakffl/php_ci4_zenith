@@ -619,7 +619,7 @@ function getList(){
                 }
             },
             { 
-                "data": "aar_exec_timestamp", 
+                "data": "aar_exec_timestamp_success", 
                 "width": "20%",
                 "render": function(data){
                     if(data != null){
