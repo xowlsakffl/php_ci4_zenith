@@ -601,26 +601,33 @@ class AutomationController extends BaseController
                             }
                             $checkTargets[] = $targetData['target'];
                         }
-                        if(empty($checkTargets)){
+
+                        $targetDatas = $this->setData($checkTargets);  
+                        if(empty($targetDatas)){
                             $resultRow = $this->recordResult([
                                 'seq' => $automation['aa_seq'],
                                 'status'=> 'not_execution'
                             ]);
-                            $result['target'] = $checkTargets;
+                            $resultTarget = [
+                                'result' => false,
+                                'msg' => '비교 대상 데이터가 존재하지 않습니다.',
+                                'seq' => $automation['aa_seq'],
+                            ];
+                            $result['target'] = $resultTarget;
                             if(!empty($resultRow)){
                                 $this->recordLog($result, $resultRow);
                             }
                             continue;
+                        }else{
+                            $resultTarget = [
+                                'result' => true,
+                                'msg' => '대상이 일치합니다.',
+                                'seq' => $automation['aa_seq'],
+                                'target' => $targetDatas,
+                            ];
+                            $result['target'] = $resultTarget;
                         }
 
-                        $targetDatas = $this->setData($checkTargets);                    
-                        $resultTarget = [
-                            'result' => true,
-                            'msg' => '대상이 일치합니다.',
-                            'seq' => $automation['aa_seq'],
-                            'target' => $targetDatas,
-                        ];
-                        $result['target'] = $resultTarget;
                         if(!empty($targetDatas)){
                             $conditionPassData = $this->checkAutomationCondition($targetDatas, $automation['aa_seq']);
                             $result['conditions'] = $conditionPassData;
@@ -915,12 +922,7 @@ class AutomationController extends BaseController
             if (method_exists($this->automation, $methodName)) {
                 $data = $this->automation->$methodName($target);
                 if(empty($data)){
-                    return [
-                        'result' => false,
-                        'status' => 'failed',
-                        'msg' => '비교 대상 데이터가 존재하지 않습니다.',
-                        'seq' => $target['aat_idx'],
-                    ];
+                    return ['result' => false];
                 }
                 $data = $this->sumData($data);
                 return  [
@@ -929,13 +931,6 @@ class AutomationController extends BaseController
                     'target' => $data,
                 ];
             }
-        }else{
-            return [
-                'result' => false,
-                'status' => 'failed',
-                'msg' => '대상 메소드 매칭 오류',
-                'seq' => $target['aat_idx'],
-            ];
         }
     }
 
