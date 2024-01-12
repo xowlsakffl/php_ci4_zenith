@@ -597,15 +597,22 @@ class AutomationController extends BaseController
                         foreach ($targets as $target) {
                             $targetData = $this->checkAutomationTarget($target);
                             if($targetData['result'] == false){
-                                $resultRow = $this->recordResult($targetData);
-                                $result['target'] = $targetData;
-                                if(!empty($resultRow)){
-                                    $this->recordLog($result, $resultRow);
-                                }
                                 continue;
                             }
                             $checkTargets[] = $targetData['target'];
                         }
+                        if(empty($checkTargets)){
+                            $resultRow = $this->recordResult([
+                                'seq' => $automation['aa_seq'],
+                                'status'=> 'not_execution'
+                            ]);
+                            $result['target'] = $checkTargets;
+                            if(!empty($resultRow)){
+                                $this->recordLog($result, $resultRow);
+                            }
+                            continue;
+                        }
+
                         $targetDatas = $this->setData($checkTargets);                    
                         $resultTarget = [
                             'result' => true,
