@@ -1149,7 +1149,6 @@ class AutomationModel extends Model
     {
         $subQueryBuilder = $this->zenith->table('aa_result aar');
         $subQueryBuilder->select('aar.idx, aar.result, MAX(aar.exec_timestamp) as aar_exec_timestamp');
-        $subQueryBuilder->where('aar.result', 'success');
         $subQueryBuilder->groupBy('aar.idx');
         
         $builder = $this->zenith->table('admanager_automation aa');
