@@ -34,38 +34,121 @@ class AutomationController extends BaseController
     
     public function getList()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomationList($arg);
-            /* foreach ($result['data'] as $d) {
-                if($d['aa_seq'] != '99'){continue;}
+            foreach ($result['data'] as &$d) {
                 $d['expected_time'] = '';
+                if($d['aa_status'] != 1){continue;}
                 if(!empty($d['aas_criteria_time']) && ($d['aas_exec_type'] == 'minute' || $d['aas_exec_type'] == 'hour') && empty($d['aar_exec_timestamp_count'])){
                     $d['expected_time'] = $d['aas_criteria_time'];
                 }else{
                     $calTime = Time::parse($d['aar_exec_timestamp_latest'] ?? $d['aas_reg_datetime']);
+                    $currentDate = new Time('now');
 
                     switch ($d['aas_exec_type']) {
                         case 'minute':
                             $type_value = (int) $d['aas_type_value'];
-                            $d['expected_time'] = $calTime->addMinutes($type_value)->toDateTimeString();
+                            $expectedTime = $calTime->addMinutes($type_value);
+                            if($expectedTime->isBefore($currentDate)){
+                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
+                            }else{
+                                $d['expected_time'] = $expectedTime->toDateTimeString();
+                            }
                             break;
                         case 'hour':
                             $type_value = (int) $d['aas_type_value'];
-                            $d['expected_time'] = $calTime->addHours($type_value)->toDateTimeString();
+                            $expectedTime = $calTime->addHours($type_value);
+                            if($expectedTime->isBefore($currentDate)){
+                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
+                            }else{
+                                $d['expected_time'] = $expectedTime->toDateTimeString();
+                            }
                         case 'day':
                             $type_value = (int) $d['aas_type_value'];
                             $expectedTime = $calTime->addDays($type_value);
                             [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
-                            $d['expected_time'] = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
-                            dd($d['expected_time']);
+                            $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
+                            if($expectedTime->isBefore($currentDate)){
+                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
+                            }else{
+                                $d['expected_time'] = $expectedTime->toDateTimeString();
+                            }
+                        case 'week':
+                            $type_value = (int) $d['aas_type_value'];
+                            $exec_week = (int) $d['aas_exec_week'];
 
+                            $expectedTime = $calTime->addDays(7 * $type_value);
+                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
+                            $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
+
+                            $expectedTime = $expectedTime->setISODate($expectedTime->year, $expectedTime->weekOfYear, $exec_week-1);
+
+                            if($expectedTime->isBefore($currentDate)){
+                                $d['expected_time'] = $expectedTime->addDays(7 * $type_value)->toDateTimeString();
+                            }else{
+                                $d['expected_time'] = $expectedTime->toDateTimeString();
+                            }
+                        case 'month':
+                            $type_value = (int) $d['aas_type_value'];
+                            $month_type = $d['aas_month_type'];
+                            $month_day = (int) $d['aas_month_day'] ?? '';
+                            $month_week = (int) $d['aas_month_week'] ?? '';
+
+                            $expectedTime = $calTime->addMonths($type_value);
+                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
+                            if($month_type === 'start_day'){
+                                $expectedTime = $expectedTime->setDay(1)->setHour($hours)->setMinute($minutes)->setSecond(0);
+                                if($expectedTime->isBefore($currentDate)){
+                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
+                                }else{
+                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                                }
+                            }else if($month_type === 'end_day'){
+                                $lastDay = $expectedTime->format('t'); 
+                                $expectedTime = $expectedTime->setDay($lastDay)->setHour($hours)->setMinute($minutes)->setSecond(0);
+                                if($expectedTime->isBefore($currentDate)){
+                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
+                                }else{
+                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                                }
+                            }else if($month_type === 'first'){
+                                $firstDay = $expectedTime->setDay(1); 
+                                while ((int) $firstDay->dayOfWeek != $month_week) {
+                                    $firstDay = $firstDay->addDays(1);
+                                }
+                                $expectedTime = $firstDay->setHour($hours)->setMinute($minutes)->setSecond(0);
+                                if($expectedTime->isBefore($currentDate)){
+                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
+                                }else{
+                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                                }
+                            }else if($month_type === 'last'){
+                                $lastDay = $expectedTime->setDay($expectedTime->format('t')); 
+                                while ((int) $lastDay->dayOfWeek != $month_week) {
+                                    $lastDay = $lastDay->subDays(1);
+                                }
+                                $expectedTime = $lastDay->setHour($hours)->setMinute($minutes)->setSecond(0);
+                                if($expectedTime->isBefore($currentDate)){
+                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
+                                }else{
+                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                                }
+                            }else if($month_type === 'day'){
+                                $expectedTime = $expectedTime->setDay($month_day); 
+                                $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
+                                if($expectedTime->isBefore($currentDate)){
+                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
+                                }else{
+                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                                }
+                            }
                         default:
-                            # code...
                             break;
                     }
                 }
-            } */
+            }
+
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],

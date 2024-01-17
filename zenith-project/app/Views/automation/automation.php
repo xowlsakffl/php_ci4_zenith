@@ -63,6 +63,7 @@
                         <th scope="col">작성자</th>
                         <th scope="col">업데이트</th>
                         <th scope="col">마지막 실행</th>
+                        <th scope="col">예상 실행 시간</th>
                         <th scope="col">사용</th>
                     </tr>
                 </thead>
@@ -603,11 +604,11 @@ function getList(){
             },
             { 
                 "data": "aa_nickname", 
-                "width": "20%",
+                "width": "15%",
             },
             { 
                 "data": "aa_mod_datetime", 
-                "width": "20%",
+                "width": "15%",
                 "render": function(data){
                     if(data != null){
                         data = data.substr(0, 16);
@@ -620,7 +621,20 @@ function getList(){
             },
             { 
                 "data": "aar_exec_timestamp_success", 
-                "width": "20%",
+                "width": "15%",
+                "render": function(data){
+                    if(data != null){
+                        data = data.substr(0, 16);
+                    }else{
+                        data = null;
+                    }
+
+                    return data;
+                }
+            },
+            { 
+                "data": "expected_time", 
+                "width": "15%",
                 "render": function(data){
                     if(data != null){
                         data = data.substr(0, 16);
