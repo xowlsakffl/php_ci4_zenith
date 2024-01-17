@@ -579,18 +579,12 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
-            //if($automation['aa_seq'] != '101'){continue;}
+            //if($automation['aa_seq'] != '112'){continue;}
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);
                 $result['schedule'] = $schedulePassData;
                 
-                if($schedulePassData['result'] == false){
-                    $resultRow = $this->recordResult($schedulePassData);
-                    if(!empty($resultRow)){
-                        $this->recordLog($result, $resultRow);
-                    }
-                    continue;
-                }else{
+                if(!empty($schedulePassData['result'])){
                     $targets = $this->automation->getAutomationTargets($automation['aa_seq']);  
                     if(!empty($targets)){
                         $checkTargets = [];
@@ -742,7 +736,6 @@ class AutomationController extends BaseController
             
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTime = $diffTime->getMinutes();
-            
             if($diffTime >= $automation['aas_type_value']){
                 $resultArray = [
                     'result' => true,
@@ -785,7 +778,6 @@ class AutomationController extends BaseController
 
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTime = $diffTime->getHours();  
-
             if($diffTime >= $automation['aas_type_value']){
                 $resultArray = [
                     'result' => true,
