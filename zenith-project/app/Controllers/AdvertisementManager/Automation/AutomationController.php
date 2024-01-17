@@ -718,7 +718,7 @@ class AutomationController extends BaseController
             if(empty($resultCount)){
                 $chkTime = false;
                 $setTime = Time::parse($automation['aas_criteria_time']);
-                if($setTime->equals($currentTime) || $setTime->isAfter($currentTime)){
+                if($setTime->equals($currentTime) || $setTime->isBefore($currentDate)){
                     $chkTime = true;
                 }
                 if($chkTime){
@@ -761,7 +761,7 @@ class AutomationController extends BaseController
             if(empty($resultCount)){
                 $chkTime = false;
                 $setTime = Time::parse($automation['aas_criteria_time']);
-                if($setTime->equals($currentTime) || $setTime->isAfter($currentTime)){
+                if($setTime->equals($currentTime) || $setTime->isBefore($currentDate)){
                     $chkTime = true;
                 }
                 if($chkTime){
