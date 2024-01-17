@@ -1657,28 +1657,32 @@ $('body').on('click', '.target-btn', function(e){
 $('body').on('click', '#execTable tbody tr', function(){
     if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
+    }else {
+        $(this).addClass('selected');
+    }
+    let selectedRows = $('#execTable tbody tr.selected');
+    if(selectedRows.length > 0){
+        selectedRows.each(function() {
+            let media = $(this).find('td:first');
+            let type = $(this).find('td:nth-child(2)');
+
+            if (media.text() === '구글' && (type.text() === '광고그룹' || type.text() === '광고')) {
+                $('#execConditionTable select').val('');
+                $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
+                $('#execConditionTable input[name=exec_condition_value]').val('').hide();
+                $('#execConditionTable select[name=exec_condition_type_budget]').val('').hide();
+                $('#execConditionTable select[name=exec_condition_value_status]').show();
+            }
+        });
+    }else{
         $('#execConditionTable select[name=exec_condition_type] option').show();
         $('#execConditionTable input[name=exec_condition_value]').show();
         $('#execConditionTable select[name=exec_condition_type_budget]').show();
         $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
-    }else {
-        $(this).addClass('selected');
-        let media = $(this).children('td').eq(0).text();
-        let type = $(this).children('td').eq(1).text();
-        if((type == '광고') || (media == '구글' && type == '광고그룹')){
-            $('#execConditionTable select').val('');
-            $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
-            $('#execConditionTable input[name=exec_condition_value]').val('').hide();
-            $('#execConditionTable select[name=exec_condition_type_budget]').val('').hide();
-            $('#execConditionTable select[name=exec_condition_value_status]').show();
-        }else{
-            $('#execConditionTable select[name=exec_condition_type] option').show();
-            $('#execConditionTable input[name=exec_condition_value]').show();
-            $('#execConditionTable select[name=exec_condition_type_budget]').show();
-            $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
-        }
     }
 });
+
+    
 
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
