@@ -716,8 +716,11 @@ class AutomationController extends BaseController
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
+                $chkTime = false;
                 $setTime = Time::parse($automation['aas_criteria_time']);
-                $chkTime = $setTime->equals($currentTime);
+                if($setTime->equals($currentTime) || $setTime->isAfter($currentTime)){
+                    $chkTime = true;
+                }
                 if($chkTime){
                     $resultArray = [
                         'result' => true,
@@ -756,8 +759,11 @@ class AutomationController extends BaseController
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
+                $chkTime = false;
                 $setTime = Time::parse($automation['aas_criteria_time']);
-                $chkTime = $setTime->equals($currentTime);
+                if($setTime->equals($currentTime) || $setTime->isAfter($currentTime)){
+                    $chkTime = true;
+                }
                 if($chkTime){
                     $resultArray = [
                         'result' => true,
