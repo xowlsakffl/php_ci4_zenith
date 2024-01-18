@@ -710,6 +710,7 @@ function setStatus(t) {
                 var $n_obj = $('.statusCount dt:contains("'+lead_status[r.status]+'")').filter(function() { return $(this).text() === lead_status[r.status];}).next('dd');
                 var n_cnt = parseInt($n_obj.text());
                 $n_obj.text(++n_cnt);
+                data.leads_seq = data.seq;
                 registerMemo(data);
             }
         },
