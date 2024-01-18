@@ -1822,6 +1822,12 @@ $('body').on('click', '#execConditionBtn', function() {
             var newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+execConditionBudgetTypeText+'</p>';
             $('#preactice-tab').append(newExecText);
         })
+
+        $('#execTable tbody tr').removeClass('selected');
+        $('#execConditionTable select[name=exec_condition_type] option').show();
+        $('#execConditionTable input[name=exec_condition_value]').show();
+        $('#execConditionTable select[name=exec_condition_type_budget]').show();
+        $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
     }
 });
 
