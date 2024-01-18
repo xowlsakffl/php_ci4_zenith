@@ -1,4 +1,9 @@
 
+.ui-autocomplete{z-index: 10000000; max-height: 300px;overflow-y: auto;overflow-x: hidden;}
+.target-btn{background-color: #ce1922;color:#fff;border-radius: 5px;}
+.set_target_except_btn{margin-left: 10px;}
+.log-search-wrap{margin-bottom:0;}
+#logTable{margin-top: 0 !important;}
 
 .search{
     button.btn-primary{ width: 90px; font-weight: 700; font-size: 100%;color: #fff; border-radius: 7px; background: #ce1922;}

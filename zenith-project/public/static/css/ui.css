@@ -108,9 +108,7 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 input[type=submit], button {
@@ -149,9 +147,7 @@ textarea:focus {
 }
 
 select {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 select:focus {
@@ -720,12 +716,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.search-wrap .search .input input[type=text]:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.75rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .search-wrap .search .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -984,12 +974,6 @@ body {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
-.form-control:focus::-moz-placeholder, .form-select:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.5rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
-}
 .form-control:focus::placeholder, .form-select:focus::placeholder {
   color: red;
   text-indent: 0.5rem;
@@ -999,9 +983,6 @@ body {
 .account-container input.form-control:focus {
   box-shadow: 0 0 0 0.25rem #C0DBEA;
   caret-color: #7286D3;
-  color: #7286D3;
-}
-.account-container input.form-control:focus::-moz-placeholder {
   color: #7286D3;
 }
 .account-container input.form-control:focus::placeholder {
@@ -1781,6 +1762,31 @@ div.dataTables_scrollBody > table {
     box-shadow: inset 200px 0px 7px red;
   }
 }
+.ui-autocomplete {
+  z-index: 10000000;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.target-btn {
+  background-color: #ce1922;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.set_target_except_btn {
+  margin-left: 10px;
+}
+
+.log-search-wrap {
+  margin-bottom: 0;
+}
+
+#logTable {
+  margin-top: 0 !important;
+}
+
 .search button.btn-primary {
   width: 90px;
   font-weight: 700;
@@ -2275,12 +2281,6 @@ div.dataTables_scrollBody > table {
   border-color: transparent;
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
-}
-.regi-content .detail-wrap .input input[type=text]:focus::-moz-placeholder {
-  color: red;
-  text-indent: 0.75rem;
-  -moz-transition: text-indent 0.3s;
-  transition: text-indent 0.3s;
 }
 .regi-content .detail-wrap .input input[type=text]:focus::placeholder {
   color: red;
@@ -2983,9 +2983,7 @@ div.dt-button-collection h3 {
 }
 
 .none {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -3019,9 +3017,7 @@ div.dt-button-collection h3 {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -3129,7 +3125,6 @@ div.dt-button-collection h3 {
   background-color: #ededed;
 }
 .account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
-  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 .account-container form .form-check .form-check-input {
@@ -3385,4 +3380,6 @@ div.dt-button-collection h3 {
     padding: 0.6rem 0.7rem;
     font-size: 90%;
   }
-}/*# sourceMappingURL=ui.css.map */
+}
+
+/*# sourceMappingURL=ui.css.map */

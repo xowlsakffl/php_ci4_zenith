@@ -381,13 +381,15 @@
                 </div>
             </div>
         </div>
-    <!-- //데이터 비교 -->
+        <!-- //데이터 비교 -->
+        <?=$this->include('templates/inc/automation_create_modal.php')?>
     </div>
 </div>
 <?=$this->endSection();?>
 
 <!--스크립트-->
 <?=$this->section('script');?>
+<script src="/static/js/automation/automation.js"></script>
 <script>
 var media_str = {
     "facebook":"페이스북", 
@@ -642,7 +644,7 @@ function getList(data = []){
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }
 
-                    
+                    name += '<div class="automation_btn_box"><button class="automation_create_btn">자동화 등록</button><button class="automation_log_btn">자동화 로그</button></div>';
                     return name;
                 },
             },
