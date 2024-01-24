@@ -415,27 +415,35 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="3">일괄 적용</td>
-                                        <td class="execConditionAllBox" colspan="5">
-                                            <div>
-                                                <select name="all_exec_condition_type" class="form-select">
-                                                    <option value="">실행항목</option>
-                                                    <option value="status">상태</option>
-                                                    <option value="budget">예산</option>
-                                                </select>
-                                                <select name="all_exec_condition_value_status" class="form-select" style="display: none;">
-                                                    <option value="">상태값</option>
-                                                    <option value="ON">ON</option>
-                                                    <option value="OFF">OFF</option>
-                                                </select>
-                                                <input type="text" name="all_exec_condition_value" class="form-control"placeholder="예산">
+                                        <td colspan="4" rowspan="2">일괄 선택</td>
+                                        <td>
+                                            <select name="all_exec_condition_type" class="form-select">
+                                                <option value="">실행항목</option>
+                                                <option value="status">상태</option>
+                                                <option value="budget">예산</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="all_exec_condition_value_status" class="form-select" style="display: none;">
+                                                <option value="">상태값</option>
+                                                <option value="ON">ON</option>
+                                                <option value="OFF">OFF</option>
+                                            </select>
+                                            <input type="text" name="all_exec_condition_value" class="form-control"placeholder="예산">
+                                        </td>
+                                        <td>
                                                 <select name="all_exec_condition_type_budget" class="form-select">
                                                     <option value="">단위</option>
                                                     <option value="won">원</option>
                                                     <option value="percent">%</option>
                                                 </select>
-                                                <button class="btn-special" id="execConditionBtn">적용</button>
-                                            </div>
+                                        </td> 
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            <button class="btn-special" id="execConditionBtn">적용</button>
                                         </td>
                                     </tr>
                                 </tfoot>

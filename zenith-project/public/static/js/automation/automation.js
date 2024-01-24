@@ -954,12 +954,31 @@ $('body').on('click', '.target-btn', function(e){
 });
 
 $('body').on('click', '.callTargetBtn', function(){
-    if(!$('#targetSelectTable tbody tr').length){
+    let isTargetPresent = false;
+    $('#targetSelectTable tbody tr').each(function() {
+        let media = $(this).find('td:eq(1)').text();
+        if (media === '캠페인' || media === '광고그룹' || media === '광고') {
+            isTargetPresent = true;
+            return false;
+        }
+    });
+    
+    if (!isTargetPresent) {
         alert('불러올 대상이 존재하지 않습니다.');
         return false;
     }
 
     $('#targetSelectTable tbody tr').each(function() {
+        let trId = $(this).data('id');
+        let existingIds = $('#execSelectTable tbody tr').map(function() {
+            return $(this).data('id');
+        }).get();
+    
+        if (existingIds.includes(trId)) {
+            alert('중복된 행이 존재합니다.');
+            return false;
+        }
+
         let media = $(this).find('td:eq(0)').text();
         let type = $(this).find('td:eq(1)').text();
         if (type == '캠페인' || type == '광고그룹' || type == '광고') {
@@ -1001,11 +1020,23 @@ $('body').on('click', '#execTable tbody tr', function(){
         }
         
         let cloneRow = $(this).clone();
+        let media = cloneRow.find('td:eq(0)').text();
+        let type = cloneRow.find('td:eq(1)').text();
         cloneRow.find('td:last-child').remove();
-        let newTd = '<td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select" style="display:none;"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>';
+        let newTd = $('<td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select" style="display:none;"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>');
+        
+        if (type === '광고' || (media == '구글' && type == '광고그룹')) {
+            newTd.find('select[name="exec_condition_type"] option[value="budget"]').hide();
+            newTd.find('select[name="exec_condition_value_status"]').hide();
+            newTd.find('input[name="exec_condition_value"]').hide();
+            newTd.find('select[name="exec_condition_type_budget"]').hide();
+            newTd.find('select[name="exec_condition_value_status"]').show();
+        }else{
+            newTd.find('select[name="exec_condition_value_status"]').hide();
+        }
+
         cloneRow.append(newTd);
         cloneRow.appendTo('#execSelectTable tbody');
-
         /* let selectedMediaTd = $(this).children('td').eq(0).text();
         let selectedTypeTd = $(this).children('td').eq(1).text();
         let selectedNameTd = $(this).children('td').eq(3).text(); */
@@ -1014,32 +1045,7 @@ $('body').on('click', '#execTable tbody tr', function(){
         /* let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'';
         $('#preactice-tab').append(newExecText); */
     }
-
-
-
-/*     let selectedRows = $('#execTable tbody tr.selected');
-    if(selectedRows.length > 0){
-        selectedRows.each(function() {
-            let media = $(this).find('td:first');
-            let type = $(this).find('td:nth-child(2)');
-
-            if (media.text() === '구글' && (type.text() === '광고그룹' || type.text() === '광고')) {
-                $('#execConditionTable select').val('');
-                $('#execConditionTable select[name=exec_condition_type] option[value=budget]').hide();
-                $('#execConditionTable input[name=exec_condition_value]').val('').hide();
-                $('#execConditionTable select[name=exec_condition_type_budget]').val('').hide();
-                $('#execConditionTable select[name=exec_condition_value_status]').show();
-            }
-        });
-    }else{
-        $('#execConditionTable select[name=exec_condition_type] option').show();
-        $('#execConditionTable input[name=exec_condition_value]').show();
-        $('#execConditionTable select[name=exec_condition_type_budget]').show();
-        $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
-    } */
 });
-
-    
 
 $('body').on('click', '#targetTab li', function(){
     $('#targetTab li').removeClass('active');
