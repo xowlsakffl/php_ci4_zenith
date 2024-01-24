@@ -6,14 +6,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="step">
                         <ol id="myTab" role="tablist">
-                            <li class="tab-link active" role="presentation" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" role="tab" aria-controls="schedule" aria-selected="true">
+                            <li class="active" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" aria-controls="schedule" aria-selected="true">
                                 <strong>일정</strong>
                                 <p id="scheduleText"></p>
                             </li>
-                            <li class="tab-link" role="presentation" id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" role="tab" aria-controls="target" aria-selected="false">
+                            <li id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" aria-controls="target" aria-selected="false">
                                 <strong>대상</strong>   
                             </li>
-                            <li class="tab-link" role="presentation" id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" role="tab" aria-controls="condition" aria-selected="false">
+                            <li id="condition-tab" data-bs-toggle="tab" data-bs-target="#condition" type="button" aria-controls="condition" aria-selected="false">
                                 <strong>조건</strong>
                                 <p id="text-condition-1">
                                     <span class="typeText"></span>
@@ -21,10 +21,10 @@
                                     <span class="compareText"></span>
                                 </p>
                             </li>
-                            <li class="tab-link" role="presentation" id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" role="tab" aria-controls="preactice" aria-selected="false">
+                            <li id="preactice-tab" data-bs-toggle="tab" data-bs-target="#preactice" type="button" aria-controls="preactice" aria-selected="false">
                                 <strong>실행</strong>
                             </li>
-                            <li class="tab-link" role="presentation" id="detailed-tab" data-bs-toggle="tab" data-bs-target="#detailed" type="button" role="tab" aria-controls="messages" aria-selected="false">
+                            <li id="detailed-tab" data-bs-toggle="tab" data-bs-target="#detailed" type="button" aria-controls="messages" aria-selected="false">
                                 <strong>상세정보</strong>
                                 <p id="detailText">
                                     <span id="subjectText"></span><br>
@@ -44,7 +44,7 @@
                                 <tr>
                                     <th scope="row">다음 시간마다 규칙적으로 실행</th>
                                     <td>
-                                        <input type="text" name="type_value" class="form-control short" oninput="onlyNumber(this);" maxlength="3" />
+                                        <input type="text" name="type_value" class="form-control short" oninput="onlyNumber(this);" maxlength="3" autocomplete="off"/>
                                         <select name="exec_type" class="form-select short" id="execType">
                                             <option value="minute">분</option>
                                             <option value="hour">시간</option>
@@ -188,6 +188,13 @@
                                 </form>
                             </div>
                             <table class="table tbl-header w-100" id="targetCheckedTable">
+                                <colgroup>
+                                    <col style="width:12%">
+                                    <col style="width:12%">
+                                    <col style="width:28%">
+                                    <col style="width:30%">
+                                    <col style="width:10%">
+                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="5"  class="text-center">선택 항목(선택 후 상단 탭 클릭 시 소속 항목 조회가 가능합니다)</th>
@@ -197,10 +204,10 @@
                             </table>
                             <table class="table tbl-header w-100" id="targetTable">
                                 <colgroup>
-                                    <col style="width:10%">
-                                    <col style="width:10%">
+                                    <col style="width:12%">
+                                    <col style="width:12%">
+                                    <col style="width:28%">
                                     <col style="width:30%">
-                                    <col style="width:32%">
                                     <col style="width:10%">
                                     <col style="width:8%">
                                 </colgroup>
@@ -218,6 +225,13 @@
                                 </tbody>
                             </table>
                             <table class="table tbl-header w-100 mt-4" id="targetSelectTable">
+                                <colgroup>
+                                    <col style="width:12%">
+                                    <col style="width:12%">
+                                    <col style="width:28%">
+                                    <col style="width:30%">
+                                    <col style="width:10%">
+                                </colgroup>
                                 <thead>
                                     <tr>
                                         <th scope="col" colspan="5"  class="text-center">적용 항목</th>
@@ -308,6 +322,9 @@
                                 <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
+                            <div class="callTargetBtnBox">
+                                <button class="callTargetBtn btn-primary">대상 불러오기</button>
+                            </div>
                             <div class="search">
                                 <div class="d-flex align-items-center mb-2">
                                     <input class="form-check-input" type="checkbox" value="1" id="searchAll">
@@ -342,7 +359,7 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <table class="table tbl-header w-100 mt-4" id="execConditionTable">
+                            <!-- <table class="table tbl-header w-100 mt-4" id="execConditionTable">
                                 <thead>
                                     <tr>
                                         <th scope="col">항목</th>
@@ -352,18 +369,22 @@
                                     <tr>
                                         <td>
                                             <div class="form-flex">
-                                                <select name="exec_condition_type" class="form-select" id="execConditionType">
+                                                <select name="exec_condition_type" class="form-select">
                                                     <option value="">실행항목</option>
                                                     <option value="status">상태</option>
                                                     <option value="budget">예산</option>
                                                 </select>
-                                                <select name="exec_condition_value_status" class="form-select" style="display: none;" id="execConditionValueStatus">
+                                        </td>
+                                        <td>
+                                                <select name="exec_condition_value_status" class="form-select">
                                                     <option value="">상태값 선택</option>
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" name="exec_condition_value" class="form-control" id="execConditionValue" placeholder="예산">
-                                                <select name="exec_condition_type_budget" class="form-select" id="execConditionTypeBudget">
+                                                <input type="text" name="exec_condition_value" class="form-control" placeholder="예산">
+                                        </td>
+                                        <td>
+                                                <select name="exec_condition_type_budget" class="form-select">
                                                     <option value="">단위 선택</option>
                                                     <option value="won">원</option>
                                                     <option value="percent">%</option>
@@ -373,16 +394,51 @@
                                         </td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> -->
 
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
+                                <colgroup>
+                                    <col style="width:8%">
+                                    <col style="width:10%">
+                                    <col style="width:15%">
+                                    <col style="width:20%">
+                                    <col style="width:16%">
+                                    <col style="width:16%">
+                                    <col style="width:16%">
+                                </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="8"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3">일괄 적용</td>
+                                        <td class="execConditionAllBox" colspan="5">
+                                            <div>
+                                                <select name="all_exec_condition_type" class="form-select">
+                                                    <option value="">실행항목</option>
+                                                    <option value="status">상태</option>
+                                                    <option value="budget">예산</option>
+                                                </select>
+                                                <select name="all_exec_condition_value_status" class="form-select" style="display: none;">
+                                                    <option value="">상태값</option>
+                                                    <option value="ON">ON</option>
+                                                    <option value="OFF">OFF</option>
+                                                </select>
+                                                <input type="text" name="all_exec_condition_value" class="form-control"placeholder="예산">
+                                                <select name="all_exec_condition_type_budget" class="form-select">
+                                                    <option value="">단위</option>
+                                                    <option value="won">원</option>
+                                                    <option value="percent">%</option>
+                                                </select>
+                                                <button class="btn-special" id="execConditionBtn">적용</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
                             </table>
                             <table class="table tbl-header w-100 mt-4 slackSendTable" id="slackSendTable">
                                 <thead>

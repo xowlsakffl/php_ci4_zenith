@@ -6,13 +6,9 @@ use CodeIgniter\Model;
 
 class AdvManagerModel extends Model
 {
-    protected $zenith, $facebook, $google, $kakao, $facebookDB, $googleDB, $kakaoDB;
+    protected $zenith, $facebook, $google, $kakao;
     public function __construct()
     {
-		$this->facebookDB = \Config\Database::connect('facebook');
-		$this->googleDB = \Config\Database::connect('google');
-		$this->kakaoDB = \Config\Database::connect('kakao');
-
         $this->zenith = \Config\Database::connect();
 		$this->facebook = model(AdvFacebookManagerModel::class);
         $this->google = model(AdvGoogleManagerModel::class);
@@ -21,10 +17,6 @@ class AdvManagerModel extends Model
 
     public function getAccounts($data)
     {
-		if(!$this->facebookDB->tableExists('fb_ad_account') || !$this->googleDB->tableExists('aw_ad_account') || !$this->kakaoDB->tableExists('mm_ad_account')){
-			return false;
-		}
-
         if(!empty($data['check'])){
             $data = $this->setArgs($data);
         }
@@ -34,10 +26,6 @@ class AdvManagerModel extends Model
 
     public function getMediaAccounts($data)
     {
-		if(!$this->facebookDB->tableExists('fb_ad_account') || !$this->googleDB->tableExists('aw_ad_account') || !$this->kakaoDB->tableExists('mm_ad_account')){
-			return false;
-		}
-
         if(!empty($data['check'])){
             $data = $this->setArgs($data);
         }
@@ -47,37 +35,21 @@ class AdvManagerModel extends Model
 
     public function getCampaigns($data)
     {
-		if(!$this->facebookDB->tableExists('fb_campaign') || !$this->googleDB->tableExists('aw_campaign') || !$this->kakaoDB->tableExists('mm_campaign')){
-			return false;
-		}
-
         return $this->getQueryResults($data, 'getCampaigns');
     }
 
     public function getAdSets($data)
     {
-		if(!$this->facebookDB->tableExists('fb_adset') || !$this->googleDB->tableExists('aw_adgroup') || !$this->kakaoDB->tableExists('mm_adgroup')){
-			return false;
-		}
-
         return $this->getQueryResults($data, 'getAdsets');
     }
 
     public function getAds($data)
     {
-		if(!$this->facebookDB->tableExists('fb_ad') || !$this->googleDB->tableExists('aw_ad') || !$this->kakaoDB->tableExists('mm_creative')){
-			return false;
-		}
-
         return $this->getQueryResults($data, 'getAds');
     }
 
     public function getReport($data)
     {
-		if(!$this->facebookDB->tableExists('fb_ad_insight_history') || !$this->googleDB->tableExists('aw_ad_report_history') || !$this->kakaoDB->tableExists('mm_creative_report_basic')){
-			return false;
-		}
-
         if(!empty($data['check'])){
             $data = $this->setArgs($data);
         }
@@ -210,10 +182,6 @@ class AdvManagerModel extends Model
 
     public function getMemo()
     {
-		if(!$this->facebookDB->tableExists('fb_ad_account') || !$this->googleDB->tableExists('aw_ad_account') || !$this->kakaoDB->tableExists('mm_ad_account')){
-			return false;
-		}
-
         $fbBuilder = $this->zenith->table('z_facebook.fb_ad_account AS faa');
         $fbBuilder->select('am.*, faa.name AS account_name, fc.campaign_name AS campaign_name, fas.adset_name AS adset_name, fa.ad_name AS ad_name');   
         $fbBuilder->join('z_facebook.fb_campaign AS fc', 'faa.ad_account_id = fc.account_id');
@@ -262,6 +230,104 @@ class AdvManagerModel extends Model
         $builder->where('seq', $data['seq']);
         $builder->update();
         $result = $this->zenith->transComplete();
+        return $result;
+    }
+
+    public function getAdvs($data)
+    {
+        $kakaoNumbers = array();
+        $googleNumbers = array();
+        $facebookNumbers = array();
+
+        foreach ($data['check'] as $value) {
+            $parts = explode('_', $value);
+            $id = $parts[1];
+            
+            switch ($parts[0]) {
+                case 'kakao':
+                    $kakaoNumbers[] = $id;
+                    break;
+                case 'google':
+                    $googleNumbers[] = $id;
+                    break;
+                case 'facebook':
+                    $facebookNumbers[] = $id;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $data['facebook'] = $facebookNumbers;
+        $data['google'] = $googleNumbers;
+        $data['kakao'] = $kakaoNumbers; 
+
+        switch ($data['type']) {
+            case 'campaigns':
+                if(!empty($data['facebook'])){
+                    $facebookBuilder = $this->facebook->getCampaignById($data['facebook']);
+                    $builders[] = $facebookBuilder;
+                }
+
+                if(!empty($data['google'])){
+                    $googleBuilder = $this->google->getCampaignById($data['google']);
+                    $builders[] = $googleBuilder;
+                }
+
+                if(!empty($data['kakao'])){
+                    $kakaoBuilder = $this->kakao->getCampaignById($data['kakao']);
+                    $builders[] = $kakaoBuilder;
+                }
+                break;
+            case 'adsets':
+                if(!empty($data['facebook'])){
+                    $facebookBuilder = $this->facebook->getAdgroupById($data['facebook']);
+                    $builders[] = $facebookBuilder;
+                }
+
+                if(!empty($data['google'])){
+                    $googleBuilder = $this->google->getAdgroupById($data['google']);
+                    $builders[] = $googleBuilder;
+                }
+
+                if(!empty($data['kakao'])){
+                    $kakaoBuilder = $this->kakao->getAdgroupById($data['kakao']);
+                    $builders[] = $kakaoBuilder;
+                }
+                break;
+            
+            case 'ads':
+                if(!empty($data['facebook'])){
+                    $facebookBuilder = $this->facebook->getAdById($data['facebook']);
+                    $builders[] = $facebookBuilder;
+                }
+
+                if(!empty($data['google'])){
+                    $googleBuilder = $this->google->getAdById($data['google']);
+                    $builders[] = $googleBuilder;
+                }
+
+                if(!empty($data['kakao'])){
+                    $kakaoBuilder = $this->kakao->getAdById($data['kakao']);
+                    $builders[] = $kakaoBuilder;
+                }
+                break;
+            
+            default:
+                break;
+        }
+
+        $unionBuilder = null;
+        foreach ($builders as $builder) {
+            if ($unionBuilder) {
+                $unionBuilder->union($builder);
+                
+            } else {
+                $unionBuilder = $builder;
+            }
+        }
+        
+        $result = $unionBuilder->get()->getResultArray();
         return $result;
     }
 }

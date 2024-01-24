@@ -1773,10 +1773,16 @@ div.dataTables_scrollBody > table {
   background-color: #ce1922;
   color: #fff;
   border-radius: 5px;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
-.set_target_except_btn {
-  margin-left: 10px;
+.callTargetBtn {
+  padding: 15px 20px;
+  background-color: #ce1922;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
 }
 
 .log-search-wrap {
@@ -1785,6 +1791,72 @@ div.dataTables_scrollBody > table {
 
 #logTable {
   margin-top: 0 !important;
+}
+
+#targetSelectTable tbody tr td {
+  position: relative;
+}
+#targetSelectTable tbody tr td .set_target_except_btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -27px;
+}
+#targetSelectTable tbody tr td .set_target_except_btn i {
+  font-size: 18px;
+}
+
+#conditionTable tr {
+  position: relative;
+}
+#conditionTable tr input[type=text], #conditionTable tr #conditionTable select {
+  height: 40px;
+}
+#conditionTable tr .deleteBtn {
+  position: absolute;
+  right: -23px;
+  top: 19px;
+}
+#conditionTable tr .deleteBtn i {
+  font-size: 18px;
+}
+
+#preactice .callTargetBtnBox {
+  position: absolute;
+  right: 30px;
+  top: 54px;
+}
+
+#execSelectTable tr td {
+  position: relative;
+}
+#execSelectTable tr td input, #execSelectTable tr td select {
+  font-size: 0.8rem;
+  padding: 0.375rem 1.25rem 0.375rem 0.75rem;
+  height: 34px;
+}
+#execSelectTable tr td .exec_condition_except_btn {
+  position: absolute;
+  top: 50%;
+  right: -27px;
+  transform: translateY(-50%);
+}
+#execSelectTable tr td .exec_condition_except_btn i {
+  font-size: 18px;
+}
+#execSelectTable tfoot {
+  border-top: 1px solid var(--bs-table-border-color);
+  background-color: #f7f7f7;
+}
+#execSelectTable tfoot .execConditionAllBox div {
+  display: flex;
+  align-items: center;
+}
+#execSelectTable tfoot .execConditionAllBox div select {
+  margin-top: 0;
+}
+#execSelectTable tfoot .execConditionAllBox div * {
+  margin-right: 5px;
 }
 
 .search button.btn-primary {
@@ -2150,7 +2222,7 @@ div.dataTables_scrollBody > table {
 }
 .regi-content .detail-wrap .tbl-header tr.selected > * {
   box-shadow: inset 0 0 0 9999px rgba(255, 199, 209, 0.368627451);
-  color: rgba(58, 32, 232, 0.8196078431);
+  color: #000;
   font-weight: 600;
 }
 .regi-content .detail-wrap .tbl-header td {
@@ -2315,12 +2387,6 @@ div.dataTables_scrollBody > table {
   border-radius: 7px;
   background: var(--bs-blue);
 }
-.regi-content .detail-wrap .target-btn:hover {
-  color: var(--bs-blue);
-}
-.regi-content .detail-wrap .target-btn:active {
-  color: red;
-}
 .regi-content .dataTables_paginate {
   float: unset;
   text-align: center !important;
@@ -2467,6 +2533,10 @@ div.dataTables_scrollBody > table {
 }
 .btn-close:active {
   transform: rotate(360deg);
+}
+
+#targetTable tbody tr:hover, #execTable tbody tr:hover {
+  cursor: pointer;
 }
 
 .ad-list .type {

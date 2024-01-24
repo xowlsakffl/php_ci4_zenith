@@ -208,7 +208,7 @@
                 <button class="nav-link tab-link" value="adsets" type="button" id="set-tab"><span>광고 세트</span><div class="selected"><span>0</span>개 선택</div></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link tab-link" value="ads" type="button" role="tab" id="advertisement-tab"><span>광고</span><div class="selected"><span>0</span>개 선택</div></button>
+                <button class="nav-link tab-link" value="ads" type="button" id="advertisement-tab"><span>광고</span><div class="selected"><span>0</span>개 선택</div></button>
             </li>
         </ul>
         <div class="tab-content">
@@ -216,6 +216,7 @@
                 <button type="button" class="btn btn-outline-danger" id="update_btn">수동 업데이트</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
+                <button type="button" class="btn btn-outline-danger checkAdvAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button>
             </div>
             <!-- <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
@@ -453,7 +454,6 @@ function setSearchData() {
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
-    console.log(data.searchData);
     if(typeof dataTable != 'undefined') dataTable.state.save();
 }
 function setDrawData() {
@@ -566,7 +566,7 @@ function getList(data = []){
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
                 };
-                console.log(tableParam.searchData);
+                //console.log(tableParam.searchData);
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 debug(tableParam.searchData);
@@ -644,7 +644,7 @@ function getList(data = []){
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }
 
-                    name += '<div class="automation_btn_box"><button class="automation_create_btn">자동화 등록</button><button class="automation_log_btn">자동화 로그</button></div>';
+                    name += '<div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button><button class="advAutomationLogBtn">자동화 로그</button></div>';
                     return name;
                 },
             },
@@ -1151,14 +1151,15 @@ $('body').on('click', '.tab-link', function() {
 
 /*체크 항목 수동 업데이트*/
 $('body').on('click', '#update_btn', function() {
-    var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
-    checkedInputs.each(function() {
+    let selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
+    /* checkedInputs.each(function() {
         var icon = $('<i>').addClass('fa fa-spinner fa-spin'); 
         $(this).parent('label.check').before(icon);
-    });
-    var data = {
+    }); */
+    let data = {
         'check' : selected,
     }
+
     if(!data.check.length){
         alert("업데이트 할 항목을 선택해주세요.");
 		return;
@@ -1584,7 +1585,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
     $id = $this.closest("tr").data('id');
     $customer = $this.closest("tr").data('customerid');
     $amount_type = $this.closest("tr").find('.bidamount_type').text();
-    console.log($amount_type);
+    //console.log($amount_type);
     budgetTxt = $this.text();
     c_bidamount = budgetTxt.replace(/[^0-9,]/g, "");
     if (!c_bidamount) return;
@@ -1679,7 +1680,7 @@ function sendCode(data, inputElement) {
         dataType: "json",
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
-            console.log(data);
+            //console.log(data);
             if (data.response == true) {
                 var $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.code);
@@ -1752,7 +1753,7 @@ $('body').on('click', '.reset-btn', function() {
 });
 
 function debug(msg) {
-    console.log(msg);
+    //console.log(msg);
 }
 </script>
 <?=$this->endSection();?>

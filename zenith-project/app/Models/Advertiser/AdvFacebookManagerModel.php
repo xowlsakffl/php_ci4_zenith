@@ -411,6 +411,33 @@ class AdvFacebookManagerModel extends Model
         return $result;
 	} */
 
+	public function getCampaignById($ids)
+    {
+		$builder = $this->db->table('z_facebook.fb_campaign');
+		$builder->select('"페이스북" as media, "캠페인" as type, campaign_id as id, campaign_name as name, status as status');
+		$builder->whereIn('campaign_id', $ids);
+		
+        return $builder;
+    }
+
+	public function getAdgroupById($ids)
+    {
+		$builder = $this->db->table('z_facebook.fb_adset');
+		$builder->select('"페이스북" as media, "광고그룹" as type, adset_id as id, adset_name as name, status as status');
+		$builder->whereIn('adset_id', $ids);
+		
+        return $builder;
+    }
+
+	public function getAdById($ids)
+    {
+		$builder = $this->db->table('z_facebook.fb_ad');
+		$builder->select('"페이스북" as media, "광고" as type, ad_id as id, ad_name as name, status as status');
+		$builder->whereIn('ad_id', $ids);
+		
+        return $builder;
+    }
+
 	public function updateCode($data) {
 		$result = [];
 		$this->db->transStart();
