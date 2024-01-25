@@ -296,7 +296,7 @@
                                                     <option value="ON">ON</option>
                                                     <option value="OFF">OFF</option>
                                                 </select>
-                                                <input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값">
+                                                <input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값" oninput="onlyNumberLeadingDashAndDot(this);">
                                             </div>
                                         </td>
                                         <td colspan="2">
@@ -359,63 +359,27 @@
                                 <tbody>
                                 </tbody>
                             </table>
-                            <!-- <table class="table tbl-header w-100 mt-4" id="execConditionTable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">항목</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="form-flex">
-                                                <select name="exec_condition_type" class="form-select">
-                                                    <option value="">실행항목</option>
-                                                    <option value="status">상태</option>
-                                                    <option value="budget">예산</option>
-                                                </select>
-                                        </td>
-                                        <td>
-                                                <select name="exec_condition_value_status" class="form-select">
-                                                    <option value="">상태값 선택</option>
-                                                    <option value="ON">ON</option>
-                                                    <option value="OFF">OFF</option>
-                                                </select>
-                                                <input type="text" name="exec_condition_value" class="form-control" placeholder="예산">
-                                        </td>
-                                        <td>
-                                                <select name="exec_condition_type_budget" class="form-select">
-                                                    <option value="">단위 선택</option>
-                                                    <option value="won">원</option>
-                                                    <option value="percent">%</option>
-                                                </select>
-                                                <button class="btn-special" id="execConditionBtn">적용</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table> -->
-
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <colgroup>
                                     <col style="width:8%">
+                                    <col style="width:8%">
                                     <col style="width:10%">
-                                    <col style="width:15%">
+                                    <col style="width:14%">
                                     <col style="width:20%">
-                                    <col style="width:16%">
-                                    <col style="width:16%">
-                                    <col style="width:16%">
+                                    <col style="width:15%">
+                                    <col style="width:15%">
+                                    <col style="width:12%">
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="7"  class="text-center">선택 항목</th>
+                                        <th scope="col" colspan="8"  class="text-center">적용 항목</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="4" rowspan="2">일괄 선택</td>
+                                        <td colspan="5">일괄 적용</td>
                                         <td>
                                             <select name="all_exec_condition_type" class="form-select">
                                                 <option value="">실행항목</option>
@@ -438,13 +402,6 @@
                                                     <option value="percent">%</option>
                                                 </select>
                                         </td> 
-                                    </tr>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                            <button class="btn-special" id="execConditionBtn">적용</button>
-                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>

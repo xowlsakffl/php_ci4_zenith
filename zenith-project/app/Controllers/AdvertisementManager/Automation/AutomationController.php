@@ -248,12 +248,6 @@ class AutomationController extends BaseController
                 }else{
                     $execution['status'] = '비활성';
                 }
-
-                if($execution['exec_type'] == 'status'){
-                    $execution['exec_type'] = '상태';
-                }else if($execution['exec_type'] == 'budget'){
-                    $execution['exec_type'] = '예산';
-                }
             }
             return $this->respond($result);
         }else{
@@ -419,6 +413,7 @@ class AutomationController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $data = $this->request->getRawInput();
+            
             $validationResult = $this->validationData($data);
             if($validationResult['result'] != true){
                 return $this->failValidationErrors($validationResult);

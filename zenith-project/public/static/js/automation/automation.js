@@ -1,5 +1,5 @@
 function setCriteriaTime(){
-    var now = new Date();
+    let now = new Date();
     now.setMinutes(now.getMinutes() + 5);
     $('input[name=criteria_time]').daterangepicker({
         singleDatePicker: true,
@@ -16,7 +16,7 @@ function setCriteriaTime(){
     });
 }
 function chkSchedule(){
-    var selectedValue = $('#execType').val();
+    let selectedValue = $('#execType').val();
     $('#weekdayRow, #nextDateRow, #timeRow').show();
 
     if (selectedValue === "minute" || selectedValue === "hour") {
@@ -42,7 +42,7 @@ function chkSchedule(){
 }
 
 function chkScheduleMonthType(){
-    month_type = $('#monthType').val();
+    let month_type = $('#monthType').val();
     $('#nextDateRow select').show();
     if(month_type == 'start_day' || month_type == 'end_day' ){
         $('#nextDateRow select[name=month_day], #nextDateRow select[name=month_week]').hide();
@@ -58,13 +58,13 @@ function chkScheduleMonthType(){
 
 //좌측 탭 일정 텍스트
 function scheduleText(){
-    var type_value = $('input[name="type_value"]').val();
-    var exec_type = $('#execType').val();
-    var exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
-    var month_type = $('#monthType').val();
-    var month_day = $('#monthDay').val();
-    var month_week = $('#monthWeek option:selected').text();
-    var exec_time = $('#execTime').val();
+    let type_value = $('input[name="type_value"]').val();
+    let exec_type = $('#execType').val();
+    let exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
+    let month_type = $('#monthType').val();
+    let month_day = $('#monthDay').val();
+    let month_week = $('#monthWeek option:selected').text();
+    let exec_time = $('#execTime').val();
     let scheduleTextParts= [];
     if(type_value) {
         switch(exec_type){
@@ -129,8 +129,8 @@ function scheduleText(){
 
 //좌측 탭 조건 텍스트
 function conditionText($this){
-    var name = $this.attr('name');
-    var trId = $this.closest('tr').attr('id');
+    let name = $this.attr('name');
+    let trId = $this.closest('tr').attr('id');
 
     if(name == 'type'){
         value = $this.find('option:selected').text()+" - ";
@@ -159,12 +159,8 @@ function conditionText($this){
 function addConditionRow(uniqueId){
     var row = `
         <tr id="${uniqueId}">
-        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
+        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="status">상태</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sale">매출액</option><option value="conversion">DB전환률</option></select><select name="type_value_status" class="form-select conditionTypeValueStatus" style="display: none;"><option value="">상태값 선택</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값" oninput="onlyNumberLeadingDashAndDot(this);"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
         </tr>`; 
-    /* var row = `
-        <tr id="${uniqueId}">
-        <td><div class="form-flex"><select name="type" class="form-select conditionType"><option value="">조건 항목</option><option value="budget">예산</option><option value="dbcost">DB단가</option><option value="unique_total">유효DB</option><option value="spend">지출액</option><option value="margin">수익</option><option value="margin_rate">수익률</option><option value="sales">매출액</option><option value="conversion">DB전환률</option></select><input type="text" name="type_value" class="form-control conditionTypeValue" placeholder="조건값"></div></td><td colspan="2"><div class="form-flex"><select name="compare" class="form-select conditionCompare"><option value="">일치여부</option><option value="greater">초과</option><option value="greater_equal">보다 크거나 같음</option><option value="less">미만</option><option value="less_equal">보다 작거나 같음</option><option value="equal">같음</option><option value="not_equal">같지않음</option></select><button class="deleteBtn" style="width:20px;flex:0"><i class="fa fa-times"></i></button></div></td>
-        </tr>`;  */
     var rowText = `<p id="text-${uniqueId}"><span class="typeText"></span><span class="typeValueText"></span><span class="compareText"></span></p>`;
     $('#conditionTable tbody').append(row);
     $('#condition-tab').append(rowText);
@@ -362,19 +358,10 @@ function validationData(){
         var eachValid = true;
         $('tr[id^="condition-"]').each(function() {
             var $row = $(this);
-            //var $conditionOrder = $row.find('input[name=order]').val();
             var $conditionType = $row.find('select[name=type]').val();
             var $conditionTypeValueStatus = $row.find('select[name=type_value_status]').val();
             var $conditionTypeValue = $row.find('input[name=type_value]').val();
             var $conditionCompare = $row.find('select[name=compare]').val();
-
-            /* if(!$conditionOrder){
-                alert('순서를 입력해주세요.');
-                $('#condition-tab').trigger('click');
-                $row.find('input[name=order]').focus();
-                eachValid = false;
-                return false;
-            } */
 
             if(!$conditionType){
                 alert('조건항목을 선택해주세요.');
@@ -424,7 +411,7 @@ function validationData(){
         });
 
         if(hasValue){
-            alert('대상이 존재하지 않는데 조건값이 설정되어 있습니다.');
+            alert('조건을 설정하기 위해서 대상을 적용해주세요.');
             $('#condition-tab').trigger('click');
             return false;
         }
@@ -437,18 +424,55 @@ function validationData(){
         return false;
     }
 
-    var execOrderCheck = true;
+    var execCheck = true;
+    var execCheckMsg = '';
+    var focusTarget = null;
     $('#execSelectTable tbody tr').each(function() {
-        var input = $(this).find('td:first input');
-        if(input.val() == '') {      
-            execOrderCheck = false;
+        let exec_order = $(this).find('td:first input[name=exec_order]');
+        let exec_condition_type = $(this).find('select[name=exec_condition_type]');
+        let exec_condition_type_budget = $(this).find('select[name=exec_condition_type_budget]');
+        let exec_condition_value = '';
+        if(exec_order.val() == '') {      
+            execCheck = false;
+            execCheckMsg = '순서를 입력해주세요.';
+            focusTarget = exec_order;
             return false;
+        }
+
+        if(exec_condition_type.val() == 'status'){
+            exec_condition_value_input = $(this).find('select[name=exec_condition_value_status]');
+            exec_condition_value = exec_condition_value_input.val();
+        }else if(exec_condition_type.val() == 'budget'){
+            exec_condition_value_input = $(this).find('input[name=exec_condition_value]');
+            exec_condition_value = exec_condition_value_input.val();
+        }else{
+            execCheck = false;
+            execCheckMsg = '실행항목을 선택해주세요.';
+            focusTarget = exec_condition_type;
+            return false;
+        }
+
+        if(exec_condition_value == '') {      
+            execCheck = false;
+            execCheckMsg = '세부항목을 입력해주세요.';
+            focusTarget = exec_condition_value_input;
+            return false;
+        }
+
+        if(exec_condition_type.val() == 'budget'){
+            if(exec_condition_type_budget.val() == ''){
+                execCheck = false;
+                execCheckMsg = '단위를 선택해주세요.';
+                focusTarget = exec_condition_type_budget;
+                return false;
+            }
         }
     });
 
-    if(!execOrderCheck){
+    if(!execCheck){
         $('#preactice-tab').trigger('click');
-        alert('순서를 입력해주세요.');
+        alert(execCheckMsg);
+        focusTarget.focus();
         return false;
     }
 
@@ -475,6 +499,10 @@ function validationData(){
 
 function onlyNumber(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+}
+
+function onlyNumberLeadingDashAndDot(inputElement) {
+    inputElement.value = inputElement.value.replace(/[^0-9.-]/g, '');
 }
 
 //모달 수정 세팅
@@ -517,7 +545,7 @@ function setModalData(data){
             let targetData = '<tr data-id="'+target.media+"_"+target.type+"_"+target.id+'" id="target-'+targetIndex+'"><td>' + target.media + '</td><td>' + target.type + '</td><td>' 
         + target.id + '</td><td>' + target.name + '</td><td>'
         + target.status  +'<button class="set_target_except_btn"><i class="fa fa-times"></i></button></td></tr>';
-            let newTargetText = '<p id="text-target-'+targetIndex+'">'+target.media+'<br>'+target.type+'<br>'+target.name+'</p>';
+            let newTargetText = '<p id="text-target-'+targetIndex+'">* '+target.type+' - '+target.media+'<br>'+target.name+'</p>';
             $('#targetSelectTable tbody').append(targetData);
             $('#target-tab').append(newTargetText);
         });
@@ -579,21 +607,24 @@ function setModalData(data){
     //실행
     if (data.executions && Array.isArray(data.executions)) {
         data.executions.forEach(function(execution, index) {
-            let execConditionBudgetTypeText = '';
-            if(execution.exec_budget_type == 'won'){
-                execConditionBudgetTypeText = '원';
-            }else if(execution.exec_budget_type == 'percent'){
-                execConditionBudgetTypeText = '%';
-            }
             var execIndex = index+1;
-            var executionData = '<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' + execution.media + '</td><td>'
-                + execution.type  +'</td><td>'
-                + execution.id  +'</td><td>'
-                + execution.name  +'</td><td>'
-                + execution.status  +'</td><td>'
-                + execution.exec_type  +'</td><td><span class="exec_value">'+execution.exec_value+'</span><span class="exec_condition_select_budget_type">'+execConditionBudgetTypeText+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>';
-            var newExecText = '<p id="text-exec-'+execIndex+'">* '+execution.type+' - '+execution.media+'<br>'+execution.name+'<br>'+execution.exec_type+' '+ execution.exec_value+execConditionBudgetTypeText+'</p>';
+            var executionData = $('<tr data-id="'+execution.media+"_"+execution.type+"_"+execution.id+'" id="exec-'+execIndex+'"><td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="'+execution.order+'"></td><td>' +execution.media+ '</td><td>'+execution.type+'</td><td>'+execution.id+'</td><td>'+execution.name+'</td><td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td></tr>');
+
+            if(execution.exec_type == 'status'){
+                executionData.find('input[name="exec_condition_value"]').hide();
+                executionData.find('select[name="exec_condition_type_budget"]').hide();
+                executionData.find('select[name="exec_condition_type"]').val(execution.exec_type);
+                executionData.find('select[name="exec_condition_value_status"]').val(execution.exec_value).show();
+            }else{
+                executionData.find('select[name="exec_condition_value_status"]').hide();
+                executionData.find('select[name="exec_condition_type"]').val(execution.exec_type);
+                executionData.find('input[name="exec_condition_value"]').val(execution.exec_value).show();
+                executionData.find('select[name="exec_condition_type_budget"]').val(execution.exec_budget_type).show();
+            }
+            
             $('#execSelectTable tbody').append(executionData);
+
+            var newExecText = '<p id="text-exec-'+execIndex+'">* '+execution.type+' - '+execution.media+'<br>'+execution.name+'</p>';
             $('#preactice-tab').append(newExecText);
         });
     }
@@ -624,6 +655,7 @@ function setModalData(data){
 
 //모달 초기화
 function reset(){
+    $('#automationModal input[name=seq]').val('');
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
     $('#condition-1 input[name=type_value]').show();
@@ -640,10 +672,10 @@ function reset(){
         $pTags.not(':first').remove();
     })
 
-    $('#automationModal').find('#automationModal select').each(function() {
+    $('#automationModal').find('select').each(function() {
         $(this).prop('selectedIndex', 0);
     });
-    $('#automationModal').find('#automationModal input[type=text], #automationModal input[type=hidden], #automationModal textarea').each(function() {
+    $('#automationModal').find('input[type=text], input[type=hidden], textarea').each(function() {
         $(this).val('');
     }); 
     
@@ -699,7 +731,6 @@ function setProcData(){
 
     $('#conditionTable tbody tr[id^="condition-"]').each(function(){
         let $row = $(this);
-        //let order = $row.find('input[name=order]').val();
         let type = $row.find('select[name=type]').val();
         let type_value = '';
         if(type == 'status'){
@@ -707,13 +738,10 @@ function setProcData(){
         }else{
             type_value = $row.find('input[name=type_value]').val();
         }
-
-        //let type_value = $row.find('input[name=type_value]').val();
         let compare = $row.find('select[name=compare]').val();
         
         if(type){
             $conditions.push({
-                //order: order,
                 type: type,
                 type_value: type_value,
                 compare: compare,
@@ -724,13 +752,18 @@ function setProcData(){
 
     $('#execSelectTable tbody tr').each(function(){
         let $row = $(this);
-        let order = $row.find('td:eq(0) input').val();
+        let order = $row.find('input[name=exec_order]').val();
         let media = $row.find('td:eq(1)').text();
         let type = $row.find('td:eq(2)').text();
         let id = $row.find('td:eq(3)').text();
-        let exec_type = $row.find('td:eq(6)').text();
-        let exec_value = $row.find('td:eq(7) .exec_value').text();
-        let exec_budget_type = $row.find('td:eq(7) .exec_condition_select_budget_type').text();
+        let exec_type = $row.find('select[name=exec_condition_type]').val();
+        let exec_value = '';
+        if(exec_type == 'status'){
+            exec_value = $row.find('select[name=exec_condition_value_status]').val();
+        }else if(exec_type == 'budget'){
+            exec_value = $row.find('input[name=exec_condition_value]').val();
+        }
+        let exec_budget_type = $row.find('select[name=exec_condition_type_budget]').val();
 
         $executions.push({
             order: order,
@@ -794,7 +827,8 @@ function setTargetExec(data)
         let targetData = '<tr data-id="'+target.media+"_"+target.type+"_"+target.id+'" id="target-'+targetIndex+'"><td>' + target.media + '</td><td>' + target.type + '</td><td>' 
     + target.id + '</td><td>' + target.name + '</td><td>'
     + target.status  +'<button class="set_target_except_btn"><i class="fa fa-times"></i></button></td></tr>';
-        let newTargetText = '<p id="text-target-'+targetIndex+'">'+target.media+'<br>'+target.type+'<br>'+target.name+'</p>';
+    
+        let newTargetText = '<p id="text-target-'+targetIndex+'">* '+target.type+' - '+target.media+'<br>'+target.name+'</p>';
         $('#targetSelectTable tbody').append(targetData);
         $('#target-tab').append(newTargetText);
     });
@@ -947,8 +981,8 @@ $('body').on('click', '.target-btn', function(e){
     clonedRow.removeClass('selected');
     clonedRow.attr('id', 'target-'+newRowIdNumber).appendTo('#targetSelectTable');
 
-    var newExecText = '<p id="text-target-'+newRowIdNumber+'">* '+rowType+' - '+rowMedia+'<br>'+rowName+'</p>';
-    $('#target-tab').append(newExecText);
+    let newTargetText = '<p id="text-target-'+newRowIdNumber+'">* '+rowType+' - '+rowMedia+'<br>'+rowName+'</p>';
+    $('#target-tab').append(newTargetText);
 
     conditionStatusHide();
 });
@@ -981,23 +1015,30 @@ $('body').on('click', '.callTargetBtn', function(){
 
         let media = $(this).find('td:eq(0)').text();
         let type = $(this).find('td:eq(1)').text();
+        let newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
         if (type == '캠페인' || type == '광고그룹' || type == '광고') {
             let cloneRow = $(this).clone();
+            cloneRow.attr('id', 'exec-'+newRowIdNumber);
             cloneRow.find('td:last-child').remove();
+            let orderTd = `<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="${newRowIdNumber}"></td>`;
             let newTd = $('<td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>');
-
             if (type === '광고' || (media == '구글' && type == '광고그룹')) {
                 newTd.find('select[name="exec_condition_type"] option[value="budget"]').hide();
-                newTd.find('select[name="exec_condition_value_status"]').hide();
                 newTd.find('input[name="exec_condition_value"]').hide();
                 newTd.find('select[name="exec_condition_type_budget"]').hide();
                 newTd.find('select[name="exec_condition_value_status"]').show();
             }else{
                 newTd.find('select[name="exec_condition_value_status"]').hide();
             }
-
+            cloneRow.prepend(orderTd);
             cloneRow.append(newTd);
             cloneRow.appendTo('#execSelectTable tbody');
+
+            let selectedMediaTd = $(this).children('td').eq(0).text();
+            let selectedTypeTd = $(this).children('td').eq(1).text();
+            let selectedNameTd = $(this).children('td').eq(3).text();
+            let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'';
+            $('#preactice-tab').append(newExecText);
         }
     });
 
@@ -1022,12 +1063,13 @@ $('body').on('click', '#execTable tbody tr', function(){
         let cloneRow = $(this).clone();
         let media = cloneRow.find('td:eq(0)').text();
         let type = cloneRow.find('td:eq(1)').text();
+        cloneRow.attr('id', 'exec-'+newRowIdNumber);
         cloneRow.find('td:last-child').remove();
+        let orderTd = `<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="${newRowIdNumber}"></td>`;
         let newTd = $('<td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select" style="display:none;"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>');
         
         if (type === '광고' || (media == '구글' && type == '광고그룹')) {
             newTd.find('select[name="exec_condition_type"] option[value="budget"]').hide();
-            newTd.find('select[name="exec_condition_value_status"]').hide();
             newTd.find('input[name="exec_condition_value"]').hide();
             newTd.find('select[name="exec_condition_type_budget"]').hide();
             newTd.find('select[name="exec_condition_value_status"]').show();
@@ -1035,15 +1077,15 @@ $('body').on('click', '#execTable tbody tr', function(){
             newTd.find('select[name="exec_condition_value_status"]').hide();
         }
 
+        cloneRow.prepend(orderTd);
         cloneRow.append(newTd);
         cloneRow.appendTo('#execSelectTable tbody');
-        /* let selectedMediaTd = $(this).children('td').eq(0).text();
-        let selectedTypeTd = $(this).children('td').eq(1).text();
-        let selectedNameTd = $(this).children('td').eq(3).text(); */
 
-        /* let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+execConditionBudgetTypeText+'</p>'; */
-        /* let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'';
-        $('#preactice-tab').append(newExecText); */
+        let selectedMediaTd = $(this).children('td').eq(0).text();
+        let selectedTypeTd = $(this).children('td').eq(1).text();
+        let selectedNameTd = $(this).children('td').eq(3).text();
+        let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'';
+        $('#preactice-tab').append(newExecText);
     }
 });
 
@@ -1057,29 +1099,29 @@ $('body').on('click', '#targetTab li', function(){
         let adv = [];
         adv.push($selectRow);
         let data = {
-        'tab': $('#targetTab li.active').data('tab'),
-        'adv': adv
-    }
+            'tab': $('#targetTab li.active').data('tab'),
+            'adv': adv
+        }
 
         getTargetAdvs(data);
     }
-})
+});
 
 $('body').on('click', '#execTab li', function(){
     $('#execTab li').removeClass('active');
     $(this).addClass('active');
-})
+});
 
 $('body').on('click', '#conditionTable .btn-add', function(){
-    var currentRowCount = $('#conditionTable tbody tr').length;
-    var uniqueId = 'condition-' + (currentRowCount + 1);
+    let currentRowCount = $('#conditionTable tbody tr').length;
+    let uniqueId = 'condition-' + (currentRowCount + 1);
     addConditionRow(uniqueId);
-})
+});
 
 $('body').on('change', '#conditionTable select[name=type]', function() {
     //상태 선택
-    var type = $(this).val();
-    var rowId = $(this).closest('tr').attr('id');
+    let type = $(this).val();
+    let rowId = $(this).closest('tr').attr('id');
     if(type == 'status'){
         $('#text-'+rowId+" .typeValueText").text('');
         $(this).siblings('input[name=type_value]').val('').hide();
@@ -1096,101 +1138,84 @@ $('body').on('change', '#conditionTable select[name=type]', function() {
 });
 
 $('body').on('change', '#conditionTable input, #conditionTable select', function() {
-    var $this = $(this);
+    let $this = $(this);
     conditionText($this);
 });
 
-$('body').on('change', '#execConditionTable select[name=exec_condition_type]', function() {
-    //상태 선택
-    var type = $(this).val();
-    if(type == 'status'){
-        $(this).siblings('input[name=exec_condition_value]').val('').hide();
-        $(this).siblings('select[name=exec_condition_type_budget]').val('').hide();
-        $(this).siblings('select[name=exec_condition_value_status]').show();
-    }else{
-        $(this).siblings('select[name=exec_condition_value_status]').val('').hide();  
-        $(this).siblings('input[name=exec_condition_value]').show();   
-        $(this).siblings('select[name=exec_condition_type_budget]').show();
+$('body').on('change', '#execSelectTable tbody tr select[name=exec_condition_type]', function() {
+    let value = $(this).val();
+    if(value == 'status'){
+        $(this).closest('tr').find('input[name=exec_condition_value]').val('').hide();
+        $(this).closest('tr').find('select[name=exec_condition_type_budget]').val('').hide();
+        $(this).closest('tr').find('select[name=exec_condition_value_status]').show();
+    }else if(value == 'budget'){
+        $(this).closest('tr').find('select[name=exec_condition_value_status]').val('').hide();  
+        $(this).closest('tr').find('input[name=exec_condition_value]').show();   
+        $(this).closest('tr').find('select[name=exec_condition_type_budget]').show();
     }
 });
 
-/* $('body').on('click', '#execConditionBtn', function() {
-    let trs = $('#execTable tbody tr.selected');
-    if(trs.length == 0){
-        alert("항목을 선택해주세요.");
-    }else{
-        let execConditionType = $('#execConditionTable select[name=exec_condition_type]').val();
-        let execConditionTypeText = $('#execConditionTable select[name=exec_condition_type] option:selected').text();
-        let execConditionValue = '';
-        let execConditionBudgetType = null;
-        if(execConditionType == 'status'){
-            execConditionValue = $('#execConditionTable select[name=exec_condition_value_status]').val();
-        }else{
-            execConditionValue = $('#execConditionTable input[name=exec_condition_value]').val();
-            execConditionBudgetType = $('#execConditionTable select[name=exec_condition_type_budget]').val();
-        }
-
-        if(!execConditionType){
-            alert("실행항목을 선택해주세요.");
-            $('#execConditionTable select[name=exec_condition_type]').focus();
-            return false;
-        }
-
-        if(!execConditionValue){
-            alert("세부항목을 선택해주세요.");
-            $('#execConditionTable select[name=exec_condition_value_status]').focus();
-            $('#execConditionTable input[name=exec_condition_value]').focus();
-            return false;
-        }
-
-        if((execConditionType != 'status') && (!execConditionBudgetType)){
-            alert("단위를 선택해주세요");
-            $('#execConditionTable select[name=exec_condition_type_budget]').focus();
-            return false;
-        }
-
-        trs.each(function() {
-            let execConditionBudgetTypeText = '';
-            if(execConditionBudgetType == 'won'){
-                execConditionBudgetTypeText = '원';
-            }else if(execConditionBudgetType == 'percent'){
-                execConditionBudgetTypeText = '%';
+$('body').on('change', '#execSelectTable tfoot select[name=all_exec_condition_type]', function(){
+    let value = $(this).val();
+    if(value == 'status'){
+        $('#execSelectTable tbody select[name=exec_condition_type]').val(value);
+        $('#execSelectTable tbody select[name=exec_condition_type]').trigger('change');
+        $(this).closest('tr').find('input[name=all_exec_condition_value]').val('').hide();
+        $(this).closest('tr').find('select[name=all_exec_condition_type_budget]').val('').hide();
+        $(this).closest('tr').find('select[name=all_exec_condition_value_status]').show();
+    }else if(value == 'budget'){
+        $('#execSelectTable tbody tr').each(function() {
+            let media = $(this).find('td').eq(1).text();
+            let type = $(this).find('td').eq(2).text();
+            if(type == '광고' || (media == '구글' && type == '광고그룹')) {
+                return;
+            }else{
+                $(this).find('select[name=exec_condition_type]').val(value).trigger('change');
             }
-            let tr = $(this);
-            let trName = tr.children('td').eq(3).text();
-            let trId = tr.data('id');
-            let cloneRow = tr.clone();
-            let newRowIdNumber = $('#execSelectTable tbody tr').length + 1;
-
-            let existingIds = $('#execSelectTable tbody tr').map(function() {
-                return $(this).data('id');
-            }).get();
-        
-            if (existingIds.includes(trId)) {
-                alert('중복된 행이 존재합니다.\n' + trName);
-                return false;
-            }
-
-            
-
-            cloneRow.prepend('<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2"></td>');
-            cloneRow.append('<td>'+execConditionTypeText+'</td><td><span class="exec_value">'+execConditionValue+'</span><span class="exec_condition_select_budget_type">'+execConditionBudgetTypeText+'</span><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>').attr('id', 'exec-'+newRowIdNumber).appendTo('#execSelectTable');
-
-            let selectedMediaTd = tr.children('td').eq(0).text();
-            let selectedTypeTd = tr.children('td').eq(1).text();
-            let selectedNameTd = tr.children('td').eq(3).text();
-
-            let newExecText = '<p id="text-exec-'+newRowIdNumber+'">* '+selectedTypeTd+' - '+selectedMediaTd+'<br>'+selectedNameTd+'<br>'+execConditionTypeText+' '+ execConditionValue+execConditionBudgetTypeText+'</p>';
-            $('#preactice-tab').append(newExecText);
-        })
-
-        $('#execTable tbody tr').removeClass('selected');
-        $('#execConditionTable select[name=exec_condition_type] option').show();
-        $('#execConditionTable input[name=exec_condition_value]').show();
-        $('#execConditionTable select[name=exec_condition_type_budget]').show();
-        $('#execConditionTable select[name=exec_condition_value_status]').val('').hide();
+        });
+    
+        $(this).closest('tr').find('select[name=all_exec_condition_value_status]').val('').hide();  
+        $(this).closest('tr').find('input[name=all_exec_condition_value]').show();   
+        $(this).closest('tr').find('select[name=all_exec_condition_type_budget]').show();
     }
-}); */
+});
+
+$('body').on('change', '#execSelectTable tfoot select[name=all_exec_condition_value_status]', function(){
+    let value = $(this).val();
+    $('#execSelectTable tbody tr').each(function() {
+        let $select = $(this).find('select[name=exec_condition_type]');
+        let selectedOption = $select.find('option:selected').val();
+
+        if(selectedOption === 'status') {
+            $(this).find('select[name=exec_condition_value_status]').val(value);
+        }
+    });
+});
+
+$('body').on('input', '#execSelectTable tfoot input[name=all_exec_condition_value]', function(){
+    let value = $(this).val();
+    $('#execSelectTable tbody tr').each(function() {
+        let $select = $(this).find('select[name=exec_condition_type]');
+        let selectedOption = $select.find('option:selected').val();
+
+        if(selectedOption === 'budget') {
+            $(this).find('input[name=exec_condition_value]').val(value);
+        }
+    });
+});
+
+$('body').on('change', '#execSelectTable tfoot select[name=all_exec_condition_type_budget]', function(){
+    let value = $(this).val();
+    $('#execSelectTable tbody tr').each(function() {
+        let $select = $(this).find('select[name=exec_condition_type]');
+        let selectedOption = $select.find('option:selected').val();
+
+        if(selectedOption === 'budget') {
+            $(this).find('select[name=exec_condition_type_budget]').val(value);
+        }
+    });
+});
+
 
 $('body').on('click', '.set_target_except_btn', function() {
     let rowId = $(this).closest('tr').attr('id');
