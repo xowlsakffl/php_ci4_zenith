@@ -36,7 +36,7 @@
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
                 <button class="btn-primary" id="search_btn" type="submit">조회</button>
                 <button class="btn-special createBtn" type="button" data-bs-toggle="modal" data-bs-target="#automationModal">작성하기</button>
-                <button class="btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#logModal">로그 보기</button>
+                <button class="btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#logModal">전체 로그 보기</button>
             </div>
         </form>
     </div>
@@ -60,10 +60,11 @@
     </div>
 </div>
 <div class="modal fade" id="logModal" tabindex="-1" aria-labelledby="logModal" aria-hidden="true">
+    <input type="hidden" name="log_seq">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title" id="logModal"><i class="ico-log"></i> 감사 로그</h1>
+                <h1 class="modal-title" id="logModal"> <span></span>감사 로그</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -201,7 +202,7 @@ function getList(){
                 "width": "20%",
                 "render": function(data, type, row){
                     checked = data == 1 ? 'checked' : '';
-                    var status = '<div class="td-inner"><div class="ui-toggle"><input type="checkbox" name="status" id="status_' + row.aa_seq + '" ' + checked + ' value="'+row.aa_seq+'"><label for="status_' + row.aa_seq + '">사용</label></div><div class="more-action"><button type="button" class="btn-more"><span>더보기</span></button><ul class="action-list z-1"><li><a href="#" data-seq="' + row.aa_seq + '" class="copy-btn">복제하기</a></li><li><a href="#" data-seq="' + row.aa_seq + '" class="delete-btn">제거하기</a></li></ul></div></div>';
+                    var status = '<div class="td-inner"><div class="ui-toggle"><input type="checkbox" name="status" id="status_' + row.aa_seq + '" ' + checked + ' value="'+row.aa_seq+'"><label for="status_' + row.aa_seq + '">사용</label></div><div class="more-action"><button type="button" class="btn-more"><span>더보기</span></button><ul class="action-list z-1"><li><a href="#" data-seq="' + row.aa_seq + '" class="log-btn" data-bs-target="#logModal" data-bs-toggle="modal">로그보기</a></li><li><a href="#" data-seq="' + row.aa_seq + '" class="copy-btn">복제하기</a></li><li><a href="#" data-seq="' + row.aa_seq + '" class="delete-btn">제거하기</a></li></ul></div></div>';
 
                     return status;
                 }
@@ -352,7 +353,7 @@ $('body').on('click', '.delete-btn', function() {
     });
 });
 //로그
-function getLogs(){
+function getLogs($seq = null){
     logTable = $('#logTable').DataTable({
         "destroy": true,
         "autoWidth": true,
@@ -370,6 +371,7 @@ function getLogs(){
             "url": "<?=base_url()?>/automation/logs",
             "data": function(d) {
                 d.stx = $('input[name=log_stx]').val();
+                d.seq = $('input[name=log_seq]').val();
             },
             "type": "GET",
             "contentType": "application/json",
@@ -428,10 +430,21 @@ function getLogs(){
 }
 //모달 보기
 $('#logModal').on('show.bs.modal', function(e) {
-    getLogs();
+    let $btn = $(e.relatedTarget);
+    if ($btn.hasClass('log-btn')) {
+        let seq = $btn.attr('data-seq');
+        $('input[name=log_seq]').val(seq);
+        let title = $btn.closest('tr').find('.updateBtn').text();
+        $('#logModal .modal-header h1 span').text(title+" - ");
+        getLogs(seq);
+    }else{      
+        getLogs();
+    }
+    
 })//모달 닫기
 .on('hidden.bs.modal', function(e) { 
     $('input[name=log_stx]').val('');
+    $('input[name=log_seq]').val('');
     logTable = $('#logTable').DataTable();
     logTable.destroy();
 });

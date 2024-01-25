@@ -1606,6 +1606,9 @@ class AutomationModel extends Model
             $builder->orLike('aa.nickname', $data['stx']);
             $builder->groupEnd();
         }
+        if(!empty($data['seq'])){
+            $builder->where('aa.seq', $data['seq']);
+        }
         $builder->groupBy('aar.seq');
         $builderNoLimit = clone $builder;
         $orderBy = [];

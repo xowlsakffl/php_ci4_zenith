@@ -1789,10 +1789,6 @@ div.dataTables_scrollBody > table {
   margin-bottom: 0;
 }
 
-#automation-table {
-  min-width: 100%;
-}
-
 #logTable {
   margin-top: 0 !important;
 }
