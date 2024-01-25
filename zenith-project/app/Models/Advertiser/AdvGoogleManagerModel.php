@@ -562,6 +562,33 @@ class AdvGoogleManagerModel extends Model
         return $result;
 	} */
 
+	public function getCampaignById($ids)
+    {
+		$builder = $this->db->table('z_adwords.aw_campaign');
+		$builder->select('"구글" as media, "캠페인" as type, id, name, status');
+		$builder->whereIn('id', $ids);
+        
+        return $builder;
+    }
+
+	public function getAdgroupById($ids)
+    {
+		$builder = $this->db->table('z_adwords.aw_adgroup');
+		$builder->select('"구글" as media, "광고그룹" as type, id, name, status');
+		$builder->whereIn('id', $ids);
+		
+        return $builder;
+    }
+
+	public function getAdById($ids)
+    {
+		$builder = $this->db->table('z_adwords.aw_ad');
+		$builder->select('"구글" as media, "광고" as type, id, name, status');
+		$builder->whereIn('id', $ids);
+		
+        return $builder;
+    }
+	
 	public function updateCode($data) {
 		$result = [];
 		$this->db->transStart();

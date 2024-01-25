@@ -282,6 +282,25 @@ class AdvManagerController extends BaseController
         return $report;
     }
 
+    public function getAdvs()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $param = $this->request->getGet();
+            
+            $result = $this->admanager->getAdvs($param);
+            foreach ($result as &$row) {
+                if(isset($row['status']) && $row['status'] == 1 || $row['status'] == 'ON' || $row['status'] == 'ENABLED' || $row['status'] == 'ACTIVE'){
+                    $row['status'] = '활성';
+                }else{
+                    $row['status'] = '비활성';
+                }
+            }
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
     private function getCampaigns($arg)
     {
         $campaigns = $this->admanager->getCampaigns($arg);

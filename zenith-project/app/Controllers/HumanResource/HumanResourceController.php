@@ -76,6 +76,7 @@ class HumanResourceController extends BaseController
         foreach($lists as $type => $list) {
             foreach($list as $row) {
                 $user = $this->hr->getUserByEmail($row['email']);
+                if(empty($user)) continue;
                 $type = isset($row['type'])?$row['type']:'시차';
                 $start = isset($row['start'])?date('Y-m-d', strtotime($row['start'])):date('Y-m-d H:m', strtotime($row['date']." ".$row['time']));
                 $end = isset($row['end'])?date('Y-m-d', strtotime($row['end'])):date('Y-m-d H:m', strtotime($row['date']." ".$row['time']." +{$row['hour_ticket']} hours"));
