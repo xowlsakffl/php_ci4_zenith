@@ -1762,6 +1762,7 @@ function getAdvLog(id){
         "responsive": true,
         "searching": false,
         "ordering": true,
+        "order": [[3,'desc']],
         "deferRender": false,
         'lengthChange': false,
         'pageLength': 10,
