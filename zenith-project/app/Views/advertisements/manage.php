@@ -384,6 +384,7 @@
         </div>
         <!-- //데이터 비교 -->
         <?=$this->include('templates/inc/automation_create_modal.php')?>
+        <?=$this->include('templates/inc/automation_log_modal.php')?>
     </div>
 </div>
 <?=$this->endSection();?>
@@ -644,7 +645,7 @@ function getList(data = []){
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }
 
-                    name += '<div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button><button class="advAutomationLogBtn">자동화 로그</button></div>';
+                    name += '<div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal">자동화 로그</button></div>';
                     return name;
                 },
             },
@@ -1750,6 +1751,136 @@ $('body').on('click', '.reset-btn', function() {
     dataTable.state.clear();
     dataTable.state.save();
     dataTable.order([2, 'asc']).draw();
+});
+
+function getAdvLog(id){
+    advLogTable = $('#advLogTable').DataTable({
+        "destroy": true,
+        "autoWidth": true,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "deferRender": false,
+        'lengthChange': false,
+        'pageLength': 10,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/automation/log",
+            "data": function(d) {
+                d.id = id;
+                d.aa_seq = selectedaaId ?? [];
+            },
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res.data;
+            }
+        },
+        "columns": [
+            { "data": "subject"},
+            { "data": "nickname"},
+            { 
+                "data": "result",
+                "render": function(data, type, row){
+                    let result;
+                    if(data == '실행됨'){
+                        result = '<b class="em">'+data+'</b>';
+                    }else if(data == '실패'){
+                        result = '<b class="fail">'+data+'</b>';
+                    }else{
+                        result = data;
+                    }
+
+                    return result;
+                }
+            },
+            { "data": "exec_timestamp"},
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.id);
+            let detailRow = '<h2>작업 세부 정보</h2>'+
+            '<div class="detail-log p-1">'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">일정</dt>'+
+                    '<dd>'+(data.schedule_desc ? data.schedule_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">대상</dt>'+
+                    '<dd>'+(data.target_desc ? data.target_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item mb-3">'+
+                    '<dt class="mb-1">조건</dt>'+
+                    '<dd>'+(data.conditions_desc ? data.conditions_desc : "")+'</dd>'+
+                '</dl>'+
+                '<dl class="log-item">'+
+                    '<dt class="mb-1">실행</dt>'+
+                    '<dd>'+(data.executions_desc != null ? (Array.isArray(data.executions_desc) ? data.executions_desc.join('<br>') : data.executions_desc) : "")+'</dd>'+
+                '</dl>'+
+            '</div>';
+            advLogTable.row(row).child(detailRow).hide();
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+    }).on('xhr.dt', function( e, settings, data, xhr ) {
+        if(data && $('#automation-list').is(':empty')){
+            setAutomationBtn(data.automation);
+        }
+    });
+}
+
+function setAutomationBtn(data) {
+    var $row = $('#automation-list');
+
+    var html = '';
+    $.each(data, function(idx, v) {
+        html += '<div class="col"><div class="inner"><button type="button" value="' + v.aa_seq + '" id="automation_btn" class="filter_btn"><span class="automation_name">' + v.aa_subject + '</span></button></div></div>';
+    });
+
+    $row.append(html);
+}
+
+$('#advLogModal').on('show.bs.modal', function(e) {  
+    let title = $(e.relatedTarget).parent().siblings(".mediaName").find("p").text();
+    let id = $(e.relatedTarget).closest("tr").data("id");
+    $('#advLogModal .modal-title span').text(" - "+title);
+    getAdvLog(id);
+})
+.on('hidden.bs.modal', function(e) { 
+    $('#advLogModal .modal-title span').text('');
+    $('#automation-list').empty();
+    advLogTable.destroy();
+});
+
+$('body').on('click', '#advLogModal tbody tr', function(){
+    var tr = $(this).closest('tr');
+    var row = advLogTable.row(tr);
+
+    if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+        row.child.hide();
+        tr.removeClass('shown');
+    }else {
+        $(this).addClass('selected');
+        row.child.show();
+        tr.addClass('shown');
+    }
+});
+var selectedaaId = [];
+$('body').on('click', '#automation_btn', function() {
+    $(this).toggleClass('active');
+    var val = $(this).val();
+
+    var index = selectedaaId.indexOf(val);
+    if (index > -1) {
+        selectedaaId.splice(index, 1); // 삭제
+    } else {
+        selectedaaId.push(val); // 추가
+    }
+    advLogTable.draw();
 });
 
 function debug(msg) {

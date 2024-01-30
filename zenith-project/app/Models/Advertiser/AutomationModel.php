@@ -1631,6 +1631,116 @@ class AutomationModel extends Model
         return $result;
     }
 
+    public function getAutomationByAdv($id)
+    {   
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select("
+            aa.seq as aa_seq,
+            aa.subject as aa_subject,
+        ");
+        $builder->join('aa_target aat', 'aa.seq = aat.idx');
+        $builder->join('aa_executions aae', 'aa.seq = aae.idx');
+
+        $builder->where('aat.id', $id);
+        $builder->orWhere('aae.id', $id);
+
+        $builder->groupBy('aa.seq');
+        $result = $builder->get()->getResultArray();
+
+        return $result;
+    }
+
+    public function getLogsByAdv($data, $id)
+    {   
+        $builder = $this->zenith->table('aa_result aar');
+        $builder->select("
+            aa.seq as seq,
+            aa.subject as subject,
+            aa.nickname as nickname,
+            IF(aat.id = $id, 'true', 'false') as aat_exist,
+            IF(aae.id = $id, 'true', 'false') as aae_exist,
+            aar.result as result, 
+            aar.exec_timestamp as exec_timestamp, 
+            aarl.schedule_desc as schedule_desc, 
+            aarl.target_desc as target_desc, 
+            aarl.conditions_desc as conditions_desc, 
+            aarl.executions_desc as executions_desc
+        ");
+        $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx');
+        $builder->join('aa_executions aae', 'aar.idx = aae.idx');
+        $builder->join('aa_conditions aac', 'aar.idx = aac.idx');
+        $builder->join('aa_target aat', 'aar.idx = aat.idx');
+        $builder->join('aa_schedule aas', 'aar.idx = aas.idx');
+        $builder->join('admanager_automation aa', 'aar.idx = aa.seq');
+
+        $builder->where('aat.id', $id);
+        $builder->orWhere('aae.id', $id);
+
+        if(!empty($data['aa_seq'])){
+            $builder->whereIn('aa.seq', $data['aa_seq']);
+        }
+
+        $builder->groupBy('aar.seq');
+        //dd($builder->get()->getResultArray());
+        $builderNoLimit = clone $builder;
+        
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "aar.exec_timestamp DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+
+        return $result;
+    }
+
+    public function getLog($data)
+    {   
+        $builder = $this->zenith->table('admanager_automation aa');
+        $builder->select('aa.seq, aa.subject, aa.nickname, aar.result, aar.exec_timestamp, aarl.schedule_desc, aarl.target_desc, aarl.conditions_desc, aarl.executions_desc');
+        $builder->join('aa_result aar', 'aa.seq = aar.idx');
+        $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx');
+        if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('aa.subject', $data['stx']);
+            $builder->orLike('aa.nickname', $data['stx']);
+            $builder->groupEnd();
+        }
+        if(!empty($data['seq'])){
+            $builder->where('aa.seq', $data['seq']);
+        }
+        $builder->groupBy('aar.seq');
+        $builderNoLimit = clone $builder;
+        $orderBy = [];
+        if(!empty($data['order'])) {
+            foreach($data['order'] as $row) {
+                $col = $data['columns'][$row['column']]['data'];
+                if($col) $orderBy[] = "{$col} {$row['dir']}";
+            }
+        }
+        $orderBy[] = "aar.exec_timestamp DESC";
+        $builder->orderBy(implode(",", $orderBy),'',true);
+        if($data['length'] > 0) $builder->limit($data['length'], $data['start']);
+        $result = $builder->get()->getResultArray();
+        $resultNoLimit = $builderNoLimit->countAllResults();
+        return [
+            'data' => $result,
+            'allCount' => $resultNoLimit
+        ];
+
+        return $result;
+    }
+
     public function createAutomation($data)
     {
         $aaData = [
