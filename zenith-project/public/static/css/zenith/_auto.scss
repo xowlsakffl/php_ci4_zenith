@@ -1,14 +1,13 @@
 
 .ui-autocomplete{z-index: 10000000; max-height: 300px;overflow-y: auto;overflow-x: hidden;}
 .target-btn{background-color: #ce1922;color:#fff;border-radius: 5px;padding:5px;box-sizing: border-box;}
-.callTargetBtn{
-    padding:15px 20px; background-color: #ce1922;border-radius: 5px;
-    color:#fff;font-weight: bold;
-}
 .log-search-wrap{margin-bottom:0;}
 
 #logTable{margin-top: 0 !important;}
-
+#automationModal #targetCreateType{
+    display: flex;
+    margin-bottom: 15px;
+}
 #targetSelectTable tbody tr td{
     position: relative;
     .set_target_except_btn{
@@ -33,12 +32,19 @@
     }
 }
 
-#preactice .callTargetBtnBox{
-    position: absolute;
-    right:30px;top:54px;
-}
-
 #execSelectTable{
+    thead tr th{
+        position: relative;
+        .callTargetBtnBox{
+            position: absolute;
+            right:3px;top:50%;transform:translateY(-50%);
+            .callTargetBtn{
+                padding:10px 15px; background-color: #ce1922;border-radius: 5px;
+                font-size: 12px;
+                color:#fff;font-weight: bold;
+            }
+        }
+    }
     tr td{
         position: relative;
         font-size: 13px;

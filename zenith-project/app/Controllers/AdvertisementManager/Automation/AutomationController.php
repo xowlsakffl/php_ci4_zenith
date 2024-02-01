@@ -515,7 +515,40 @@ class AutomationController extends BaseController
                     $execution['exec_budget_type'] = $execBudgetTypeMapping[$execution['exec_budget_type']] ?? $execution['exec_budget_type'];
                 }
             }
-            
+
+            if($data['target_create_type'] == 'target_seperate'){
+                $seperateDatas = [];
+                foreach ($data['target'] as $key => $targetData) {
+                    $newItem = [
+                        'schedule' => $data['schedule'],
+                        'target' => [$targetData],
+                        'condition' => $data['condition'],
+                        'detail' => $data['detail']
+                    ];
+                    $newItem['detail']['subject'] = $newItem['detail']['subject']." 개별 적용 - ".$key+1;
+                    foreach ($data['execution'] as $executionData) {
+                        if($targetData['id'] == $executionData['id'] && $targetData['media'] == $executionData['media']){
+                            $newItem['execution'] = [$executionData];
+                        }
+                        continue;
+                    }
+
+                    $seperateDatas[] = $newItem;
+                }
+
+                $db = \Config\Database::connect();
+                $db->transStart(); 
+                foreach ($seperateDatas as $seperateData) {
+                    $result = $this->automation->createAutomation($seperateData);
+                    if (!$result) {  // If creation fails, rollback and exit
+                        $db->transRollback();
+                        return false;
+                    }
+                }
+                $result = $db->transComplete();
+                return $this->respond($result);
+            }
+
             $result = $this->automation->createAutomation($data);
             return $this->respond($result);
         }else{

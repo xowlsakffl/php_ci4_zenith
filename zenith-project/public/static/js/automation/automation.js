@@ -275,7 +275,7 @@ function validationData(){
     let $operation = $('input[name=operation]:checked').length;
     let $selectTarget = $('#targetSelectTable tbody tr').length;
     let $selectExec = $('#execSelectTable tbody tr').length;
-
+    let $target_create_type = $('input[name=target_create_type]:checked').val();
     let $subject = $('#detailTable input[name=subject]').val();
     let $slack_webhook = $('#slackSendTable input[name="slack_webhook"]').val();
     let $slack_msg = $('#slackSendTable input[name="slack_msg"]').val();
@@ -476,6 +476,41 @@ function validationData(){
         return false;
     }
 
+    if($target_create_type == 'target_seperate'){
+        let isMatchingRows = true;
+        let targetRows = $('#targetSelectTable tbody tr');
+        let execRows = $('#execSelectTable tbody tr');
+
+        if(targetRows.length === 0 || execRows.length === 0) {
+            $('#preactice-tab').trigger('click');
+            alert('대상 또는 실행 항목이 존재하지 않습니다.');
+            return false;
+        }
+        
+        if(targetRows.length !== execRows.length) {
+            $('#preactice-tab').trigger('click');
+            alert('개별 적용의 경우 대상과 실행 테이블의 모든 항목이 동일해야 합니다.');
+            return false;
+        }
+
+        targetRows.each(function() {
+            let targetId = $(this).find('td:eq(2)').text();
+            let correspondingExecRow = execRows.filter(function() {
+                return $(this).find('td:eq(3)').text() === targetId;
+            });
+    
+            if(correspondingExecRow.length === 0) {
+                isMatchingRows = false;
+                return false;
+            }
+        });
+
+        if (!isMatchingRows) {
+            $('#preactice-tab').trigger('click');
+            alert('개별 적용의 경우 대상과 실행의 모든 항목이 동일해야합니다.');
+            return false;
+        }
+    }
 
     if (($slack_webhook && !$slack_msg) || (!$slack_webhook && $slack_msg)) {     
         alert('웹훅 URL과 메세지 둘 다 입력해주세요.');
@@ -709,8 +744,8 @@ function setProcData(){
     let $exec_time = $('#scheduleTable select[name=exec_time]').val();
     let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
     let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
-    
-    let operation = $('input[name=operation]:checked').val();
+    let $target_create_type = $('input[name=target_create_type]:checked').val();
+    let $operation = $('input[name=operation]:checked').val();
 
     let $targets = [];
     let $conditions = [];
@@ -745,7 +780,7 @@ function setProcData(){
                 type: type,
                 type_value: type_value,
                 compare: compare,
-                operation: operation
+                operation: $operation
             });
         }
     });
@@ -804,6 +839,7 @@ function setProcData(){
     };
 
     if ($('#targetSelectTable tbody tr').length > 0) {
+        $data['target_create_type'] = $target_create_type;
         $data['target'] = $targets;
         $data['condition'] = $conditions;
     }
@@ -853,8 +889,10 @@ function getTargetAdv(data){
 //모달 보기
 $('#automationModal').on('show.bs.modal', function(e) {
     setCriteriaTime();
+    $('#execSearchWrap').show();
     var $btn = $(e.relatedTarget);
     if ($btn.hasClass('updateBtn')) {
+        $('#automationModal #targetCreateType').hide();
         var id = $btn.closest('tr').data('id');
         $.ajax({
             type: "GET",
@@ -883,7 +921,6 @@ $('#automationModal').on('show.bs.modal', function(e) {
 
         if ($btn.hasClass('checkAdvAutomationCreateBtn')) {
             let selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
-            console.log(selected);
             let data = {
                 'check': selected,
                 'type': $('.tab-link.active').val(),
@@ -892,6 +929,8 @@ $('#automationModal').on('show.bs.modal', function(e) {
         }
         chkSchedule();
         conditionStatusHide();
+        $('#automationModal #targetCreateType').show();
+        $('#automationModal input[type="radio"][value="target_sum"]').prop('checked', true);
         $('#automationModal input[type="radio"][value="and"]').prop('checked', true);
         $('#createAutomationBtn').show();
         $('#updateAutomationBtn').hide();
@@ -1021,6 +1060,9 @@ $('body').on('click', '.callTargetBtn', function(){
             cloneRow.attr('id', 'exec-'+newRowIdNumber);
             cloneRow.find('td:last-child').remove();
             let orderTd = `<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="${newRowIdNumber}"></td>`;
+            if($('input[name=target_create_type]:checked').val() == 'target_seperate'){
+                orderTd = `<td><input type="text" class="form-control" name="exec_order" placeholder="순서" oninput="onlyNumber(this);" maxlength="2" value="1"></td>`;
+            }
             let newTd = $('<td><div class="form-flex"><select name="exec_condition_type" class="form-select"><option value="">실행항목</option><option value="status">상태</option><option value="budget">예산</option></select></td><td><select name="exec_condition_value_status" class="form-select"><option value="">상태값</option><option value="ON">ON</option><option value="OFF">OFF</option></select><input type="text" name="exec_condition_value" class="form-control"placeholder="예산"></td><td><select name="exec_condition_type_budget" class="form-select"><option value="">단위</option><option value="won">원</option><option value="percent">%</option></select></div><button class="exec_condition_except_btn"><i class="fa fa-times"></i></button></td>');
             if (type === '광고' || (media == '구글' && type == '광고그룹')) {
                 newTd.find('select[name="exec_condition_type"] option[value="budget"]').hide();
@@ -1104,6 +1146,17 @@ $('body').on('click', '#targetTab li', function(){
         }
 
         getTargetAdvs(data);
+    }
+});
+
+//합산적용, 개별적용
+$('body').on('change', '#targetCreateType input[name=target_create_type]', function() {
+    //상태 선택
+    let type = $(this).val();
+    if(type == 'target_seperate'){
+        $('#execSearchWrap').hide();
+    }else{
+        $('#execSearchWrap').show();
     }
 });
 

@@ -1777,20 +1777,17 @@ div.dataTables_scrollBody > table {
   box-sizing: border-box;
 }
 
-.callTargetBtn {
-  padding: 15px 20px;
-  background-color: #ce1922;
-  border-radius: 5px;
-  color: #fff;
-  font-weight: bold;
-}
-
 .log-search-wrap {
   margin-bottom: 0;
 }
 
 #logTable {
   margin-top: 0 !important;
+}
+
+#automationModal #targetCreateType {
+  display: flex;
+  margin-bottom: 15px;
 }
 
 #targetSelectTable tbody tr td {
@@ -1821,12 +1818,23 @@ div.dataTables_scrollBody > table {
   font-size: 18px;
 }
 
-#preactice .callTargetBtnBox {
-  position: absolute;
-  right: 30px;
-  top: 54px;
+#execSelectTable thead tr th {
+  position: relative;
 }
-
+#execSelectTable thead tr th .callTargetBtnBox {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+#execSelectTable thead tr th .callTargetBtnBox .callTargetBtn {
+  padding: 10px 15px;
+  background-color: #ce1922;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+}
 #execSelectTable tr td {
   position: relative;
   font-size: 13px;

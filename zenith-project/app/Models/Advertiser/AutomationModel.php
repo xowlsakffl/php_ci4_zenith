@@ -1743,21 +1743,16 @@ class AutomationModel extends Model
 
     public function createAutomation($data)
     {
-        $aaData = [
-            'subject' => $data['detail']['subject'],
-            'description' => $data['detail']['description'],
-            'nickname' => auth()->user()->nickname,
-            'status' => 1,
-            'slack_webhook' =>$data['detail']['slack_webhook'],
-            'slack_msg' =>$data['detail']['slack_msg'],
-            'mod_datetime' => date('Y-m-d H:i:s'),
-        ];
+        $data['detail']['nickname'] = auth()->user()->nickname;
+        $data['detail']['status'] = 1;
+        $data['detail']['mod_datetime'] = date('Y-m-d H:i:s');
+
 
         $this->zenith->transStart();
         $aaBuilder = $this->zenith->table('admanager_automation');
-        $result = $aaBuilder->insert($aaData);
+        $result = $aaBuilder->insert($data['detail']);
         $seq = $this->zenith->insertID();
-        
+
         $data['schedule'] = array_filter($data['schedule']);
         $data['schedule']['idx'] = $seq;
         $aasBuilder = $this->zenith->table('aa_schedule');

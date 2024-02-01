@@ -179,6 +179,20 @@
                                 <li data-tab="adgroup"><a href="#">광고그룹</a></li>
                                 <li data-tab="ad"><a href="#">광고</a></li>
                             </ul>
+                            <div id="targetCreateType">
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="target_create_type" value="target_sum" id="targetSum">
+                                    <label class="form-check-label" for="targetSum">
+                                        합산 적용
+                                    </label>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-check-input" type="radio" name="target_create_type" value="target_seperate" id="targetSeperate">
+                                    <label class="form-check-label" for="targetSeperate">
+                                        개별 적용
+                                    </label>
+                                </div>
+                            </div>
                             <div class="search">
                                 <form name="search-target-form" class="search d-flex justify-content-center w-100">
                                     <div class="input">
@@ -317,48 +331,48 @@
                             </table>
                         </div>
                         <div class="detail" id="preactice" role="tabpanel" aria-labelledby="preactice-tab" tabindex="3">
-                            <ul class="tab" id="execTab">
-                                <li class="active" data-tab="campaign"><a href="#">캠페인</a></li>
-                                <li data-tab="adgroup"><a href="#">광고그룹</a></li>
-                                <li data-tab="ad"><a href="#">광고</a></li>
-                            </ul>
-                            <div class="callTargetBtnBox">
-                                <button class="callTargetBtn btn-primary">대상 불러오기</button>
-                            </div>
-                            <div class="search">
-                                <div class="d-flex align-items-center mb-2">
-                                    <input class="form-check-input" type="checkbox" value="1" id="searchAll">
-                                    <label class="form-check-label" for="searchAll">
-                                        전체검색
-                                    </label>
+                            <div id="execSearchWrap">
+                                <ul class="tab" id="execTab">
+                                    <li class="active" data-tab="campaign"><a href="#">캠페인</a></li>
+                                    <li data-tab="adgroup"><a href="#">광고그룹</a></li>
+                                    <li data-tab="ad"><a href="#">광고</a></li>
+                                </ul>
+                                <div class="search">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" value="1" id="searchAll">
+                                        <label class="form-check-label" for="searchAll">
+                                            전체검색
+                                        </label>
+                                    </div>
+                                    <form name="search-exec-form" class="search d-flex justify-content-center w-100">
+                                    <div class="input">
+                                            <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv">
+                                            <button class="btn-primary" id="search_exec_btn" type="submit">조회</button>
+                                    </div>
+                                    </form>
                                 </div>
-                                <form name="search-exec-form" class="search d-flex justify-content-center w-100">
-                                   <div class="input">
-                                        <input type="text" placeholder="검색어를 입력하세요" id="showExecAdv">
-                                        <button class="btn-primary" id="search_exec_btn" type="submit">조회</button>
-                                   </div>
-                                </form>
+                            
+                                <table class="table tbl-header w-100 mt-4" id="execTable">
+                                    <colgroup>
+                                        <col style="width:10%">
+                                        <col style="width:10%">
+                                        <col style="width:30%">
+                                        <col style="width:40%">
+                                        <col style="width:10%">
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">매체</th>
+                                            <th scope="col">분류</th>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">제목</th>
+                                            <th scope="col">상태</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
-                            <table class="table tbl-header w-100 mt-4" id="execTable">
-                                <colgroup>
-                                    <col style="width:10%">
-                                    <col style="width:10%">
-                                    <col style="width:30%">
-                                    <col style="width:40%">
-                                    <col style="width:10%">
-                                </colgroup>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">매체</th>
-                                        <th scope="col">분류</th>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">제목</th>
-                                        <th scope="col">상태</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
                             <table class="table tbl-header w-100 mt-4 execSelectTable" id="execSelectTable">
                                 <colgroup>
                                     <col style="width:8%">
@@ -372,7 +386,12 @@
                                 </colgroup>
                                 <thead>
                                     <tr>
-                                        <th scope="col" colspan="8"  class="text-center">적용 항목</th>
+                                        <th scope="col" colspan="8"  class="text-center">
+                                            적용 항목
+                                            <div class="callTargetBtnBox">
+                                                <button class="callTargetBtn btn-primary">대상 불러오기</button>
+                                            </div>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
