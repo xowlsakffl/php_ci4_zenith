@@ -1666,22 +1666,21 @@ class AutomationModel extends Model
             aarl.conditions_desc as conditions_desc, 
             aarl.executions_desc as executions_desc
         ");
-        $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx');
+        $builder->join('aa_result_logs aarl', 'aar.seq = aarl.idx', 'left');
         $builder->join('aa_executions aae', 'aar.idx = aae.idx');
         $builder->join('aa_conditions aac', 'aar.idx = aac.idx');
         $builder->join('aa_target aat', 'aar.idx = aat.idx');
         $builder->join('aa_schedule aas', 'aar.idx = aas.idx');
         $builder->join('admanager_automation aa', 'aar.idx = aa.seq');
 
-        $builder->where('aat.id', $id);
-        $builder->orWhere('aae.id', $id);
-
         if(!empty($data['aa_seq'])){
             $builder->whereIn('aa.seq', $data['aa_seq']);
+        }else{
+            $builder->where('aat.id', $id);
+            $builder->orWhere('aae.id', $id);
         }
 
         $builder->groupBy('aar.seq');
-        //dd($builder->get()->getResultArray());
         $builderNoLimit = clone $builder;
         
         $orderBy = [];

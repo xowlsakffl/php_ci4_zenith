@@ -71,6 +71,7 @@ class AdvManagerController extends BaseController
 				}
 
 				foreach ($result['data'] as &$value) {
+                    $value['campaign_bidamount'] = number_format($value['campaign_bidamount'] ?? 0);
                     $value['bidamount'] = number_format($value['bidamount']);
 					$value['budget'] = number_format($value['budget']);
 					$value['impressions'] = number_format($value['impressions']);

@@ -207,7 +207,7 @@ class AdvFacebookManagerModel extends Model
 			sub.budget AS budget, 
 			"" AS biddingStrategyType,
 			0 AS bidamount, 
-			"" AS campaign_bidamount,
+			0 AS campaign_bidamount,
 			"" AS bidamount_type,
 			sub.impressions, 
 			sub.click, 

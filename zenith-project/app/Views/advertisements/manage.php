@@ -680,7 +680,7 @@ function getList(data = []){
                         if(row.biddingStrategyType != '타겟 CPA'){
                             bidamount = '<div class="bidamount">-</div>';
                         }else{
-                            bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
+                            bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.campaign_bidamount+'</p></div>';
                         }
                     }else{
                         bidamount = '<div class="bidamount"><p data-editable="true" class="modify_tag">\u20A9'+row.bidamount+'</p></div>';
@@ -692,7 +692,7 @@ function getList(data = []){
                     if(row.biddingStrategyType){
                         bidamount+= '<div class="bidamount_strategy">'+row.biddingStrategyType+'</div>';
                     }
-                    if(row.campaign_bidamount && row.campaign_bidamount > 0){
+                    if(row.campaign_bidamount && row.campaign_bidamount != 0){
                         bidamount+= '<div class="campaign_bidamount">캠페인 입찰가 사용</div>';
                     }
 
