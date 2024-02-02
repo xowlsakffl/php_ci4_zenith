@@ -415,14 +415,15 @@ $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
 let loadedData = false;
-//if(typeof tableParam != 'undefined'){
-    $('.tab-link[value="campaigns"]').addClass('active');
-
+$('.tab-link[value="campaigns"]').addClass('active');
+if(typeof tableParam != 'undefined'){
     tableParam.searchData = {
         'type': $('.tab-link.active').val(),
         'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
     };
-//}
+}
 
 getList();
 function setSearchData() {
@@ -556,7 +557,7 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            //if($('#advertiser-list>div').is(':visible')) {
+            if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
 					'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
                     'sdate': $('#sdate').val(),
@@ -571,11 +572,13 @@ function getList(data = []){
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 debug(tableParam.searchData);
-            //}
+            }
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
-            debug('state 로드')
+            debug('state 로드');
+            //debug(tableParam.searchData);
             //$(`.btns-memo[value="${data.memoView}"]`).addClass('active');
+            //console.log(data);
             tableParam = data;
             tableParam.searchData.sdate = today;
             tableParam.searchData.edate = today;
@@ -810,8 +813,8 @@ function setTotal(res){
     if(!res.total){
         return false;
     }else{
-        var margin = res.total.margin.replace(/,/g, '');
-        var margin = Number(margin);
+        let margin = res.total.margin.replace(/,/g, '');
+        margin = Number(margin);
 
         if(margin < 0){
             $('#total-margin').css('color', 'red');
@@ -907,16 +910,16 @@ function getCheckData(check){
 }
 
 function setAccount(data) {
-    var $row = $('.advertiser .row');
+    let $row = $('.advertiser .row');
 
-    var existingIds = [];
+    let existingIds = [];
     $row.find('.filter_btn').each(function() {
         existingIds.push($(this).val());
     });
 
-    var html = '';
+    let html = '';
     $.each(data, function(idx, v) {
-        var companyId = v.company_id.toString();
+        let companyId = v.company_id.toString();
 
         if (existingIds.includes(companyId)) {
             existingIds = existingIds.filter(id => id !== companyId);
@@ -932,10 +935,10 @@ function setAccount(data) {
     $row.append(html);
 
     //정렬
-    var buttons = $row.find('.filter_btn');
+    let buttons = $row.find('.filter_btn');
     buttons.sort(function(a, b) {
-        var textA = $(a).find('.account_name').text().toUpperCase();
-        var textB = $(b).find('.account_name').text().toUpperCase();
+        let textA = $(a).find('.account_name').text().toUpperCase();
+        let textB = $(b).find('.account_name').text().toUpperCase();
         return textA.localeCompare(textB, 'en', { sensitivity: 'base' });
     });
 
@@ -945,16 +948,16 @@ function setAccount(data) {
 }
 
 function setMediaAccount(data) {
-    var $row = $('.media-advertiser .row');
+    let $row = $('.media-advertiser .row');
 
-    var mediaExistingIds = [];
+    let mediaExistingIds = [];
     $row.find('.filter_media_btn').each(function() {
         mediaExistingIds.push($(this).val());
     });
 
-    var html = '';
+    let html = '';
     $.each(data, function(idx, v) {
-        var media_account_id = v.media_account_id.toString();
+        let media_account_id = v.media_account_id.toString();
 
         if (mediaExistingIds.includes(media_account_id)) {
             mediaExistingIds = mediaExistingIds.filter(id => id !== media_account_id);
@@ -970,10 +973,10 @@ function setMediaAccount(data) {
     $row.append(html);
 
     //정렬
-    var buttons = $row.find('.filter_media_btn');
+    let buttons = $row.find('.filter_media_btn');
     buttons.sort(function(a, b) {
-        var textA = $(a).find('.media_account_name').text().toUpperCase();
-        var textB = $(b).find('.media_account_name').text().toUpperCase();
+        let textA = $(a).find('.media_account_name').text().toUpperCase();
+        let textB = $(b).find('.media_account_name').text().toUpperCase();
         
         return textA.localeCompare(textB, 'en', { sensitivity: 'base' });
     });
@@ -1018,12 +1021,12 @@ function setDate(){
         $checkoutInput.val(endDate);
 
         // Setting the Selection of dates on calender on CHECKOUT FIELD (To get this it must be binded by Ids not Calss)
-        var checkOutPicker = $checkoutInput.data('daterangepicker');
+        let checkOutPicker = $checkoutInput.data('daterangepicker');
         checkOutPicker.setStartDate(startDate);
         checkOutPicker.setEndDate(endDate);
 
         // Setting the Selection of dates on calender on CHECKIN FIELD (To get this it must be binded by Ids not Calss)
-        var checkInPicker = $checkinInput.data('daterangepicker');
+        let checkInPicker = $checkinInput.data('daterangepicker');
         checkInPicker.setStartDate($checkinInput.val(startDate));
         checkInPicker.setEndDate(endDate);
     
@@ -1057,7 +1060,7 @@ function sendName(data, inputElement) {
         contentType: 'application/json; charset=utf-8',
         success: function(data) {
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true" class="modify_tag">');
+                let $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.name);
                 inputElement.replaceWith($new_p);
             }
@@ -1069,19 +1072,19 @@ function sendName(data, inputElement) {
 }
 
 function restoreElement(text, inputElement) {
-    var $old_p = $('<p data-editable="true" class="modify_tag">');
+    let $old_p = $('<p data-editable="true" class="modify_tag">');
     $old_p.text(text);
     inputElement.replaceWith($old_p);
 }
 
 function handleInput(tab, id, tmp_name, inputElement) {
-    var new_name = inputElement.val();
-    var data = {
+    let new_name = inputElement.val();
+    let data = {
         'name': new_name,
         'tab': tab,
         'id': id,
     };
-    var customerId = inputElement.closest("tr").data("customerid");
+    let customerId = inputElement.closest("tr").data("customerid");
     if (customerId) {
         data['customerId'] = customerId;
     }
@@ -1178,7 +1181,7 @@ $('form[name="search-form"]').bind('submit', function() {
 //Row Selected
 $('.dataTable').on('click', 'tbody tr td:first-child', function(e) {
     $(this.parentNode).toggleClass('selected');
-    var selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
+    let selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
     if(typeof tableParam.searchData.data == 'undefined') tableParam.searchData.data = {};
     tableParam.searchData.data[$('.tab-link.active').val()] = selected;
     $('.tab-link.active .selected span').text(tableParam.searchData.data[$('.tab-link.active').val()].length).parent().fadeIn();
@@ -1215,8 +1218,8 @@ $(".dataTable").on("click", '.mediaName p[data-editable="true"]', function(){
         return false;
     }else{
         $('.mediaName p[data-editable="true"]').attr("data-editable", "false");
-        var tmp_name = $(this).text();
-        var $input = $('<input type="text" style="width:100%">');
+        let tmp_name = $(this).text();
+        let $input = $('<input type="text" style="width:100%">');
         $input.val(tmp_name);
         $(this).replaceWith($input);
         $input.focus();
@@ -1315,9 +1318,9 @@ function registerMemo(data) { //메모 등록
 }
 
 function setMemoList(data) { //메모 리스트 생성
-    var html =  '';
+    let html =  '';
     $.each(data, function(i,row) {
-        var name = '';
+        let name = '';
         switch (row.type) {
             case 'campaigns':
                 name = row.campaign_name;
@@ -1381,7 +1384,7 @@ $('#memo-check-modal').on('show.bs.modal', function(e) {
 });
 
 $('#memo-write-modal').on('show.bs.modal', function(e) { 
-    var clickedButton = $(document.activeElement).closest('tr').data('id');
+    let clickedButton = $(document.activeElement).closest('tr').data('id');
     idMedia = clickedButton.split("_");
     memoType = $('.tab-link.active').val();
     $('form[name="memo-regi-form"] input[name=id]').val(idMedia[1]);
@@ -1396,7 +1399,7 @@ $('#memo-write-modal').on('show.bs.modal', function(e) {
 });
 
 $('form[name="memo-regi-form"]').bind('submit', function() {
-    var formData = $(this).serialize();
+    let formData = $(this).serialize();
     registerMemo(formData);
     return false;
 });
@@ -1456,7 +1459,7 @@ $(".dataTable").on("click", '.btn-budget button', function(){
             rate = 0.81;
             break;
     }
-    var budget = Math.round(c_budget * rate);
+    let budget = Math.round(c_budget * rate);
     
     if (
         !confirm(
@@ -1534,7 +1537,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                         success: function(response){  
                             if(response == true) {
                                 $('.budget p').attr("data-editable", "true");
-                                var $new_p = $('<p data-editable="true" class="modify_tag">');
+                                let $new_p = $('<p data-editable="true" class="modify_tag">');
                                 $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                                 $input.replaceWith($new_p);
                             }
@@ -1567,7 +1570,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                     success: function(response){  
                         if(response == true) {
                             $('.budget p').attr("data-editable", "true");
-                            var $new_p = $('<p data-editable="true" class="modify_tag">');
+                            let $new_p = $('<p data-editable="true" class="modify_tag">');
                             $new_p.text('\u20A9'+new_budget.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
@@ -1625,7 +1628,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                         success: function(response){  
                             if(response == true) {
                                 $('.bidamount p').attr("data-editable", "true");
-                                var $new_p = $('<p data-editable="true" class="modify_tag">');
+                                let $new_p = $('<p data-editable="true" class="modify_tag">');
                                 $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                                 $input.replaceWith($new_p);
                             }
@@ -1659,7 +1662,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                     success: function(response){  
                         if(response == true) {
                             $('.bidamount p').attr("data-editable", "true");
-                            var $new_p = $('<p data-editable="true" class="modify_tag">');
+                            let $new_p = $('<p data-editable="true" class="modify_tag">');
                             $new_p.text('\u20A9'+new_bidamount.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
                             $input.replaceWith($new_p);
                         }
@@ -1683,7 +1686,7 @@ function sendCode(data, inputElement) {
         success: function(data) {
             //console.log(data);
             if (data.response == true) {
-                var $new_p = $('<p data-editable="true" class="modify_tag">');
+                let $new_p = $('<p data-editable="true" class="modify_tag">');
                 $new_p.text(data.code);
                 inputElement.replaceWith($new_p);
             }
@@ -1698,8 +1701,8 @@ $(".dataTable").on("click", '.codeBtn', function(){
     tab = $('.tab-link.active').val();
     id = $(this).closest("tr").data("id");
     $('.codeBox p[data-editable="true"]').attr("data-editable", "false");
-    var code = $(this).siblings('span').find('p').text();
-    var $input = $('<input type="text" style="width:100%;">');
+    let code = $(this).siblings('span').find('p').text();
+    let $input = $('<input type="text" style="width:100%;">');
     $input.val(code);
     $(this).siblings('span').find('p').replaceWith($input);
     $input.focus();
@@ -1710,8 +1713,8 @@ $(".dataTable").on("click", '.codeBtn', function(){
                 // ESC Key
                 restoreElement(code, $input);
             } else if (e.keyCode == 13) {
-                var new_code = $input.val();
-                var data = {
+                let new_code = $input.val();
+                let data = {
                     'code': new_code,
                     'tab': tab,
                     'id': id,
@@ -1724,8 +1727,8 @@ $(".dataTable").on("click", '.codeBtn', function(){
                 }
             }
         } else if (e.type === 'blur') {
-            var new_code = $input.val();
-            var data = {
+            let new_code = $input.val();
+            let data = {
                 'code': new_code,
                 'tab': tab,
                 'id': id,
@@ -1834,9 +1837,9 @@ function getAdvLog(id){
 }
 
 function setAutomationBtn(data) {
-    var $row = $('#automation-list');
+    let $row = $('#automation-list');
 
-    var html = '';
+    let html = '';
     $.each(data, function(idx, v) {
         html += '<div class="col"><div class="inner"><button type="button" value="' + v.aa_seq + '" id="automation_btn" class="filter_btn"><span class="automation_name">' + v.aa_subject + '</span></button></div></div>';
     });
@@ -1857,8 +1860,8 @@ $('#advLogModal').on('show.bs.modal', function(e) {
 });
 
 $('body').on('click', '#advLogModal tbody tr', function(){
-    var tr = $(this).closest('tr');
-    var row = advLogTable.row(tr);
+    let tr = $(this).closest('tr');
+    let row = advLogTable.row(tr);
 
     if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
@@ -1873,9 +1876,9 @@ $('body').on('click', '#advLogModal tbody tr', function(){
 var selectedaaId = [];
 $('body').on('click', '#automation_btn', function() {
     $(this).toggleClass('active');
-    var val = $(this).val();
+    let val = $(this).val();
 
-    var index = selectedaaId.indexOf(val);
+    let index = selectedaaId.indexOf(val);
     if (index > -1) {
         selectedaaId.splice(index, 1); // 삭제
     } else {
@@ -1885,7 +1888,7 @@ $('body').on('click', '#automation_btn', function() {
 });
 
 function debug(msg) {
-    //console.log(msg);
+    console.log(msg);
 }
 </script>
 <?=$this->endSection();?>
