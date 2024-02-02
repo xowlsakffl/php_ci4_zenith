@@ -244,7 +244,7 @@ function getList(data = []) { //리스트 세팅
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
-            //if($('#advertiser-list>div').is(':visible')) {
+            if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
                     'sdate': $('#sdate').val(),
                     'edate': $('#edate').val(),
@@ -259,7 +259,7 @@ function getList(data = []) { //리스트 세팅
                 <?php }?>
                 tableParam = data;
                 debug(tableParam.searchData);
-            //}
+            }
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드')
