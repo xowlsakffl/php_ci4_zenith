@@ -102,9 +102,9 @@ class ZenithKM
      
     private function getAdAccountList()
     { //1.1 광고계정 리스트 조회
-        $request = 'adAccounts';
-        $param = array('config' => 'ON,OFF,DEL'); //enum{ON, OFF, DEL}
-        $result = $this->getCall($request);
+        $request = 'adAccounts/pages';
+        $param = array('config' => 'ON,OFF,DEL', 'page' => 0, 'size' => 2000); //enum{ON, OFF, DEL}
+        $result = $this->getCall($request, $param);
         return $result; //[id] => 41250 [name] => 강남조은눈안과 [memberType] => MASTER [config] => ON
     }
      
