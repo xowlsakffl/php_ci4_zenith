@@ -91,6 +91,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('check-data', 'AdvertisementManager\AdvManagerController::getCheckData');
         $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->get('get-adv', 'AdvertisementManager\AdvManagerController::getAdvs');
+        $routes->get('adaccounts', 'AdvertisementManager\AdvManagerController::getOnlyAdAccount');
+        $routes->put('set-dbcount', 'AdvertisementManager\AdvManagerController::setDbCount');
+        $routes->put('set-exposed', 'AdvertisementManager\AdvManagerController::setExposed');
         $routes->put('set-status', 'AdvertisementManager\AdvManagerController::updateStatus');
         $routes->put('set-name', 'AdvertisementManager\AdvManagerController::updateName');
         $routes->put('set-budget', 'AdvertisementManager\AdvManagerController::updateBudget');

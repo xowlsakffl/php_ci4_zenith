@@ -17,6 +17,85 @@
         }
     }
 }
+
+#media-advertiser{
+    margin-bottom:18px;
+    width:100%;
+    h3{margin-bottom: 0;}
+    &:after{flex:1; width:100%; height:2px; margin:16px 0 0 12px; content:''; background:#dbdbdb;}
+}
+#dbCountTable{
+    padding-bottom:0;
+    .canmanage{
+        font-weight: bold;
+    }
+    .media_box{
+        i{
+            width:15px;height:15px;background-size: cover;
+        }
+        p{
+            &.canmanage{
+                font-weight: bold;   
+            }
+            margin-left: 4px;
+        }
+    }
+}
+@keyframes blink-effect {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+#media-advertiser-list{
+    .col .inner{
+        &.tag_inactive{
+            opacity:0.5;
+        }
+        &.disapproval{
+            position: relative;
+            &:after{
+                content:'';
+                height:2px;width:100%;
+                background-color: $color-primary;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        }
+        &.approved_limited{
+            position: relative;
+            &:before{
+                content:'';
+                height:2px;width:20px;
+                background-color: #ff00ff;
+                position: absolute;
+                z-index: 1;
+                top: 0;
+                right:0;
+            }
+        }
+        position: relative;
+        .db_ratio{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width:100%;
+            p{
+                &.over{
+                    color:$color-primary;
+                    animation: blink-effect 0.5s ease-in-out infinite alternate;
+                }
+                margin-right:2px;
+                font-size:8px;
+                text-align: right;
+            }
+            .bar{
+                height:2px;
+                background-color: #ffb310;
+            }
+        }
+    }
+}
+
 .col.half {
     .search-wrap .search .input{
         input[type="text"]{font-size:90%;}
@@ -101,7 +180,13 @@
         }
     }
 }
-
+.media-advertiser #dbCountBtn{margin-left: 15px;
+    width: 113px;
+    height: 38px;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 7px;
+    font-size: 14px;background:$color-primary;}
 .tab-wrap{margin:60px 0 0;}
 .nav-tabs{
     > li{flex:1; margin:0; padding:0;}

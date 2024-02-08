@@ -55,7 +55,13 @@ class AdvKakaoManagerModel extends Model
         $builder->select('
             "kakao" AS media,
 			E.name AS media_account_name,
-			E.id AS media_account_id
+			E.id AS media_account_id,
+            E.config AS status,
+            E.isAdminStop AS isAdminStop,
+            "" AS is_exposed,
+			"" AS db_count,
+            "" AS db_sum,
+			"" AS date_count
         ');
         $builder->join('z_moment.mm_creative B', 'A.id = B.id');
 		$builder->join('z_moment.mm_adgroup C', 'B.adgroup_id = C.id');
@@ -92,6 +98,7 @@ class AdvKakaoManagerModel extends Model
 					break;
 			}
         }
+        $builder->groupBy('E.id');
 
         return $builder;
 	}
@@ -375,16 +382,13 @@ class AdvKakaoManagerModel extends Model
         return $builder;
 	}
 
-    /* public function getDisapproval()
+    public function getDisapproval()
 	{
-        $builder = $this->kakao->table('mm_ad_account acc');
-		$builder->select('acc.id AS account_id, acc.name AS customer_name,
-        ac.id AS campaign_id, ac.name AS campaign_name,
-        ag.id AS adgroup_id, ag.name AS adgroup_name,
-        ad.id, ad.name, ad.landingUrl, ad.config AS status, ad.reviewStatus, ad.creativeStatus, ad.create_time, ad.update_time');
-		$builder->join('mm_campaign ac', 'ac.ad_account_id = acc.id', 'left');
-		$builder->join('mm_adgroup ag', 'ag.campaign_id = ac.id', 'left');
-		$builder->join('mm_creative ad', 'ad.adgroup_id = ag.id', 'left');
+        $builder = $this->db->table('z_moment.mm_ad_account acc');
+		$builder->select('acc.id AS account_id');
+		$builder->join('z_moment.mm_campaign ac', 'ac.ad_account_id = acc.id', 'left');
+		$builder->join('z_moment.mm_adgroup ag', 'ag.campaign_id = ac.id', 'left');
+		$builder->join('z_moment.mm_creative ad', 'ad.adgroup_id = ag.id', 'left');
         $builder->where("(ad.reviewStatus = 'REJECTED' OR ad.reviewStatus = 'MODIFICATION_REJECTED')");
         $builder->where('ad.creativeStatus is NOT NULL', NULL);
         $builder->where('acc.config', 'ON');
@@ -392,10 +396,11 @@ class AdvKakaoManagerModel extends Model
         $builder->where('ag.config', 'ON');
         $builder->where('ad.config', 'ON');
         $builder->orderBy('ad.create_time', 'DESC');
+        $builder->groupBy('acc.id');
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	} */
+	}
 
     public function getCampaignById($ids)
     {

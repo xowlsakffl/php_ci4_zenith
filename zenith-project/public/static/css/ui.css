@@ -652,6 +652,99 @@ body {
   transform: rotate(180deg);
 }
 
+#media-advertiser {
+  margin-bottom: 18px;
+  width: 100%;
+}
+#media-advertiser h3 {
+  margin-bottom: 0;
+}
+#media-advertiser:after {
+  flex: 1;
+  width: 100%;
+  height: 2px;
+  margin: 16px 0 0 12px;
+  content: "";
+  background: #dbdbdb;
+}
+
+#dbCountTable {
+  padding-bottom: 0;
+}
+#dbCountTable .canmanage {
+  font-weight: bold;
+}
+#dbCountTable .media_box i {
+  width: 15px;
+  height: 15px;
+  background-size: cover;
+}
+#dbCountTable .media_box p {
+  margin-left: 4px;
+}
+#dbCountTable .media_box p.canmanage {
+  font-weight: bold;
+}
+
+@keyframes blink-effect {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#media-advertiser-list .col .inner {
+  position: relative;
+}
+#media-advertiser-list .col .inner.tag_inactive {
+  opacity: 0.5;
+}
+#media-advertiser-list .col .inner.disapproval {
+  position: relative;
+}
+#media-advertiser-list .col .inner.disapproval:after {
+  content: "";
+  height: 2px;
+  width: 100%;
+  background-color: #ce1922;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#media-advertiser-list .col .inner.approved_limited {
+  position: relative;
+}
+#media-advertiser-list .col .inner.approved_limited:before {
+  content: "";
+  height: 2px;
+  width: 20px;
+  background-color: #ff00ff;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+}
+#media-advertiser-list .col .inner .db_ratio {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+#media-advertiser-list .col .inner .db_ratio p {
+  margin-right: 2px;
+  font-size: 8px;
+  text-align: right;
+}
+#media-advertiser-list .col .inner .db_ratio p.over {
+  color: #ce1922;
+  animation: blink-effect 0.5s ease-in-out infinite alternate;
+}
+#media-advertiser-list .col .inner .db_ratio .bar {
+  height: 2px;
+  background-color: #ffb310;
+}
+
 .col.half .search-wrap .search .input input[type=text] {
   font-size: 90%;
 }
@@ -876,6 +969,17 @@ body {
 }
 .client-list.biz .row .col {
   width: 160px;
+}
+
+.media-advertiser #dbCountBtn {
+  margin-left: 15px;
+  width: 113px;
+  height: 38px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 7px;
+  font-size: 14px;
+  background: #ce1922;
 }
 
 .tab-wrap {

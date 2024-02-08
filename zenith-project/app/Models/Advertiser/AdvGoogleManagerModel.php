@@ -70,7 +70,13 @@ class AdvGoogleManagerModel extends Model
         $builder->select('
 			"google" AS media,
 			E.name AS media_account_name,
-			E.customerId AS media_account_id
+			E.customerId AS media_account_id,
+			E.status AS status,
+			"" AS isAdminStop,
+			E.is_exposed AS is_exposed,
+			E.db_count AS db_count,
+			SUM(A.db_count) AS db_sum,
+			COUNT(DISTINCT A.date) AS date_count
 		');
 		$builder->join('z_adwords.aw_ad B', 'A.ad_id = B.id');
         $builder->join('z_adwords.aw_adgroup C', 'B.adgroupId = C.id');
@@ -108,8 +114,30 @@ class AdvGoogleManagerModel extends Model
 					break;
 			}
         }
-		
+		$builder->groupBy('E.customerId');
+
 		return $builder;
+	}
+
+	public function getOnlyAdAccount($data)
+	{
+		$builder = $this->db->table('z_adwords.aw_ad_account');
+        $builder->select('
+			"google" AS media,
+			name AS media_account_name,
+			customerId AS media_account_id,
+			is_exposed AS is_exposed,
+			canManageClients AS canManageClients,
+			db_count AS db_count
+		');
+		$builder->where('is_hidden', 0);
+		if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('name', $data['stx']);
+            $builder->groupEnd();
+        }
+		
+        return $builder;
 	}
 
     public function getCampaigns($data)
@@ -539,17 +567,33 @@ class AdvGoogleManagerModel extends Model
 		
 		return $builder;
 	}
-    /* public function getDisapproval()
+
+    public function getDisapproval()
 	{
-        $builder = $this->google->table('aw_ad_account acc');
-		$builder->select('acc.customerId, acc.name AS customer_name,
-        ac.id AS campaign_id, ac.name AS campaign_name,
-        ag.id AS adgroup_id, ag.name AS adgroup_name,
-        ad.id, ad.name, ad.code, ass.url, ad.status, ad.reviewStatus, ad.approvalStatus, ad.adType, ad.finalUrl, ad.create_time, ad.update_time');
-		$builder->join('aw_campaign ac', 'ac.customerId = acc.customerId', 'left');
-		$builder->join('aw_adgroup ag', 'ag.campaignId = ac.id', 'left');
-		$builder->join('aw_ad ad', 'ad.adgroupId = ag.id', 'left');
-		$builder->join('aw_asset ass', "SUBSTRING_INDEX(ad.assets, ',', 1) = ass.id", 'left');
+        $builder = $this->db->table('z_adwords.aw_ad_account acc');
+		$builder->select('
+		acc.customerId, 
+		acc.name AS customer_name,
+        ac.id AS campaign_id, 
+		ac.name AS campaign_name,
+        ag.id AS adgroup_id, 
+		ag.name AS adgroup_name,
+        ad.id, 
+		ad.name, 
+		ad.code, 
+		ass.url, 
+		ad.status, 
+		ad.policyTopic,
+		ad.reviewStatus, 
+		ad.approvalStatus, 
+		ad.adType, 
+		ad.finalUrl, 
+		ad.create_time, 
+		ad.update_time');
+		$builder->join('z_adwords.aw_campaign ac', 'ac.customerId = acc.customerId', 'left');
+		$builder->join('z_adwords.aw_adgroup ag', 'ag.campaignId = ac.id', 'left');
+		$builder->join('z_adwords.aw_ad ad', 'ad.adgroupId = ag.id', 'left');
+		$builder->join('z_adwords.aw_asset ass', "SUBSTRING_INDEX(ad.assets, ',', 1) = ass.id", 'left');
         $builder->where("(ad.approvalStatus = 'DISAPPROVED' OR ad.approvalStatus = 'AREA_OF_INTEREST_ONLY')");
 		$builder->where('acc.is_exposed', 1);
         $builder->where('acc.status', 'ENABLED');
@@ -560,7 +604,7 @@ class AdvGoogleManagerModel extends Model
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	} */
+	}
 
 	public function getCampaignById($ids)
     {
@@ -620,6 +664,28 @@ class AdvGoogleManagerModel extends Model
 		$builder = $this->db->table('z_adwords.aw_campaign');
 		$builder->whereIn('id', $campaignIds);
 		$builder->set('is_updating', 1);
+		$builder->update();
+		$result = $this->db->transComplete();
+
+		return $result;
+	}
+
+	public function updateDbCount($data) {
+		$this->db->transStart();
+        $builder = $this->db->table('z_adwords.aw_ad_account');  
+		$builder->set('db_count', (integer)$data['db_count']);
+		$builder->where('customerId', $data['id']);
+		$builder->update();
+		$result = $this->db->transComplete();
+
+		return $result;
+	}
+
+	public function updateExposed($data) {
+		$this->db->transStart();
+        $builder = $this->db->table('z_adwords.aw_ad_account');  
+		$builder->set('is_exposed', (integer)$data['is_exposed']);
+		$builder->where('customerId', $data['id']);
 		$builder->update();
 		$result = $this->db->transComplete();
 

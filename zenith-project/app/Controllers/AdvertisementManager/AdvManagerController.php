@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 	
 			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
@@ -99,72 +99,124 @@ class AdvManagerController extends BaseController
     }
 
     private function getAccounts($arg)
-    {
-        $result  = [];    
-        $accounts = $this->admanager->getAccounts($arg);
-        //$accounts = $this->setAccountData($accounts);
-        $result = array_merge($result, $accounts); 
+    {  
+        $result = $this->admanager->getAccounts($arg);
         return $result;
     }
 
     private function getMediaAccounts($arg)
     { 
         $result = $this->admanager->getMediaAccounts($arg);
-        return $result;
+        $accounts = $this->setAccountData($result);
+        return $accounts;
     }
 
-    /* private function setAccountData($accounts)
+    private function setAccountData($accounts)
     {
-        $getDisapprovalByAccount = $this->getDisapprovalByAccount('ad_account_id');
+        $facebookApprovals = [];
+        $googleApprovals = [];
+        $kakaoApprovals = [];
+        if(array_search('facebook', array_column($accounts, 'media')) !== false){
+            $facebookApprovals = $this->facebook->getDisapproval();
+        }
+
+        if(array_search('google', array_column($accounts, 'media')) !== false){
+            $disapprovalGoogle = $this->google->getDisapproval();
+            foreach ($disapprovalGoogle as $row) {
+                $policyTopic = [];
+                if(!empty($row['policyTopic'])) $policyTopic = explode(',', $row['policyTopic']);
+                if($row['approvalStatus'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic)) {
+                    $row['approvalStatus'] = 'DISAPPROVED';
+                } else if($row['approvalStatus'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic)) {
+                    $row['approvalStatus'] = 'APPROVED_LIMITED';
+                }
+                if(!isset($googleApprovals[$row['approvalStatus']])) $googleApprovals[$row['approvalStatus']] = [];
+                if(!in_array($row['customerId'], $googleApprovals[$row['approvalStatus']]))
+                    $googleApprovals[$row['approvalStatus']][] = $row['customerId'];
+            }
+        }
+
+        if(array_search('kakao', array_column($accounts, 'media')) !== false){
+            $kakaoApprovals = $this->kakao->getDisapproval();
+        }
+
         foreach ($accounts as &$account) {
-            $account['class'] = [];
-            $account['db_ratio'] = 0;
+            if($account['media'] == 'facebook'){
+                $account['db_ratio'] = 0;
+                if ($account['status'] != 1){
+                    $account['tag_inactive'] = 'tag_inactive';
+                }
+                if (in_array($account['media_account_id'], $facebookApprovals)){
+                    $account['disapproval'] = 'disapproval';
+                } 
 
-            if ($account['status'] != 1) 
-                array_push($account['class'], 'tag-inactive');
-            if (in_array($account['id'], $getDisapprovalByAccount)) 
-                array_push($account['class'], 'disapproval');
+                $account['db_count'] = $account['db_count'] * $account['date_count'];
+    
+                if($account['db_sum'] && $account['db_count']){
+                    $account['db_ratio'] = round($account['db_sum'] / $account['db_count'] * 100,1);
+                }
+    
+                if($account['db_ratio'] >= 100) { 
+                    $account['db_ratio'] = 100; 
+                    $account['over'] = 'over';
+                }
+    
+                if(!$account['db_sum']){
+                    $account['db_sum'] = 0;  
+                }  
 
-            $account['db_count'] = $account['db_count'] * $account['date_count'];
+                continue;
+            }
+            
+            if($account['media'] == 'google'){
+                $account['db_ratio'] = 0;
+                if($account['is_exposed'] === 0){
+                    $account['tag_inactive'] = 'tag_inactive';
+                }
+                
+                if((isset($googleApprovals['DISAPPROVED']) && in_array($account['media_account_id'], $googleApprovals['DISAPPROVED'])) ||
+                (isset($googleApprovals['AREA_OF_INTEREST_ONLY']) && in_array($account['media_account_id'], $googleApprovals['AREA_OF_INTEREST_ONLY']))) 
+                {
+                    $account['disapproval'] = 'disapproval';
+                }
 
-            if($account['db_sum'] && $account['db_count']) 
-                $account['db_ratio'] = round($account['db_sum'] / $account['db_count'] * 100,1);
+                if(isset($googleApprovals['APPROVED_LIMITED']) && in_array($account['media_account_id'], $googleApprovals['APPROVED_LIMITED']))
+                {
+                    $account['approved_limited'] = 'approved_limited';
+                }
+                
+                $account['db_count'] = $account['db_count'] * $account['date_count'];
 
-            if($account['db_ratio'] >= 100) { 
-                $account['db_ratio'] = 100; 
-                array_push($account['class'], 'over');
+                if($account['db_sum'] && $account['db_count']){
+                    $account['db_ratio'] = round($account['db_sum'] / $account['db_count'] * 100,1);
+                }
+
+                if($account['db_ratio'] >= 100) { 
+                    $account['db_ratio'] = 100; 
+                    $account['over'] = 'over';
+                }
+
+                if(!$account['db_sum']){
+                    $account['db_sum'] = 0;
+                }
+
+                continue;
             }
 
-            if(!$account['db_sum']) $account['db_sum'] = 0;    
+            if($account['media'] == 'kakao'){
+                if($account['status'] == 'OFF' || (isset($account['isAdminStop']) && $account['isAdminStop'] == 1)){
+                    $account['tag_inactive'] = 'tag_inactive';
+                }
+                if(is_array($kakaoApprovals) && in_array($account['media_account_id'], $kakaoApprovals)){
+                    $account['disapproval'] = 'disapproval';
+                }
+
+                continue;
+            }
         }
 
         return $accounts;
     }
-
-    private function getDisapprovalByAccount($id)
-    {
-        switch ($id) {
-            case 'customerId':
-                $disapprovals = $this->google->getDisapproval();
-                break;
-            case 'account_id':
-                $disapprovals = $this->kakao->getDisapproval();
-                break;
-            case 'ad_account_id':
-                $disapprovals = $this->facebook->getDisapproval();
-                break;
-            default:
-                return $this->fail("잘못된 요청.");
-        }
-
-        $data = [];
-        foreach ($disapprovals as $row) {
-            $data[] = $row[$id];
-        }
-        $data = array_unique($data);
-
-        return $data;
-    } */
     
     public function getCheckData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
@@ -281,6 +333,17 @@ class AdvManagerController extends BaseController
         }
 
         return $report;
+    }
+
+    public function getOnlyAdAccount()
+    {
+        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+            $param = $this->request->getGet();
+            $result = $this->admanager->getOnlyAdAccount($param);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
     }
 
     public function getAdvs()
@@ -563,29 +626,57 @@ class AdvManagerController extends BaseController
         return $total;
     }
 
-    private function getDisapprovalByAccount($id)
+    public function setDbCount()
     {
-        switch ($id) {
-            case 'customerId':
-                $disapprovals = $this->google->getDisapproval();
-                break;
-            case 'account_id':
-                $disapprovals = $this->kakao->getDisapproval();
-                break;
-            case 'ad_account_id':
-                $disapprovals = $this->facebook->getDisapproval();
-                break;
-            default:
-                return $this->fail("잘못된 요청.");
-        }
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $param = $this->request->getRawInput();
+            $sliceId = explode("_", $param['id']);
+            $data = [
+                'media' => $sliceId[0],
+                'id' => $sliceId[1],
+                'db_count' => $param['db_count']
+            ];
 
-        $data = [];
-        foreach ($disapprovals as $row) {
-            $data[] = $row[$id];
-        }
-        $data = array_unique($data);
+            switch ($data['media']) {
+                case 'facebook':
+                    $result = $this->facebook->updateDbCount($data);
+                    break;
+                case 'google':
+                    $result = $this->google->updateDbCount($data);
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
 
-        return $data;
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function setExposed()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            $param = $this->request->getRawInput();
+            $sliceId = explode("_", $param['id']);
+            $data = [
+                'media' => $sliceId[0],
+                'id' => $sliceId[1],
+                'is_exposed' => $param['is_exposed']
+            ];
+
+            switch ($data['media']) {
+                case 'google':
+                    $result = $this->google->updateExposed($data);
+                    break;
+                default:
+                    return $this->fail("잘못된 요청");
+            }
+
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
     }
 
     public function updateStatus()

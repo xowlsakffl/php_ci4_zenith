@@ -194,7 +194,10 @@
     </div>
 
     <div class="section client-list media-advertiser">
-        <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체별 광고주</h3>
+        <div class="d-flex" id="media-advertiser">
+            <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체별 광고주</h3>
+            <button class="btn-primary" id="dbCountBtn" data-bs-toggle="modal" data-bs-target="#dbcount-modal">목표수량 설정</button>
+        </div>
         <div class="row" id="media-advertiser-list">
         </div>
     </div>
@@ -271,6 +274,44 @@
                 </div>
             </div>
         </div>
+        <!-- 목표수량 설정 -->
+        <div class="modal fade" id="dbcount-modal" tabindex="-1" aria-labelledby="dbcount-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title" id="dbcount-modal-label"><i class="bi bi-file-text"></i> 목표수량 설정</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="search-wrap log-search-wrap">
+                            <form name="account-search-form" class="search">
+                                <div class="input">
+                                    <input type="text" name="account_stx" id="stx" placeholder="검색어를 입력하세요">
+                                    <button class="btn-primary" id="search_btn" type="submit">조회</button>
+                                </div>
+                            </form>
+                        </div>
+                        <table class="table tbl-dark" id="dbCountTable" style="width: 100%;">
+                            <colgroup>
+                                <col style="width:5%;">
+                                <col style="width:75%;">
+                                <col style="width:20%;">
+                            </colgroup>
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">제목</th>
+                                    <th scope="col">목표수량</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 목표수량 설정 -->
         <!-- 메모 작성 -->
         <div class="modal fade" id="memo-write-modal" tabindex="-1" aria-labelledby="memo-write-modal-label" aria-hidden="true">
             <div class="modal-dialog modal-sm sm-txt">
@@ -416,14 +457,14 @@ $('#sdate, #edate').val(today);
 let dataTable, tableParam = {};
 let loadedData = false;
 $('.tab-link[value="campaigns"]').addClass('active');
-if(typeof tableParam != 'undefined'){
+//if(typeof tableParam != 'undefined'){
     tableParam.searchData = {
         'type': $('.tab-link.active').val(),
         'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
     };
-}
+//}
 
 getList();
 function setSearchData() {
@@ -568,18 +609,20 @@ function getList(data = []){
                     'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
                     'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
                 };
-                //console.log(tableParam.searchData);
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
-                debug(tableParam.searchData);
+                //console.log(tableParam.searchData);  
             }
+            
+            debug(tableParam.searchData);
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드');
             //debug(tableParam.searchData);
             //$(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             //console.log(data);
-            tableParam = data;
+            console.log(data);
+            console.log(tableParam);
             tableParam.searchData.sdate = today;
             tableParam.searchData.edate = today;
             setSearchData();
@@ -828,7 +871,8 @@ function setTotal(res){
         $('#total-budget').text('\u20A9'+res.total.budget);//예산
         $(' #total-bidamount').text('\u20A9'+res.total.bidamount);//입찰가
         $('#avg-cpa').text('\u20A9'+res.total.avg_cpa);//현재 DB 단가
-        $('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+        //$('#total-unique_total').html('<div>'+res.total.unique_total+'</div><div style="color:blue">'+res.total.expect_db+'</div>');
+        $('#total-unique_total').text(res.total.unique_total);
         $('#total-spend').text('\u20A9'+res.total.spend);
         $('#total-margin').text('\u20A9'+res.total.margin);
         $('#avg_margin_ratio').text(Math.round(res.total.avg_margin_ratio * 100) / 100 +'\u0025');
@@ -962,7 +1006,25 @@ function setMediaAccount(data) {
         if (mediaExistingIds.includes(media_account_id)) {
             mediaExistingIds = mediaExistingIds.filter(id => id !== media_account_id);
         } else {
-            html += '<div class="col"><div class="inner"><button type="button" value="' + media_account_id + '" id="media_account_btn" class="filter_media_btn"><div class="media_account_txt d-flex align-items-center"><span class="media_account_icon '+v.media+'"></span><span class="media_account_name">' + v.media_account_name + '</span></div></button></div></div>';
+            html += `
+            <div class="col">
+            <div class="inner ${v.tag_inactive ? tag_inactive : ''} ${v.approved_limited ? v.approved_limited : ''} ${v.disapproval ? v.disapproval : ''}">
+                <button type="button" value="${media_account_id}" id="media_account_btn" class="filter_media_btn">
+                <div class="media_account_txt d-flex align-items-center">
+                    <span class="media_account_icon ${v.media}"></span>
+                    <span class="media_account_name">${v.media_account_name}</span>
+                </div>
+                </button>
+                ${v.db_count ? 
+                `<div class="db_ratio">
+                    <p class="${v.over ? v.over : ''}">
+                    ${v.db_sum}/${v.db_count}
+                    </p>
+                    <div class="bar" style="width:${v.db_ratio}%"></div>
+                </div>` : '' 
+                }
+            </div>
+            </div>`;
         }
     });
 
@@ -1118,6 +1180,132 @@ function setManualUpdate(data){
         }
     });
 }
+
+function getOnlyAdAccount(){
+    dbCountTable = $('#dbCountTable').DataTable({
+        "destroy": true,
+        "autoWidth": false,
+        "processing" : true,
+        "serverSide" : true,
+        "responsive": true,
+        "searching": false,
+        "ordering": true,
+        "order": [[0,'desc']],
+        "deferRender": false,
+        'lengthChange': false,
+        "scrollY": "70vh",
+        "scrollCollapse": true,
+        "paging": false,
+        "info": false,
+        "ajax": {
+            "url": "<?=base_url()?>/advertisements/adaccounts",
+            "data": function(d) {
+                d.stx = $('input[name=account_stx]').val();
+            },
+            "type": "GET",
+            "contentType": "application/json",
+            "dataType": "json",
+            "dataSrc": function(res){
+                return res;
+            }
+        },
+        "columns": [
+            { 
+                "data": "null",
+                "render": function(data, type, row){
+                    let check = '';
+                    if(row.media == 'google'){
+                        check = `<input type="checkbox" name="expose_check" class="expose_check" ${row.is_exposed == 1 ? 'checked' : ''}>`;
+                    }
+
+                    return check;
+                },
+                "width": "5%"
+            },
+            { 
+                "data": "media_account_name",
+                "render": function(data, type, row){
+                    let name = '<div class="media_box d-flex"><i class="'+row.media+'"></i><p'+(row.canManageClients == "1" ? 'class="canmanage"' : '')+'>'+data+'</p></div>';
+                    return name;
+                },
+                "width": "75%"
+            },
+            { 
+                "data": "db_count",
+                "render": function(data, type, row){
+                    let db_count = `<input type="text" class="form-control db-count-input" value="${data = data === null ? '' : data}">`;
+                    return db_count;
+                },
+                "width": "20%"
+            }
+        ],
+        "createdRow": function(row, data, dataIndex) {
+            $(row).attr("data-id", data.media+"_"+data.media_account_id);
+        },
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/ko.json',
+        },
+    })
+}
+
+$('form[name="account-search-form"]').bind('submit', function() {
+    dbCountTable.draw();
+    return false;
+});
+
+$('#dbCountTable').on('blur', '.db-count-input', function() {
+    let id = $(this).closest("tr").data("id");
+    let db_count = $(this).val();
+    $.ajax({
+        type: 'PUT',
+        url: "<?=base_url()?>/advertisements/set-dbcount",
+        data: {
+            "id": id,
+            "db_count": db_count
+        },
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            if(data == true){
+                alert('변경되었습니다.');
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
+
+$('#dbCountTable').on('change', '.expose_check', function() {
+    let id = $(this).closest("tr").data("id");
+    let is_exposed = $(this).is(":checked") ? 1 : 0; 
+    $.ajax({
+        type: 'PUT',
+        url: "<?=base_url()?>/advertisements/set-exposed",
+        data: {
+            "id": id,
+            "is_exposed": is_exposed
+        },
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            if(data == true){
+                alert('변경되었습니다.');
+            }
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+});
+
+$('#dbcount-modal').on('show.bs.modal', function(e) { 
+    getOnlyAdAccount();
+})
+.on('hidden.bs.modal', function(e) { 
+    $('input[name=account_stx]').val('');
+    dbCountTable.destroy();
+});
 
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
@@ -1277,7 +1465,7 @@ $('#data-modal').on('show.bs.modal', function(e) {
     $('#dataDiffToday td, #dataDiffYesterday td, #dataDiffPrev td').text('');
 });
 
-$(".dataTable").on("click", '.sorting button', function(){
+$("body").on("click", '.sorting button', function(){
     $('.sorting button').removeClass('active');
     $(this).addClass('active');
     $('#customDiffTh').text($(this).text());

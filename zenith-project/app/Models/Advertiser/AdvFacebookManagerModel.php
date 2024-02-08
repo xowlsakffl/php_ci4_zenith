@@ -55,7 +55,13 @@ class AdvFacebookManagerModel extends Model
         $builder->select('
 			"facebook" AS media,
 			E.name AS media_account_name,
-			E.ad_account_id AS media_account_id
+			E.ad_account_id AS media_account_id,
+			E.status AS status,
+			"" AS isAdminStop,
+			"" AS is_exposed,
+			E.db_count AS db_count,
+			SUM(A.db_count) AS db_sum,
+			COUNT(DISTINCT A.date) AS date_count
 		');
 		$builder->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
         $builder->join('z_facebook.fb_adset C', 'B.adset_id = C.adset_id');
@@ -92,7 +98,31 @@ class AdvFacebookManagerModel extends Model
 					break;
 			}
         }
+		$builder->groupBy('E.ad_account_id');
+		
+        return $builder;
+	}
 
+	public function getOnlyAdAccount($data)
+	{
+		$builder = $this->db->table('z_facebook.fb_ad_account');
+        $builder->select('
+			"facebook" AS media,
+			name AS media_account_name,
+			ad_account_id AS media_account_id,
+			"" AS is_exposed,
+			"" AS canManageClients,
+			db_count AS db_count
+		');
+		$builder->where('status', 1);
+		$builder->where('perm', 1);
+
+		if(!empty($data['stx'])){
+            $builder->groupStart();
+            $builder->like('name', $data['stx']);
+            $builder->groupEnd();
+        }
+		
         return $builder;
 	}
 
@@ -391,14 +421,14 @@ class AdvFacebookManagerModel extends Model
         return $builder;
 	}
 
-    /* public function getDisapproval()
+    public function getDisapproval()
 	{
-        $builder = $this->facebook->table('fb_ad_account acc');
-		$builder->select('acc.ad_account_id, acc.name AS account_name, ac.campaign_id, ac.campaign_name AS campaign_name, ag.adset_id, ag.adset_name AS adset_name, ad.ad_id, ad.ad_name, as.link, ad.effective_status, ad.status, ad.created_time, ad.updated_time');
-		$builder->join('fb_campaign ac', 'ac.account_id = acc.ad_account_id', 'left');
-		$builder->join('fb_adset ag', 'ag.campaign_id = ac.campaign_id', 'left');
-		$builder->join('fb_ad ad', 'ad.adset_id = ag.adset_id', 'left');
-		$builder->join('fb_adcreative as', 'ad.ad_id = as.ad_id', 'left');
+        $builder = $this->db->table('z_facebook.fb_ad_account acc');
+		$builder->select('acc.ad_account_id');
+		$builder->join('z_facebook.fb_campaign ac', 'acc.ad_account_id = ac.account_id', 'left');
+		$builder->join('z_facebook.fb_adset ag', 'ac.campaign_id = ag.campaign_id', 'left');
+		$builder->join('z_facebook.fb_ad ad', 'ag.adset_id = ag.adset_id', 'left');
+		$builder->join('z_facebook.fb_adcreative as', 'ad.ad_id = as.ad_id', 'left');
 		$builder->where('ad.effective_status', 'DISAPPROVED');
 		$builder->where('acc.status', 1);
 		$builder->where('ac.status', 'ACTIVE');
@@ -406,10 +436,11 @@ class AdvFacebookManagerModel extends Model
 		$builder->where('ad.status', 'ACTIVE');
 		$builder->where('ad.created_time >=', '2022-01-01 00:00:00');
 		$builder->orderBy('ad.created_time', 'DESC');
+		$builder->groupBy('acc.ad_account_id');
 		$result = $builder->get()->getResultArray();
 
         return $result;
-	} */
+	}
 
 	public function getCampaignById($ids)
     {
@@ -449,6 +480,17 @@ class AdvFacebookManagerModel extends Model
 		if($queryResult){
 			$result['code'] = $data['code'] ?? '';
 		}
+
+		return $result;
+	}
+
+	public function updateDbCount($data) {
+		$this->db->transStart();
+        $builder = $this->db->table('z_facebook.fb_ad_account');  
+		$builder->set('db_count', (integer)$data['db_count']);
+		$builder->where('ad_account_id', $data['id']);
+		$builder->update();
+		$result = $this->db->transComplete();
 
 		return $result;
 	}

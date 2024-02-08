@@ -48,6 +48,13 @@ class AdvManagerModel extends Model
         return $this->getQueryResults($data, 'getAds');
     }
 
+    public function getOnlyAdAccount($data)
+    {   
+        $data['searchData']['stx'] = $data['stx'] ?? '';
+        $data['searchData']['media'] = 'facebook|google';
+        return $this->getQueryResults($data, 'getOnlyAdAccount');
+    }
+
     public function getReport($data)
     {
         if(!empty($data['check'])){
@@ -145,7 +152,7 @@ class AdvManagerModel extends Model
                 $resultQuery->orderBy('adv.company_name', 'asc');
             }
 
-            if($type == 'getMediaAccounts'){   
+            if($type == 'getMediaAccounts'){  
                 $resultQuery->groupBy('adv.media_account_id');
                 $resultQuery->orderBy('adv.media_account_name', 'asc');
             }
@@ -330,4 +337,6 @@ class AdvManagerModel extends Model
         $result = $unionBuilder->get()->getResultArray();
         return $result;
     }
+
+    
 }
