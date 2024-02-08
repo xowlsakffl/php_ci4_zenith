@@ -488,11 +488,6 @@ function setSearchData() {
         data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
     }
 	
-	if(data.searchData.carelabs == 1){
-		$("#carelabs_btn").addClass("active")
-	}else{
-		$("#carelabs_btn").removeClass("active")
-	}
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
