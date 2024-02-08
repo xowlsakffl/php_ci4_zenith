@@ -488,6 +488,11 @@ function setSearchData() {
         data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
     }
 	
+	if(data.searchData.carelabs == 1){
+		$("#carelabs_btn").addClass("active")
+	}else{
+		$("#carelabs_btn").removeClass("active")
+	}
     $('.tab-link').removeClass('active');
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
@@ -593,7 +598,7 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            if($('#advertiser-list>div').is(':visible')) {
+            //if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
 					'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
                     'sdate': $('#sdate').val(),
@@ -607,7 +612,7 @@ function getList(data = []){
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 //console.log(tableParam.searchData);  
-            }
+            //}
             
             debug(tableParam.searchData);
         },
