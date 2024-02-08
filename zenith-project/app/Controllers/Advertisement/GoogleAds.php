@@ -36,6 +36,9 @@ class GoogleAds extends BaseController
         // fwrite($log_file, $result . "\r\n\r\n");
         // fclose($log_file);
     }
+    public function getAdSchedules() {
+        $result = $this->chainsaw->getAdSchedules();
+    }
 
     public function updateDB($sdate = null, $edate = null) {
         CLI::clearScreen();
@@ -55,7 +58,14 @@ class GoogleAds extends BaseController
     }
 
     public function getCampaign() {
-        $campaigns = $this->chainsaw->getCampaigns('7792262348', '5577144141', '20882987900');
+        $campaigns = $this->chainsaw->getCampaigns('7792262348', '1705230747', '20870581914');
+        dd($campaigns);
+    }
+
+    public function getCriterion() {
+        // $campaigns = $this->chainsaw->getCriterions('7792262348', '1705230747', '20870581914');
+        // $campaigns = $this->chainsaw->getCriterions('7792262348', '8023466215', '20999659346');
+        $campaigns = $this->chainsaw->getCriterions('7792262348', '9049844350', '20979863645');
         dd($campaigns);
     }
 

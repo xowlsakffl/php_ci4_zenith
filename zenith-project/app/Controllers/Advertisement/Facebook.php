@@ -39,11 +39,13 @@ class Facebook extends Controller
                     break;
                 }
             }
+            /*
             $hour = date("G"); //24-hour format of an hour without leading zeros
             if($date == $today && ($hour >= 0 && $hour <= 7)) {
                 CLI::write("당일 0시~8시는 자동업데이트를 사용할 수 없습니다.", "light_purple");
                 exit;
             }
+            */
         }
     }
 
@@ -120,6 +122,15 @@ class Facebook extends Controller
             CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
             $this->zenith->getAdsUseLanding($date);
         }
+    }
+
+    public function updateCampaign() {
+        $campaign_id = CLI::prompt("업데이트 할 캠페인 ID를 입력해주세요.", null);
+        if(is_null($campaign_id)) return;
+        $data = [
+            ['campaign_id'=>$campaign_id]
+        ];
+        $this->zenith->updateCampaigns($data);
     }
 
     public function updateAds() {

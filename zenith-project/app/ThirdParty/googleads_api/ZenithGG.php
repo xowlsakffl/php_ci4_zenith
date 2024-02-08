@@ -42,10 +42,15 @@ use Google\Ads\GoogleAds\V14\Enums\MimeTypeEnum\MimeType;
 use Google\Ads\GoogleAds\V14\Enums\AssetTypeEnum\AssetType;
 use Google\Ads\GoogleAds\V14\Enums\BiddingStrategyTypeEnum\BiddingStrategyType;
 use Google\Ads\GoogleAds\V14\Enums\ResponseContentTypeEnum\ResponseContentType;
+use Google\Ads\GoogleAds\V14\Enums\CampaignCriterionStatusEnum\CampaignCriterionStatus;
+use Google\Ads\GoogleAds\V14\Enums\MinuteOfHourEnum\MinuteOfHour;
+use Google\Ads\GoogleAds\V14\Enums\DayOfWeekEnum\DayOfWeek;
+use Google\Ads\GoogleAds\V14\Enums\CriterionTypeEnum\CriterionType;
 use Google\Ads\GoogleAds\V14\Resources\Ad;
 use Google\Ads\GoogleAds\V14\Resources\AdGroup;
 use Google\Ads\GoogleAds\V14\Resources\AdGroupAd;
 use Google\Ads\GoogleAds\V14\Resources\Campaign;
+use Google\Ads\GoogleAds\V14\Resources\CampaignCriterion;
 use Google\Ads\GoogleAds\V14\Services\AdGroupAdOperation;
 use Google\Ads\GoogleAds\V14\Services\AdGroupOperation;
 use Google\Ads\GoogleAds\V14\Services\AdOperation;
@@ -237,6 +242,38 @@ class ZenithGG
             }
         }
         return $data;
+    }
+
+    public function getCriterions($loginCustomerId = null, $customerId = null, $campaignId = null) {
+        self::setCustomerId($loginCustomerId);
+        $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
+        $query = 'SELECT campaign.id, campaign_criterion.criterion_id, campaign_criterion.display_name, campaign_criterion.status, campaign_criterion.type, campaign_criterion.ad_schedule.day_of_week, campaign_criterion.ad_schedule.start_hour, campaign_criterion.ad_schedule.start_minute, campaign_criterion.ad_schedule.end_hour, campaign_criterion.ad_schedule.end_minute FROM ad_schedule_view WHERE campaign.status IN ("ENABLED","PAUSED","REMOVED") ';
+        if($campaignId !== null){
+            $query .= "AND campaign.id = $campaignId";
+        }
+        $query .= " ORDER BY campaign.start_date DESC";
+        $stream = $googleAdsServiceClient->searchStream($customerId, $query);
+        $result = [];
+        $minutes = ['ZERO'=>0, 'FIFTEEN'=>15, 'THIRTY'=>30, 'FORTY_FIVE'=>45];
+        foreach ($stream->iterateAllElements() as $googleAdsRow) {
+            $c = $googleAdsRow->getCampaign();
+            $ct = $googleAdsRow->getCampaignCriterion();
+            $s = $ct->getAdSchedule();
+            // echo ($c->getId().":".$ct->getCriterionId().":".CriterionType::name($ct->getType()).":".$ct->getDisplayName()).PHP_EOL;
+            $data = [
+                'campaignId' => $c->getId(),
+                'id' => $ct->getCriterionId(),
+                'status' => CampaignCriterionStatus::name($ct->getStatus()),
+                'dayOfWeek' => DayOfWeek::name($s->getDayOfWeek()),
+                'startHour' => $s->getStartHour(),
+                'startMinute' => $minutes[MinuteOfHour::name($s->getStartMinute())],
+                'endHour' => $s->getEndHour(),
+                'endMinute' => $minutes[MinuteOfHour::name($s->getEndMinute())],
+            ];
+            if ($this->db->updateAdSchedule($data))
+                $result[] = $data;
+        }
+        return $result;
     }
       
     public function getCampaigns($loginCustomerId = null, $customerId = null, $campaignId = null)
@@ -889,6 +926,25 @@ class ZenithGG
                 $result['adGroups'][] = $adGroups;
                 $result['ads'][] = $ads;
             }
+        }
+        return $result;
+    }
+
+    public function getAdSchedules($accounts = null) {
+        if(is_null($accounts)) {
+            $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
+            $lists = $accounts->getResultArray();
+        } else {
+            $lists = $accounts;
+        }
+        $total = count($lists);
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."광고일정 업데이트를 시작합니다.", "light_red");
+        $result = [];
+        foreach ($lists as $account) {
+            CLI::showProgress($step++, $total);
+            $criterions = $this->getCriterions($account['manageCustomer'], $account['customerId']);
+            $result[] = $criterions;
         }
         return $result;
     }

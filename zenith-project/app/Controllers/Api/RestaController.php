@@ -19,6 +19,7 @@ class RestaController extends BaseController
     private $advertiser = [
         '더스퀘어치과의원', 
         '메이드영성형외과의원',
+        '리프톤피부과의원',
         '모아만의원',
         '모우림의원',
         '열정치과의원',

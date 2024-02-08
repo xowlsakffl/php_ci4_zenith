@@ -125,6 +125,27 @@ class GADB
 		return $result;
 	}
 
+	public function updateAdSchedule($data = null) {
+		if (is_null($data)) return false;
+		$sql = "INSERT INTO aw_campaign_ad_schedule(`campaignId`, `id`, `status`, `dayOfWeek`, `startHour`, `startMinute`, `endHour`, `endMinute`)
+				VALUES(:campaignId:, :id:, :status:, :dayOfWeek:, :startHour:, :startMinute:, :endHour:, :endMinute:)
+				ON DUPLICATE KEY UPDATE
+				campaignId=:campaignId:, id=:id:, status=:status:, dayOfWeek=:dayOfWeek:, startHour=:startHour:, startMinute=:startMinute:, endHour=:endHour:, endMinute=:endMinute:";
+		$params = [
+			'campaignId' => $data['campaignId'],
+			'id' => $data['id'],
+			'status' => $data['status'],
+			'dayOfWeek' => $data['dayOfWeek'],
+			'startHour' => $data['startHour'],
+			'startMinute' => $data['startMinute'],
+			'endHour' => $data['endHour'],
+			'endMinute' => $data['endMinute']
+		];
+		$result = $this->db->query($sql, $params);
+
+		return $result;
+	}
+
 	public function updateCampaign($data = null)
 	{
 		if (is_null($data)) return false;
