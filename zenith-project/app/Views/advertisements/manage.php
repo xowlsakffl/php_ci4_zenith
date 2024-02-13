@@ -598,7 +598,7 @@ function getList(data = []){
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             //data.memoView = $('.btns-memo.active').val();
-            //if($('#advertiser-list>div').is(':visible')) {
+            if($('#advertiser-list>div').is(':visible')) {
                 data.searchData = {
 					'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
                     'sdate': $('#sdate').val(),
@@ -612,7 +612,7 @@ function getList(data = []){
                 data.searchData.data = tableParam.searchData.data;
                 tableParam = data;
                 //console.log(tableParam.searchData);  
-            //}
+            }
             
             debug(tableParam.searchData);
         },
