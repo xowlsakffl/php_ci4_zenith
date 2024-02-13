@@ -121,7 +121,7 @@ class AdvManagerController extends BaseController
         }
 
         if(array_search('google', array_column($accounts, 'media')) !== false){
-            $disapprovalGoogle = $this->google->getDisapproval();
+            $disapprovalGoogle = $this->google->getDisapproval();   
             foreach ($disapprovalGoogle as $row) {
                 $policyTopic = [];
                 if(!empty($row['policyTopic'])) $policyTopic = explode(',', $row['policyTopic']);

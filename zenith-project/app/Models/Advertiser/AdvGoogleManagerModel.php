@@ -594,12 +594,7 @@ class AdvGoogleManagerModel extends Model
 		$builder->join('z_adwords.aw_adgroup ag', 'ag.campaignId = ac.id', 'left');
 		$builder->join('z_adwords.aw_ad ad', 'ad.adgroupId = ag.id', 'left');
 		$builder->join('z_adwords.aw_asset ass', "SUBSTRING_INDEX(ad.assets, ',', 1) = ass.id", 'left');
-        $builder->where("(ad.approvalStatus = 'DISAPPROVED' OR ad.approvalStatus = 'AREA_OF_INTEREST_ONLY')");
-		$builder->where('acc.is_exposed', 1);
-        $builder->where('acc.status', 'ENABLED');
-        $builder->where('ac.status', 'ENABLED');
-        $builder->where('ag.status', 'ENABLED');
-        $builder->where('ad.status', 'ENABLED');
+        $builder->where("(ad.approvalStatus = 'DISAPPROVED' OR ad.approvalStatus = 'AREA_OF_INTEREST_ONLY' OR ad.approvalStatus = 'APPROVED_LIMITED' OR (ad.approvalStatus = 'APPROVED' AND ad.policyTopic LIKE '%HEALTH_IN_PERSONALIZED_ADS%')) AND acc.is_exposed = 1 AND acc.status = 'ENABLED' AND ac.status = 'ENABLED' AND ag.status = 'ENABLED' AND ad.status = 'ENABLED'");
 		$builder->orderBy('ad.create_time', 'DESC');
 		$result = $builder->get()->getResultArray();
 
