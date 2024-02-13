@@ -93,7 +93,8 @@
     .modify_tag:hover{
         cursor: pointer;
     }
-    .dataTables_scrollHeadInner{width:100% !important;}
+    #dbCountTable_wrapper .dataTables_scrollHeadInner{width:100% !important;}
+    #dbCountTable_wrapper .dataTable{width:100% !important;}
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
