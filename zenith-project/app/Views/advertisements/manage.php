@@ -95,6 +95,24 @@
     }
     #dbCountTable_wrapper .dataTables_scrollHeadInner{width:100% !important;}
     #dbCountTable_wrapper .dataTable{width:100% !important;}
+
+    .name_wrap{
+        display: flex;
+        align-items: flex-end;
+    }
+    .name_wrap .name_left_wrap{
+        margin-right:10px;
+        width:50px;
+    }
+    .name_wrap .name_left_wrap img{width:100%;position: relative;z-index: 1;}
+    .name_wrap .name_left_wrap img:hover{
+        scale: 2.5;
+    }
+    .view_btn{
+        position: absolute;
+        left:5px;
+        bottom:5px;
+    }
     /* 업데이트 애니메이션 */
     tr.updating td:first-child{
         animation: updating-background 2s linear infinite forwards;
@@ -688,7 +706,7 @@ function getList(data = []){
                 "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
-                        name = '<div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="view_btn">'+(row.landingUrl ? '<a href="'+row.landingUrl+'" target="_blank">보기</a>' : '')+'</div><div class="name_wrap">'+(row.thumbnail ? '<div class="name_left_wrap"><img src="'+row.thumbnail+'"></div>' : '')+'<div class="name_right_wrap"><div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div></div></div>';
                     }else{
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
                     }

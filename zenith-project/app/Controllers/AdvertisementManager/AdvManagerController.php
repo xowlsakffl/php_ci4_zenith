@@ -33,7 +33,7 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if(/* $this->request->isAJAX() && */ strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
 	
 			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
@@ -239,8 +239,9 @@ class AdvManagerController extends BaseController
             $arg['searchData']['edate'] = $currentDate;
             $result['today'] = $this->getReport($arg);
 
-            $arg['searchData']['sdate'] = date("Y-m-t", strtotime("-1 days", strtotime($currentDate)));
-            $arg['searchData']['edate'] = date("Y-m-t", strtotime("-1 days", strtotime($currentDate)));
+            $arg['searchData']['sdate'] = date("Y-m-d", strtotime("-1 days", strtotime($currentDate)));
+            $arg['searchData']['edate'] = date("Y-m-d", strtotime("-1 days", strtotime($currentDate)));
+
             $result['yesterday'] = $this->getReport($arg);
             
             switch ($arg['searchData']['diff']) {
@@ -337,7 +338,7 @@ class AdvManagerController extends BaseController
 
     public function getOnlyAdAccount()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $param = $this->request->getGet();
             $result = $this->admanager->getOnlyAdAccount($param);
             return $this->respond($result);
@@ -370,18 +371,17 @@ class AdvManagerController extends BaseController
         $campaigns = $this->admanager->getCampaigns($arg);
 		if(!empty($campaigns)){
 			$campaigns = $this->setData($campaigns);
+            $total = $this->getTotal($campaigns);
+        
+            $result = [
+                'total' => $total,
+                'data' => $campaigns,
+            ];
+
+            return $result;
 		}else{
 			return false;
 		}
-
-        $total = $this->getTotal($campaigns);
-        
-        $result = [
-            'total' => $total,
-            'data' => $campaigns,
-        ];
-
-        return $result;
     }
 
     private function getAdSets($arg)
@@ -390,20 +390,19 @@ class AdvManagerController extends BaseController
         $adsets = $this->admanager->getAdSets($arg);
 		if(!empty($adsets)){
 			$adsets = $this->setData($adsets);
+            $result = array_merge($result, $adsets); 
+
+            $total = $this->getTotal($result);
+            
+            $result = [
+                'total' => $total,
+                'data' => $result,
+            ];
+
+            return $result;
 		}else{
 			return false;
 		}
-    
-        $result = array_merge($result, $adsets); 
-
-        $total = $this->getTotal($result);
-        
-        $result = [
-            'total' => $total,
-            'data' => $result,
-        ];
-
-        return $result;
     }
 
     private function getAds($arg)
@@ -412,25 +411,30 @@ class AdvManagerController extends BaseController
         $ads = $this->admanager->getAds($arg);
 		if(!empty($ads)){
 			$ads = $this->setData($ads);
+            $result = array_merge($result, $ads); 
+
+            $total = $this->getTotal($result);
+            
+            $result = [
+                'total' => $total,
+                'data' => $result,
+            ];
+
+            return $result;
 		}else{
 			return false;
 		}
-        $ads = $this->setData($ads);
-        $result = array_merge($result, $ads); 
-
-        $total = $this->getTotal($result);
-        
-        $result = [
-            'total' => $total,
-            'data' => $result,
-        ];
-
-        return $result;
     }
 
     private function setData($result)
     {
         foreach ($result as &$row) {
+            if($row['media'] == 'google' && isset($row['thumbnail'])){
+                if (!empty($row['assets'])){
+                    $assets = $this->google->getAsset($row['assets']);
+                    $row['thumbnail'] = $assets['url'];
+                }
+            }
 			$row['status'] = $this->setStatus($row['status']);
 			
             $row['margin_ratio'] = Calc::margin_ratio($row['margin'], $row['sales']);	// 수익률

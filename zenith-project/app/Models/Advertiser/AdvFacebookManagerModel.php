@@ -287,6 +287,8 @@ class AdvFacebookManagerModel extends Model
 		B.ad_name AS name, 
 		B.code AS code,
 		B.status AS status, 
+		C.thumbnail AS thumbnail,
+		C.link AS landingUrl,
 		SUM(A.impressions) AS impressions, 
 		SUM(A.inline_link_clicks) AS click, 
 		SUM(A.spend) AS spend, 
@@ -294,6 +296,7 @@ class AdvFacebookManagerModel extends Model
 		SUM(A.db_count) as unique_total, 
 		SUM(A.margin) as margin');
 		$subQuery->join('z_facebook.fb_ad B', 'A.ad_id = B.ad_id');
+		$subQuery->join('z_facebook.fb_adcreative C', 'A.ad_id = C.ad_id');
 		if(!empty($data['sdate']) && !empty($data['edate'])){
 			$subQuery->where('DATE(A.date) >=', $data['sdate']);
 			$subQuery->where('DATE(A.date) <=', $data['edate']);
@@ -312,6 +315,9 @@ class AdvFacebookManagerModel extends Model
 			sub.name AS name, 
 			sub.code AS code,
 			sub.status AS status,
+			sub.thumbnail AS thumbnail,
+			"" AS assets,
+			sub.landingUrl AS landingUrl,
 			0 AS budget, 
 			0 AS bidamount, 
 			"" AS bidamount_type,

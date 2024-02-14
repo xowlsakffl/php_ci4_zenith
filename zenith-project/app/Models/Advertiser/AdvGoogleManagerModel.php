@@ -316,6 +316,9 @@ class AdvGoogleManagerModel extends Model
 		B.name AS name, 
 		B.code AS code,
 		B.status AS status, 
+		B.imageUrl AS thumbnail,
+		B.assets AS assets,
+		B.finalUrl AS landingUrl,
 		SUM(A.impressions) AS impressions, 
 		SUM(A.clicks) AS click, 
 		SUM(A.cost) AS spend, 
@@ -342,6 +345,9 @@ class AdvGoogleManagerModel extends Model
 		sub.name AS name, 
 		sub.code AS code,
 		sub.status AS status, 
+		sub.thumbnail AS thumbnail,
+		sub.assets AS assets,
+		sub.landingUrl AS landingUrl,
 		0 AS budget, 
 		0 AS bidamount,
 		"" AS bidamount_type,
@@ -704,6 +710,15 @@ class AdvGoogleManagerModel extends Model
 		}
 		
 		$builder->groupBy('A.customerId');
+		$result = $builder->get()->getRowArray();
+
+		return $result;
+	}
+
+	public function getAsset($id) {
+        $builder = $this->db->table('z_adwords.aw_asset');  
+		$builder->select('url');
+		$builder->where('id', $id);
 		$result = $builder->get()->getRowArray();
 
 		return $result;
