@@ -1369,6 +1369,7 @@ class AutomationModel extends Model
         return $kakaoBuilder;
     }
 
+
     public function getTargetFacebook($data)
     {
         $subQuery = $this->zenith->table('z_facebook.fb_ad_insight_history A');

@@ -516,7 +516,7 @@ class AutomationController extends BaseController
                 }
             }
 
-            if($data['target_create_type'] == 'target_seperate'){
+            if(!empty($data['target_create_type']) && $data['target_create_type'] == 'target_seperate'){
                 $seperateDatas = [];
                 foreach ($data['target'] as $key => $targetData) {
                     $newItem = [
