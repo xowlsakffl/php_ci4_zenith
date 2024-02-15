@@ -15,15 +15,13 @@
                 </div>
                 <table class="table tbl-dark" id="advLogTable" style="width: 100%;">
                     <colgroup>
-                        <col>
-                        <col style="width:10%;">
-                        <col style="width:22%;">
-                        <col style="width:18%;">
-                        <col style="width:22%;">
+                        <col style="width:40%;">
+                        <col style="width:15%;">
+                        <col style="width:15%;">
+                        <col style="width:30%;">
                     </colgroup>
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">소속 항목</th>
                             <th scope="col">제목</th>
                             <th scope="col">작성자</th>
                             <th scope="col">결과</th>
