@@ -106,7 +106,7 @@
     }
     .name_wrap .name_left_wrap img{width:100%;position: relative;z-index: 1;}
     .name_wrap .name_left_wrap img:hover{
-        scale: 2.5;
+        scale: 3;
     }
     .view_btn{
         position: absolute;

@@ -317,7 +317,7 @@ class ZenithFB
                 'adcreative_id' => $data['id'],
                 'ad_id' => $data['ad_id'],
                 'thumbnail_url' => $data['thumbnail_url'] ?? '',
-                'object_type' => $data[AdCreativeFields::OBJECT_TYPE],
+                'object_type' => $data[AdCreativeFields::OBJECT_TYPE] ?? '',
             ];
             if (isset($data[AdCreativeFields::CALL_TO_ACTION_TYPE]) && in_array($data[AdCreativeFields::CALL_TO_ACTION_TYPE], ["LEARN_MORE", "APPLY_NOW"])) {
                 $object_story_spec = $data[AdCreativeFields::OBJECT_STORY_SPEC] ?? [];
