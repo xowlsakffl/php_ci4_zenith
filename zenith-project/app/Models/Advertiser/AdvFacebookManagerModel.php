@@ -440,8 +440,7 @@ class AdvFacebookManagerModel extends Model
 		$builder->where('ac.status', 'ACTIVE');
 		$builder->where('ag.status', 'ACTIVE');
 		$builder->where('ad.status', 'ACTIVE');
-		$builder->where('ad.created_time >=', '2022-01-01 00:00:00');
-		$builder->orderBy('ad.created_time', 'DESC');
+		// $builder->orderBy('ad.created_time', 'DESC');
 		$builder->groupBy('acc.ad_account_id');
 		$result = $builder->get()->getResultArray();
 

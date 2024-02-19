@@ -400,7 +400,7 @@ class AdvKakaoManagerModel extends Model
         $builder->where('ac.config', 'ON');
         $builder->where('ag.config', 'ON');
         $builder->where('ad.config', 'ON');
-        $builder->orderBy('ad.create_time', 'DESC');
+        // $builder->orderBy('ad.create_time', 'DESC');
         $builder->groupBy('acc.id');
 		$result = $builder->get()->getResultArray();
 

@@ -39,23 +39,24 @@ class AdvManagerController extends BaseController
 			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
 				$arg['external'] = 'resta';
 				return $this->getCareLabsData($arg);
-			}	
-
-            switch ($arg['searchData']['type']) {
-                case 'ads':
-                    $result = $this->getAds($arg);
-                    break;
-                case 'adsets':
-                    $result = $this->getAdSets($arg);
-                    break;
-                case 'campaigns':
-                    $result = $this->getCampaigns($arg);
-                    break;
-                default:
-                    return $this->fail("잘못된 요청");
-            }
-            
-			if(!empty($result)){
+			}
+            if(!empty($arg['searchData']['account']) || 
+            !empty($arg['searchData']['comapany']) || 
+            !empty($arg['searchData']['media']) ||
+            !empty($arg['searchData']['stx'])) {
+                switch ($arg['searchData']['type']) {
+                    case 'ads':
+                        $result = $this->getAds($arg);
+                        break;
+                    case 'adsets':
+                        $result = $this->getAdSets($arg);
+                        break;
+                    case 'campaigns':
+                        $result = $this->getCampaigns($arg);
+                        break;
+                    default:
+                        return $this->fail("잘못된 요청");
+                }
 				$orderBy = [];
 				if(!empty($arg['order'])) {
 					foreach($arg['order'] as $row) {
@@ -87,10 +88,10 @@ class AdvManagerController extends BaseController
 				if(isset($arg['noLimit'])) {
 					return $this->respond($result['data']);
 				}
-				$result['accounts'] = $this->getAccounts($arg);
-				$result['media_accounts'] = $this->getMediaAccounts($arg);
-				$result['report'] = $this->getReport($arg);
-			}
+            }
+            $result['report'] = $this->getReport($arg);
+            $result['accounts'] = $this->getAccounts($arg);
+            $result['media_accounts'] = $this->getMediaAccounts($arg);
 
             return $this->respond($result);
         }else{

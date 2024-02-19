@@ -920,6 +920,10 @@ $('#automationModal').on('show.bs.modal', function(e) {
         }
 
         if ($btn.hasClass('checkAdvAutomationCreateBtn')) {
+            if($('.dataTable tbody tr.selected').length == 0){
+                alert('자동화를 등록할 대상을 선택해주세요.');
+                return false;
+            }
             let selected = $('.dataTable tbody tr.selected').map(function(){return $(this).data('id');}).get();
             let data = {
                 'check': selected,
