@@ -117,6 +117,10 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         });
     });
 
+    $routes->group('advertisement-etc', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
+        $routes->get('', 'AdvertisementManager\AdvEtcManagerController::index');
+    });
+
     //자동화
     $routes->group('automation', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
