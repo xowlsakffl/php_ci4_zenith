@@ -110,12 +110,14 @@ class ZenithGG
                 'customerId' => $data['customerId'],
                 'manageCustomer' => $data['manageCustomer'],
                 'name' => $data['name'],
+                'level' => $data['level'],
                 'status' => $data['status'],
                 'canManageClients' => $data['canManageClients'],
                 'currencyCode' => $data['currencyCode'],
                 'dateTimeZone' => $data['dateTimeZone'],
                 'testAccount' => $data['testAccount'],
                 'is_hidden' => $data['is_hidden'],
+                'is_manager' => $data['is_manager'],
             ];
             $this->db->updateAccount($data);
         }
@@ -222,10 +224,12 @@ class ZenithGG
         if (!array_key_first($customerIdsToChildAccounts)) $rootCustomerId = $customerId;
         else $rootCustomerId = array_key_first($customerIdsToChildAccounts);
         //print str_repeat('-', $depth * 2);
+        // echo $customerId.'/'.$customerClient->getDescriptiveName().'::'.$customerClient->getClientCustomer().'::'.$customerClient->getManager().PHP_EOL;
         $data = [
             'customerId' => $customerId,
             'manageCustomer' => $rootCustomerId,
             'name' => $customerClient->getDescriptiveName(),
+            'level' => $customerClient->getLevel(),
             'currencyCode' => $customerClient->getCurrencyCode(),
             'dateTimeZone' => $customerClient->getTimeZone(),
             'is_hidden' => $customerClient->getHidden() ? '1' : '0',
@@ -233,6 +237,7 @@ class ZenithGG
             'status' => CustomerStatus::name($customerClient->getStatus()),
             'testAccount' => $customerClient->getTestAccount() ? '1' : '0',
             'canManageClients' => $rootCustomerId == $customerId ? '1' : '0',
+            'is_manager' => $customerClient->getManager()
         ];
         //echo '<pre>'.print_r($data,1).'</pre>';
         if (array_key_exists($customerId, $customerIdsToChildAccounts)) {
@@ -639,6 +644,50 @@ class ZenithGG
         }else{
             return false;
         };
+    }
+
+    public function getReports($date = null, $edate = null, $accounts = null)
+    {
+        if(is_null($accounts)) {
+            $accounts = $this->db->getAccounts(0, "AND status = 'ENABLED'");
+            $lists = $accounts->getResultArray();
+        } else {
+            $lists = $accounts;
+        }
+        $total = count($lists);
+        $step = 1;
+        CLI::write("[".date("Y-m-d H:i:s")."]"."보고서 업데이트를 시작합니다.", "light_red");
+        $result = [];
+        foreach ($lists as $account) {
+            CLI::showProgress($step++, $total);
+            if($account['is_manager'] == 1) continue;
+            self::setCustomerId($account['manageCustomer']);
+            $googleAdsServiceClient = $this->googleAdsClient->getGoogleAdsServiceClient();
+            if ($date == null) $date = date('Y-m-d');
+            if ($edate == null) $edate = date('Y-m-d');
+            
+            $query = 'SELECT ad_group_ad.ad.id, metrics.clicks, metrics.impressions, metrics.cost_micros, segments.date FROM ad_group_ad WHERE customer.id = '.$account['customerId'].' AND ad_group_ad.status IN ("ENABLED","PAUSED","REMOVED") AND segments.date >= "' . $date . '" AND segments.date <= "' . $edate . '"';
+            // echo $query;
+
+            $stream = $googleAdsServiceClient->searchStream($account['customerId'], $query);
+            foreach ($stream->iterateAllElements() as $googleAdsRow) {
+                $d = $googleAdsRow->getAdGroupAd();
+                $s = $googleAdsRow->getSegments();
+                $metric = $googleAdsRow->getMetrics();
+                // if($metric->getImpressions()) {echo '<pre>'.print_r($googleAdsRow->getSegments()->getDate(),1).'</pre>'; exit;}
+                $data = [
+                    'id' => $d->getAd()->getId() ? $d->getAd()->getId() : "", 
+                    'date' => $s->getDate(),
+                    'clicks' => $metric->getClicks() ? $metric->getClicks() : 0, 
+                    'impressions' => $metric->getImpressions(), 
+                    'cost' => round($metric->getCostMicros() / 1000000)
+                ];
+                if ($this->db->insertReport($data))
+                    $result[] = $data;
+            }
+        }
+        // echo '<pre>'.print_r($result,1).'</pre>'; exit;
+        return $result;
     }
       
     public function getAds($loginCustomerId = null, $customerId = null, $adGroupId = null, $date = null)

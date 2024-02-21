@@ -43,22 +43,26 @@ class GADB
 			manageCustomer, 
 			name, 
 			status, 
+			level,
 			canManageClients, 
 			currencyCode, 
 			dateTimeZone, 
 			testAccount, 
 			is_hidden, 
+			is_manager,
 			create_time)
 		VALUES (
 			:customerId:, 
 			:manageCustomer:, 
 			:name:, 
 			:status:, 
+			:level:,
 			:canManageClients:, 
 			:currencyCode:, 
 			:dateTimeZone:, 
 			:testAccount:, 
 			:is_hidden:, 
+			:is_manager:,
 			NOW()
 		) ON DUPLICATE KEY
 			UPDATE customerId = :customerId:,
@@ -66,11 +70,13 @@ class GADB
 			is_update = :is_update:,
 			name = :name:,
 			status = :status:, 
+			level = :level:,
 			canManageClients = :canManageClients:, 
 			currencyCode = :currencyCode:, 
 			dateTimeZone = :dateTimeZone:, 
 			testAccount = :testAccount:, 
 			is_hidden = :is_hidden:, 
+			is_manager = :is_manager:,
 			update_time = NOW();";
 
 		$params = [
@@ -78,12 +84,14 @@ class GADB
 			'manageCustomer' => $data['manageCustomer'],
 			'name' => $data['name'],
 			'status' => $data['status'],
+			'level' => $data['level'],
 			'canManageClients' => (integer)$data['canManageClients'],
 			'currencyCode' => $data['currencyCode'],
 			'dateTimeZone' => $data['dateTimeZone'],
 			'testAccount' => (integer)$data['testAccount'],
 			'is_hidden' => (integer)$data['is_hidden'],
-			'is_update' => (integer)$is_update
+			'is_update' => (integer)$is_update,
+			'is_manager' => $data['is_manager'],
 		];
 		$result = $this->db->query($sql, $params);
 		return $result;
@@ -517,6 +525,38 @@ class GADB
                 GROUP BY `event_seq`, `site`, HOUR(from_unixtime(reg_timestamp))";
         $result = $this->zenith->query($sql);
         return $result;
+    }
+	public function insertReport($data)
+    {
+		if(!empty($data)){
+			$row = $data;
+		}else{
+			return false;
+		}
+        
+		if ($row['id']) {
+			$data = [
+				'ad_id' => $row['id'],
+				'date' => $row['date'],
+				'hour' => 0,
+				'impressions' => $row['impressions'],
+				'clicks' => $row['clicks'],
+				'cost' => $row['cost'],
+				'create_time' => new RawSql('NOW()')
+			];
+			$builder = $this->db->table('aw_ad_report_history');
+			$builder->setData($data);
+			$updateTime = ['update_time' => new RawSql('NOW()')];
+			$builder->updateFields($updateTime, true);
+			// d($builder->getCompiledUpsert());
+			$builder->upsert();
+			/*
+			$sql = "UPDATE `z_adwords`.`aw_ad_report_history` 
+			SET `media` = '{$row['media']}', `period` = '{$row['period_ad']}', `event_seq` = '{$row['event_seq']}', `site` = '{$row['site']}', `db_price` = '{$row['db_price']}', `db_count` = '{$v['count']}', `margin` = '{$v['margin']}', `sales` = '{$v['sales']}', `update_time` = NOW()
+			WHERE `ad_id` = '{$row['ad_id']}' AND `date` = '{$row['date']}' AND `hour` = '{$v['hour']}'";
+			$this->db_query($sql, true);
+			*/
+		}
     }
 
 	public function updateReport($data)

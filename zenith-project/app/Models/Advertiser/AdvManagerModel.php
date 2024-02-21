@@ -113,6 +113,12 @@ class AdvManagerModel extends Model
 
     private function getQueryResults($data, $type)
     {
+        $cache = \Config\Services::cache();
+        // print_r($data['searchData']);
+        $cacheName = $type."_".md5(json_encode($data['searchData']));
+        $cacheData = $cache->get($cacheName);
+        if($cacheName && $cacheData) return $cacheData;
+
         $builders = [];
         if(empty($data['searchData']['media'])){
             $media = ['facebook', 'google', 'kakao'];
@@ -183,7 +189,8 @@ class AdvManagerModel extends Model
         } else {
             $result = null;
         }
-
+        if(!$cacheData)
+            $cache->save($cacheName, $result, 300);
         return $result;
     }
 

@@ -25,6 +25,18 @@ class GoogleAds extends BaseController
         CLI::write("광고계정 업데이트 완료", "yellow");
     }
 
+    public function getReports($date=null, $edate=null) {
+        CLI::clearScreen();
+        if($date == null)
+            $date = CLI::prompt("리포트를 수신할 기간 중 시작날짜를 입력해주세요.", date('Y-m-d'));
+        if($edate == null)
+            $edate = CLI::prompt("리포트를 수신할 기간 중 종료날짜를 입력해주세요.", $date);
+        // $run = CLI::prompt("광고데이터를 ".($all=="true"?"포함":"미포함")."하여 {$date} ~ {$edate} 기간의 인사이트를 수신합니다.",["y","n"]);
+        // if($run != 'y') return false;
+        $this->chainsaw->getReports($date, $edate);
+        CLI::write("데이터 수신이 완료되었습니다.", "yellow");
+    }
+
     public function getAll()
     {
         CLI::clearScreen();
@@ -55,6 +67,13 @@ class GoogleAds extends BaseController
             CLI::write("{$date} 유효DB를 업데이트 합니다.", "light_red");
             $this->chainsaw->getAdsUseLanding($date);
         }
+    }
+
+    public function getReport() {
+        $accounts = [
+            ['manageCustomer'=> 7177486093,'customerId'=>6242835878]
+        ];
+        $this->chainsaw->getReports('2024-02-16', '2024-02-19', $accounts);
     }
 
     public function getCampaign() {

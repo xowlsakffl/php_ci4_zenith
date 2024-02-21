@@ -41,9 +41,10 @@ class AdvManagerController extends BaseController
 				return $this->getCareLabsData($arg);
 			}
             if(!empty($arg['searchData']['account']) || 
-            !empty($arg['searchData']['comapany']) || 
+            !empty($arg['searchData']['company']) || 
             !empty($arg['searchData']['media']) ||
             !empty($arg['searchData']['stx'])) {
+                // print_r($arg['searchData']);
                 switch ($arg['searchData']['type']) {
                     case 'ads':
                         $result = $this->getAds($arg);
@@ -286,7 +287,6 @@ class AdvManagerController extends BaseController
         $result = $this->admanager->getReport($arg);
         $columnIndex = 0;
         $data = [];
-        
         foreach($result as $row) {
             $data[] = $row;
             foreach ($row as $col => $val) {
@@ -299,7 +299,6 @@ class AdvManagerController extends BaseController
         $report['impressions_sum'] = $report['clicks_sum'] = $report['click_ratio_sum'] = $report['spend_sum'] = $report['unique_total_sum'] = $report['unique_one_price_sum'] = $report['conversion_ratio_sum'] = $report['profit_sum'] = $report['per_sum'] = $report['price_sum'] = $report['spend_ratio_sum'] =$report['cpc'] = 0;
 
         if(!empty($result)){
-
             $report['impressions_sum'] = array_sum($total['impressions']); //총 노출수
             $report['clicks_sum'] = array_sum($total['click']); //총 클릭수
             if ($report['clicks_sum'] != 0 && $report['impressions_sum'] != 0) {
