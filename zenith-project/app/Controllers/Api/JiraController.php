@@ -176,8 +176,7 @@ class JiraController extends BaseController
     {
         $issueKey = $this->request->getGet('issue');
         if(empty($issueKey)){throw new Exception("이슈키가 존재하지 않습니다.");}
-        $result = $this->jira->setIssueStatus($issueKey);
-
+        $this->jira->setIssueStatus($issueKey);
     }
 
     public function sendSlackMessage($username, $text)

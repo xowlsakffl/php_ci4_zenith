@@ -141,7 +141,7 @@ class ZenithJira
 
             $transition->setTransitionId('21');
             $result = $issueService->transition($issueKey, $transition);
-            dd($result);
+            return $result;
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
