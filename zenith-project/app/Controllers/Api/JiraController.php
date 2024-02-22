@@ -149,7 +149,7 @@ class JiraController extends BaseController
                                 $this->sendSlackMessage($designerName, $sendText);
                             }
                         }else if($changeStatus == '10136'){//검수중
-                            $completeLink = 'https://carezenith.co.kr/jira-complete?issue='.$issueKey;
+                            $completeLink = 'https://carezenith.co.kr/jira/updateComplete?issue='.$issueKey;
                             $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)'.PHP_EOL.'바로 완료처리를 하시려면 해당 링크를 클릭하세요.'.PHP_EOL.'%s', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName, $completeLink);
                             $this->sendSlackMessage($reporterName, $sendText);
 
@@ -170,6 +170,11 @@ class JiraController extends BaseController
             $logText = "오류 메세지: ".$e->getMessage();
             $this->writeLog($this->request, $logText, 'issue_complete_log');
         }
+    }
+
+    public function updateComplete()
+    {
+
     }
 
     public function sendSlackMessage($username, $text)

@@ -6,6 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Exception;
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Issue\Transition;
 use JiraRestApi\Project\ProjectService;
 use JiraRestApi\JiraException;
 use JiraRestApi\Status\StatusService;
@@ -127,6 +128,21 @@ class ZenithJira
 
             // get the user info.
             $users = $us->findUsers($paramArray);
+        } catch (JiraException $e) {
+            print_r("에러 발생 : ".$e->getMessage());
+        }
+    }
+
+    public function setIssueStatus($issueKey)
+    {
+        try {
+            $issueService = new IssueService($this->iss);
+            $issueCompleteStatus = '10132'; //완료됨
+            $transition = new Transition();
+
+            $transition->setTransitionId($issueCompleteStatus);
+            $result = $issueService->transition($issueKey, $transition);
+            dd($result);
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }
