@@ -174,6 +174,9 @@ class JiraController extends BaseController
 
     public function updateComplete()
     {
+        $issueKey = $this->request->getGet('issue');
+        if(empty($issueKey)){throw new Exception("이슈키가 존재하지 않습니다.");}
+        $result = $this->jira->setIssueStatus($issueKey);
 
     }
 
