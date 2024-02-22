@@ -139,7 +139,8 @@ class ZenithJira
             $issueService = new IssueService($this->iss);
             $issueCompleteStatus = '10132'; //완료됨
             $transition = new Transition();
-
+            $transitions = $issueService->getTransition($issueKey);
+            dd($transitions);
             $transition->setTransitionId($issueCompleteStatus);
             $result = $issueService->transition($issueKey, $transition);
             dd($result);
