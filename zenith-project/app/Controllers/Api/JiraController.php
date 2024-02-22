@@ -55,8 +55,8 @@ class JiraController extends BaseController
 
     public function getIssue()
     {
-        $result = $this->jira->getIssue();
-        dd($result);
+        /* $result = $this->jira->getIssue();
+        dd($result); */
     }
 
     public function getIssueEventData()
@@ -150,7 +150,7 @@ class JiraController extends BaseController
                             }
                         }else if($changeStatus == '10136'){//검수중
                             $completeLink = 'https://carezenith.co.kr/jira/updateComplete?issue='.$issueKey;
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)'.PHP_EOL.'바로 완료처리를 하시려면 해당 링크를 클릭하세요.'.PHP_EOL.'%s', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName, $completeLink);
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)'.PHP_EOL.'*<%s|여기를 클릭하시면 바로 완료처리 됩니다.>*', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName, $completeLink);
                             $this->sendSlackMessage($reporterName, $sendText);
 
                             if(!empty($designerName) && $reporterName != $designerName){
@@ -176,7 +176,8 @@ class JiraController extends BaseController
     {
         $issueKey = $this->request->getGet('issue');
         if(empty($issueKey)){throw new Exception("이슈키가 존재하지 않습니다.");}
-        $this->jira->setIssueStatus($issueKey);
+        $result = $this->jira->setIssueStatus($issueKey);
+        echo '<script>alert("'.$result['msg'].'");window.close();</script>';
     }
 
     public function sendSlackMessage($username, $text)
