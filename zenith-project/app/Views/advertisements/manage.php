@@ -26,105 +26,6 @@
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
-<style>
-    :root {
-        --dt-row-selected: 130,190,255;
-        --dt-row-selected-text: 0,0,0;
-    }
-
-    .dataTable tfoot .header th{background-color:#000; color:#fff;}
-    .table-default tfoot .header th:not(:last-child) {
-        border-right: 1px dashed #dfdfdf;
-    }
-    .inner button.disapproval::after{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        content: "";
-        background: #ce1922;
-    }
-
-    .inner button.tag-inactive{
-        opacity: 0.5;
-    }
-
-    .campaign-total td{
-        text-align: center !important;
-    }
-    .hl-red{
-        color: red;
-    }
-    .dt-buttons{
-        position: initial !important;
-    }
-	#carelabs_btn{
-		width: 150px;
-		height: 43px;
-		padding: 2px 7px;
-		white-space: normal;
-		text-align: left;
-		line-height: 1.1;
-		border: 1px solid #c3c3c3;
-		border-radius: 5px;
-		background: #fff;
-		overflow-y: hidden;
-		font-size: 85%;
-	}
-	#carelabs_btn.active{
-		color: #ce1922;
-		border-color: #ce1922;
-	}
-    .bidamount{
-        margin-top:4px;
-    }
-    .bidamount_type{
-        position: absolute;
-        top: 0;
-        left: 0;
-        font-size: 10px;
-        color: blue;
-        font-weight: bold;
-    }
-    .bidamount_strategy, .campaign_bidamount{
-        font-size: 9px;
-    }
-    .modify_tag:hover{
-        cursor: pointer;
-    }
-    #dbCountTable_wrapper .dataTables_scrollHeadInner{width:100% !important;}
-    #dbCountTable_wrapper .dataTable{width:100% !important;}
-
-    .name_wrap{
-        display: flex;
-        align-items: flex-end;
-    }
-    .name_wrap .name_left_wrap{
-        margin-right:10px;
-        width:50px;
-    }
-    .name_wrap .name_left_wrap img{width:100%;position: relative;z-index: 1;}
-    .name_wrap .name_left_wrap img:hover{
-        scale: 3;
-    }
-    .view_btn{
-        position: absolute;
-        left:5px;
-        bottom:5px;
-    }
-    /* 업데이트 애니메이션 */
-    tr.updating td:first-child{
-        animation: updating-background 2s linear infinite forwards;
-        background-image: linear-gradient(to right, transparent 8%, #bbbbbb 55%, transparent 80%);
-        background-size: 200%;
-        box-shadow: none !important;
-    }
-    @keyframes updating-background {
-        0% {background-position: 100% 0}
-        100% {background-position: -100% 0}
-    }
-</style>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -706,12 +607,12 @@ function getList(data = []){
                 "width": "250px",
                 "render": function (data, type, row) {
                     if(tableParam.searchData.type == 'ads'){
-                        name = '<div class="view_btn">'+(row.landingUrl ? '<a href="'+row.landingUrl+'" target="_blank">보기</a>' : '')+'</div><div class="name_wrap">'+(row.thumbnail ? '<div class="name_left_wrap"><img src="'+row.thumbnail+'"></div>' : '')+'<div class="name_right_wrap"><div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div></div></div>';
+                        name = '<div class="view_btn">'+(row.landingUrl ? '<a href="'+row.landingUrl+'" target="_blank">보기</a>' : '')+'</div><div class="name_wrap">'+(row.thumbnail ? '<div class="name_left_wrap"><img src="'+row.thumbnail+'"></div>' : '')+'<div class="name_right_wrap"><div class="codeBox d-flex align-items-center mb-2"><button class="codeBtn"><i class="bi bi-braces-asterisk"></i></button><span style="font-size:80%"><p data-editable="true" class="modify_tag">'+(row.code ?? '')+'</p></span></div><div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p></div></div></div>';
                     }else{
-                        name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div>';
+                        name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p></div>';
                     }
 
-                    name += '<div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal">자동화 로그</button></div>';
+                    name += '<button class="btn_box_open"><span></span><span></span><span></span></button><div class="btn_box"><div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal"><i class="bi bi-robot h4"></i></button><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal"><i class="bi bi-clock h4"></i></button></div><div class="memo_btn_box"><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div></div>';
                     return name;
                 },
             },

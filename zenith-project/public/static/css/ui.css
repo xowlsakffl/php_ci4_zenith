@@ -1068,6 +1068,136 @@ body {
     }
 }
 */
+:root {
+  --dt-row-selected: 130,190,255;
+  --dt-row-selected-text: 0,0,0;
+}
+
+.dataTable tfoot .header th {
+  background-color: #000;
+  color: #fff;
+}
+
+.table-default tfoot .header th:not(:last-child) {
+  border-right: 1px dashed #dfdfdf;
+}
+
+.inner button.disapproval::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  content: "";
+  background: #ce1922;
+}
+
+.inner button.tag-inactive {
+  opacity: 0.5;
+}
+
+.campaign-total td {
+  text-align: center !important;
+}
+
+.hl-red {
+  color: red;
+}
+
+.dt-buttons {
+  position: initial !important;
+}
+
+#carelabs_btn {
+  width: 150px;
+  height: 43px;
+  padding: 2px 7px;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.1;
+  border: 1px solid #c3c3c3;
+  border-radius: 5px;
+  background: #fff;
+  overflow-y: hidden;
+  font-size: 85%;
+}
+
+#carelabs_btn.active {
+  color: #ce1922;
+  border-color: #ce1922;
+}
+
+.bidamount {
+  margin-top: 4px;
+}
+
+.bidamount_type {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 10px;
+  color: blue;
+  font-weight: bold;
+}
+
+.bidamount_strategy, .campaign_bidamount {
+  font-size: 9px;
+}
+
+.modify_tag:hover {
+  cursor: pointer;
+}
+
+#dbCountTable_wrapper .dataTables_scrollHeadInner {
+  width: 100% !important;
+}
+
+#dbCountTable_wrapper .dataTable {
+  width: 100% !important;
+}
+
+.name_wrap {
+  display: flex;
+  align-items: flex-end;
+}
+
+.name_wrap .name_left_wrap {
+  margin-right: 10px;
+  width: 50px;
+}
+
+.name_wrap .name_left_wrap img {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.name_wrap .name_left_wrap img:hover {
+  scale: 3;
+}
+
+.view_btn {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+}
+
+/* 업데이트 애니메이션 */
+tr.updating td:first-child {
+  animation: updating-background 2s linear infinite forwards;
+  background-image: linear-gradient(to right, transparent 8%, #bbbbbb 55%, transparent 80%);
+  background-size: 200%;
+  box-shadow: none !important;
+}
+
+@keyframes updating-background {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
 #adv-show-table #p_name #search-results {
   position: absolute;
   background-color: #fff;
@@ -1239,6 +1369,34 @@ input:-internal-autofill-selected {
     margin-left: 40px;
   }
 }
+#adv-table tbody tr td:nth-child(2) {
+  position: relative;
+}
+#adv-table tbody tr td:nth-child(2) .btn_box_open {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+#adv-table tbody tr td:nth-child(2) .btn_box_open span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: #CCC;
+  border-radius: 100%;
+}
+#adv-table tbody tr td:nth-child(2) .btn_box {
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  background-color: #fff;
+  width: 138px;
+  height: 100%;
+}
+#adv-table tbody tr td:nth-child(3) {
+  position: relative;
+  z-index: -1;
+}
+
 div.dataTables_processing {
   z-index: 1;
   top: 150px !important;
