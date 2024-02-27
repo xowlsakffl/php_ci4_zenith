@@ -19,7 +19,7 @@ $uri = current_url(true)->getPath();
                 <div class="collapse" id="advertisements">
                     <ul class="btn-toggle-nav">
                         <li><a href="/advertisements" class="<?php if($uri === '/advertisements'){ echo "active";}?>">통합 광고관리</a></li>
-                        <li><a href="/advertisement-etc" class="<?php if($uri === '/advertisement-etc'){ echo "active";}?>">기타 광고관리</a></li>
+                        <!-- <li><a href="/advertisement-etc" class="<?php if($uri === '/advertisement-etc'){ echo "active";}?>">기타 광고관리</a></li> -->
                         <li><a href="/automation" class="<?php if($uri === '/automation'){ echo "active";}?>">자동화 관리</a></li>
                     </ul>
                 </div>
