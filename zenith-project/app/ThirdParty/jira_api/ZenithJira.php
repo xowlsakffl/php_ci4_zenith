@@ -6,6 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use Exception;
 use JiraRestApi\Configuration\ArrayConfiguration;
 use JiraRestApi\Issue\IssueService;
+use JiraRestApi\Issue\Transition;
 use JiraRestApi\Project\ProjectService;
 use JiraRestApi\JiraException;
 use JiraRestApi\Status\StatusService;
@@ -68,7 +69,7 @@ class ZenithJira
         }
     }
 
-    public function getIssue()
+    public function getIssue($issueKey)
     {
         try {
             $issueService = new IssueService($this->iss);
@@ -82,10 +83,13 @@ class ZenithJira
                     'operations',
                     'editmeta',
                     'changelog',
+                ],
+                'fields' => [
+                    'status',
                 ]
             ];
                     
-            $issue = $issueService->get('DEV-1228', $queryParam);
+            $issue = $issueService->get($issueKey, $queryParam);
             
             return $issue;
         } catch (JiraException $e) {
@@ -127,6 +131,24 @@ class ZenithJira
 
             // get the user info.
             $users = $us->findUsers($paramArray);
+        } catch (JiraException $e) {
+            print_r("에러 발생 : ".$e->getMessage());
+        }
+    }
+
+    public function setIssueStatus($issueKey)
+    {
+        try {
+            $issueService = new IssueService($this->iss);
+            $transition = new Transition();
+
+            $issue = $this->getIssue($issueKey);
+            $currentIssueStatus = $issue->fields->status->id;
+            if($currentIssueStatus == '10132'){return ['result' => false, 'msg' => '이미 완료처리된 이슈입니다.'];}
+
+            $transition->setTransitionId('21');
+            $result = $issueService->transition($issueKey, $transition);
+            return ['result' => $result, 'msg' => '완료처리 되었습니다.'];
         } catch (JiraException $e) {
             print_r("에러 발생 : ".$e->getMessage());
         }

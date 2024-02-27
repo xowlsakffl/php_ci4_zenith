@@ -55,8 +55,8 @@ class JiraController extends BaseController
 
     public function getIssue()
     {
-        $result = $this->jira->getIssue();
-        dd($result);
+        /* $result = $this->jira->getIssue();
+        dd($result); */
     }
 
     public function getIssueEventData()
@@ -120,7 +120,7 @@ class JiraController extends BaseController
     public function getIssueAction()
     {  
         try {
-            $this->writeLog($this->request, null, 'issue_complete_log');
+            $this->writeLog($this->request, null, 'issue_complete_log2');
             if (strtolower($this->request->getMethod()) === 'post') {
                 $param = $this->request->getVar();
                        
@@ -149,7 +149,8 @@ class JiraController extends BaseController
                                 $this->sendSlackMessage($designerName, $sendText);
                             }
                         }else if($changeStatus == '10136'){//검수중
-                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName);
+                            $completeLink = 'https://carezenith.co.kr/jira/updateComplete?issue='.$issueKey;
+                            $sendText = sprintf('[%s][%s] <%s|%s> %s님이 작업이 완료되어 %s님께 최종 검수를 요청하였습니다.'.PHP_EOL.'링크로 이동하셔서 *댓글로 확인 여부 및 피드백* 남겨주세요.(*보고자 확인 후 완료로 처리*됩니다.)'.PHP_EOL.'*<%s|여기를 클릭하시면 바로 완료처리 됩니다.>*', $projectName, $issueSummary, $issueLink, $issueKey, $actionUser, $reporterName, $completeLink);
                             $this->sendSlackMessage($reporterName, $sendText);
 
                             if(!empty($designerName) && $reporterName != $designerName){
@@ -169,6 +170,15 @@ class JiraController extends BaseController
             $logText = "오류 메세지: ".$e->getMessage();
             $this->writeLog($this->request, $logText, 'issue_complete_log');
         }
+    }
+
+    public function updateComplete()
+    {
+        if(preg_match('/Slackbot/', $_SERVER['HTTP_USER_AGENT'])) return;
+        $issueKey = $this->request->getGet('issue');
+        if(empty($issueKey)){throw new Exception("이슈키가 존재하지 않습니다.");}
+        $result = $this->jira->setIssueStatus($issueKey);
+        echo '<script>alert("'.$result['msg'].'");window.close();</script>';
     }
 
     public function sendSlackMessage($username, $text)
