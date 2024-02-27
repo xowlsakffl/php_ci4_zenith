@@ -612,7 +612,7 @@ function getList(data = []){
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p></div>';
                     }
 
-                    name += '<button class="btn_box_open"><span></span><span></span><span></span></button><div class="btn_box"><div class="automation_btn_box"><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal"><i class="bi bi-robot h4"></i></button><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal"><i class="bi bi-clock h4"></i></button></div><div class="memo_btn_box"><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal"><i class="bi bi-chat-square-text h4"></i><span class="position-absolute top--10 start-100 translate-middle badge rounded-pill bg-danger badge-"></span></button></div></div>';
+                    name += '<button class="btn_box_open"><span></span><span></span><span></span></button><ul class="btn_box"><li><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button></li><li><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal">자동화 로그</button></li><li class="memo_btn_box"><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal">메모 확인</button></li></ul>';
                     return name;
                 },
             },
@@ -1994,6 +1994,12 @@ $('body').on('click', '#automation_btn', function() {
         selectedaaId.push(val); // 추가
     }
     advLogTable.draw();
+});
+
+$('body').on('click', '.btn_box_open', function() {
+    let box = $(this).siblings('.btn_box');
+    $('.btn_box').not(box).hide();
+    box.fadeToggle();
 });
 
 function debug(msg) {
