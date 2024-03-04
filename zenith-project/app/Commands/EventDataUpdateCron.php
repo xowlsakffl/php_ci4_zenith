@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Controllers\Api\JiraController;
+use App\Services\LoggerService;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 
@@ -61,12 +62,12 @@ class EventDataUpdateCron extends BaseCommand
         $jira->getIssueEventData();
 
         //로그 기록
-        $db = \Config\Database::connect();
         $data = [
             'type' => 'tasks',
             'command' => $this->name
         ];
 
-        $db->table('zenith_logs')->insert($data);
+        $logger = new LoggerService();
+        $logger->insertLog($data);
     }
 }

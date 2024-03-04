@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Services\LoggerService;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -25,7 +26,6 @@ class LogFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        $db = \Config\Database::connect();
         $data = [
             'type' => 'web',
             'scheme' => $request->getServer('REQUEST_SCHEME') ?? '',
@@ -46,7 +46,8 @@ class LogFilter implements FilterInterface
             $data['command'] = implode(' ', $_SERVER['argv']);
         }
 
-        $db->table('zenith_logs')->insert($data);
+        $logger = new LoggerService();
+        $logger->insertLog($data);
     }
 
     /**

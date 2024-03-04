@@ -5,6 +5,7 @@ namespace App\Commands;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use App\Controllers\HumanResource\HumanResourceController;
+use App\Services\LoggerService;
 
 class GwCron extends BaseCommand
 {
@@ -46,12 +47,12 @@ class GwCron extends BaseCommand
         }
 
         //로그 기록
-        $db = \Config\Database::connect();
         $data = [
             'type' => 'tasks',
             'command' => $this->name
         ];
 
-        $db->table('zenith_logs')->insert($data);
+        $logger = new LoggerService();
+        $logger->insertLog($data);
     }
 }
