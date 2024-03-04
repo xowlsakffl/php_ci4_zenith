@@ -28,19 +28,8 @@ class AdvEtcManagerController extends BaseController
             !empty($arg['searchData']['advertiser']) || 
             !empty($arg['searchData']['group']) ||
             !empty($arg['searchData']['description'])) {
-                switch ($arg['searchData']['type']) {
-                    case 'ads':
-                        $result = $this->getAds($arg);
-                        break;
-                    case 'adsets':
-                        $result = $this->getAdSets($arg);
-                        break;
-                    case 'campaigns':
-                        $result = $this->getCampaigns($arg);
-                        break;
-                    default:
-                        return $this->fail("잘못된 요청");
-                }
+
+                $result = $this->getCampaigns($arg);
 				$orderBy = [];
 				if(!empty($arg['order'])) {
 					foreach($arg['order'] as $row) {
@@ -82,4 +71,6 @@ class AdvEtcManagerController extends BaseController
             return $this->fail("잘못된 요청");
         }
     }
+
+    
 }
