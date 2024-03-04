@@ -23,7 +23,7 @@ class AdvEtcManagerController extends BaseController
 
     public function getData(){
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
+            /* $arg = $this->request->getGet();
             if(!empty($arg['searchData']['media']) || 
             !empty($arg['searchData']['advertiser']) || 
             !empty($arg['searchData']['group']) ||
@@ -66,7 +66,7 @@ class AdvEtcManagerController extends BaseController
             $result['accounts'] = $this->getAccounts($arg);
             $result['media_accounts'] = $this->getMediaAccounts($arg);
 
-            return $this->respond($result);
+            return $this->respond($result); */
         }else{
             return $this->fail("잘못된 요청");
         }
