@@ -62,5 +62,14 @@ class PreparingIssueMessageCron extends BaseCommand
         if($hour < "10" || $hour >= "19" || $week == "0" || $week == "6") return;
         $jira = new JiraController;
         $jira->getIssuePreparing();
+
+        //로그 기록
+        $db = \Config\Database::connect();
+        $data = [
+            'type' => 'tasks',
+            'command' => $this->name
+        ];
+
+        $db->table('zenith_logs')->insert($data);
     }
 }

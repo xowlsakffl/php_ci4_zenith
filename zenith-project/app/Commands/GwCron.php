@@ -44,5 +44,14 @@ class GwCron extends BaseCommand
         } catch (\Exception $e) {
             $this->showError($e);
         }
+
+        //로그 기록
+        $db = \Config\Database::connect();
+        $data = [
+            'type' => 'tasks',
+            'command' => $this->name
+        ];
+
+        $db->table('zenith_logs')->insert($data);
     }
 }

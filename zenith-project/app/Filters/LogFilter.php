@@ -27,6 +27,7 @@ class LogFilter implements FilterInterface
     {
         $db = \Config\Database::connect();
         $data = [
+            'type' => 'web',
             'scheme' => $request->getServer('REQUEST_SCHEME') ?? '',
             'host' => $request->getServer('HTTP_HOST') ?? '',
             'path' => $request->getServer('PATH_INFO') ?? '',
@@ -41,6 +42,7 @@ class LogFilter implements FilterInterface
 
         if ($request->isCLI())
         {
+            $data['type'] = 'command';
             $data['command'] = implode(' ', $_SERVER['argv']);
         }
 

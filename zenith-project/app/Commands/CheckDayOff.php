@@ -120,5 +120,14 @@ class CheckDayOff extends BaseCommand
             // d($data);
             $response = $slack->sendMessage($data);
         }
+
+        //로그 기록
+        $db = \Config\Database::connect();
+        $data = [
+            'type' => 'tasks',
+            'command' => $this->name
+        ];
+
+        $db->table('zenith_logs')->insert($data);
     }
 }
