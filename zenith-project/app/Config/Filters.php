@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\LogFilter;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -22,7 +23,8 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
-        'forcePasswordReset' => ForcePasswordResetFilter::class
+        'forcePasswordReset' => ForcePasswordResetFilter::class,
+        'logFilter' => LogFilter::class
     ];
 
     /**
@@ -36,6 +38,7 @@ class Filters extends BaseConfig
             // 'invalidchars',
             'session' => ['except' => ['login*', 'register', 'auth/a/*', 'slack/*', 'jira/*', 'interlock', 'resta/*']],
             'forcePasswordReset' => ['except' => ['login*', 'set-password*', 'logout']],
+            'logFilter'
         ],
         'after' => [
             'toolbar',
