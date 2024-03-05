@@ -1289,9 +1289,14 @@ class AdvManagerController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $id = $this->request->getGet('id');
-            $sliceId = explode("_", $id);
-            $id = $sliceId[1];
-            $result = $this->admanager->getChangeLogs($id);
+            if(!empty($id)){
+                $sliceId = explode("_", $id);
+                $id = $sliceId[1];
+                $result = $this->admanager->getChangeLogs($id);
+            }else{
+                $result = $this->admanager->getChangeLogs();
+            }
+            
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

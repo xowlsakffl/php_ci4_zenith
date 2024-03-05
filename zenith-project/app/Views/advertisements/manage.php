@@ -141,6 +141,7 @@
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
                 <button type="button" class="btn btn-outline-danger checkAdvAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button>
+                <button type="button" class="btn btn-outline-danger" id="allAdvChangeLogBtn" data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button>
             </div>
             <!-- <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
@@ -616,7 +617,7 @@ function getList(data = []){
                         name = '<div class="mediaName"><p data-editable="true" class="modify_tag">'+row.name.replace(/(\@[0-9]+)/, '<span class="hl-red">$1</span>', row.name)+'</p></div>';
                     }
 
-                    name += '<button class="btn_box_open"><span></span><span></span><span></span></button><ul class="btn_box"><li><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button></li><li><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal">자동화 로그</button></li><li class="memo_btn_box"><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal">메모 작성</button></li><li><button data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button></li></ul>';
+                    name += '<button class="btn_box_open"><span></span><span></span><span></span></button><ul class="btn_box"><li><button class="advAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button></li><li><button class="advAutomationLogBtn"data-bs-toggle="modal" data-bs-target="#advLogModal">자동화 로그</button></li><li class="memo_btn_box"><button class="btn_memo text-dark position-relative" data-bs-toggle="modal" data-bs-target="#memo-write-modal">메모 작성</button></li><li><button id="advChangeLogBtn" data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button></li></ul>';
                     return name;
                 },
             },
@@ -1555,7 +1556,7 @@ $(".dataTable").on("click", '.memo-list input[name="is_done"]', function(){
     });
 });
 
-function getChangeLogList(id) {
+function getChangeLogList(id = null) {
     $.ajax({
         type: "get",
         url: "<?=base_url()?>advertisements/change-log",
@@ -1607,7 +1608,7 @@ function setChangeLogList(data) {
         }
         html += '    <li class="d-flex justify-content-between align-items-start" data-id="'+row.seq+'">';
         html += '        <div class="detail d-flex align-items-start">';
-        html += '            <p class="ms-1">['+ media +'] ['+ change_type +'] '+ (row.old_value != '' ? row.old_value + '-> ' : '') + row.change_value+'</p>';
+        html += '            <p class="ms-1">['+ media +'] ['+ change_type +'] ['+ row.id +'] '+ (row.old_value != '' ? row.old_value + '-> ' : '') + row.change_value+'</p>';
         html += '        </div>';
         html += '        <div class="d-flex">';
         html += '            <p style="width:50px;margin-right:15px">'+ row.nickname +'</p>';
@@ -1620,8 +1621,13 @@ function setChangeLogList(data) {
 }
 
 $('#advChangeLogModal').on('show.bs.modal', function(e) { 
-    let id = $(e.relatedTarget).closest("tr").data("id");
-    getChangeLogList(id);
+    let $btn = $(e.relatedTarget);
+    if ($btn.attr('id') === 'allAdvChangeLogBtn') {
+        getChangeLogList();
+    }else{
+        let id = $(e.relatedTarget).closest("tr").data("id");
+        getChangeLogList(id);
+    }
 })
 .on('hidden.bs.modal', function(e) { 
     $('ul.change-list').empty();
