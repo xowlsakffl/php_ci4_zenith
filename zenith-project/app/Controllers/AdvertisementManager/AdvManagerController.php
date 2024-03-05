@@ -1294,7 +1294,11 @@ class AdvManagerController extends BaseController
                 $id = $sliceId[1];
                 $result = $this->admanager->getChangeLogs($id);
             }else{
-                $result = $this->admanager->getChangeLogs();
+                if(auth()->user()->inGroup('developer')){
+                    $result = $this->admanager->getChangeLogs();
+                }else{
+                    $result = false;
+                }
             }
             
             return $this->respond($result);

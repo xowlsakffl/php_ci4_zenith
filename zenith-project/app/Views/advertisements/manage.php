@@ -141,7 +141,11 @@
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
                 <button type="button" class="btn btn-outline-danger checkAdvAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button>
-                <button type="button" class="btn btn-outline-danger" id="allAdvChangeLogBtn" data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button>
+                <?php 
+                if(auth()->user()->inGroup('developer')){
+                    echo '<button type="button" class="btn btn-outline-danger" id="allAdvChangeLogBtn" data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button>';
+                }
+                ?>
             </div>
             <!-- <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
