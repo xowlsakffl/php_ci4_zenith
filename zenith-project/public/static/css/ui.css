@@ -1158,7 +1158,7 @@ body {
 
 .name_wrap {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .name_wrap .name_left_wrap {
@@ -1371,6 +1371,7 @@ input:-internal-autofill-selected {
 }
 #adv-table tbody .mediaName {
   padding-right: 10px;
+  min-height: 25px;
 }
 #adv-table tbody tr td:nth-child(2) {
   position: relative;

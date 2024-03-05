@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Libraries\slack_api\SlackChat;
 use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AutomationModel;
+use App\Services\AdvLoggerService;
 use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\googleads_api\ZenithGG;
 use App\ThirdParty\moment_api\ZenithKM;
@@ -1601,6 +1602,18 @@ class AutomationController extends BaseController
                             break;
                     }
                     if(!empty($return)){
+                        $logData = [
+                            'media' => $execution['media'],
+                            'id' => $execution['id'],
+                            'change_type' => $execution['type'] == 'status' ? 'status' : 'budget',
+                            'old_value' => '',
+                            'change_value' => $execution['exec_value'],
+                            'nickname' => '자동화',
+                        ];
+                
+                        $logger = new AdvLoggerService();
+                        $logger->insertLog($logData);
+
                         $result['log'][] = [
                             "result" => true,
                             'status' => 'success',

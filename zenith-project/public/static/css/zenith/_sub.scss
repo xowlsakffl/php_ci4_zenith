@@ -290,7 +290,7 @@
 
 .name_wrap{
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 .name_wrap .name_left_wrap{
     margin-right:10px;
@@ -407,7 +407,7 @@ input:-internal-autofill-selected {color: #7286D3;}
 
 #adv-table{
     tbody{
-        .mediaName{padding-right:10px;}
+        .mediaName{padding-right:10px;min-height: 25px;}
         tr td:nth-child(2){
             position: relative;
             .btn_box_open{position: absolute;right: 0;top: 50%;transform:translateY(-50%);

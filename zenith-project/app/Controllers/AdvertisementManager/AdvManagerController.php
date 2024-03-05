@@ -8,6 +8,7 @@ use App\Models\Advertiser\AdvFacebookManagerModel;
 use App\Models\Advertiser\AdvGoogleManagerModel;
 use App\Models\Advertiser\AdvKakaoManagerModel;
 use App\Models\Advertiser\AdvManagerModel;
+use App\Services\AdvLoggerService;
 use CodeIgniter\API\ResponseTrait;
 use App\ThirdParty\facebook_api\ZenithFB;
 use App\ThirdParty\googleads_api\ZenithGG;
@@ -693,6 +694,7 @@ class AdvManagerController extends BaseController
                 'id' => $sliceId[1],
                 'tab' => $param['tab'],
                 'status' => $param['status'],
+                'old_status' => $param['old_status'],
                 'customerId' => $param['customerId'],
             ];
 
@@ -791,6 +793,18 @@ class AdvManagerController extends BaseController
             }
 
             if(!empty($result)){
+                $logData = [
+                    'media' => $data['media'],
+                    'id' => $data['id'],
+                    'change_type' => 'status',
+                    'old_value' => $data['old_status'],
+                    'change_value' => $data['status'],
+                    'nickname' => auth()->user()->nickname,
+                ];
+        
+                $logger = new AdvLoggerService();
+                $logger->insertLog($logData);
+
                 $result['response'] = true;
                 return $this->respond($result);
             }else{
@@ -811,6 +825,7 @@ class AdvManagerController extends BaseController
                 'id' => $sliceId[1],
                 'tab' => $param['tab'],
                 'name' => $param['name'],
+                'old_name' => $param['old_name'],
                 'customerId' => $param['customerId'],
             ];
 
@@ -880,6 +895,18 @@ class AdvManagerController extends BaseController
             }
 
             if(!empty($result)){
+                $logData = [
+                    'media' => $data['media'],
+                    'id' => $data['id'],
+                    'change_type' => 'name',
+                    'old_value' => $data['old_name'],
+                    'change_value' => $data['name'],
+                    'nickname' => auth()->user()->nickname,
+                ];
+        
+                $logger = new AdvLoggerService();
+                $logger->insertLog($logData);
+
                 $result['response'] = true;
                 return $this->respond($result);
             }else{
@@ -901,6 +928,7 @@ class AdvManagerController extends BaseController
                 'customer' => $param['customer'],
                 'tab' => $param['tab'],
                 'budget' => $param['budget'],
+                'old_budget' => $param['old_budget']
             ];
 
             switch ($data['tab']) {
@@ -980,6 +1008,18 @@ class AdvManagerController extends BaseController
             }
 
             if(!empty($result) && $result['id'] == $data['id']){
+                $logData = [
+                    'media' => $data['media'],
+                    'id' => $data['id'],
+                    'change_type' => 'budget',
+                    'old_value' => $data['old_budget'],
+                    'change_value' => $data['budget'],
+                    'nickname' => auth()->user()->nickname,
+                ];
+        
+                $logger = new AdvLoggerService();
+                $logger->insertLog($logData);
+
                 $result = true;
                 return $this->respond($result);
             }else{
@@ -1003,6 +1043,7 @@ class AdvManagerController extends BaseController
                 'tab' => $param['tab'],
                 'bidamount' => $param['bidamount'],
                 'bidamount_type' => $param['bidamount_type'] ?? null,
+                'old_bidamount' => $param['old_bidamount']
             ];
 
             switch ($data['tab']) {
@@ -1071,6 +1112,18 @@ class AdvManagerController extends BaseController
             }
 
             if(!empty($result) && $result['id'] == $data['id']){
+                $logData = [
+                    'media' => $data['media'],
+                    'id' => $data['id'],
+                    'change_type' => 'bigamount',
+                    'old_value' => $data['old_bidamount'],
+                    'change_value' => $data['bidamount'],
+                    'nickname' => auth()->user()->nickname,
+                ];
+        
+                $logger = new AdvLoggerService();
+                $logger->insertLog($logData);
+
                 $result = true;
                 return $this->respond($result);
             }else{

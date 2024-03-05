@@ -1063,6 +1063,7 @@ function restoreElement(text, inputElement) {
 function handleInput(tab, id, tmp_name, inputElement) {
     let new_name = inputElement.val();
     let data = {
+        'old_name' : tmp_name,
         'name': new_name,
         'tab': tab,
         'id': id,
@@ -1303,6 +1304,7 @@ $('.dataTable').on('focus', 'select[name="status"]', function(){
     prevVal = $(this).val();
 }).on('change', 'select[name="status"]', function() {
     data = {
+        'old_status' : prevVal,
         'status' : $(this).val(),
         'tab' : $('.tab-link.active').val(),
         'id' : $(this).closest("tr").data("id"),
@@ -1586,7 +1588,8 @@ $(".dataTable").on("click", '.btn-budget button', function(){
         'id': $id,
         'customer': $customer,
         'tab': $('.tab-link.active').val(),
-        'budget': budget
+        'budget': budget,
+        'old_budget' : c_budget
     };
     $.ajax({
         type: "put",
@@ -1631,7 +1634,8 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                     'id': $id,
                     'customer': $customer,
                     'tab': $('.tab-link.active').val(),
-                    'budget': new_budget
+                    'budget': new_budget,
+                    'old_budget' : c_budget
                 };
 
                 if (c_budget.replace(",", "") === new_budget) {
@@ -1664,7 +1668,8 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                 'id': $id,
                 'customer': $customer,
                 'tab': $('.tab-link.active').val(),
-                'budget': new_budget
+                'budget': new_budget,
+                'old_budget' : c_budget
             };
 
             if (c_budget.replace(",", "") === new_budget) {
@@ -1723,6 +1728,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                     'tab': $('.tab-link.active').val(),
                     'bidamount': new_bidamount,
                     'bidamount_type': $amount_type ? $amount_type : '',
+                    'old_bidamount': c_bidamount
                 };
 
                 if (c_bidamount.replace(",", "") === new_bidamount) {
@@ -1757,6 +1763,7 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                 'tab': $('.tab-link.active').val(),
                 'bidamount': new_bidamount,
                 'bidamount_type': $amount_type ? $amount_type : '',
+                'old_bidamount': c_bidamount
             };
 
             if (c_bidamount.replace(",", "") === new_bidamount) {
