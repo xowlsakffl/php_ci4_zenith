@@ -46,5 +46,8 @@ class Tasks extends BaseConfig
 
         $schedule->command('EventDataUpdateCron')->everyMinute(60)->named('eventUpdate');
         $schedule->command('PreparingIssueMessage')->everyMinute(30)->named('preparingIssue');
+
+        //매달 말일 zenith_logs테이블 생성
+        $schedule->command('ZenithLogTable')->cron('59 23 28-31 * *')->named('zenithLogTable');
     }
 }
