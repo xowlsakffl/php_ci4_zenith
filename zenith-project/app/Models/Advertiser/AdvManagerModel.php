@@ -349,9 +349,7 @@ class AdvManagerModel extends Model
     {
         $builder = $this->zenith->table('adv_change_logs');
         $builder->select('*');
-        if(!empty($id)){
-            $builder->where('id', $id);
-        } 
+        $builder->where('id', $id);
         $builder->where('DATE(datetime) >=', date('Y-m-d'));
         $builder->where('DATE(datetime) <=', date('Y-m-d'));
 

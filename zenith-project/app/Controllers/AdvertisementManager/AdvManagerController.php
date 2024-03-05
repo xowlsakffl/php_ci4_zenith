@@ -1288,7 +1288,9 @@ class AdvManagerController extends BaseController
     public function getChangeLogs()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $id = $this->request->getGet('id') ?? null;
+            $id = $this->request->getGet('id');
+            $sliceId = explode("_", $id);
+            $id = $sliceId[1];
             $result = $this->admanager->getChangeLogs($id);
             return $this->respond($result);
         }else{
