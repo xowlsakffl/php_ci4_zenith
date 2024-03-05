@@ -352,6 +352,9 @@ class AdvManagerModel extends Model
         if(!empty($id)){
             $builder->where('id', $id);
         } 
+        $builder->where('DATE(datetime) >=', date('Y-m-d'));
+        $builder->where('DATE(datetime) <=', date('Y-m-d'));
+
         $result = $builder->get()->getResultArray();
         return $result;
     }
