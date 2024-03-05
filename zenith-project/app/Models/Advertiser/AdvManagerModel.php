@@ -345,5 +345,14 @@ class AdvManagerModel extends Model
         return $result;
     }
 
-    
+    public function getChangeLogs($id)
+    {
+        $builder = $this->zenith->table('adv_change_logs');
+        $builder->select('*');
+        if(!empty($id)){
+            $builder->where('id', $id);
+        } 
+        $result = $builder->get()->getResultArray();
+        return $result;
+    }
 }

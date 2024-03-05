@@ -103,6 +103,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         $routes->get('getmemo', 'AdvertisementManager\AdvManagerController::getMemo');
         $routes->post('addmemo', 'AdvertisementManager\AdvManagerController::addMemo');
         $routes->post('checkmemo', 'AdvertisementManager\AdvManagerController::checkMemo');
+        $routes->get('change-log', 'AdvertisementManager\AdvManagerController::getChangeLogs');
         
         $routes->group('facebook', static function($routes){
             $routes->get('report', 'AdvertisementManager\AdvFacebookManagerController::getReport');

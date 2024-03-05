@@ -1605,7 +1605,7 @@ class AutomationController extends BaseController
                         $logData = [
                             'media' => $execution['media'],
                             'id' => $execution['id'],
-                            'change_type' => $execution['type'] == 'status' ? 'status' : 'budget',
+                            'change_type' => $execution['exec_type'] == 'status' ? 'status' : 'budget',
                             'old_value' => '',
                             'change_value' => $execution['exec_value'],
                             'nickname' => '자동화',

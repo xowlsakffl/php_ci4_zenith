@@ -141,6 +141,7 @@
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#data-modal">데이터 비교</button>
                 <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#memo-check-modal"><i class="bi bi-file-text"></i> 메모확인</button>
                 <button type="button" class="btn btn-outline-danger checkAdvAutomationCreateBtn" data-bs-toggle="modal" data-bs-target="#automationModal">자동화 등록</button>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#advChangeLogModal">변경 내역</button>
             </div>
             <!-- <div class="btns-memo-style">
                 <span class="btns-title">메모 표시:</span>
@@ -345,8 +346,12 @@
             </div>
         </div>
         <!-- //데이터 비교 -->
+        <!-- 자동화 모달 -->
         <?=$this->include('templates/inc/automation_create_modal.php')?>
+        <!-- 자동화 로그 모달 -->
         <?=$this->include('templates/inc/automation_log_modal.php')?>
+        <!-- 변경내역 로그 모달 -->
+        <?=$this->include('templates/inc/change_log_modal.php')?>
     </div>
 </div>
 <?=$this->endSection();?>
@@ -1550,6 +1555,77 @@ $(".dataTable").on("click", '.memo-list input[name="is_done"]', function(){
         }
     });
 });
+
+function getChangeLogList() {
+    $.ajax({
+        type: "get",
+        url: "<?=base_url()?>advertisements/change-log",
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){  
+            setChangeLogList(data);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
+function setChangeLogList(data) {
+    let html =  '';
+    $.each(data, function(i,row) {
+        let media = '';
+        switch (row.media) {
+            case 'facebook':
+                media = '페이스북';
+                break;
+            case 'kakao':
+                media = '카카오';
+                break;
+            case 'google':
+                media = '구글';
+                break;
+            default:
+                break;
+        }
+
+        switch (row.change_type) {
+            case 'status':
+                change_type = '상태';
+                break;
+            case 'name':
+                change_type = '제목';
+                break;
+            case 'budget':
+                change_type = '예산';
+                break;
+            case 'bidamount':
+                change_type = '입찰가';
+                break;
+            default:
+                break;
+        }
+        html += '    <li class="d-flex justify-content-between align-items-start" data-id="'+row.seq+'">';
+        html += '        <div class="detail d-flex align-items-start">';
+        html += '            <p class="ms-1">['+ media +'] ['+ change_type +'] '+ (row.old_value != '' ? row.old_value + '-> ' : '') + row.change_value+'</p>';
+        html += '        </div>';
+        html += '        <div class="d-flex">';
+        html += '            <p style="width:50px;margin-right:15px">'+ row.nickname +'</p>';
+        html += '            <p style="min-width:150px">'+ row.datetime +'</p>';
+        html += '        </div>';
+        html += '    </li>';
+    });
+    
+    $('ul.change-list').prepend(html);
+}
+
+$('#advChangeLogModal').on('show.bs.modal', function(e) { 
+    getChangeLogList();
+})
+.on('hidden.bs.modal', function(e) { 
+    $('ul.change-list').empty();
+});
+
 
 $(".dataTable").on("click", '.btn-budget button', function(){
     $this = $(this);

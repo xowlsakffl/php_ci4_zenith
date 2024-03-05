@@ -1767,16 +1767,16 @@ div.dataTables_scrollBody > table {
   background: #2d2e34;
 }
 
-.memo-list {
+.memo-list, .change-list {
   font-size: 13px;
   max-height: 60vh;
   overflow-y: auto;
 }
-.memo-list li {
+.memo-list li, .change-list li {
   position: relative;
   padding: 10px 0;
 }
-.memo-list li::before {
+.memo-list li::before, .change-list li::before {
   content: "";
   position: absolute;
   top: 17px;
@@ -1786,10 +1786,10 @@ div.dataTables_scrollBody > table {
   border-radius: 100%;
   background-color: #ce1922;
 }
-.memo-list li:not(:last-child) {
+.memo-list li:not(:last-child), .change-list li:not(:last-child) {
   border-bottom: 2px dashed #dfdfdf;
 }
-.memo-list li .info {
+.memo-list li .info, .change-list li .info {
   min-width: 200px;
   text-align: right;
 }

@@ -1252,7 +1252,7 @@ class AdvManagerController extends BaseController
 
     public function getMemo()
     {
-        if(/* $this->request->isAJAX() &&  */strtolower($this->request->getMethod()) === 'get'){
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $result = $this->admanager->getMemo();
             return $this->respond($result);
         }else{
@@ -1279,6 +1279,17 @@ class AdvManagerController extends BaseController
             $param = $this->request->getPost();
             $param['done_nickname'] = auth()->user()->nickname;
             $result = $this->admanager->checkMemo($param);
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
+
+    public function getChangeLogs()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $id = $this->request->getGet('id') ?? null;
+            $result = $this->admanager->getChangeLogs($id);
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");

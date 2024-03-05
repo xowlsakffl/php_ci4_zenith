@@ -55,7 +55,7 @@
         .btn-regi{width:90px; margin:0 0 0 5px; color:#fff; text-align:center; border-radius:5px; background:$color-dark;}
     }
 }
-.memo-list{font-size:13px; max-height:60vh; overflow-y:auto;
+.memo-list, .change-list{font-size:13px; max-height:60vh; overflow-y:auto;
     li{position:relative; padding:10px 0;
         &::before{content:""; position:absolute; top:17px; left:-6px; width:2px; height:2px; border-radius:100%; background-color:$color-primary;}
         &:not(:last-child){border-bottom:2px dashed #dfdfdf;}
