@@ -794,12 +794,12 @@ class AdvManagerController extends BaseController
 
             if(!empty($result)){
                 $logData = [
-                    'media' => $data['media'],
-                    'id' => $data['id'],
+                    'media' => $data['media'] ?? '',
+                    'id' => $data['id'] ?? '',
                     'change_type' => 'status',
-                    'old_value' => $data['old_status'],
-                    'change_value' => $data['status'],
-                    'nickname' => auth()->user()->nickname,
+                    'old_value' => $data['old_status'] ?? '',
+                    'change_value' => $data['status'] ?? '',
+                    'nickname' => auth()->user()->nickname ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -896,12 +896,12 @@ class AdvManagerController extends BaseController
 
             if(!empty($result)){
                 $logData = [
-                    'media' => $data['media'],
-                    'id' => $data['id'],
+                    'media' => $data['media'] ?? '',
+                    'id' => $data['id'] ?? '',
                     'change_type' => 'name',
-                    'old_value' => $data['old_name'],
-                    'change_value' => $data['name'],
-                    'nickname' => auth()->user()->nickname,
+                    'old_value' => $data['old_name'] ?? '',
+                    'change_value' => $data['name'] ?? '',
+                    'nickname' => auth()->user()->nickname ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -1009,12 +1009,12 @@ class AdvManagerController extends BaseController
 
             if(!empty($result) && $result['id'] == $data['id']){
                 $logData = [
-                    'media' => $data['media'],
-                    'id' => $data['id'],
+                    'media' => $data['media'] ?? '',
+                    'id' => $data['id'] ?? '',
                     'change_type' => 'budget',
-                    'old_value' => $data['old_budget'],
-                    'change_value' => $data['budget'],
-                    'nickname' => auth()->user()->nickname,
+                    'old_value' => $data['old_budget'] ?? '',
+                    'change_value' => $data['budget'] ?? '',
+                    'nickname' => auth()->user()->nickname ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -1113,12 +1113,12 @@ class AdvManagerController extends BaseController
 
             if(!empty($result) && $result['id'] == $data['id']){
                 $logData = [
-                    'media' => $data['media'],
-                    'id' => $data['id'],
+                    'media' => $data['media'] ?? '',
+                    'id' => $data['id'] ?? '',
                     'change_type' => 'bigamount',
-                    'old_value' => $data['old_bidamount'],
-                    'change_value' => $data['bidamount'],
-                    'nickname' => auth()->user()->nickname,
+                    'old_value' => $data['old_bidamount'] ?? '',
+                    'change_value' => $data['bidamount'] ?? '',
+                    'nickname' => auth()->user()->nickname ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
