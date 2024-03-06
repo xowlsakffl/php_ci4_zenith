@@ -65,16 +65,19 @@ class AutomationController extends BaseController
                             }else{
                                 $d['expected_time'] = $expectedTime->toDateTimeString();
                             }
+                            break;
                         case 'day':
-                            $type_value = (int) $d['aas_type_value'];
+                            $type_value = (int) $d['aas_type_value'];                           
                             $expectedTime = $calTime->addDays($type_value);
                             [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
                             $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
+                            
                             if($expectedTime->isBefore($currentDate)){
                                 $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
                             }else{
                                 $d['expected_time'] = $expectedTime->toDateTimeString();
                             }
+                            break;
                         case 'week':
                             $type_value = (int) $d['aas_type_value'];
                             $exec_week = (int) $d['aas_exec_week'];
@@ -90,6 +93,7 @@ class AutomationController extends BaseController
                             }else{
                                 $d['expected_time'] = $expectedTime->toDateTimeString();
                             }
+                            break;
                         case 'month':
                             $type_value = (int) $d['aas_type_value'];
                             $month_type = $d['aas_month_type'];
@@ -144,6 +148,7 @@ class AutomationController extends BaseController
                                     $d['expected_time'] = $expectedTime->toDateTimeString();
                                 }
                             }
+                            break;
                         default:
                             break;
                     }
@@ -769,7 +774,7 @@ class AutomationController extends BaseController
             $result = [];
             //if($automation['aa_seq'] != '112'){continue;}
             if(!empty($automation)){
-                $schedulePassData = $this->checkAutomationSchedule($automation);
+                $schedulePassData = $this->checkAutomationSchedule($automation);                
                 $result['schedule'] = $schedulePassData;
                 
                 if(!empty($schedulePassData['result'])){
