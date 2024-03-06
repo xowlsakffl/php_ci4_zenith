@@ -37,7 +37,7 @@ class LogFilter implements FilterInterface
             'content_type' => $request->getHeaderLine('Content-Type'),
             'remote_addr' => $request->getServer('SERVER_ADDR'),
             'server_addr' => $request->getIPAddress(),
-            'nickname' => auth()->user()->nickname ?? ''
+            'nickname' => auth()->user()->username ?? ''
         ];
 
         if ($request->isCLI())

@@ -1743,7 +1743,7 @@ class AutomationModel extends Model
 
     public function createAutomation($data)
     {
-        $data['detail']['nickname'] = auth()->user()->nickname;
+        $data['detail']['nickname'] = auth()->user()->nickname ?? '';
         $data['detail']['status'] = 1;
         $data['detail']['mod_datetime'] = date('Y-m-d H:i:s');
 
@@ -1830,7 +1830,7 @@ class AutomationModel extends Model
         $aaData = [
             'subject' => $aaGetResult['aa_subject']." - 복제",
             'description' => $aaGetResult['aa_description'] ?? null,
-            'nickname' => auth()->user()->nickname,
+            'nickname' => auth()->user()->nickname ?? '',
             'status' => $aaGetResult['aa_status'],
             'slack_webhook' =>$aaGetResult['aa_slack_webhook'],
             'slack_msg' =>$aaGetResult['aa_slack_msg'],

@@ -172,7 +172,7 @@ class CompanyModel extends Model
         $builder_1 = $this->zenith->table('companies');
         $builder_1->set('type', $data['type']);
         $builder_1->set('name', $data['name']);
-        $builder_1->set('nickname', auth()->user()->nickname);
+        $builder_1->set('nickname', auth()->user()->nickname ?? '');
         $builder_1->set('status', 1);
         $result_1 = $builder_1->insert();
         if(!empty($agency)){

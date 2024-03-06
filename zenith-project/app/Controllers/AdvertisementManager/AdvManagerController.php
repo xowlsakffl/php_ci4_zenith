@@ -799,7 +799,7 @@ class AdvManagerController extends BaseController
                     'change_type' => 'status',
                     'old_value' => $data['old_status'] ?? '',
                     'change_value' => $data['status'] ?? '',
-                    'nickname' => auth()->user()->nickname ?? '',
+                    'nickname' => auth()->user()->username ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -901,7 +901,7 @@ class AdvManagerController extends BaseController
                     'change_type' => 'name',
                     'old_value' => $data['old_name'] ?? '',
                     'change_value' => $data['name'] ?? '',
-                    'nickname' => auth()->user()->nickname ?? '',
+                    'nickname' => auth()->user()->username ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -1014,7 +1014,7 @@ class AdvManagerController extends BaseController
                     'change_type' => 'budget',
                     'old_value' => $data['old_budget'] ?? '',
                     'change_value' => $data['budget'] ?? '',
-                    'nickname' => auth()->user()->nickname ?? '',
+                    'nickname' => auth()->user()->username ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -1118,7 +1118,7 @@ class AdvManagerController extends BaseController
                     'change_type' => 'bigamount',
                     'old_value' => $data['old_bidamount'] ?? '',
                     'change_value' => $data['bidamount'] ?? '',
-                    'nickname' => auth()->user()->nickname ?? '',
+                    'nickname' => auth()->user()->username ?? '',
                 ];
         
                 $logger = new AdvLoggerService();
@@ -1264,7 +1264,7 @@ class AdvManagerController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $param = $this->request->getPost();
-            $param['nickname'] = auth()->user()->nickname;
+            $param['nickname'] = auth()->user()->username;
             $param['is_done'] = 0;
             $result = $this->admanager->addMemo($param);
             return $this->respond($result);
@@ -1277,7 +1277,7 @@ class AdvManagerController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $param = $this->request->getPost();
-            $param['done_nickname'] = auth()->user()->nickname;
+            $param['done_nickname'] = auth()->user()->username;
             $result = $this->admanager->checkMemo($param);
             return $this->respond($result);
         }else{

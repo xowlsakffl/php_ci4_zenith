@@ -271,7 +271,7 @@ class EventController extends BaseController
             'check_name' => $arg['check_name'],
             'check_cookie' => (integer)$arg['check_cookie'] ?? 0,
             'duplicate_precheck' => (integer)$arg['duplicate_precheck'] ?? 0,
-            'username' => auth()->user()->nickname,
+            'username' => auth()->user()->username ?? '',
         ];
 
         return $data;
