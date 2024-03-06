@@ -73,7 +73,7 @@ class AutomationController extends BaseController
                             $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
                             
                             if($expectedTime->isBefore($currentDate)){
-                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
+                                $d['expected_time'] = $expectedTime->addDays($type_value)->toDateTimeString();
                             }else{
                                 $d['expected_time'] = $expectedTime->toDateTimeString();
                             }
