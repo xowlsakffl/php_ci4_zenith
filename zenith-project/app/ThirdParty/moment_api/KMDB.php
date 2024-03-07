@@ -672,7 +672,7 @@ class KMDB
     public function getBizformUpdateList()
     {
         $sql = "SELECT ei.creative_id, ei.bizform_apikey, mc.id, mc.bizFormId, mcp.name, ma.name, mc.name
-        FROM chainsaw_old.event_information AS ei
+        FROM `zenith`.event_information AS ei 
             LEFT JOIN `z_moment`.mm_creative AS mc ON ei.creative_id = mc.creativeId
             LEFT JOIN `z_moment`.mm_adgroup AS ma ON ma.id = mc.adgroup_id
             LEFT JOIN `z_moment`.mm_campaign AS mcp ON mcp.id = ma.campaign_id 

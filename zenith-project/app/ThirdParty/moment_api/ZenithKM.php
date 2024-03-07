@@ -125,6 +125,7 @@ class ZenithKM
         CLI::write("[".date("Y-m-d H:i:s")."]"."{$total}개의 광고계정 수신을 시작합니다.", "light_red");
         foreach ($adAccountList['content'] as $row) {
             CLI::showProgress($step++, $total);
+            if($row['config'] == 'DEL') continue; 
             $data[$i] = $this->getAdAccount($row['id']);
             $data[$i]['memberType'] = $row['memberType'];
             $i++;

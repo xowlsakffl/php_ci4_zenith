@@ -354,6 +354,7 @@ class AdvManagerModel extends Model
         } 
         $builder->where('DATE(datetime) >=', date('Y-m-d'));
         $builder->where('DATE(datetime) <=', date('Y-m-d'));
+        $builder->orderBy('datetime', 'DESC');
 
         $result = $builder->get()->getResultArray();
         return $result;
