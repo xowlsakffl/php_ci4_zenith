@@ -20,6 +20,7 @@
     <script src="/static/node_modules/daterangepicker/daterangepicker.js"></script>
     <script src="/static/js/ui.js"></script>
     <script src="/static/js/index.js"></script>
+    <script src="/static/js/clipboard.min.js"></script>
     <?=$this->renderSection('header')?>
     <!--Developer An Minseong(LUPUS) -->
 </head>

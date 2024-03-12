@@ -46,7 +46,35 @@ $(function(){
                 $('.btn-top .list').fadeOut();
             }
         },1000);
-    })
+
+        var clipboard = new ClipboardJS('.copy', {
+            text: function(trigger) {
+                return $(trigger).data('clipboard-text');
+            }
+        });
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            showTooltip(e.trigger, '복사완료!');
+        });
+        clipboard.on('error', function(e) {
+            showTooltip(e.trigger, fallbackMessage(e.action));
+        });
+        $(".modal").on("shown.bs.modal", function() {
+            var modalClipboard = new ClipboardJS('.copy', {
+                container: document.querySelector('.modal'),
+                text: function(trigger) {
+                    return $(trigger).data('clipboard-text');
+                }
+            });
+            modalClipboard.on('success', function(e) {
+                e.clearSelection();
+                showTooltip(e.trigger, '복사완료!');
+            });
+            modalClipboard.on('error', function(e) {
+                showTooltip(e.trigger, fallbackMessage(e.action));
+            });
+        });
+    });
 
     // $('.nav-wrap').on('mouseenter',function(){  
     //     if($('.left-side').hasClass('active') && $('.left-side').hasClass('hide')){

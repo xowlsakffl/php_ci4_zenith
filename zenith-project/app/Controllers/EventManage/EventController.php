@@ -63,7 +63,8 @@ class EventController extends BaseController
                     $data['impressions'] = 0;
                 }
 
-				$data['event_url'] = getenv('app.eventURL').$data['seq'];
+                $data['hash_no'] = $this->makeHash($data['seq']);
+                $data['event_url'] = env('app.eventURL').$data['hash_no'];
                 $data['db_price'] = number_format($data['db_price']);
             }
 
@@ -223,7 +224,8 @@ class EventController extends BaseController
             $seq = $this->request->getGet('seq');
             $result = $this->event->getEvent($seq);
             $result['keywords'] = explode(',', $result['keywords']);
-            $result['event_url'] = getenv('app.eventURL').$result['seq'];
+            $result['hash_no'] = $this->makeHash($result['seq']);
+            $result['event_url'] = env('app.eventURL').$result['hash_no'];
             return $this->respond($result);
         }else{
             return $this->fail("잘못된 요청");
@@ -271,9 +273,22 @@ class EventController extends BaseController
             'check_name' => $arg['check_name'],
             'check_cookie' => (integer)$arg['check_cookie'] ?? 0,
             'duplicate_precheck' => (integer)$arg['duplicate_precheck'] ?? 0,
+            'no_hash' => $arg['no_hash'] ?? 0,
             'username' => auth()->user()->username ?? '',
         ];
 
         return $data;
     }
+
+    private function makeHash($uid) {
+		$ab = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$s_id = str_split($uid);
+		$make_hash = [0,0];
+		for($i=0; $i<count($s_id); $i++) $make_hash[0] += $s_id[$i]*($i+$s_id[count($s_id)-1]);
+		for($i=0; $i<count($s_id); $i++) $make_hash[1] += $s_id[$i]*($i+$s_id[0]);
+		$make_hash = array_map(function($v) use($ab){$chksum = ($v % 26); return $ab[$chksum];}, $make_hash);
+		$hash = implode("", $make_hash);
+		$result = $hash.$uid;
+		return $result;
+	}
 }

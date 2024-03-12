@@ -208,7 +208,8 @@
                                     <th scope="row" class="text-end">랜딩주소</th>
                                     <td>
                                         <a href="#" target="_blank" class="landing_info_link"></a>
-                                        <button type="button" class="btn btn-secondary btn-sm">복사하기</button>
+                                        <button type="button" class="btn btn-secondary btn-sm copy">복사하기</button>
+                                        <p class="mt-2 text-secondary"><label><input type="checkbox" name="no_hash" value="1"> 일반주소 같이 사용</label></p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -634,7 +635,7 @@ function getList(){
         "columns": [
             { 
                 "data": "seq",
-                "width": "6%",
+                "width": "7.5%",
                 "render": function(data, type, row) {
                     config = '';
                     if(row.config == 'disabled'){
@@ -644,7 +645,7 @@ function getList(){
                     if(row.config == 'enabled'){
                         config = '<span class="ads_status '+row.config+'" title="광고 운영중"></span>';
                     }
-                    return config+'<button data-text="'+row.event_url+'" class="event_seq">'+data+'</button>';
+                    return config+'<button data-text="'+row.event_url+'" class="event_seq copy" data-clipboard-target=".modal" data-clipboard-text="'+row.event_url+'">'+row.hash_no+'</button>';
                 }
             },
             { 
@@ -656,7 +657,7 @@ function getList(){
                 }
             },
             { "data": "media_name", "width": "8%"},
-            { "data": "title", "width": "18%"},
+            { "data": "title"},
             { "data": "description","width": "16%"},
             { "data": "interlock", "width": "4%"},
             { 
@@ -947,6 +948,8 @@ function setEvent(data){
     $('input[name="media"]').val(data.media);
     $('.landing_info_num').text(data.seq);
     $('.landing_info_link').attr('href', data.event_url).text(data.event_url);
+    $('.landing_info_link').next('button').attr('data-clipboard-text', data.event_url);
+    $('input[name="no_hash"][value="'+data.no_hash+'"]').prop('checked', true);
     $('input[name="adv_name"]').val(data.advertiser_name).attr('disabled', true);
     $('input[name="media_name"]').val(data.media_name);
     $('input[name="description"]').val(data.description);
@@ -1162,18 +1165,6 @@ $('#deleteActionBtn').on('click', function(e) {
     }
 });
 
-$('body').on('click', '.event_seq', function() {
-    var textToCopy = $(this).data('text');
-    navigator.clipboard.writeText(textToCopy)
-        .then(function() {
-            alert("복사되었습니다. ");
-        })
-        .catch(function(err) {
-            console.error("복사 실패: ", err);
-        });
-});
-
-
 $('#landingView').on('show.bs.modal', function(e) {
     var $btn = $(e.relatedTarget);
     var link = $btn.data('link');
@@ -1228,7 +1219,6 @@ $('body').on('click', '#sumDB', function() {
     window.localStorage.setItem('DataTables_deviceTable_/integrate', updatedStorageValue);
     window.location.href = '/integrate';
 });
-
 </script>
 <?=$this->endSection();?>
 
