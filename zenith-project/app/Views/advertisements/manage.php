@@ -154,7 +154,7 @@
             </div> -->
             <div class="tab-pane active">
                 <div class="table-responsive text-center">
-                    <table class="dataTable table table-striped table-hover table-default" id="adv-table">
+                    <table class="dataTable table table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">매체</th>
@@ -760,6 +760,10 @@ function getList(data = []){
         "createdRow": function(row, data, dataIndex) {
             $(row).attr("data-id", data.media+"_"+data.id);
             $(row).attr("data-customerId", data.customerId ? data.customerId : '');
+
+            if(data.class != ''){
+                $(row).addClass(data.class)
+            }
         },
         "language": {
             "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신

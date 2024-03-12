@@ -1552,6 +1552,9 @@ input:-internal-autofill-selected {
     margin-left: 40px;
   }
 }
+#adv-table tbody tr td {
+  background: none !important;
+}
 #adv-table tbody .mediaName {
   padding-right: 10px;
   min-height: 25px;
@@ -1591,6 +1594,27 @@ input:-internal-autofill-selected {
 }
 #adv-table tbody tr td:nth-child(2) .btn_box li:last-child {
   border-bottom: none;
+}
+#adv-table tbody tr.off {
+  background-color: #f5f5f5;
+}
+#adv-table tbody tr.disapproval td:nth-child(2) {
+  background-color: #f87e7e !important;
+}
+#adv-table tbody tr.disapproval td:nth-child(2)::after {
+  content: "비승인";
+  display: block;
+  font-size: 12px;
+  text-align: right;
+}
+#adv-table tbody tr.approved_limited td:nth-child(2) {
+  background-color: #f36cd6 !important;
+}
+#adv-table tbody tr.approved_limited td:nth-child(2)::after {
+  content: "제한적 승인";
+  display: block;
+  font-size: 12px;
+  text-align: right;
 }
 #adv-table tbody tr td:nth-child(3) {
   position: relative;

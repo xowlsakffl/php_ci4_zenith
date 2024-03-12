@@ -414,8 +414,29 @@ class AdvManagerController extends BaseController
 			$ads = $this->setData($ads);
             $result = array_merge($result, $ads); 
 
+            foreach ($result as &$row) {
+                $row['class'] = [];
+                if(!empty($row['status'])){
+                    if ($row['status'] != 'ON') {
+                        $row['class'][] = 'off';
+                    }
+                }
+
+                if(!empty($row['approval_status'])){
+                    $policyTopic = [];
+                    if(!empty($row['policyTopic'])){
+                        $policyTopic = explode(',', $row['policyTopic']);
+                    }
+                    if ($row['approval_status'] == 'DISAPPROVED' || $row['approval_status'] == 'REJECTED' || $row['approval_status'] == 'AREA_OF_INTEREST_ONLY' || ($row['approval_status'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic))) {
+                        $row['class'][] = 'disapproval';
+                    }else if($row['approval_status'] == 'APPROVED_LIMITED' || ($row['approval_status'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic))){
+                        $row['class'][] = 'approved_limited';
+                    }
+                }
+
+                $row['class'] = implode(" ", $row['class']);
+            }
             $total = $this->getTotal($result);
-            
             $result = [
                 'total' => $total,
                 'data' => $result,

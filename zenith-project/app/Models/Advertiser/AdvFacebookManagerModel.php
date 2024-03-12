@@ -287,6 +287,7 @@ class AdvFacebookManagerModel extends Model
 		B.ad_name AS name, 
 		B.code AS code,
 		B.status AS status, 
+		B.effective_status AS approval_status,
 		C.thumbnail AS thumbnail,
 		C.link AS landingUrl,
 		SUM(A.impressions) AS impressions, 
@@ -315,6 +316,8 @@ class AdvFacebookManagerModel extends Model
 			sub.name AS name, 
 			sub.code AS code,
 			sub.status AS status,
+			sub.approval_status AS approval_status,
+			"" AS policyTopic,
 			sub.thumbnail AS thumbnail,
 			"" AS assets,
 			sub.landingUrl AS landingUrl,
@@ -333,7 +336,7 @@ class AdvFacebookManagerModel extends Model
         $builder->join('z_facebook.fb_ad_account E', 'D.account_id = E.ad_account_id');
 		$builder->join('zenith.company_adaccounts F', 'E.ad_account_id = F.ad_account_id AND F.media = "facebook"');
 		$builder->join('zenith.companies G', 'F.company_id = G.id');
-        
+
         if(!empty($data['business'])){
 			$builder->whereIn('E.business_id', explode("|",$data['business']));
         }
