@@ -1552,9 +1552,6 @@ input:-internal-autofill-selected {
     margin-left: 40px;
   }
 }
-#adv-table tbody tr td {
-  background: none !important;
-}
 #adv-table tbody .mediaName {
   padding-right: 10px;
   min-height: 25px;
