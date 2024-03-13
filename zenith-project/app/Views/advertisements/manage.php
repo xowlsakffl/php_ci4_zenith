@@ -1771,8 +1771,13 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
             };
 
             if (c_budget.replace(",", "") === new_budget) {
+                if(media == 'kakao' && budgetTxt == '미설정'){
+                    c_budget = '미설정';
+                }else{
+                    c_budget = '\u20A9'+c_budget;
+                }
                 $('.budget p').attr("data-editable", "true");
-                restoreElement('\u20A9'+c_budget, $input);
+                restoreElement(c_budget, $input);
             } else {
                 $.ajax({
                     type: "put",

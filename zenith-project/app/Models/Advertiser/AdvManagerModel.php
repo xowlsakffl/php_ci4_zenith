@@ -144,8 +144,7 @@ class AdvManagerModel extends Model
         $unionBuilder = null;
         foreach ($builders as $builder) {
             if ($unionBuilder) {
-                $unionBuilder->union($builder);
-                
+                $unionBuilder->union($builder);          
             } else {
                 $unionBuilder = $builder;
             }
