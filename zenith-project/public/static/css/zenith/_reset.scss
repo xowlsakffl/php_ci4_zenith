@@ -5,6 +5,12 @@
     font-style:normal;
 }
 @font-face {
+    font-family: 'D2Coding';
+    src: url('/fonts/D2Coding.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
     font-family:'bootstrap-icons';
     src:url('/fonts/bootstrap-icons.woff2') format('woff2');
     font-weight:normal;
@@ -31,6 +37,7 @@ input::-ms-clear, input::-ms-reveal{display:none;}
 input{outline: none;}
 textarea{box-sizing:border-box; padding: 20px; color: #222; border:1px solid #ddd;}
 textarea:focus{border: 1px solid #222; outline: none;}
+textarea[name*="script"]{font-family:"D2Coding";}
 select{appearance:none;}
 select:focus{outline:none;}
 select::-ms-expand{display:none;}
