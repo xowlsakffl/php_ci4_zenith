@@ -3267,7 +3267,7 @@ div.dataTables_scrollBody > table {
   text-align: center;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr.abnormal td {
-  background-color: #f5ff6c;
+  background-color: #fffad1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
   padding: 0px;

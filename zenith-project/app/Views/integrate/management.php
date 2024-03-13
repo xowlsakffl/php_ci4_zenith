@@ -94,7 +94,7 @@
                 <button type="button" class="btns-memo" value="modal" title="새창으로 표시"><i class="bi bi-window-stack"></i></button>
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div>
-            <table class="dataTable table table-hover table-default" id="deviceTable">
+            <table class="dataTable table table-default" id="deviceTable">
                 <thead class="table-dark">
                     <tr>
                         <th class="first">#</th>
