@@ -226,25 +226,25 @@ class KMDB
             'campaign_id' => $row['campaign_id'],
             'id' => $row['id'],
             'name' => $row['name'],
-            'type' => $row['type'],
+            'type' => $row['type'] ?? null,
             'config' => $row['config'],
             'allAvailableDeviceType' => $row['allAvailableDeviceType'],
             'allAvailablePlacement' => $row['allAvailablePlacement'],
             'pricingType' => $row['pricingType'],
-            'pacing' => $row['pacing'],
+            'pacing' => $row['pacing'] ?? null,
             'adult' => $row['adult'],
             'bidStrategy' => $row['bidStrategy'],
-            'totalBudget' => $row['totalBudget'],
-            'dailyBudgetAmount' => $row['dailyBudgetAmount'],
+            'totalBudget' => $row['totalBudget'] ?? null,
+            'dailyBudgetAmount' => $row['dailyBudgetAmount'] ?? null,
             'bidAmount' => $row['bidAmount'],
-            'useMaxAutoBidAmount' => $row['useMaxAutoBidAmount'],
-            'autoMaxBidAmount' => $row['autoMaxBidAmount'],
+            'useMaxAutoBidAmount' => $row['useMaxAutoBidAmount'] ?? null,
+            'autoMaxBidAmount' => $row['autoMaxBidAmount'] ?? null,
             'isDailyBudgetAmountOver' => $row['isDailyBudgetAmountOver'],
             'creativeOptimization' => $row['creativeOptimization'],
             'isValidPeriod' => $row['isValidPeriod'],
             'deviceTypes' => implode(',', $row['deviceTypes']??[]),
             'placements' => implode(',', $row['placements']??[]),
-            'statusDescription' => $row['statusDescription']
+            'statusDescription' => $row['statusDescription'] ?? null
         ];
         $builder = $this->db->table('mm_adgroup');
         $builder->setData($data);

@@ -406,7 +406,8 @@ class ZenithKM
         foreach ($campaigns->getResultArray() as $campaign) {
             CLI::showProgress($step++, $total);
             //echo "{$campaign['id']}<br>";
-            $adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
+            $adGroupList = $this->getAdGroups('1199922', '621384');
+            //$adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
             if (isset($adGroupList['content']) && count($adGroupList['content'])) {
                 $i = 0;
                 // $groupStep = 1;
@@ -427,20 +428,22 @@ class ZenithKM
                             continue;
                             //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                         }
-                        if(!isset($row['totalBudget']))
+                        
+                        /* if(!isset($adgroup['totalBudget']))
                             $data[$campaign['id']][$i]['totalBudget'] = null;
-                        if(!isset($row['useMaxAutoBidAmount']))
+                        if(!isset($adgroup['useMaxAutoBidAmount']))
                             $data[$campaign['id']][$i]['useMaxAutoBidAmount'] = null;
-                        if(!isset($row['autoMaxBidAmount']))
+                        if(!isset($adgroup['autoMaxBidAmount']))
                             $data[$campaign['id']][$i]['autoMaxBidAmount'] = null;
-                        if(!isset($row['pacing']))
-                            $data[$campaign['id']][$i]['pacing'] = null;
-                        if(!isset($row['dailyBudgetAmount']))
+                        if(!isset($adgroup['pacing']))
+                            $data[$campaign['id']][$i]['pacing'] = null;                  
+                        if(!isset($adgroup['dailyBudgetAmount']))
                             $data[$campaign['id']][$i]['dailyBudgetAmount'] = null;
-                        if(!isset($row['statusDescription']))
+                        if(!isset($adgroup['statusDescription']))
                             $data[$campaign['id']][$i]['statusDescription'] = null;
-                        if(!isset($row['type']))
-                            $data[$campaign['id']][$i]['type'] = null;
+                        if(!isset($adgroup['type']))
+                            $data[$campaign['id']][$i]['type'] = null; */
+
                         $i++;
                     } else if ($row['config'] == 'DEL') {
                         $delete = ['id' => $row['id'], 'config' => 'DEL'];
@@ -450,6 +453,7 @@ class ZenithKM
                         continue;
                         //echo "{$campaign['ad_account_id']} - 광고그룹({$row['id']}) : 삭제" . PHP_EOL;
                     }
+                    
                     $this->db->updateAdGroups($data);
                 }
                 $result = array_merge($result, $data);
