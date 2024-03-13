@@ -942,7 +942,7 @@ function setMediaAccount(data) {
         } else {
             html += `
             <div class="col">
-            <div class="inner ${v.tag_inactive ? tag_inactive : ''} ${v.approved_limited ? v.approved_limited : ''} ${v.disapproval ? v.disapproval : ''}">
+            <div class="inner ${v.tag_inactive ? v.tag_inactive : ''} ${v.approved_limited ? v.approved_limited : ''} ${v.disapproval ? v.disapproval : ''}">
                 <button type="button" value="${media_account_id}" id="media_account_btn" class="filter_media_btn">
                 <div class="media_account_txt d-flex align-items-center">
                     <span class="media_account_icon ${v.media}"></span>

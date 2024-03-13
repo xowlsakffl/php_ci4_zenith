@@ -94,7 +94,7 @@
                 <button type="button" class="btns-memo" value="modal" title="새창으로 표시"><i class="bi bi-window-stack"></i></button>
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div>
-            <table class="dataTable table table-striped table-hover table-default" id="deviceTable">
+            <table class="dataTable table table-hover table-default" id="deviceTable">
                 <thead class="table-dark">
                     <tr>
                         <th class="first">#</th>
@@ -385,6 +385,10 @@ function getList(data = []) { //리스트 세팅
             var seqNumber = totalRecords - (currentPage * pageSize) - index; // 계산된 순번 (내림차순)
             
             $('td:eq(0)', row).html(seqNumber);
+
+            if(data.status != "1"){
+                $(row).addClass('abnormal');
+            }
         },
         "infoCallback": function(settings, start, end, max, total, pre){ //페이지현황 세팅
             return "<i class='bi bi-check-square'></i>현재" + "<span class='now'>" +start +" - " + end + "</span>" + " / " + "<span class='total'>" + total + "</span>" + "건";

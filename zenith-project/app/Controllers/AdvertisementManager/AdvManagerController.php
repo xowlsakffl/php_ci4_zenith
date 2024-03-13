@@ -74,6 +74,27 @@ class AdvManagerController extends BaseController
 				}
 
 				foreach ($result['data'] as &$value) {
+                    $value['class'] = [];
+                    if(!empty($value['status']) || !empty($value['approval_status'])){
+                        if (isset($value['status']) && $value['status'] != 'ON') {
+                            $value['class'][] = 'off';
+                        }
+
+                        $policyTopic = [];
+                        if(!empty($value['policyTopic'])){
+                            $policyTopic = explode(',', $value['policyTopic']);
+                        }
+                        if (isset($value['approval_status']) && ($value['approval_status'] == 'DISAPPROVED' || $value['approval_status'] == 'REJECTED' || $value['approval_status'] == 'AREA_OF_INTEREST_ONLY' || ($value['approval_status'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic)))) {
+                            $value['class'][] = 'disapproval';
+                        } else if (isset($value['approval_status']) && ($value['approval_status'] == 'APPROVED_LIMITED' || ($value['approval_status'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic)))) {
+                            $value['class'][] = 'approved_limited';
+                        }
+                    
+                        if (isset($value['class'])) {
+                            $value['class'] = implode(" ", $value['class']);
+                        }
+                    }
+
                     $value['campaign_bidamount'] = number_format($value['campaign_bidamount'] ?? 0);
                     $value['bidamount'] = number_format($value['bidamount']);
 					$value['budget'] = number_format($value['budget']);
@@ -414,28 +435,6 @@ class AdvManagerController extends BaseController
 			$ads = $this->setData($ads);
             $result = array_merge($result, $ads); 
 
-            foreach ($result as &$row) {
-                $row['class'] = [];
-                if(!empty($row['status'])){
-                    if ($row['status'] != 'ON') {
-                        $row['class'][] = 'off';
-                    }
-                }
-
-                if(!empty($row['approval_status'])){
-                    $policyTopic = [];
-                    if(!empty($row['policyTopic'])){
-                        $policyTopic = explode(',', $row['policyTopic']);
-                    }
-                    if ($row['approval_status'] == 'DISAPPROVED' || $row['approval_status'] == 'REJECTED' || $row['approval_status'] == 'AREA_OF_INTEREST_ONLY' || ($row['approval_status'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic))) {
-                        $row['class'][] = 'disapproval';
-                    }else if($row['approval_status'] == 'APPROVED_LIMITED' || ($row['approval_status'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic))){
-                        $row['class'][] = 'approved_limited';
-                    }
-                }
-
-                $row['class'] = implode(" ", $row['class']);
-            }
             $total = $this->getTotal($result);
             $result = [
                 'total' => $total,
