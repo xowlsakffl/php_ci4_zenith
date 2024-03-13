@@ -641,7 +641,7 @@ function getList(data = []){
                 "data": "budget", //예산
                 "width": "80px",
                 "render": function (data, type, row) {
-                    budget = '<div class="budget">'+(row.budget == 0 ? '-' : '<p data-editable="true" class="modify_tag">\u20A9'+row.budget+'</p>')+'</div>';
+                    budget = '<div class="budget">'+(row.budget == 0 ? (row.media == 'kakao' && (tableParam.searchData.type == 'campaigns' || tableParam.searchData.type == 'adsets') ? '<p data-editable="true" class="modify_tag">미설정</p>' : '-') : '<p data-editable="true" class="modify_tag">\u20A9'+row.budget+'</p>')+'</div>';
                     if(row.budget != 0)
                         budget += '<div class="btn-budget"><button class="btn-budget-up"><span class="material-symbols-outlined">arrow_circle_up</span></button><button class="btn-budget-down"><span class="material-symbols-outlined">arrow_circle_down</span></button></div>';
                     return budget;
@@ -1700,15 +1700,17 @@ $(".dataTable").on("click", '.btn-budget button', function(){
 });
 
 $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){  
-    $this = $(this);
-    $id = $this.closest("tr").data('id');
-    $customer = $this.closest("tr").data('customerid');
-    budgetTxt = $this.text();
-    c_budget = budgetTxt.replace(/[^0-9,]/g, "");
-    if (!c_budget) return;
+    let $this = $(this);
+    let $id = $this.closest("tr").data('id');
+    let media = $id.split("_")[0];
+    let tab = $('.tab-link.active').val();
+    let $customer = $this.closest("tr").data('customerid');
+    let budgetTxt = $this.text();
+    let c_budget = budgetTxt.replace(/[^0-9,]/g, "");
+    if (!c_budget && (media == 'kakao' && tab == 'ads')) return;
 
     $('.budget p[data-editable="true"]').attr("data-editable", "false");
-    $input = $('<input type="text" style="width:100%">');
+    let $input = $('<input type="text" style="width:100%">');
     $input.val(c_budget);
     $(this).replaceWith($input);
     $input.focus();
@@ -1717,14 +1719,19 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
             $input.number(true);
             if (e.keyCode == 27) {
                 // ESC Key
+                if(media == 'kakao' && budgetTxt == '미설정'){
+                    c_budget = '미설정';
+                }else{
+                    c_budget = '\u20A9'+c_budget;
+                }
                 $('.budget p').attr("data-editable", "true");
-                restoreElement('\u20A9'+c_budget, $input);
+                restoreElement(c_budget, $input);
             } else if (e.keyCode == 13) {
                 new_budget = $input.val();
                 data = {
                     'id': $id,
                     'customer': $customer,
-                    'tab': $('.tab-link.active').val(),
+                    'tab': tab,
                     'budget': new_budget,
                     'old_budget' : c_budget
                 };
@@ -1758,7 +1765,7 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
             data = {
                 'id': $id,
                 'customer': $customer,
-                'tab': $('.tab-link.active').val(),
+                'tab': tab,
                 'budget': new_budget,
                 'old_budget' : c_budget
             };
@@ -1790,17 +1797,17 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
 });
 
 $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){  
-    $this = $(this);
-    $id = $this.closest("tr").data('id');
-    $customer = $this.closest("tr").data('customerid');
-    $amount_type = $this.closest("tr").find('.bidamount_type').text();
+    let $this = $(this);
+    let $id = $this.closest("tr").data('id');
+    let $customer = $this.closest("tr").data('customerid');
+    let $amount_type = $this.closest("tr").find('.bidamount_type').text();
     //console.log($amount_type);
-    budgetTxt = $this.text();
-    c_bidamount = budgetTxt.replace(/[^0-9,]/g, "");
+    let budgetTxt = $this.text();
+    let c_bidamount = budgetTxt.replace(/[^0-9,]/g, "");
     if (!c_bidamount) return;
 
     $('.bidamount p[data-editable="true"]').attr("data-editable", "false");
-    $input = $('<input type="text" style="width:100%">');
+    let $input = $('<input type="text" style="width:100%">');
     $input.val(c_bidamount);
     $(this).replaceWith($input);
     $input.focus();
