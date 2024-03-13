@@ -230,7 +230,7 @@ function getList(data = []) { //리스트 세팅
         "dom": '<Bfr<t>ip>',
         "fixedHeader": true,
         "autoWidth": true,
-        "order": [[13,'desc']],
+        "order": [[12,'desc']],
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
