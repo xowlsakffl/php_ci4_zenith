@@ -406,8 +406,7 @@ class ZenithKM
         foreach ($campaigns->getResultArray() as $campaign) {
             CLI::showProgress($step++, $total);
             //echo "{$campaign['id']}<br>";
-            $adGroupList = $this->getAdGroups('1199922', '621384');
-            //$adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
+            $adGroupList = $this->getAdGroups($campaign['id'], $campaign['ad_account_id']);
             if (isset($adGroupList['content']) && count($adGroupList['content'])) {
                 $i = 0;
                 // $groupStep = 1;
