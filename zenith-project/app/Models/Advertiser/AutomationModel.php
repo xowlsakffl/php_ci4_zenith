@@ -21,29 +21,15 @@ class AutomationModel extends Model
         aa.nickname as aa_nickname,
         aa.status as aa_status,
         aa.mod_datetime as aa_mod_datetime, 
-        aas.exec_type as aas_exec_type,
-        aas.type_value as aas_type_value,
-        DATE_FORMAT(aas.criteria_time, "%Y-%m-%d %H:%i") as aas_criteria_time,
-        DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
-        DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time,
-        DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time,
-        aas.exec_week as aas_exec_week,
-        aas.month_type as aas_month_type,
-        aas.month_day as aas_month_day,
-        aas.month_week as aas_month_week,
-        aas.reg_datetime as aas_reg_datetime,
+        aas.schedule_value as aas_schedule_value,
+        aas.exec_once as aas_exec_once,
         (SELECT MAX(aar.exec_timestamp) 
         FROM aa_result aar 
         WHERE aar.idx = aa.seq AND aar.result = "success") as aar_exec_timestamp_success,
-        (SELECT MAX(aar.exec_timestamp) 
-        FROM aa_result aar 
-        WHERE aar.idx = aa.seq) as aar_exec_timestamp_latest,
-        (SELECT COUNT(*) 
-        FROM aa_result aar 
-        WHERE aar.idx = aa.seq) as aar_exec_timestamp_count
         ');
-        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
-        $builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
+        
+        $builder->join('aa_schedule_new aas', 'aas.idx = aa.seq', 'left');
+        //$builder->join('aa_result aar', 'aar.idx = aa.seq', 'left');
 
         if(!empty($data['searchData']['sdate']) && !empty($data['searchData']['edate'])){
             $builder->where('DATE(aa.mod_datetime) >=', $data['searchData']['sdate']);
@@ -1056,18 +1042,10 @@ class AutomationModel extends Model
         aa.description as aa_description,
         aa.slack_webhook as aa_slack_webhook,
         aa.slack_msg as aa_slack_msg,
-        aas.exec_type as aas_exec_type,
-        aas.type_value as aas_type_value,
-        DATE_FORMAT(aas.criteria_time, "%Y-%m-%d %H:%i") as aas_criteria_time,
-        DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time,
-        DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time,
-        DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time,
-        aas.exec_week as aas_exec_week,
-        aas.month_type as aas_month_type,
-        aas.month_day as aas_month_day,
-        aas.month_week as aas_month_week,
+        aas.schedule_value as aas_schedule_value,
+        aas.exec_once as aas_exec_once,
         ');
-        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_schedule_new aas', 'aas.idx = aa.seq', 'left');
         $builder->join('aa_target aat', 'aat.idx = aa.seq', 'left');
         $builder->where('aa.seq', $data['id']);
         $builder->groupBy('aa.seq');
@@ -1157,20 +1135,14 @@ class AutomationModel extends Model
         aa.slack_webhook as aa_slack_webhook,
         aa.slack_msg as aa_slack_msg,
         aas.idx as aas_idx, 
-        aas.exec_type as aas_exec_type, 
-        aas.type_value as aas_type_value, 
-        DATE_FORMAT(aas.criteria_time, "%Y-%m-%d %H:%i") as aas_criteria_time,
-        DATE_FORMAT(aas.exec_time, "%H:%i") as aas_exec_time, 
-        DATE_FORMAT(aas.ignore_start_time, "%H:%i") as aas_ignore_start_time, 
-        DATE_FORMAT(aas.ignore_end_time, "%H:%i") as aas_ignore_end_time, 
-        aas.exec_week as aas_exec_week, 
-        aas.month_type as aas_month_type, 
-        aas.month_day as aas_month_day, 
-        aas.month_week as aas_month_week, 
-        aas.reg_datetime as aas_reg_datetime, 
+        aas.schedule_value as aas_schedule_value,
+        aas.exec_once as aas_exec_once,  
         aar_sub.aar_exec_timestamp as aar_exec_timestamp,
+        (SELECT MAX(aar.exec_timestamp) 
+        FROM aa_result aar 
+        WHERE aar.idx = aa.seq AND aar.result = "success" AND DATE(aar.exec_timestamp) = CURDATE()) as aar_exec_timestamp_success,
         ');
-        $builder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $builder->join('aa_schedule_new aas', 'aas.idx = aa.seq', 'left');
         $builder->join("({$subQueryBuilder->getCompiledSelect()}) aar_sub", 'aar_sub.idx = aa.seq', 'left');
         $builder->where('aa.status', 1);
         $builder->groupBy('aa.seq');
@@ -1755,7 +1727,7 @@ class AutomationModel extends Model
 
         $data['schedule'] = array_filter($data['schedule']);
         $data['schedule']['idx'] = $seq;
-        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder = $this->zenith->table('aa_schedule_new');
         $aasBuilder->insert($data['schedule']);
 
         if(!empty($data['target'])){
@@ -1798,17 +1770,10 @@ class AutomationModel extends Model
         aa.status as aa_status,
         aa.slack_webhook as aa_slack_webhook,
         aa.slack_msg as aa_slack_msg,
-        aas.exec_type as aas_exec_type,
-        aas.type_value as aas_type_value,
-        aas.exec_time as aas_exec_time,
-        aas.ignore_start_time as aas_ignore_start_time,
-        aas.ignore_end_time as aas_ignore_end_time,
-        aas.exec_week as aas_exec_week,
-        aas.month_type as aas_month_type,
-        aas.month_day as aas_month_day,
-        aas.month_week as aas_month_week,
+        aas.schedule_value as schedule_value,
+        aas.exec_once as exec_once,
         ');
-        $aaGetBuilder->join('aa_schedule aas', 'aas.idx = aa.seq', 'left');
+        $aaGetBuilder->join('aa_schedule_new aas', 'aas.idx = aa.seq', 'left');
         $aaGetBuilder->where('aa.seq', $data['seq']);
         $aaGetResult  = $aaGetBuilder->get()->getRowArray();
 
@@ -1842,18 +1807,10 @@ class AutomationModel extends Model
         
         $aasData = [
             'idx' => $seq,
-            'exec_type' => $aaGetResult['aas_exec_type'],
-            'type_value' => $aaGetResult['aas_type_value'],
-            'exec_time' => $aaGetResult['aas_exec_time'] ?? null,
-            'ignore_start_time' => $aaGetResult['aas_ignore_start_time'] ?? null,
-            'ignore_end_time' => $aaGetResult['aas_ignore_end_time'] ?? null,
-            'exec_week' => $aaGetResult['aas_exec_week'] ?? null,
-            'month_type' => $aaGetResult['aas_month_type'] ?? null,
-            'month_day' => $aaGetResult['aas_month_day'] ?? null,
-            'month_week' => $aaGetResult['aas_month_week'] ?? null,
+            'schedule_value' => $aaGetResult['schedule_value'],
+            'exec_once' => $aaGetResult['exec_once'],
         ];
-        $aasData = array_filter($aasData);
-        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder = $this->zenith->table('aa_schedule_new');
         $aasBuilder->insert($aasData);
 
         if(!empty($aatGetResult)){
@@ -1917,8 +1874,7 @@ class AutomationModel extends Model
         $aaBuilder->where('seq', $data['seq']);
         $result = $aaBuilder->update($aaData);
         
-        $data['schedule'] = array_filter($data['schedule']);
-        $aasBuilder = $this->zenith->table('aa_schedule');
+        $aasBuilder = $this->zenith->table('aa_schedule_new');
         $aasBuilder->where('idx', $data['seq']);
         $aasBuilder->update($data['schedule']);
 

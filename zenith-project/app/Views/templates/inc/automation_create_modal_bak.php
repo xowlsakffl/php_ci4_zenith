@@ -1,9 +1,3 @@
-<!--헤더-->
-<?=$this->section('header');?>
-<link href="/static/css/scheduler.css" rel="stylesheet">  
-<script src="/static/js/scheduler.js"></script>
-<?=$this->endSection();?>
-
 <div class="modal fade" id="automationModal" tabindex="-1" aria-labelledby="automationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -14,6 +8,7 @@
                         <ol id="myTab" role="tablist">
                             <li class="active" type="button" id="schedule-tab"  data-bs-toggle="tab" data-bs-target="#schedule" type="button" aria-controls="schedule" aria-selected="true">
                                 <strong>일정</strong>
+                                <p id="scheduleText"></p>
                             </li>
                             <li id="target-tab" data-bs-toggle="tab" data-bs-target="#target" type="button" aria-controls="target" aria-selected="false">
                                 <strong>대상</strong>   
@@ -41,8 +36,140 @@
                     <div class="detail-wrap">
                         <input type="hidden" name="seq">
                         <div class="detail show active" id="schedule" role="tabpanel" aria-labelledby="schedule-tab" tabindex="0"> 
-                            <table id="scheduleTable"></table>
-                            <label for="onceExecution"><input type="checkbox" name="exec_once" id="onceExecution">하루에 한번만 실행</label>
+                            <table class="table tbl-side" id="scheduleTable">
+                                <colgroup>
+                                    <col style="width:35%">
+                                    <col>
+                                </colgroup>
+                                <tr>
+                                    <th scope="row">다음 시간마다 규칙적으로 실행</th>
+                                    <td>
+                                        <input type="text" name="type_value" class="form-control short" oninput="onlyNumber(this);" maxlength="3" autocomplete="off"/>
+                                        <select name="exec_type" class="form-select short" id="execType">
+                                            <option value="minute">분</option>
+                                            <option value="hour">시간</option>
+                                            <option value="day">일</option>
+                                            <option value="week">주</option>
+                                            <option value="month">월</option>
+                                        </select>
+                                        <p></p>
+                                    </td>
+                                </tr>
+                                <tr id="weekdayRow">
+                                    <th scope="row">요일</th>
+                                    <td>
+                                        <div class="week-radio">
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="2" id="day01">
+                                                <label for="day01">월</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="3" id="day02">
+                                                <label for="day02">화</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="4" id="day03">
+                                                <label for="day03">수</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="5" id="day04">
+                                                <label for="day04">목</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="6" id="day05">
+                                                <label for="day05">금</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="7" id="day06">
+                                                <label for="day06">토</label>
+                                            </div>
+                                            <div class="day">
+                                                <input type="radio" name="exec_week" value="1" id="day07">
+                                                <label for="day07">일</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr id="nextDateRow">
+                                    <th scope="row">다음 날짜에</th>
+                                    <td>
+                                        <select name="month_type" class="form-select" id="monthType">
+                                            <option value="" selected>선택</option>
+                                            <option value="start_day">매달 첫번째 날</option>
+                                            <option value="end_day">매달 마지막 날</option>
+                                            <option value="first">처음</option>
+                                            <option value="last">마지막</option>
+                                            <option value="day">날짜</option>
+                                        </select>
+                                        <select name="month_day" class="form-select" id="monthDay">
+                                            <option value="" selected>선택</option>
+                                            <?php
+                                            for ($i = 1; $i <= 31; $i++) {
+                                                echo "<option value='$i'>".$i."일</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                        <select name="month_week" class="form-select" id="monthWeek">
+                                            <option value="" selected>선택</option>
+                                            <option value="2">월</option>
+                                            <option value="3">화</option>
+                                            <option value="4">수</option>
+                                            <option value="5">목</option>
+                                            <option value="6">금</option>
+                                            <option value="7">토</option>
+                                            <option value="1">일</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr id="timeRow">
+                                    <th scope="row">시간</th>
+                                    <td>
+                                    <?php
+                                        $interval = new DateInterval('PT30M');
+                                        $time = new DateTime('00:00');
+                                        $end = new DateTime('24:00');
+
+                                        ob_start();
+
+                                        while ($time < $end) {
+                                            $value = $time->format('H:i');
+                                            echo "<option value='$value'>$value</option>";
+                                            $time->add($interval);
+                                        }
+
+                                        $timeOptions = ob_get_clean();
+                                        ?>
+                                        <select name="exec_time" id="execTime" class="form-select middle">
+                                            <option value="" selected>선택</option>
+                                            <?php echo $timeOptions; ?>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr id="criteriaTimeRow">
+                                    <th scope="row">시작 일시</th>
+                                    <td>
+                                        <div class="form-flex">
+                                            <input type="text" name="criteria_time" class="form-control" readonly>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">제외 시간</th>
+                                    <td>
+                                        <div class="form-flex">
+                                        <select name="ignore_start_time" class="form-select middle">
+                                            <option value="" selected>선택</option>
+                                            <?php echo $timeOptions; ?>
+                                        </select>
+                                            <span>~</span>
+                                            <select name="ignore_end_time" class="form-select middle">
+                                                <option value="">선택</option>
+                                                <?php echo $timeOptions; ?>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                         <div class="detail" id="target" role="tabpanel"  aria-labelledby="target-tab" tabindex="1">
                             <ul class="tab" id="targetTab">
@@ -160,6 +287,7 @@
                                     <tr id="condition-1">
                                         <td>
                                             <div class="form-flex">
+                                                <!-- <input type="text" name="order" placeholder="순서(1~)" class="form-control conditionOrder" oninput="onlyNumber(this);" maxlength="3"> -->
                                                 <select name="type" class="form-select conditionType">
                                                     <option value="">조건 항목</option>
                                                     <option value="status">상태</option>
@@ -344,4 +472,3 @@
         </div>
     </div>
 </div>
-
