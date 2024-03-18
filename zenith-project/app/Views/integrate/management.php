@@ -7,16 +7,29 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link href="/static/css/datatables.css" rel="stylesheet">
+<script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<!-- bootstrap5 -->
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore-bs5/js/stateRestore.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js"></script>
+<script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
@@ -39,11 +52,9 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="sdate" id="sdate"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="edate" id="edate"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
@@ -226,8 +237,9 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
     return {body: arr , header: headerArray};
 } );
 function getList(data = []) { //리스트 세팅
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#deviceTable').DataTable({
-        "dom": '<Bfr<t>ip>',
+        "dom": '<Bfri<t>p>',
         "fixedHeader": true,
         "autoWidth": true,
         "order": [[12,'desc']],
@@ -274,7 +286,7 @@ function getList(data = []) { //리스트 세팅
         "buttons": [ //Set Button
             {
                 'extend': 'collection',
-                'text': "<i class='bi bi-list'></i>",
+                'text': "Menu",
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [

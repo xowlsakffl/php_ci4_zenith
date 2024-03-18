@@ -376,6 +376,24 @@ select::-ms-expand {
   border-left-color: rgba(255, 255, 255, 0.8);
 }
 
+.zenith-loading {
+  background: 50% 100%/50% 50% no-repeat radial-gradient(ellipse at bottom, #cd1626, transparent, transparent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 10vw;
+  font-family: sans-serif;
+  animation: zenith-loading-reveal 1500ms ease-in-out forwards 200ms, zenith-loading-glow 2500ms linear infinite 2000ms;
+}
+
+.zenith-loading::after {
+  display: block;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  content: "ZENITH";
+}
+
 body {
   background: #f7f7f7;
 }
@@ -970,6 +988,11 @@ body {
   border-top: 2px solid #e2e2e2;
   border-bottom: 2px solid #e2e2e2;
 }
+.search-wrap .search .term label {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
 .search-wrap .search .term input[type=text] {
   flex: 1;
   width: 100%;
@@ -980,6 +1003,9 @@ body {
 }
 .search-wrap .search .term button {
   width: 28px;
+  color: #ce1922;
+}
+.search-wrap .search .term i {
   color: #ce1922;
 }
 .search-wrap .search .input {
@@ -1628,14 +1654,14 @@ input:-internal-autofill-selected {
   z-index: 0;
 }
 
-div.dataTables_processing {
+div.dt-processing {
   z-index: 1;
   top: 150px !important;
   padding-top: 16px !important;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-div.dataTables_processing > div:last-child > div {
+div.dt-processing > div:last-child > div {
   background-color: var(--bs-red) !important;
 }
 
@@ -1852,6 +1878,15 @@ div.dataTables_scrollBody {
 }
 div.dataTables_scrollBody > table {
   padding-bottom: 3rem;
+}
+
+table thead #total td {
+  color: #000;
+  text-align: center;
+}
+
+.dt-buttons .btn-group .btn > span {
+  font-size: 0.825em;
 }
 
 @media screen and (max-width: 1024px) {
@@ -2253,6 +2288,19 @@ div.dataTables_scrollBody > table {
   }
   100% {
     box-shadow: inset 200px 0px 7px red;
+  }
+}
+@keyframes zenith-loading-reveal {
+  80% {
+    letter-spacing: 8px;
+  }
+  100% {
+    background-size: 300% 300%;
+  }
+}
+@keyframes zenith-loading-glow {
+  40% {
+    text-shadow: 0 0 8px #cd1626;
   }
 }
 .ui-autocomplete {
@@ -3130,35 +3178,64 @@ div.dataTables_scrollBody > table {
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
-.sub-contents-wrap .dataTables_wrapper .dt-buttons {
+.sub-contents-wrap .dt-container .dt-button-collection .dt-button-split {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+}
+.sub-contents-wrap .dt-container .dt-button-collection .dt-button-split button.dt-button {
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 50px;
+}
+.sub-contents-wrap .dt-container .dt-button-collection .dt-button-split button.dt-button:first-child {
+  padding-right: 3em;
+}
+.sub-contents-wrap .dt-container .dt-button-collection .dt-button-split button.dt-button:last-child {
+  margin-left: -1px;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  z-index: 2;
+}
+.sub-contents-wrap .dt-container .dt-button-collection .dt-button-split button.dt-button-split-drop {
+  min-width: 33px;
+  flex: 0;
+}
+.sub-contents-wrap .dt-container .dt-buttons {
   z-index: 1;
   text-align: left;
   margin-bottom: 1rem;
 }
-.sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list {
+.sub-contents-wrap .dt-container .dt-buttons i.bi-list {
   color: #2d2e34;
   transition: all 0.3s;
   font-size: 150%;
 }
-.sub-contents-wrap .dataTables_wrapper .dt-buttons i.bi-list:hover::before {
+.sub-contents-wrap .dt-container .dt-buttons i.bi-list:hover::before {
   animation: rotate-turn 0.3s infinite linear alternate;
 }
-.sub-contents-wrap .dataTables_wrapper .paging {
+.sub-contents-wrap .dt-container .paging {
   padding-top: 1.755em;
   position: sticky;
   bottom: 0;
   background-color: #f7f7f7;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_length {
+.sub-contents-wrap .dt-container .dataTables_length {
   margin-bottom: 2rem;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_length select {
+.sub-contents-wrap .dt-container .dataTables_length select {
   background-color: #fff;
   padding: 0.2rem 1rem;
   border-radius: 4px;
   border: 1px dashed #2d2e34;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info {
+.sub-contents-wrap .dt-container .dt-info {
   float: unset;
   position: absolute;
   right: 0;
@@ -3166,20 +3243,20 @@ div.dataTables_scrollBody > table {
   transition: all 0.5s;
   cursor: pointer;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info i.bi {
+.sub-contents-wrap .dt-container .dt-info i.bi {
   color: red;
   padding-right: 6px;
   font-size: 110%;
   display: inline-block;
   vertical-align: top;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info > span {
+.sub-contents-wrap .dt-container .dt-info > span {
   position: relative;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info > span:hover {
+.sub-contents-wrap .dt-container .dt-info > span:hover {
   font-weight: 900;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_info > span:hover::after {
+.sub-contents-wrap .dt-container .dt-info > span:hover::after {
   position: absolute;
   bottom: -5px;
   left: 0%;
@@ -3190,29 +3267,29 @@ div.dataTables_scrollBody > table {
   transition: 0.2s;
   animation: hover-line 0.2s linear;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate {
+.sub-contents-wrap .dt-container .dt-paging {
   float: unset;
   text-align: center;
   padding-top: 1.755em;
   padding-bottom: 1.755em;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button {
   border: none;
   padding: 0.25rem 0.5rem;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button.disabled, .sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled, .sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled:hover {
   color: #aaa !important;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:hover {
   color: red !important;
   border: none;
   background: none;
   transition: 0.2s;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous, .next, .current) {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current) {
   position: relative;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous, .next, .current):hover::before {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::before {
   position: absolute;
   top: -5px;
   left: 47%;
@@ -3223,7 +3300,7 @@ div.dataTables_scrollBody > table {
   transition: 0.2s;
   border-radius: 50%;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:not(.previous, .next, .current):hover::after {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::after {
   position: absolute;
   bottom: -5px;
   left: 0%;
@@ -3234,61 +3311,61 @@ div.dataTables_scrollBody > table {
   transition: 0.2s;
   animation: hover-line 0.2s linear;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current {
   color: #fff !important;
   background-color: red;
   border: none;
   padding: 0.2rem 1rem;
   border-radius: 4px;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current:hover {
   color: #fff !important;
   background-color: red;
   border: none;
 }
-.sub-contents-wrap .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:active {
   background: none;
   border: none;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable thead tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr td {
+.sub-contents-wrap .dt-container table.dataTable thead tr th, .sub-contents-wrap .dt-container table.dataTable thead tr td {
   text-align: center;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dataTables_wrapper table.dataTable thead tr .sorting_desc:after {
+.sub-contents-wrap .dt-container table.dataTable thead tr .sorting_asc:before, .sub-contents-wrap .dt-container table.dataTable thead tr .sorting_desc:after {
   color: #fff;
   opacity: 1;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr {
+.sub-contents-wrap .dt-container table.dataTable tbody tr {
   background-color: #fff;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr td {
+.sub-contents-wrap .dt-container table.dataTable tbody tr td {
   position: relative;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr td {
+.sub-contents-wrap .dt-container table.dataTable tfoot tr th, .sub-contents-wrap .dt-container table.dataTable tfoot tr td {
   text-align: center;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr.abnormal td {
+.sub-contents-wrap .dt-container table.dataTable tbody tr.abnormal td {
   background-color: #fffad1;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
+.sub-contents-wrap .dt-container table.dataTable textarea.consultation {
   padding: 0px;
   width: 100%;
   border: none;
   background: transparent;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable select.data-del {
+.sub-contents-wrap .dt-container table.dataTable select.data-del {
   padding: 3px;
   border-radius: 4px;
   font-size: 98%;
   letter-spacing: -1px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable button.save {
+.sub-contents-wrap .dt-container table.dataTable button.save {
   background-color: #009dff;
   color: #fff;
   margin-top: 0.25rem;
   padding: 0.4rem 1rem;
   border-radius: 4px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable button.delete {
+.sub-contents-wrap .dt-container table.dataTable button.delete {
   background-color: #000;
   color: #fff;
   margin-top: 0.25rem;
@@ -3296,52 +3373,52 @@ div.dataTables_scrollBody > table {
   border-radius: 4px;
   transition: 0.5s;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable button.delete:hover {
+.sub-contents-wrap .dt-container table.dataTable button.delete:hover {
   box-shadow: inset 0 -3em 0 0 red;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box i {
+.sub-contents-wrap .dt-container table.dataTable .media_box i {
   display: inline-block;
   width: 28px;
   height: 28px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .facebook {
+.sub-contents-wrap .dt-container table.dataTable .media_box .facebook {
   background: url("/img/ico_facebook.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .kakao {
+.sub-contents-wrap .dt-container table.dataTable .media_box .kakao {
   background: url("/img/ico_kakao.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .media_box .google {
+.sub-contents-wrap .dt-container table.dataTable .media_box .google {
   background: url("/img/ico_google.png") no-repeat center 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn {
+.sub-contents-wrap .dt-container table.dataTable .codeBox .codeBtn {
   padding: 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn .bi-c-circle {
+.sub-contents-wrap .dt-container table.dataTable .codeBox .codeBtn .bi-c-circle {
   font-size: 1.15rem;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox .codeBtn .bi-c-circle:hover {
+.sub-contents-wrap .dt-container table.dataTable .codeBox .codeBtn .bi-c-circle:hover {
   cursor: pointer;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .codeBox span {
+.sub-contents-wrap .dt-container table.dataTable .codeBox span {
   margin-left: 5px;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName p {
+.sub-contents-wrap .dt-container table.dataTable .mediaName p {
   margin-bottom: 0.5rem;
   text-align: left;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName button {
+.sub-contents-wrap .dt-container table.dataTable .mediaName button {
   position: absolute !important;
   bottom: 0;
   right: 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .mediaName button i {
+.sub-contents-wrap .dt-container table.dataTable .mediaName button i {
   font-size: 1.25rem;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .landing-box > button {
+.sub-contents-wrap .dt-container table.dataTable .landing-box > button {
   display: block;
   margin: 0 auto;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable select.form-select {
+.sub-contents-wrap .dt-container table.dataTable select.form-select {
   font-size: 0.75rem;
   background-position: right 0.25rem center;
   padding: 0.375rem 0.25rem 0.375rem 0.35rem;
@@ -3352,12 +3429,12 @@ div.dataTables_scrollBody > table {
   transform: translate(-50%, -50%);
   width: 88%;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable button.btn-history {
+.sub-contents-wrap .dt-container table.dataTable button.btn-history {
   position: absolute;
   bottom: 0;
   right: 0;
 }
-.sub-contents-wrap .dataTables_wrapper table.dataTable .is_stop {
+.sub-contents-wrap .dt-container table.dataTable .is_stop {
   color: red;
 }
 
