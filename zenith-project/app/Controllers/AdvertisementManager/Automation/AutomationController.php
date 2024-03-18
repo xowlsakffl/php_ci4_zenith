@@ -682,7 +682,7 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
-            //if($automation['aa_seq'] != '193'){continue;}
+            //if($automation['aa_seq'] != '199'){continue;}
             if(!empty($automation)){
                 $schedulePassData = $this->checkAutomationSchedule($automation);           
                 $result['schedule'] = $schedulePassData;
@@ -815,7 +815,7 @@ class AutomationController extends BaseController
                 }
             }
         }
-
+        
         return $resultArray;
         //제외시간
         /* if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
