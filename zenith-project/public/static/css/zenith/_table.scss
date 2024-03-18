@@ -1,5 +1,5 @@
-div.dataTables_processing{z-index:1; top:150px !important; padding-top:16px !important; background-color:rgba(255,255,255,.9);}
-div.dataTables_processing>div:last-child>div{background-color:var(--bs-red) !important;}
+div.dt-processing{z-index:1; top:150px !important; padding-top:16px !important; background-color:rgba(255,255,255,.9);}
+div.dt-processing>div:last-child>div{background-color:var(--bs-red) !important;}
 .table-responsive{position:relative;}
 .btns-memo-style{display:inline; width:auto; position:absolute; right:0; top:0; z-index:1;
     button.active{color:var(--bs-red);}

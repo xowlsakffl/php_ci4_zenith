@@ -58,7 +58,7 @@
         }
     }
 
-    .dataTables_wrapper{
+    #deviceTable_wrapper{
         .dt-button-collection{
             .dt-button-split{display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-content: flex-start; align-items: stretch;
                 button.dt-button{margin: 0; display: inline-block; width: 0; flex-grow: 1; flex-shrink: 0; flex-basis: 50px;
@@ -79,7 +79,7 @@
             select{background-color:#fff; padding:0.2rem 1rem; border-radius:4px; border:1px dashed $color-dark;}
         }
     
-        .dataTables_info{float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;
+        .dt-info{float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;
             i.bi{color:$red; padding-right:6px; font-size:110%; display: inline-block; vertical-align: top;}
             > span{position:relative;
                 &:hover{font-weight:900;
@@ -88,8 +88,8 @@
             }          
         }
     
-        .dataTables_paginate{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
-            .paginate_button{border:none; padding:0.25rem 0.5rem;
+        .dt-paging{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
+            .dt-paging-button{border:none; padding:0.25rem 0.5rem;
                 &.disabled,
                 &.disabled:hover{color:#aaa !important;}
 
