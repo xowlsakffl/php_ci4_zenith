@@ -155,7 +155,7 @@
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div> -->
             <div class="tab-pane active">
-                <div class="table-responsiv">
+                <div class="table-responsive">
                     <table class="dataTable table table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
