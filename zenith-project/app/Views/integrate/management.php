@@ -7,16 +7,29 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link href="/static/css/dataTables.css" rel="stylesheet">
+<script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<!-- bootstrap5 -->
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore-bs5/js/stateRestore.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js"></script>
+<script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
@@ -274,7 +287,7 @@ function getList(data = []) { //리스트 세팅
         "buttons": [ //Set Button
             {
                 'extend': 'collection',
-                'text': "<i class='bi bi-list'></i>",
+                'text': "Menu",
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [
