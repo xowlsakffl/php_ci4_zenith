@@ -41,8 +41,12 @@ class AutomationController extends BaseController
 
             $currentDate = new Time('now');
             foreach ($result['data'] as &$data) {
-                $schedule = $this->convertJsonToTimes($data['aas_schedule_value']);
                 $closestTime = null;
+                if($data['aa_status'] != 1){
+                    $data['expected_time'] = '';
+                    continue;
+                }
+                $schedule = $this->convertJsonToTimes($data['aas_schedule_value']);
                 $currentDay = $currentDate->format('N');
 
                 $foundThisWeek = false;
@@ -60,9 +64,15 @@ class AutomationController extends BaseController
                         foreach ($times as $time) {
                             $scheduledTime = Time::parse($time);
                             $scheduledDateTime = $currentDate->setISODate($currentDate->year, $currentDate->weekOfYear, $day)->setTime($scheduledTime->hour, $scheduledTime->minute);
+ 
                             if ($scheduledDateTime->isAfter($currentDate)) {
                                 if (is_null($closestTime) || $scheduledDateTime->isBefore($closestTime)) {
                                     $closestTime = $scheduledDateTime;
+                                    $foundThisWeek = true;
+                                }
+                            }else if($scheduledDateTime->difference($currentDate)->getMinutes() <= 30){
+                                if (is_null($closestTime) || $scheduledDateTime->isBefore($closestTime)) {
+                                    $closestTime = $currentDate->addMinutes(1);
                                     $foundThisWeek = true;
                                 }
                             }
