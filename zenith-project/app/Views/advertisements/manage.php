@@ -6,7 +6,7 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/css/dataTables.css" rel="stylesheet">
+<link href="/static/css/datatables.css" rel="stylesheet">
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
