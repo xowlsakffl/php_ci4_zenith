@@ -34,92 +34,103 @@ class AdvManagerController extends BaseController
     }
 
     public function getData(){
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $arg = $this->request->getGet();
-	
-			if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
-				$arg['external'] = 'resta';
-				return $this->getCareLabsData($arg);
-			}
-            if(!empty($arg['searchData']['account']) || 
-            !empty($arg['searchData']['company']) || 
-            !empty($arg['searchData']['media']) ||
-            !empty($arg['searchData']['stx'])) {
-                // print_r($arg['searchData']);
-                switch ($arg['searchData']['type']) {
-                    case 'ads':
-                        $result = $this->getAds($arg);
-                        break;
-                    case 'adsets':
-                        $result = $this->getAdSets($arg);
-                        break;
-                    case 'campaigns':
-                        $result = $this->getCampaigns($arg);
-                        break;
-                    default:
-                        return $this->fail("잘못된 요청");
-                }
-				$orderBy = [];
-				if(!empty($arg['order'])) {
-					foreach($arg['order'] as $row) {
-						if($row['dir'] == 'desc'){
-							$sort = SORT_DESC;
-						}else{
-							$sort = SORT_ASC;
-						}
-						$col = $arg['columns'][$row['column']]['data'];
-						if($col) $orderBy[$col] = $sort;
-					}
-					array_sort_by_multiple_keys($result['data'], $orderBy);
-				}
+        if(!$this->request->isAJAX() || strtolower($this->request->getMethod()) !== 'get') return $this->fail("잘못된 요청");
+        $arg = $this->request->getGet();
 
-				foreach ($result['data'] as &$value) {
-                    $value['class'] = [];
-                    if(!empty($value['status']) || !empty($value['approval_status'])){
-                        if (isset($value['status']) && $value['status'] != 'ON') {
-                            $value['class'][] = 'off';
-                        }
-
-                        $policyTopic = [];
-                        if(!empty($value['policyTopic'])){
-                            $policyTopic = explode(',', $value['policyTopic']);
-                        }
-                        if (isset($value['approval_status']) && ($value['approval_status'] == 'DISAPPROVED' || $value['approval_status'] == 'REJECTED' || $value['approval_status'] == 'AREA_OF_INTEREST_ONLY' || ($value['approval_status'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic)))) {
-                            $value['class'][] = 'disapproval';
-                        } else if (isset($value['approval_status']) && ($value['approval_status'] == 'APPROVED_LIMITED' || ($value['approval_status'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic)))) {
-                            $value['class'][] = 'approved_limited';
-                        }
-                    
-                        if (isset($value['class'])) {
-                            $value['class'] = implode(" ", $value['class']);
-                        }
-                    }
-
-                    $value['campaign_bidamount'] = number_format($value['campaign_bidamount'] ?? 0);
-                    $value['bidamount'] = number_format($value['bidamount']);
-					$value['budget'] = number_format($value['budget']);
-					$value['impressions'] = number_format($value['impressions']);
-					$value['click'] = number_format($value['click']);
-					$value['spend'] = number_format($value['spend']);
-					$value['sales'] = number_format($value['sales']);
-					$value['unique_total'] = number_format($value['unique_total']);
-					$value['margin'] = number_format($value['margin']);
-					$value['margin_ratio'] = number_format($value['margin_ratio']);
-					$value['cpa'] = number_format($value['cpa']);
-					$value['cpc'] = number_format($value['cpc']);
-				}
-				if(isset($arg['noLimit'])) {
-					return $this->respond($result['data']);
-				}
-            }
-            $result['report'] = $this->getReport($arg);
-            $result['accounts'] = $this->getAccounts($arg);
-            $result['media_accounts'] = $this->getMediaAccounts($arg);
-
-            return $this->respond($result);
-        }else{
-            return $this->fail("잘못된 요청");
+        if(getenv('MY_SERVER_NAME') === 'resta' && isset($arg['searchData']['carelabs']) && $arg['searchData']['carelabs'] == 1) {
+            $arg['external'] = 'resta';
+            return $this->getCareLabsData($arg);
         }
+        // print_r($arg['searchData']);
+        switch ($arg['searchData']['type']) {
+            case 'ads':
+                $result = $this->getAds($arg);
+                break;
+            case 'adsets':
+                $result = $this->getAdSets($arg);
+                break;
+            case 'campaigns':
+                $result = $this->getCampaigns($arg);
+                break;
+            default:
+                return $this->fail("잘못된 요청");
+        }
+        $orderBy = [];
+        if(!empty($arg['order'])) {
+            foreach($arg['order'] as $row) {
+                if($row['dir'] == 'desc'){
+                    $sort = SORT_DESC;
+                }else{
+                    $sort = SORT_ASC;
+                }
+                $col = $arg['columns'][$row['column']]['data'];
+                if($col) $orderBy[$col] = $sort;
+            }
+            array_sort_by_multiple_keys($result['data'], $orderBy);
+        }
+
+        foreach ($result['data'] as &$value) {
+            $value['class'] = [];
+            if(!empty($value['status']) || !empty($value['approval_status'])){
+                if (isset($value['status']) && $value['status'] != 'ON') {
+                    $value['class'][] = 'off';
+                }
+
+                $policyTopic = [];
+                if(!empty($value['policyTopic'])){
+                    $policyTopic = explode(',', $value['policyTopic']);
+                }
+                if (isset($value['approval_status']) && ($value['approval_status'] == 'DISAPPROVED' || $value['approval_status'] == 'REJECTED' || $value['approval_status'] == 'AREA_OF_INTEREST_ONLY' || ($value['approval_status'] == 'APPROVED_LIMITED' && in_array('YOUTUBE_AD_REQUIREMENTS_AUTOMATED_CONTENT_POLICY_DECISION', $policyTopic)))) {
+                    $value['class'][] = 'disapproval';
+                } else if (isset($value['approval_status']) && ($value['approval_status'] == 'APPROVED_LIMITED' || ($value['approval_status'] == 'APPROVED' && in_array('HEALTH_IN_PERSONALIZED_ADS', $policyTopic)))) {
+                    $value['class'][] = 'approved_limited';
+                }
+            
+                if (isset($value['class'])) {
+                    $value['class'] = implode(" ", $value['class']);
+                }
+            }
+
+            $value['campaign_bidamount'] = number_format($value['campaign_bidamount'] ?? 0);
+            $value['bidamount'] = number_format($value['bidamount']);
+            $value['budget'] = number_format($value['budget']);
+            $value['impressions'] = number_format($value['impressions']);
+            $value['click'] = number_format($value['click']);
+            $value['spend'] = number_format($value['spend']);
+            $value['sales'] = number_format($value['sales']);
+            $value['unique_total'] = number_format($value['unique_total']);
+            $value['margin'] = number_format($value['margin']);
+            $value['margin_ratio'] = number_format($value['margin_ratio']);
+            $value['cpa'] = number_format($value['cpa']);
+            $value['cpc'] = number_format($value['cpc']);
+            if(isset($arg['noLimit'])) {
+                return $this->respond($result['data']);
+            }
+        }
+            // $result['report'] = $this->getReport($arg);
+            // $result['accounts'] = $this->getAccounts($arg);
+            // $result['media_accounts'] = $this->getMediaAccounts($arg);
+
+        return $this->respond($result);
+    }
+
+    public function getReportData() {
+        if(!$this->request->isAJAX() || strtolower($this->request->getMethod()) !== 'get') return $this->fail("잘못된 요청");
+        $arg = $this->request->getGet();
+        $result = $this->getReport($arg);
+        return $this->respond($result);
+    }
+    public function getAccountsData() {
+        if(!$this->request->isAJAX() || strtolower($this->request->getMethod()) !== 'get') return $this->fail("잘못된 요청");
+        $arg = $this->request->getGet();
+        $result = $this->getAccounts($arg);
+        return $this->respond($result);
+    }
+    public function getMediaAccountsData() {
+        if(!$this->request->isAJAX() || strtolower($this->request->getMethod()) !== 'get') return $this->fail("잘못된 요청");
+        $arg = $this->request->getGet();
+        $result = $this->getMediaAccounts($arg);
+        return $this->respond($result);
     }
 
     private function getAccounts($arg)

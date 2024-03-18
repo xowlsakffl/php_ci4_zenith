@@ -58,7 +58,16 @@
         }
     }
 
-    .dataTables_wrapper{  
+    .dataTables_wrapper{
+        .dt-button-collection{
+            .dt-button-split{display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-content: flex-start; align-items: stretch;
+                button.dt-button{margin: 0; display: inline-block; width: 0; flex-grow: 1; flex-shrink: 0; flex-basis: 50px;
+                    &:first-child{padding-right: 3em;}
+                    &:last-child{margin-left: -1px; padding-left: 0.75em; padding-right: 0.75em; z-index: 2;}
+                }
+                button.dt-button-split-drop{min-width: 33px; flex: 0;}
+            }
+        }
         .dt-buttons{z-index:1; text-align: left; margin-bottom:1rem;
             i.bi-list{color:$color-dark; transition:all 0.3s; font-size:150%;
                 &:hover::before{animation:rotate-turn 0.3s infinite linear alternate;}

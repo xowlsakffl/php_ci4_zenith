@@ -114,7 +114,9 @@ textarea {
   font-size: 100%;
   resize: none;
   border-radius: 0;
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 input[type=submit], button {
@@ -157,7 +159,9 @@ textarea[name*=script] {
 }
 
 select {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 select:focus {
@@ -322,7 +326,6 @@ select::-ms-expand {
 }
 
 .tooltipped-multiline:after {
-  width: -webkit-max-content;
   width: -moz-max-content;
   width: max-content;
   max-width: 250px;
@@ -374,6 +377,24 @@ select::-ms-expand {
 
 .fullscreen-overlay-enabled.dark-theme .tooltipped.tooltipped-w:before {
   border-left-color: rgba(255, 255, 255, 0.8);
+}
+
+.zenith-loading {
+  background: 50% 100%/50% 50% no-repeat radial-gradient(ellipse at bottom, #cd1626, transparent, transparent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 10vw;
+  font-family: sans-serif;
+  animation: zenith-loading-reveal 1500ms ease-in-out forwards 200ms, zenith-loading-glow 2500ms linear infinite 2000ms;
+}
+
+.zenith-loading::after {
+  display: block;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  content: "ZENITH";
 }
 
 body {
@@ -970,10 +991,17 @@ body {
   border-top: 2px solid #e2e2e2;
   border-bottom: 2px solid #e2e2e2;
 }
+.search-wrap .search .term label {
+  position: relative;
+}
 .search-wrap .search .term input[type=text] {
   flex: 1;
   width: 100%;
   border: 0;
+}
+.search-wrap .search .term .bi {
+  position: absolute;
+  right: 0.375em;
 }
 .search-wrap .search .term span {
   margin: 0 20px;
@@ -1001,6 +1029,12 @@ body {
   border-color: transparent;
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
+}
+.search-wrap .search .input input[type=text]:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
 }
 .search-wrap .search .input input[type=text]:focus::placeholder {
   color: red;
@@ -1401,6 +1435,12 @@ tr.updating td:first-child {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
+.form-control:focus::-moz-placeholder, .form-select:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.5rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
+}
 .form-control:focus::placeholder, .form-select:focus::placeholder {
   color: red;
   text-indent: 0.5rem;
@@ -1410,6 +1450,9 @@ tr.updating td:first-child {
 .account-container input.form-control:focus {
   box-shadow: 0 0 0 0.25rem #C0DBEA;
   caret-color: #7286D3;
+  color: #7286D3;
+}
+.account-container input.form-control:focus::-moz-placeholder {
   color: #7286D3;
 }
 .account-container input.form-control:focus::placeholder {
@@ -1854,6 +1897,15 @@ div.dataTables_scrollBody > table {
   padding-bottom: 3rem;
 }
 
+table thead #total td {
+  color: #000;
+  text-align: center;
+}
+
+.dt-buttons .btn-group .btn > span {
+  font-size: 0.825em;
+}
+
 @media screen and (max-width: 1024px) {
   .table-data {
     text-align: center;
@@ -2253,6 +2305,19 @@ div.dataTables_scrollBody > table {
   }
   100% {
     box-shadow: inset 200px 0px 7px red;
+  }
+}
+@keyframes zenith-loading-reveal {
+  80% {
+    letter-spacing: 8px;
+  }
+  100% {
+    background-size: 300% 300%;
+  }
+}
+@keyframes zenith-loading-glow {
+  40% {
+    text-shadow: 0 0 8px #cd1626;
   }
 }
 .ui-autocomplete {
@@ -2852,6 +2917,12 @@ div.dataTables_scrollBody > table {
   box-shadow: 0 0 0 0.25rem rgba(223, 23, 43, 0.2705882353);
   caret-color: red;
 }
+.regi-content .detail-wrap .input input[type=text]:focus::-moz-placeholder {
+  color: red;
+  text-indent: 0.75rem;
+  -moz-transition: text-indent 0.3s;
+  transition: text-indent 0.3s;
+}
 .regi-content .detail-wrap .input input[type=text]:focus::placeholder {
   color: red;
   text-indent: 0.75rem;
@@ -3129,6 +3200,35 @@ div.dataTables_scrollBody > table {
 }
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button {
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 50px;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:first-child {
+  padding-right: 3em;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:last-child {
+  margin-left: -1px;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  z-index: 2;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button-split-drop {
+  min-width: 33px;
+  flex: 0;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   z-index: 1;
@@ -3554,7 +3654,9 @@ div.dt-button-collection h3 {
 }
 
 .none {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 
 @media screen and (max-width: 1400px) {
@@ -3588,7 +3690,9 @@ div.dt-button-collection h3 {
   color: #fff;
 }
 .container-user-management .btn-wrap input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
 }
 .container-user-management .row.filter-btn-wrap {
   width: 100%;
@@ -3696,6 +3800,7 @@ div.dt-button-collection h3 {
   background-color: #ededed;
 }
 .account-container form .form-control:-webkit-autofill, .account-container form .form-control:-internal-autofill-selected {
+  -webkit-transition: background-color 5000s ease-in-out 0s;
   transition: background-color 5000s ease-in-out 0s;
 }
 .account-container form .form-check .form-check-input {
@@ -3951,6 +4056,4 @@ div.dt-button-collection h3 {
     padding: 0.6rem 0.7rem;
     font-size: 90%;
   }
-}
-
-/*# sourceMappingURL=ui.css.map */
+}/*# sourceMappingURL=ui.css.map */

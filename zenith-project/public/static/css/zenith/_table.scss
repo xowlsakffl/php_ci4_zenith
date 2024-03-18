@@ -92,7 +92,8 @@ div.dataTables_scrollBody{
     /*height:73vh !important;*/
     &>table{padding-bottom:3rem;}
 }
-
+table thead #total td{color:#000; text-align:center;}
+.dt-buttons .btn-group .btn > span {font-size:.825em;}
 @include x-large{
 
 }

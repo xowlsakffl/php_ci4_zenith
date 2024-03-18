@@ -47,3 +47,11 @@
     transform: translateY(6.25rem); visibility:hidden; transition: all linear $second;
     &.up{transform: translateY(0); visibility:visible;}
 }
+
+@keyframes zenith-loading-reveal {
+    80%{letter-spacing: 8px;}
+    100% {background-size: 300% 300%;}
+}
+@keyframes zenith-loading-glow {
+    40% {text-shadow: 0 0 8px #cd1626;}
+}

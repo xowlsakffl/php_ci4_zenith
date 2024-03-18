@@ -40,7 +40,7 @@
         "copy": "<i class=\"bi bi-clipboard\"></i> 복사",
         "createState" : "필터생성",
         "removeAllStates" : "전체삭제",
-        "savedStates" : "필터저장",
+        "savedStates" : "저장된 필터",
         "updateState" : "변경",
         "renameState" : "이름변경",
         "removeState" : "필터삭제",
