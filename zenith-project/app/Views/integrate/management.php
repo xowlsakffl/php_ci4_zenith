@@ -174,6 +174,17 @@ $('#sdate, #edate').val(today);
 let dataTable, tableParam = {};
 getList();
 getData('buttons');
+function setTableParam() {
+    tableParam.searchData = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+    };
+}
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
     $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
@@ -416,6 +427,11 @@ function getList(data = []) { //리스트 세팅
             "contentType": "application/json",
             "dataType": "json",
         }
+    }).on('preXhr.dt', function (e, settings, data) {
+        if(!$('.reportData').find('.zenith-loading').is(':visible')) $('.reportData').prepend('<div class="zenith-loading"/>')
+        $('.client-list:not(.media) .row').filter(function(i, el) {
+            if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
+        });
     }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
         /* setButtons(data.buttons);
         setLeadCount(data.buttons)
@@ -563,6 +579,7 @@ function setMemoList(data) { //메모 리스트 생성
     
 }
 function setLeadCount(data) { //Filter Count 표시
+    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
@@ -585,6 +602,7 @@ function setLeadCount(data) { //Filter Count 표시
 }
 
 function setStatusCount(data){ //상태 Count 표시
+    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.statusCount').empty();
     $.each(data, function(key, value) {
         $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
@@ -619,7 +637,8 @@ $(window).resize(function() {
     fontAutoResize();
 });
 
-function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
+function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅   
+    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});    
     $.each(data, function(type, row) {
         if(type == 'status') return true;
         <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
@@ -696,7 +715,7 @@ function setDate(){
 $('body').on('click', '#company-list button, #advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 
