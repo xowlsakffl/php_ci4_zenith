@@ -49,9 +49,11 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <label><input type="text" name="sdate" id="sdate" readonly="readonly"><i class="bi bi-calendar2-week"></i></label>
+                <input type="text" name="sdate" id="sdate" readonly="readonly">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
                 <span> ~ </span>
-                <label><input type="text" name="edate" id="edate" readonly="readonly"><i class="bi bi-calendar2-week"></i></label>
+                <input type="text" name="edate" id="edate" readonly="readonly">
+                <button type="button"><i class="bi bi-calendar2-week"></i></button>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">

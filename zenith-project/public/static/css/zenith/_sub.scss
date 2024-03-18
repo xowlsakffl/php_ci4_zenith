@@ -115,7 +115,6 @@
         .term{flex:1; height:50px; padding:0 25px; border-top:2px solid #e2e2e2; border-bottom:2px solid #e2e2e2;
             label{position:relative;width: 100%;}
             input[type="text"]{flex:1; width:100%; border:0;}
-            .bi{position:absolute; right:.375em;}
             span{margin:0 20px;}
             button{width:28px; color:$color-primary;}
         }

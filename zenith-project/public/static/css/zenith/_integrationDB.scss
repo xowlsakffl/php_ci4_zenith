@@ -58,7 +58,7 @@
         }
     }
 
-    #deviceTable_wrapper{
+    .dt-container{
         .dt-button-collection{
             .dt-button-split{display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-content: flex-start; align-items: stretch;
                 button.dt-button{margin: 0; display: inline-block; width: 0; flex-grow: 1; flex-shrink: 0; flex-basis: 50px;
