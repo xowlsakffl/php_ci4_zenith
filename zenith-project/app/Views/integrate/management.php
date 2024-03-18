@@ -173,6 +173,7 @@ $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
 getList();
+getData('buttons');
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
     $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
@@ -416,13 +417,34 @@ function getList(data = []) { //리스트 세팅
             "dataType": "json",
         }
     }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
-        setButtons(data.buttons);
+        /* setButtons(data.buttons);
         setLeadCount(data.buttons)
-        setStatusCount(data.buttons.status);
+        setStatusCount(data.buttons.status); */
         setDate();
         setSearchData();
     });
 }
+
+function getData(type) {
+    $.ajax({
+        type: "GET",
+        url: `<?=base_url()?>integrate/${type}`,
+        data: {
+            "searchData":tableParam.searchData,
+        },
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){
+            setButtons(data);
+            setLeadCount(data)
+            setStatusCount(data.status);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');

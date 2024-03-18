@@ -143,6 +143,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('integrate', static function($routes){   
         $routes->get('', 'Integrate\IntegrateController::index');
         $routes->get('list', 'Integrate\IntegrateController::getList');
+        $routes->get('buttons', 'Integrate\IntegrateController::getButtons');
         $routes->get('lead', 'Integrate\IntegrateController::getLead');
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');
