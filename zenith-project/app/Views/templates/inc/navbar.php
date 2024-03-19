@@ -29,7 +29,7 @@ $uri = current_url(true)->getPath();
                 <a href="/integrate" class="<?php if($uri === '/integrate'){ echo "active";}?>"><button><i class="bi bi-database-fill"></i>통합 DB관리</button></a>
             </li>
             <?php 
-            if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')) {
+            if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user', 'test')) {
                 if(getenv('MY_SERVER_NAME') === 'carelabs'){
             ?>
             <li>
@@ -64,7 +64,7 @@ $uri = current_url(true)->getPath();
                 <div class="collapse" id="user">
                     <ul class="btn-toggle-nav">
                         <li><a href="/company" class="<?php if($uri === '/company'){ echo "active";}?>">광고주/광고대행사 관리</a></li>
-                        <?php if (auth()->user()->inGroup('superadmin', 'admin')) {?>
+                        <?php if (auth()->user()->inGroup('superadmin', 'admin', 'test')) {?>
                         <li><a href="/user" class="<?php if($uri === '/user'){ echo "active";}?>">회원 관리</a></li>
                         <?php }?>
                     </ul>

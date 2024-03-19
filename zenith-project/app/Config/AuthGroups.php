@@ -139,8 +139,13 @@ class AuthGroups extends ShieldAuthGroups
             'guest.access'
         ],
         'test' => [
+            'admin.access',
+            'users.create',
+            'users.edit',
+            'users.delete',
             'agency.*',
-            'advertiser.*'
+            'advertiser.*',
+            'integrate.*',
         ],
     ];
 }

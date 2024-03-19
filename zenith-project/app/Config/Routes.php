@@ -36,7 +36,7 @@ $routes->post('set-password', '\App\Controllers\Auth\PasswordChangeController::c
 // route since we don't have to scan directories.
 
 //게스트 - 승인대기중 페이지
-$routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], static function($routes){
+$routes->group('', ['filter' => 'group:admin,superadmin,developer,guest,test'], static function($routes){
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
 
@@ -54,7 +54,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     //광고주, 광고대행사 관리
-    $routes->group('', ['filter' => 'group:superadmin,admin,developer,user', 'permission:admin.access,admin.settings,agency.access'], static function($routes){
+    $routes->group('', ['filter' => 'group:superadmin,admin,developer,user,test', 'permission:admin.access,admin.settings,agency.access'], static function($routes){
         $routes->get('company', 'Company\CompanyController::index');
         $routes->get('company/get-companies', 'Company\CompanyController::getCompanies');
         $routes->get('company/get-company', 'Company\CompanyController::getCompany');
@@ -75,7 +75,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 회원 관리
-    $routes->group('', ['filter' => 'group:admin,superadmin', 'permission:admin.access,admin.settings'], static function($routes){
+    $routes->group('', ['filter' => 'group:admin,superadmin,test', 'permission:admin.access,admin.settings'], static function($routes){
         $routes->get('user', 'User\UserController::index');
         $routes->get('user/get-users', 'User\UserController::getUsers');
         $routes->get('user/get-user', 'User\UserController::getUser');
@@ -120,12 +120,12 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         });
     });
 
-    $routes->group('advertisement-etc', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
+    $routes->group('advertisement-etc', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvEtcManagerController::index');
     });
 
     //자동화
-    $routes->group('automation', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
+    $routes->group('automation', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\Automation\AutomationController::index');
         $routes->get('list', 'AdvertisementManager\Automation\AutomationController::getList');
         $routes->get('adv', 'AdvertisementManager\Automation\AutomationController::getAdv');
@@ -153,7 +153,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 회계 관리
-    $routes->group('accounting', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
+    $routes->group('accounting', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){   
         $routes->get('tax', 'Accounting\TaxController::tax');
         $routes->get('taxList', 'Accounting\TaxController::taxList');
         $routes->get('unpaid', 'Accounting\UnpaidController::unpaid');
@@ -162,12 +162,12 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 인사 관리
-    $routes->group('humanresource', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
+    $routes->group('humanresource', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){   
         $routes->get('management', 'HumanResource\HumanResourceController::humanResource');
     });
 
     // 이벤트
-    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){   
+    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){   
         $routes->group('event', static function($routes){   
             $routes->get('', 'EventManage\EventController::index');
             $routes->get('list', 'EventManage\EventController::getList');
@@ -221,7 +221,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
         
     });
 
-    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){
+    $routes->group('eventmanage', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){
         $routes->get('/advertisement/(:any)', 'Advertisement\ApiController::$1');
 
         $routes->get('fbapi/(:any)', 'Advertisement\Facebook::$1');
