@@ -187,8 +187,9 @@ function setTableParam() {
 }
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
-    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
+    console.log(data.searchData);
     if(typeof data.searchData == 'undefined') return;
+    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData.company != 'undefined') {
         data.searchData.company.split('|').map(function(txt){ $(`#company-list button[value="${txt}"]`).addClass('active'); });
     }
@@ -718,7 +719,6 @@ $('body').on('click', '#company-list button, #advertiser-list button, #media-lis
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
     setTableParam();
-    getData('buttons');
     dataTable.draw();
 });
 
