@@ -1667,6 +1667,7 @@ div.dt-processing > div:last-child > div {
 
 .table-responsive {
   position: relative;
+  overflow-x: visible;
 }
 
 .btns-memo-style {
