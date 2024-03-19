@@ -187,7 +187,6 @@ function setTableParam() {
 }
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
-    console.log(data.searchData);
     if(typeof data.searchData == 'undefined') return;
     $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData.company != 'undefined') {
@@ -269,32 +268,12 @@ function getList(data = []) { //리스트 세팅
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
-            if($('#media-list').is(':visible')) {
-                data.searchData = {
-                    'sdate': $('#sdate').val(),
-                    'edate': $('#edate').val(),
-                    'stx': $('#stx').val(),
-                    'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
-                };
-                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
-                    data.searchData.company = $('#company-list button.active').map(function(){return $(this).val();}).get().join('|');
-                <?php }?>
-                tableParam = data;
-                debug(tableParam.searchData);
-            }
+            data.searchData = tableParam.searchData;
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드')
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
-            if(typeof tableParam.searchData == 'undefined') tableParam.searchData = [];
-            tableParam.searchData.sdate = today;
-            tableParam.searchData.edate = today;
-            setSearchData();
-            debug(tableParam.searchData);
         },
         "buttons": [ //Set Button
             {
@@ -437,7 +416,7 @@ function getList(data = []) { //리스트 세팅
         setLeadCount(data.buttons)
         setStatusCount(data.buttons.status); */
         setDate();
-        setSearchData();
+        //setSearchData();
     }).on('draw', function() {
         debug('draw');
         getData('buttons');
@@ -602,6 +581,7 @@ function setLeadCount(data) { //Filter Count 표시
             if(v.count) button.addClass('on');
         });
     });
+    setSearchData();
 }
 
 function setStatusCount(data){ //상태 Count 표시
@@ -610,6 +590,7 @@ function setStatusCount(data){ //상태 Count 표시
     $.each(data, function(key, value) {
         $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
     });
+    setSearchData();
 }
 function fontAutoResize() { //.client-list button 항목 가변폰트 적용
     $('.client-list .col').each(function(i, el) {
@@ -667,6 +648,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         $('#'+type+'-list').html(html);
     });
     fontAutoResize();
+    setSearchData();
 }
 
 function setDate(){
