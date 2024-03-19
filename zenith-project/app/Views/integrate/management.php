@@ -172,6 +172,7 @@ var today = moment().format('YYYY-MM-DD');
 $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
+let isPaginationClicked = false;
 getList();
 getData('buttons');
 function setTableParam() {
@@ -408,9 +409,11 @@ function getList(data = []) { //리스트 세팅
             "dataType": "json",
         }
     }).on('preXhr.dt', function (e, settings, data) {
-        $('.client-list .row').filter(function(i, el) {
-            if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
-        });
+        if (!isPaginationClicked) {
+            $('.client-list .row').filter(function(i, el) {
+                if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
+            });
+        }
     }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
         /* setButtons(data.buttons);
         setLeadCount(data.buttons)
@@ -419,7 +422,13 @@ function getList(data = []) { //리스트 세팅
         //setSearchData();
     }).on('draw', function() {
         debug('draw');
-        getData('buttons');
+        console.log(isPaginationClicked);
+        if (!isPaginationClicked) {
+            getData('buttons');
+        }
+        isPaginationClicked = false;
+    }).on('page', function() {
+        isPaginationClicked = true;
     });
 }
 
