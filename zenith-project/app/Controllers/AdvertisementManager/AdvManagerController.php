@@ -719,6 +719,10 @@ class AdvManagerController extends BaseController
     public function updateStatus()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            if (auth()->user()->inGroup('test')) {
+                return $this->fail("테스트 계정");
+            }
+
             $param = $this->request->getRawInput();
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -850,6 +854,10 @@ class AdvManagerController extends BaseController
     public function updateName()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            if (auth()->user()->inGroup('test')) {
+                return $this->fail("테스트 계정");
+            }
+
             $param = $this->request->getRawInput();
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -952,6 +960,10 @@ class AdvManagerController extends BaseController
     public function updateBudget()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            if (auth()->user()->inGroup('test')) {
+                return $this->fail("테스트 계정");
+            }
+
             $param = $this->request->getRawInput(); 
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -1066,6 +1078,10 @@ class AdvManagerController extends BaseController
     public function updateBidAmount()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            if (auth()->user()->inGroup('test')) {
+                return $this->fail("테스트 계정");
+            }
+
             $param = $this->request->getRawInput(); 
             $sliceId = explode("_", $param['id']);
             $data = [
@@ -1170,6 +1186,10 @@ class AdvManagerController extends BaseController
     public function updateAdv()
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'put'){
+            if (auth()->user()->inGroup('test')) {
+                return $this->fail("테스트 계정");
+            }
+            
             $data = $this->request->getRawInput();
             //$data = $this->request->getGet();
             $result = false;

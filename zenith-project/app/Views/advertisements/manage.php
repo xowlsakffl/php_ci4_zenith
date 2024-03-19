@@ -837,7 +837,7 @@ function getData(type) {
             // setReport(data.report);
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -905,7 +905,7 @@ function getCheckData(check){
             // setMediaAccount(data.media_accounts);
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -1066,12 +1066,12 @@ function sendStatus(data){
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
         }
     });
 }
 
-function sendName(data, inputElement) {
+function sendName(data, inputElement, tmp_name) {
     $.ajax({
         type: "put",
         url: "<?=base_url()?>/advertisements/set-name",
@@ -1086,7 +1086,8 @@ function sendName(data, inputElement) {
             }
         },
         error: function(error, status, msg) {
-            alert("상태코드 " + status + "에러메시지" + msg);
+            restoreElement(tmp_name, inputElement);
+            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
         }
     });
 }
@@ -1113,7 +1114,7 @@ function handleInput(tab, id, tmp_name, inputElement) {
     if (tmp_name === new_name) {
         restoreElement(tmp_name, inputElement);
     } else {
-        sendName(data, inputElement);
+        sendName(data, inputElement, tmp_name);
     }
 }
 
@@ -1135,7 +1136,7 @@ function setManualUpdate(data){
 			$('.fa-spinner').remove();
 		},
         error: function(error, status, msg) {
-            alert("상태코드 " + status + "에러메시지" + msg);
+            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
         }
     });
 }
@@ -1230,7 +1231,7 @@ $('#dbCountTable').on('blur', '.db-count-input', function() {
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 });
@@ -1253,7 +1254,7 @@ $('#dbCountTable').on('change', '.expose_check', function() {
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 });
@@ -1403,7 +1404,7 @@ function getDiffData(){
             setDiffData(data);
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -1441,7 +1442,7 @@ function getMemoList() { //메모 수신
             setMemoList(data);
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -1459,7 +1460,7 @@ function registerMemo(data) { //메모 등록
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -1582,7 +1583,7 @@ $(".dataTable").on("click", '.memo-list input[name="is_done"]', function(){
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 });
@@ -1598,7 +1599,7 @@ function getChangeLogList(id = null) {
             setChangeLogList(data);
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + msg );
         }
     });
 }
@@ -1717,7 +1718,7 @@ $(".dataTable").on("click", '.btn-budget button', function(){
             }
         },
         error: function(error, status, msg){
-            alert("상태코드 " + status + "에러메시지" + msg );
+            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error );
         }
     });
 });
@@ -1777,7 +1778,8 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                             }
                         },
                         error: function(error, status, msg){
-                            alert("상태코드 " + status + "에러메시지" + msg );
+                            restoreElement('\u20A9'+c_budget, $input);
+                            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
                         }
                     });
                 }
@@ -1816,7 +1818,8 @@ $(".dataTable").on("click", '.budget p[data-editable="true"]', function(){
                         }
                     },
                     error: function(error, status, msg){
-                        alert("상태코드 " + status + "에러메시지" + msg );
+                        restoreElement(c_budget, $input);
+                        alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
                     }
                 });
             }
@@ -1875,7 +1878,8 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                             }
                         },
                         error: function(error, status, msg){
-                            alert("상태코드 " + status + "에러메시지" + msg );
+                            restoreElement('\u20A9'+c_bidamount, $input);
+                            alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
                         }
                     });
                 }
@@ -1910,7 +1914,8 @@ $(".dataTable").on("click", '.bidamount p[data-editable="true"]', function(){
                         }
                     },
                     error: function(error, status, msg){
-                        alert("상태코드 " + status + "에러메시지" + msg );
+                        restoreElement('\u20A9'+c_bidamount, $input);
+                        alert("상태코드 " + status + " 에러메시지 " + error.responseJSON.messages.error);
                     }
                 });
             }
@@ -1934,7 +1939,7 @@ function sendCode(data, inputElement) {
             }
         },
         error: function(error, status, msg) {
-            alert("상태코드 " + status + "에러메시지" + msg);
+            alert("상태코드 " + status + " 에러메시지 " + msg);
         }
     });
 }

@@ -13,7 +13,7 @@ $uri = current_url(true)->getPath();
     ?>"><img src="/img/logo.png" alt="CHAIN 열혈광고"></a></h1>
     <div class="nav-wrap">
         <ul class="nav flex-column">
-            <?php if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')) {?>
+            <?php if (auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user', 'test')) {?>
             <li>
                 <button data-bs-toggle="collapse" data-bs-target="#advertisements" aria-expanded="false"><i class="bi bi-bar-chart-line-fill"></i>통합 광고관리</button>
                 <div class="collapse" id="advertisements">

@@ -40,8 +40,8 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,guest'], stati
     $routes->get('guest', 'GuestController::index', ['as' => 'guest']);
 });
 
-//관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사
-$routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser'], static function($routes){
+//관리자, 최고관리자, 개발자, 일반사용자, 광고주, 광고대행사, 테스트
+$routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,advertiser,test'], static function($routes){
     $routes->get('mypage', 'User\UserController::myPage');
     $routes->post('mypage/update', 'User\UserController::myPageUpdate');
     $routes->get('password-changed-at', 'User\UserController::setPasswordChangedAtAjax');
@@ -84,7 +84,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     });
 
     // 광고관리
-    $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
+    $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user,test'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
         $routes->get('report', 'AdvertisementManager\AdvManagerController::getReportData');

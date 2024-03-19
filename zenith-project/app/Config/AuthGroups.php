@@ -58,6 +58,10 @@ class AuthGroups extends ShieldAuthGroups
         'guest' => [
             'title'       => '게스트',
             'description' => '게스트 권한'
+        ],
+        'test' => [
+            'title'       => '테스트',
+            'description' => '테스트 권한'
         ]
     ];
 
@@ -133,6 +137,10 @@ class AuthGroups extends ShieldAuthGroups
         ],
         'guest' => [
             'guest.access'
+        ],
+        'test' => [
+            'agency.*',
+            'advertiser.*'
         ],
     ];
 }
