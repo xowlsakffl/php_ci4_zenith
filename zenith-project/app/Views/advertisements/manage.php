@@ -6,22 +6,28 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-scroller-bs5/css/scroller.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link href="/static/css/datatables.css" rel="stylesheet">
+<script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
-<script src="/static/node_modules/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
 <script src="/static/node_modules/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<!-- bootstrap5 -->
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore-bs5/js/stateRestore.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js"></script>
 <script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
@@ -43,11 +49,9 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" readonly="readonly">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="sdate" id="sdate"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" readonly="readonly">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="edate" id="edate"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
@@ -56,7 +60,6 @@
         </form>
         <div class="row d-flex">
             <div class="reportData detail minWd">
-
             </div> 
         </div>
     </div>
@@ -92,7 +95,6 @@
             </div>
         </div>
     </div> -->
-
     <div class="section client-list advertiser">
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 광고주</h3>
         <div class="row" id="advertiser-list">
@@ -103,13 +105,13 @@
         <h3 class="content-title toggle"><i class="bi bi-chevron-up"></i> 매체</h3>
         <div class="row">
             <div class="col">
-                <div class="inner"><button type="button" value="facebook" id="media_btn" class="media_btn">페이스북</button></div>
+                <div class="inner"><button type="button" value="facebook" data-btn="media" class="media_btn">페이스북</button></div>
             </div>
             <div class="col">
-                <div class="inner"><button type="button" value="kakao" id="media_btn" class="media_btn">카카오</button></div>
+                <div class="inner"><button type="button" value="kakao" data-btn="media" class="media_btn">카카오</button></div>
             </div>
             <div class="col">
-                <div class="inner"><button type="button" value="google" id="media_btn" class="media_btn">구글</button></div>
+                <div class="inner"><button type="button" value="google" data-btn="media" class="media_btn">구글</button></div>
             </div>
         </div>
     </div>
@@ -153,7 +155,7 @@
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div> -->
             <div class="tab-pane active">
-                <div class="table-responsive text-center">
+                <div class="table-responsive">
                     <table class="dataTable table table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
@@ -390,13 +392,25 @@ $('.tab-link[value="campaigns"]').addClass('active');
 //if(typeof tableParam != 'undefined'){
     tableParam.searchData = {
         'type': $('.tab-link.active').val(),
-        'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
+        'media' : $('.media_btn.active').map(function(){return $(this).val();}).get().join('|'), 
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
     };
 //}
 
 getList();
+function setTableParam() {
+    tableParam.searchData = {
+        'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'type': $('.tab-link.active').val(),
+        'media' : $('.media_btn.active').map(function(){return $(this).val();}).get().join('|'),
+        'company' : $('.company_btn.active').map(function(){return $(this).val();}).get().join('|'),
+        'account' : $('.media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
+    };
+}
 function setSearchData() {
     tab = $('.tab-link.active').val();
     if(tab == 'adsets' || tab == 'ads'){
@@ -406,16 +420,16 @@ function setSearchData() {
     }
     var data = tableParam;
     if(typeof data.searchData == 'undefined') return;
-    $('#media_btn, #business_btn, #company_btn').removeClass('active');
+    $('.media_btn, .business_btn, .company_btn').removeClass('active');
 
     if(data.searchData.media){
-        data.searchData.media.split('|').map(function(txt){ $(`#media_btn[value="${txt}"]`).addClass('active'); });
+        data.searchData.media.split('|').map(function(txt){ $(`.media_btn[value="${txt}"]`).addClass('active'); });
     }
     if(data.searchData.company){
-        data.searchData.company.split('|').map(function(txt){ $(`#company_btn[value="${txt}"]`).addClass('active'); });
+        data.searchData.company.split('|').map(function(txt){ $(`.company_btn[value="${txt}"]`).addClass('active'); });
     }
     if(data.searchData.account){
-        data.searchData.account.split('|').map(function(txt){ $(`#media_account_btn[value="${txt}"]`).addClass('active'); });
+        data.searchData.account.split('|').map(function(txt){ $(`.media_account_btn[value="${txt}"]`).addClass('active'); });
     }
 	
 	if(data.searchData.carelabs == 1){
@@ -427,8 +441,9 @@ function setSearchData() {
     $('.tab-link[value="'+data.searchData.type+'"]').addClass('active');
     $('#stx').val(data.searchData.stx);
     debug('searchData 세팅')
-    if(typeof dataTable != 'undefined') dataTable.state.save();
+    // if(typeof dataTable != 'undefined') dataTable.state.save();
 }
+/*
 function setDrawData() {
     tab = $('.tab-link.active').val();
     if(typeof tableParam.searchData == 'undefined') return;
@@ -474,7 +489,7 @@ function setDrawData() {
         }
     }
 }
-
+*/
 $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serverside export
     var arr = [];
     $.ajax({
@@ -505,7 +520,7 @@ function getList(data = []){
         "fixedColumns": {
             "leftColumns": 3
         },
-        "deferRender": false,
+        "deferRender": true,
         "autoWidth": true,
         "order": [[1,'asc']],
         "processing" : true,
@@ -519,49 +534,17 @@ function getList(data = []){
         "orderMulti": true,
         "orderCellsTop": true,
         "paging": false,
-        "info": true,
+        "info": false,
         "scroller": false,
         "scrollX": true,
-        // "scrollY": "75vh",
+        // "scrollY": "50%",
         // "scrollCollapse": true,
         "stateSave": true,
-        "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
-            debug('state 저장')
-            //data.memoView = $('.btns-memo.active').val();
-            //if($('#advertiser-list>div').is(':visible')) {
-                data.searchData = {
-					'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
-                    'sdate': $('#sdate').val(),
-                    'edate': $('#edate').val(),
-                    'stx': $('#stx').val(),
-                    'type': $('.tab-link.active').val(),
-                    'media' : $('#media_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    'company' : $('#company_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                    'account' : $('#media_account_btn.active').map(function(){return $(this).val();}).get().join('|'),
-                };
-                data.searchData.data = tableParam.searchData.data;
-                tableParam = data;
-                //console.log(tableParam.searchData);  
-            //}
-            
-            debug(tableParam.searchData);
-        },
-        "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
-            debug('state 로드');
-            //debug(tableParam.searchData);
-            //$(`.btns-memo[value="${data.memoView}"]`).addClass('active');
-            //console.log(data);
-            console.log(data);
-            console.log(tableParam);
-            tableParam.searchData.sdate = today;
-            tableParam.searchData.edate = today;
-            setSearchData();
-        },
-        "deferRender": true,
+        "deferRender": false,
         "buttons": [
             {
                 'extend': 'collection',
-                'text': "<i class='bi bi-list'></i>",
+                'text': "Menu",
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [
@@ -767,21 +750,43 @@ function getList(data = []){
         },
         "language": {
             "url": '/static/js/dataTables.i18n.json' //CDN 에서 한글화 수신
-        }
+        },
+        "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
+            debug('state 저장');
+            data.memoView = $('.btns-memo.active').val();
+            data.searchData = tableParam.searchData;
+        },
+        "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
+            debug('state 로드');
+            tableParam = data;
+        },
+    }).on('preXhr.dt', function (e, settings, data) {
+        if(!$('.reportData').find('.zenith-loading').is(':visible')) $('.reportData').prepend('<div class="zenith-loading"/>')
+        $('.client-list:not(.media) .row').filter(function(i, el) {
+            if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
+        });
     }).on('xhr.dt', function( e, settings, data, xhr ) {
         if(data){
             debug('ajax loaded');
+            setDate();
+            setTotal(data);
+            /*
             setReport(data.report);
             setAccount(data.accounts);
             setMediaAccount(data.media_accounts);
-            setTotal(data);
             setDate();
             setSearchData();
+            */
         }
     }).on('draw', function() {
         debug('draw');
+        getData('report');
+        getData('accounts');
+        getData('mediaAccounts');
+        /*
         loadedData = true;
         setDrawData();
+        */
     })
 }
 
@@ -818,9 +823,26 @@ function setTotal(res){
         $('#avg-cvr').text(Math.round(res.total.avg_cvr * 100) / 100 +'\u0025');
     };
 }
-
+function getData(type) {
+    $.ajax({
+        type: "GET",
+        url: `<?=base_url()?>advertisements/${type}`,
+        data: {
+            "searchData":tableParam.searchData,
+        },
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){
+            eval(`set${type.charAt(0).toUpperCase()+type.slice(1)}`)(data); 
+            // setReport(data.report);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
 function setReport(data){
-    $('.reportData').empty();
+    $('.reportData').empty().find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $.each(data, function(key, value) {
         switch (key) {
             case 'impressions_sum':
@@ -864,6 +886,7 @@ function setReport(data){
         }
         $('.reportData').append('<dl class="col"><dt>' + newKey + '</dt><dd>' + value + '</dd></dl>');
     });
+    setSearchData();
 }
 
 function getCheckData(check){
@@ -886,10 +909,9 @@ function getCheckData(check){
         }
     });
 }
-
-function setAccount(data) {
+function setAccounts(data) {
     let $row = $('.advertiser .row');
-
+    $('.advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     let existingIds = [];
     $row.find('.filter_btn').each(function() {
         existingIds.push($(this).val());
@@ -902,7 +924,7 @@ function setAccount(data) {
         if (existingIds.includes(companyId)) {
             existingIds = existingIds.filter(id => id !== companyId);
         } else {
-            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" id="company_btn" class="filter_btn"><span class="account_name">' + v.company_name + '</span></button></div></div>';
+            html += '<div class="col"><div class="inner"><button type="button" value="' + companyId + '" data-btn="company" class="company_btn filter_btn"><span class="account_name">' + v.company_name + '</span></button></div></div>';
         }
     });
 
@@ -923,11 +945,12 @@ function setAccount(data) {
     $.each(buttons, function(_, button) {
         $row.append(button.parentNode.parentNode);
     });
+    setSearchData();
 }
 
-function setMediaAccount(data) {
+function setMediaAccounts(data) {
     let $row = $('.media-advertiser .row');
-
+    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     let mediaExistingIds = [];
     $row.find('.filter_media_btn').each(function() {
         mediaExistingIds.push($(this).val());
@@ -943,7 +966,7 @@ function setMediaAccount(data) {
             html += `
             <div class="col">
             <div class="inner ${v.tag_inactive ? v.tag_inactive : ''} ${v.approved_limited ? v.approved_limited : ''} ${v.disapproval ? v.disapproval : ''}">
-                <button type="button" value="${media_account_id}" id="media_account_btn" class="filter_media_btn">
+                <button type="button" value="${media_account_id}" data-btn="media-account" class="filter_media_btn media_account_btn">
                 <div class="media_account_txt d-flex align-items-center">
                     <span class="media_account_icon ${v.media}"></span>
                     <span class="media_account_name">${v.media_account_name}</span>
@@ -980,6 +1003,7 @@ function setMediaAccount(data) {
     $.each(buttons, function(_, button) {
         $row.append(button.parentNode.parentNode);
     });
+    setSearchData();
 }
 
 function setDate(){
@@ -1246,13 +1270,12 @@ $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');
     debug('메모표시방식 설정');
-    dataTable.state.save();
 });
 
-$('body').on('click', '#media_btn, #company_btn, #media_account_btn', function() {
+$('body').on('click', '.media_btn, .company_btn, .media_account_btn', function() {
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 <?php if(getenv('MY_SERVER_NAME') === 'resta'){?>
@@ -1966,7 +1989,7 @@ $(".dataTable").on("click", '.codeBtn', function(){
 
 $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
-    $('#media_btn, #business_btn, #company_btn, .tab-link, #media_account_btn, #carelabs_btn').removeClass('active');
+    $('.media_btn, #business_btn, .company_btn, .tab-link, .media_account_btn, #carelabs_btn').removeClass('active');
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#total td').empty();
     $('#stx').val('');

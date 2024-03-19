@@ -7,16 +7,29 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
-<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link href="/static/css/datatables.css" rel="stylesheet">
+<script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns/js/dataTables.fixedColumns.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<!-- bootstrap5 -->
+<link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-keytable-bs5/css/keyTable.bootstrap5.min.css" rel="stylesheet"> 
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-staterestore-bs5/js/stateRestore.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+<script src="/static/node_modules/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js"></script>
+<script src="/static/js/jquery.number.min.js"></script>
 <script src="/static/js/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
@@ -39,11 +52,9 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="sdate" id="sdate"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="edate" id="edate"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
@@ -84,7 +95,7 @@
     </div>
 
     <div>
-        <div class="search-wrap my-5">
+        <div class="search-wrap my-5 status_wrap">
             <div class="statusCount detail d-flex minWd"></div>     
         </div>
 
@@ -162,10 +173,22 @@ $('#sdate, #edate').val(today);
 
 let dataTable, tableParam = {};
 getList();
+getData('buttons');
+function setTableParam() {
+    tableParam.searchData = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
+        'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
+    };
+}
 function setSearchData() { //state 에 저장된 내역으로 필터 active 세팅
     var data = tableParam;
-    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData == 'undefined') return;
+    $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     if(typeof data.searchData.company != 'undefined') {
         data.searchData.company.split('|').map(function(txt){ $(`#company-list button[value="${txt}"]`).addClass('active'); });
     }
@@ -226,8 +249,9 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
     return {body: arr , header: headerArray};
 } );
 function getList(data = []) { //리스트 세팅
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#deviceTable').DataTable({
-        "dom": '<Bfr<t>ip>',
+        "dom": '<Bfri<t>p>',
         "fixedHeader": true,
         "autoWidth": true,
         "order": [[12,'desc']],
@@ -244,37 +268,17 @@ function getList(data = []) { //리스트 세팅
         "stateSaveParams": function (settings, data) { //LocalStorage 저장 시
             debug('state 저장')
             data.memoView = $('.btns-memo.active').val();
-            if($('#media-list').is(':visible')) {
-                data.searchData = {
-                    'sdate': $('#sdate').val(),
-                    'edate': $('#edate').val(),
-                    'stx': $('#stx').val(),
-                    'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
-                    'status' : $('.statusCount dl.active').map(function(){return $('dt',this).text();}).get().join('|')
-                };
-                <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
-                    data.searchData.company = $('#company-list button.active').map(function(){return $(this).val();}).get().join('|');
-                <?php }?>
-                tableParam = data;
-                debug(tableParam.searchData);
-            }
+            data.searchData = tableParam.searchData;
         },
         "stateLoadParams": function (settings, data) { //LocalStorage 호출 시
             debug('state 로드')
             $(`.btns-memo[value="${data.memoView}"]`).addClass('active');
             tableParam = data;
-            if(typeof tableParam.searchData == 'undefined') tableParam.searchData = [];
-            tableParam.searchData.sdate = today;
-            tableParam.searchData.edate = today;
-            setSearchData();
-            debug(tableParam.searchData);
         },
         "buttons": [ //Set Button
             {
                 'extend': 'collection',
-                'text': "<i class='bi bi-list'></i>",
+                'text': "Menu",
                 'className': 'custom-btn-collection',
                 'fade': true,
                 'buttons': [
@@ -403,14 +407,42 @@ function getList(data = []) { //리스트 세팅
             "contentType": "application/json",
             "dataType": "json",
         }
+    }).on('preXhr.dt', function (e, settings, data) {
+        $('.client-list .row').filter(function(i, el) {
+            if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
+        });
     }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
-        setButtons(data.buttons);
+        /* setButtons(data.buttons);
         setLeadCount(data.buttons)
-        setStatusCount(data.buttons.status);
+        setStatusCount(data.buttons.status); */
         setDate();
-        setSearchData();
+        //setSearchData();
+    }).on('draw', function() {
+        debug('draw');
+        getData('buttons');
     });
 }
+
+function getData(type) {
+    $.ajax({
+        type: "GET",
+        url: `<?=base_url()?>integrate/${type}`,
+        data: {
+            "searchData":tableParam.searchData,
+        },
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
+        success: function(data){
+            setButtons(data);
+            setLeadCount(data)
+            setStatusCount(data.status);
+        },
+        error: function(error, status, msg){
+            alert("상태코드 " + status + "에러메시지" + msg );
+        }
+    });
+}
+
 $('.btns-memo-style button').bind('click', function() { //메모 표시타입
     $('.btns-memo-style button').removeClass('active');
     $(this).addClass('active');
@@ -529,6 +561,7 @@ function setMemoList(data) { //메모 리스트 생성
     
 }
 function setLeadCount(data) { //Filter Count 표시
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
@@ -548,13 +581,16 @@ function setLeadCount(data) { //Filter Count 표시
             if(v.count) button.addClass('on');
         });
     });
+    setSearchData();
 }
 
 function setStatusCount(data){ //상태 Count 표시
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.statusCount').empty();
     $.each(data, function(key, value) {
         $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
     });
+    setSearchData();
 }
 function fontAutoResize() { //.client-list button 항목 가변폰트 적용
     $('.client-list .col').each(function(i, el) {
@@ -585,7 +621,8 @@ $(window).resize(function() {
     fontAutoResize();
 });
 
-function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅       
+function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅   
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});    
     $.each(data, function(type, row) {
         if(type == 'status') return true;
         <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
@@ -611,6 +648,7 @@ function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅
         $('#'+type+'-list').html(html);
     });
     fontAutoResize();
+    setSearchData();
 }
 
 function setDate(){
@@ -662,7 +700,7 @@ function setDate(){
 $('body').on('click', '#company-list button, #advertiser-list button, #media-list button, #event-list button', function() {
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 

@@ -380,6 +380,24 @@ select::-ms-expand {
   border-left-color: rgba(255, 255, 255, 0.8);
 }
 
+.zenith-loading {
+  background: 50% 100%/50% 50% no-repeat radial-gradient(ellipse at bottom, #cd1626, transparent, transparent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 10vw;
+  font-family: sans-serif;
+  animation: zenith-loading-reveal 1500ms ease-in-out forwards 200ms, zenith-loading-glow 2500ms linear infinite 2000ms;
+}
+
+.zenith-loading::after {
+  display: block;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  content: "ZENITH";
+}
+
 body {
   background: #f7f7f7;
 }
@@ -974,10 +992,17 @@ body {
   border-top: 2px solid #e2e2e2;
   border-bottom: 2px solid #e2e2e2;
 }
+.search-wrap .search .term label {
+  position: relative;
+}
 .search-wrap .search .term input[type=text] {
   flex: 1;
   width: 100%;
   border: 0;
+}
+.search-wrap .search .term .bi {
+  position: absolute;
+  right: 0.375em;
 }
 .search-wrap .search .term span {
   margin: 0 20px;
@@ -1621,8 +1646,8 @@ input:-internal-autofill-selected {
 #adv-table tbody tr td:nth-child(2) .btn_box li:last-child {
   border-bottom: none;
 }
-#adv-table tbody tr.off {
-  background-color: #f5f5f5;
+#adv-table tbody tr.off td {
+  background-color: #f7f7f7;
 }
 #adv-table tbody tr.disapproval td:nth-child(2) {
   background-color: #f87e7e !important;
@@ -1871,6 +1896,15 @@ div.dataTables_scrollBody {
 }
 div.dataTables_scrollBody > table {
   padding-bottom: 3rem;
+}
+
+table thead #total td {
+  color: #000;
+  text-align: center;
+}
+
+.dt-buttons .btn-group .btn > span {
+  font-size: 0.825em;
 }
 
 @media screen and (max-width: 1024px) {
@@ -2272,6 +2306,19 @@ div.dataTables_scrollBody > table {
   }
   100% {
     box-shadow: inset 200px 0px 7px red;
+  }
+}
+@keyframes zenith-loading-reveal {
+  80% {
+    letter-spacing: 8px;
+  }
+  100% {
+    background-size: 300% 300%;
+  }
+}
+@keyframes zenith-loading-glow {
+  40% {
+    text-shadow: 0 0 8px #cd1626;
   }
 }
 .ui-autocomplete {
@@ -3155,6 +3202,35 @@ div.dataTables_scrollBody > table {
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
 }
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button {
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 50px;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:first-child {
+  padding-right: 3em;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:last-child {
+  margin-left: -1px;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  z-index: 2;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button-split-drop {
+  min-width: 33px;
+  flex: 0;
+}
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   z-index: 1;
   text-align: left;
@@ -3290,6 +3366,9 @@ div.dataTables_scrollBody > table {
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr td {
   text-align: center;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr.abnormal td {
+  background-color: #fffad1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
   padding: 0px;
@@ -4052,6 +4131,19 @@ div.dt-button-collection h3 {
     box-shadow: inset 200px 0px 7px red;
   }
 }
+@keyframes zenith-loading-reveal {
+  80% {
+    letter-spacing: 8px;
+  }
+  100% {
+    background-size: 300% 300%;
+  }
+}
+@keyframes zenith-loading-glow {
+  40% {
+    text-shadow: 0 0 8px #cd1626;
+  }
+}
 .ad-list .type {
   transition: 0.4s;
 }
@@ -4144,6 +4236,35 @@ div.dt-button-collection h3 {
 }
 .sub-contents-wrap .btns-memo-style button:hover i.bi::before {
   animation: sidebarShake 0.3s infinite linear alternate;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button {
+  margin: 0;
+  display: inline-block;
+  width: 0;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 50px;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:first-child {
+  padding-right: 3em;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button:last-child {
+  margin-left: -1px;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  z-index: 2;
+}
+.sub-contents-wrap .dataTables_wrapper .dt-button-collection .dt-button-split button.dt-button-split-drop {
+  min-width: 33px;
+  flex: 0;
 }
 .sub-contents-wrap .dataTables_wrapper .dt-buttons {
   z-index: 1;
@@ -4280,6 +4401,9 @@ div.dt-button-collection h3 {
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr th, .sub-contents-wrap .dataTables_wrapper table.dataTable tfoot tr td {
   text-align: center;
+}
+.sub-contents-wrap .dataTables_wrapper table.dataTable tbody tr.abnormal td {
+  background-color: #fffad1;
 }
 .sub-contents-wrap .dataTables_wrapper table.dataTable textarea.consultation {
   padding: 0px;

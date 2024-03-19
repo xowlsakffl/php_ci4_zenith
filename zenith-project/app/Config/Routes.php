@@ -87,7 +87,9 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('advertisements', ['filter' => 'group:superadmin,admin,developer,user'], static function($routes){ 
         $routes->get('', 'AdvertisementManager\AdvManagerController::index');
         $routes->get('data', 'AdvertisementManager\AdvManagerController::getData');
-        $routes->get('report', 'AdvertisementManager\AdvManagerController::getReport');
+        $routes->get('report', 'AdvertisementManager\AdvManagerController::getReportData');
+        $routes->get('accounts', 'AdvertisementManager\AdvManagerController::getAccountsData');
+        $routes->get('mediaAccounts', 'AdvertisementManager\AdvManagerController::getMediaAccountsData');
         $routes->get('check-data', 'AdvertisementManager\AdvManagerController::getCheckData');
         $routes->get('diff-report', 'AdvertisementManager\AdvManagerController::getDiffReport');
         $routes->get('get-adv', 'AdvertisementManager\AdvManagerController::getAdvs');
@@ -141,6 +143,7 @@ $routes->group('', ['filter' => 'group:admin,superadmin,developer,user,agency,ad
     $routes->group('integrate', static function($routes){   
         $routes->get('', 'Integrate\IntegrateController::index');
         $routes->get('list', 'Integrate\IntegrateController::getList');
+        $routes->get('buttons', 'Integrate\IntegrateController::getButtons');
         $routes->get('lead', 'Integrate\IntegrateController::getLead');
         $routes->get('leadcount', 'Integrate\IntegrateController::getEventLeadCount');
         $routes->get('statuscount', 'Integrate\IntegrateController::getStatusCount');

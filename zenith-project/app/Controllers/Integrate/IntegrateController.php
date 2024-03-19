@@ -98,7 +98,30 @@ class IntegrateController extends BaseController
                 }
                 return $this->respond($list['data']);
             }
+            
+            $result = [
+                'data' => $list['data'],
+                'recordsTotal' => $list['allCount'],
+                'recordsFiltered' => $list['allCount'],
+                'draw' => intval($arg['draw']),
+            ];
+            
+            return $this->respond($result);
+        }else{
+            return $this->fail("잘못된 요청");
+        }
+    }
 
+    public function getButtons()
+    {
+        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
+            $arg = $this->request->getGet();
+            if(!isset($arg['searchData'])) {
+                $arg['searchData'] = [
+                    'sdate'=> date('Y-m-d'),
+                    'edate'=> date('Y-m-d')
+                ];
+            }
             $leadsAll = $this->integrate->getEventLeadCount($arg);
 
             $buttons['filtered'] = $this->setCount($leadsAll['filteredResult'], 'count');
@@ -126,22 +149,8 @@ class IntegrateController extends BaseController
             }
             $status = $this->integrate->getStatusCount($arg);
             $filters['status'] = $status;
-            /* $buttons = [
-                'advertiser' => $data['advertiser'],
-                'media' => $data['media'],
-                'event' => $data['event'],
-                'status' => $status,
-            ]; */
-            
-            $result = [
-                'data' => $list['data'],
-                'recordsTotal' => $list['allCount'],
-                'recordsFiltered' => $list['allCount'],
-                'draw' => intval($arg['draw']),
-                'buttons' => $filters,
-            ];
-            
-            return $this->respond($result);
+           
+            return $this->respond($filters);
         }else{
             return $this->fail("잘못된 요청");
         }

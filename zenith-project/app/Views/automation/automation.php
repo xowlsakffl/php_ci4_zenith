@@ -7,10 +7,13 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/css/datatables.css" rel="stylesheet">
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet">  
-<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -122,6 +125,7 @@ function setData() {
 }
 
 function getList(){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#automation-table').DataTable({
         "autoWidth": false,
         "order": [[3,'desc']],
@@ -354,6 +358,7 @@ $('body').on('click', '.delete-btn', function() {
 });
 //로그
 function getLogs($seq = null){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     logTable = $('#logTable').DataTable({
         "destroy": true,
         "autoWidth": true,
