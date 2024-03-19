@@ -7,13 +7,17 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/css/datatables.css" rel="stylesheet">
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
 <style>
     .ui-autocomplete{
         z-index: 10000000;
@@ -245,6 +249,7 @@ function setData() {
 }
 
 function getList(){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#advertiser-table').DataTable({
         "order": [[0,'desc']],
         "fixedHeader": true,

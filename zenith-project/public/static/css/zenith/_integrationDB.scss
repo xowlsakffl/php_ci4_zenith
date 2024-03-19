@@ -79,7 +79,7 @@
             select{background-color:#fff; padding:0.2rem 1rem; border-radius:4px; border:1px dashed $color-dark;}
         }
     
-        .dt-info{float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;
+        .dt-info{/*float:unset; position: absolute; right:0;  padding-top:1.755em; transition:all 0.5s; cursor:pointer;*/
             i.bi{color:$red; padding-right:6px; font-size:110%; display: inline-block; vertical-align: top;}
             > span{position:relative;
                 &:hover{font-weight:900;

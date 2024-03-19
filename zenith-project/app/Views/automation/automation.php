@@ -79,24 +79,26 @@
                         </div>
                     </form>
                 </div>
-                <table class="table tbl-dark" id="logTable" style="width: 100%;">
-                    <colgroup>
-                        <col>
-                        <col style="width:22%;">
-                        <col style="width:18%;">
-                        <col style="width:22%;">
-                    </colgroup>
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">제목</th>
-                            <th scope="col">작성자</th>
-                            <th scope="col">결과</th>
-                            <th scope="col">마지막 실행</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-default" id="logTable" style="width: 100%;">
+                        <colgroup>
+                            <col>
+                            <col style="width:22%;">
+                            <col style="width:18%;">
+                            <col style="width:22%;">
+                        </colgroup>
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">제목</th>
+                                <th scope="col">작성자</th>
+                                <th scope="col">결과</th>
+                                <th scope="col">마지막 실행</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
