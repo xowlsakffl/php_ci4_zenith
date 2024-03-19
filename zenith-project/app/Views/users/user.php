@@ -7,11 +7,15 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/css/datatables.css" rel="stylesheet">
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
+<link href="/static/node_modules/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
 <style>
     .ui-autocomplete{
         z-index: 10000000;
@@ -45,11 +49,9 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" autocomplete="off">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="sdate" id="sdate" autocomplete="off"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" autocomplete="off">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="edate" id="edate" autocomplete="off"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">

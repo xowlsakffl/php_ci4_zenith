@@ -69,7 +69,7 @@ body{background:#f7f7f7;}
 }
 
 .section.position-relative{
-    .btn-wrap{position:absolute; top:0; right:0; z-index:1;}
+    .btn-wrap{position:absolute; top:-15px; right:0; z-index:1;}
 }
 
 .main-contents-wrap{flex:1; padding:70px 5.7708vw; margin-left:240px;}

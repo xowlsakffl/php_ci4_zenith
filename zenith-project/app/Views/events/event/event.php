@@ -7,13 +7,17 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/css/datatables.css" rel="stylesheet">
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"> 
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="/static/node_modules/datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5.min.js"></script>
 <script src="/static/js/tag-it.min.js"></script>
 <style>
     ul.tagit {
@@ -128,11 +132,9 @@
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <input type="text" name="sdate" id="sdate" readonly="readonly">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="sdate" id="sdate" autocomplete="off"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <input type="text" name="edate" id="edate" readonly="readonly">
-                <button type="button"><i class="bi bi-calendar2-week"></i></button>
+                <label><input type="text" name="edate" id="edate" autocomplete="off"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
@@ -603,6 +605,7 @@ function setData() {
 }
 
 function getList(){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#event-table').DataTable({
         "autoWidth": true,
         "fixedHeader": true,
@@ -718,6 +721,7 @@ function getList(){
 }
 
 function getImpressions(seq){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     impressionsTable = $('#impression-view-table').DataTable({
         "destroy": true,
         "autoWidth": false,

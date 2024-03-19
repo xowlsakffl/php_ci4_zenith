@@ -3,11 +3,10 @@
 <?=$this->section('title');?>
     CHAIN 열혈광고 - 광고 관리 / 통합
 <?=$this->endSection();?>
-div.dt-button-collection .dt-button-active.dt-button-split > *:first-child:after {
 
 <!--헤더-->
 <?=$this->section('header');?>
-<link href="/static/css/dataTables.css" rel="stylesheet">
+<link href="/static/css/datatables.css" rel="stylesheet">
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
@@ -50,9 +49,9 @@ div.dt-button-collection .dt-button-active.dt-button-split > *:first-child:after
     <div class="search-wrap">
         <form name="search-form" class="search d-flex justify-content-center">
             <div class="term d-flex align-items-center">
-                <label><input type="text" name="sdate" id="sdate" readonly="readonly"><i class="bi bi-calendar2-week"></i></label>
+                <label><input type="text" name="sdate" id="sdate"><i class="bi bi-calendar2-week"></i></label>
                 <span> ~ </span>
-                <label><input type="text" name="edate" id="edate" readonly="readonly"><i class="bi bi-calendar2-week"></i></label>
+                <label><input type="text" name="edate" id="edate"><i class="bi bi-calendar2-week"></i></label>
             </div>
             <div class="input">
                 <input type="text" name="stx" id="stx" placeholder="검색어를 입력하세요">
@@ -156,7 +155,7 @@ div.dt-button-collection .dt-button-active.dt-button-split > *:first-child:after
                 <button type="button" class="btns-memo" value="table" title="테이블에 표시"><i class="bi bi-table"></i></button>
             </div> -->
             <div class="tab-pane active">
-                <div class="table-responsiv">
+                <div class="table-responsive">
                     <table class="dataTable table table-default" id="adv-table">
                         <thead class="table-dark">
                             <tr>
@@ -1994,6 +1993,16 @@ $('body').on('click', '.reset-btn', function() {
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#total td').empty();
     $('#stx').val('');
+    tableParam.searchData = {
+        'carelabs': 0,
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'type': $('.tab-link.active').val(),
+        'media' : '',
+        'company' : '',
+        'account' : '',
+    };
     dataTable.state.clear();
     dataTable.state.save();
     dataTable.order([2, 'asc']).draw();

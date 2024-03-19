@@ -12,7 +12,7 @@
 
 @charset "UTF-8";
 :root {
-  --dt-row-selected: 13, 110, 253;
+  --dt-row-selected: 253, 13, 13;
   --dt-row-selected-text: 255, 255, 255;
   --dt-row-selected-link: 9, 10, 11;
   --dt-row-stripe: 0, 0, 0;
@@ -178,8 +178,9 @@ div.dt-processing {
   margin-left: -100px;
   margin-top: -22px;
   text-align: center;
-  padding: 2px;
+  padding: 15px 2px 2px;
   z-index: 10;
+  background-color: #fff;
 }
 div.dt-processing > div:last-child {
   position: relative;
@@ -193,7 +194,7 @@ div.dt-processing > div:last-child > div {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: rgb(13, 110, 253);
+  background: rgb(253, 13, 13);
   background: rgb(var(--dt-row-selected));
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }

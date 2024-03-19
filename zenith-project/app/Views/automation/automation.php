@@ -7,10 +7,13 @@
 
 <!--헤더-->
 <?=$this->section('header');?>
+<link href="/static/css/datatables.css" rel="stylesheet">
 <link href="/static/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css" rel="stylesheet"> 
 <link href="/static/node_modules/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet">  
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
 <?=$this->endSection();?>
 
 <!--바디-->
@@ -76,24 +79,26 @@
                         </div>
                     </form>
                 </div>
-                <table class="table tbl-dark" id="logTable" style="width: 100%;">
-                    <colgroup>
-                        <col>
-                        <col style="width:22%;">
-                        <col style="width:18%;">
-                        <col style="width:22%;">
-                    </colgroup>
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">제목</th>
-                            <th scope="col">작성자</th>
-                            <th scope="col">결과</th>
-                            <th scope="col">마지막 실행</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-default" id="logTable" style="width: 100%;">
+                        <colgroup>
+                            <col>
+                            <col style="width:22%;">
+                            <col style="width:18%;">
+                            <col style="width:22%;">
+                        </colgroup>
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">제목</th>
+                                <th scope="col">작성자</th>
+                                <th scope="col">결과</th>
+                                <th scope="col">마지막 실행</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -122,6 +127,7 @@ function setData() {
 }
 
 function getList(){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     dataTable = $('#automation-table').DataTable({
         "autoWidth": false,
         "order": [[3,'desc']],
@@ -354,18 +360,20 @@ $('body').on('click', '.delete-btn', function() {
 });
 //로그
 function getLogs($seq = null){
+    $.fn.DataTable.ext.pager.numbers_length = 10;
     logTable = $('#logTable').DataTable({
         "destroy": true,
         "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
-        "responsive": true,
+        "responsive": false,
         "searching": false,
         "ordering": true,
         "order": [[3,'desc']],
-        "deferRender": false,
-        'lengthChange': false,
+        "deferRender": true,
+        'lengthChange': true,
         'pageLength': 10,
+        "scrollX": true,
         "info": false,
         "ajax": {
             "url": "<?=base_url()?>/automation/logs",
