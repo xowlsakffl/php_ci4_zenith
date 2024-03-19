@@ -422,7 +422,6 @@ function getList(data = []) { //리스트 세팅
         //setSearchData();
     }).on('draw', function() {
         debug('draw');
-        console.log(isPaginationClicked);
         if (!isPaginationClicked) {
             getData('buttons');
         }
