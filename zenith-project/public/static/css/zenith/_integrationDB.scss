@@ -88,23 +88,6 @@
             }          
         }
     
-        .dt-paging{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
-            .dt-paging-button{border:none; padding:0.25rem 0.5rem;
-                &.disabled,
-                &.disabled:hover{color:#aaa !important;}
-
-                &:hover{color:$red !important; border:none; background:none; transition:0.2s;}
-                &:not(.previous,.next,.current){@include dot-effect;
-                    @include underline-effect;
-                }
-                &.current{
-                    color:#fff !important; background-color:$red; border:none; padding:0.2rem 1rem; border-radius:4px;
-                    &:hover{color:#fff !important; background-color:$red; border:none;}
-                } 
-                &:active{background:none; border:none;}
-            }            
-        }    
-
         table.dataTable{ 
             thead tr{
                 th,td{text-align: center;}
@@ -176,6 +159,23 @@
             }
         }        
     }
+}
+
+.dt-paging{float:unset; text-align: center; padding-top:1.755em; padding-bottom:1.755em;
+    .dt-paging-button{border:none; padding:0.25rem 0.5rem;
+        &.disabled,
+        &.disabled:hover{color:#aaa !important;}
+
+        &:hover{color:$red !important; border:none; background:none; transition:0.2s;}
+        &:not(.previous,.next,.current){@include dot-effect;
+            @include underline-effect;
+        }
+        &.current{
+            color:#fff !important; background-color:$red; border:none; padding:0.2rem 1rem; border-radius:4px;
+            &:hover{color:#fff !important; background-color:$red; border:none;}
+        } 
+        &:active{background:none; border:none;}
+    }            
 }
 
 div.dt-button-collection{padding:0;    

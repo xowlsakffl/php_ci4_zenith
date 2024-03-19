@@ -1686,6 +1686,7 @@ div.dt-processing > div:last-child > div {
 
 .table-responsive {
   position: relative;
+  overflow-x: visible;
 }
 
 .btns-memo-style {
@@ -3285,66 +3286,6 @@ table thead #total td {
   transition: 0.2s;
   animation: hover-line 0.2s linear;
 }
-.sub-contents-wrap .dt-container .dt-paging {
-  float: unset;
-  text-align: center;
-  padding-top: 1.755em;
-  padding-bottom: 1.755em;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button {
-  border: none;
-  padding: 0.25rem 0.5rem;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled, .sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled:hover {
-  color: #aaa !important;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:hover {
-  color: red !important;
-  border: none;
-  background: none;
-  transition: 0.2s;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current) {
-  position: relative;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::before {
-  position: absolute;
-  top: -5px;
-  left: 47%;
-  content: "";
-  width: 4px;
-  height: 4px;
-  background-color: red;
-  transition: 0.2s;
-  border-radius: 50%;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::after {
-  position: absolute;
-  bottom: -5px;
-  left: 0%;
-  content: "";
-  width: 100%;
-  height: 2px;
-  background-color: red;
-  transition: 0.2s;
-  animation: hover-line 0.2s linear;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current {
-  color: #fff !important;
-  background-color: red;
-  border: none;
-  padding: 0.2rem 1rem;
-  border-radius: 4px;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current:hover {
-  color: #fff !important;
-  background-color: red;
-  border: none;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:active {
-  background: none;
-  border: none;
-}
 .sub-contents-wrap .dt-container table.dataTable thead tr th, .sub-contents-wrap .dt-container table.dataTable thead tr td {
   text-align: center;
 }
@@ -3478,6 +3419,67 @@ table thead #total td {
 }
 .db-manage-contaniner .detail.minWd .col:hover dd, .db-manage-contaniner .detail.minWd .col.active dd {
   font-weight: 900;
+}
+
+.dt-paging {
+  float: unset;
+  text-align: center;
+  padding-top: 1.755em;
+  padding-bottom: 1.755em;
+}
+.dt-paging .dt-paging-button {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+.dt-paging .dt-paging-button.disabled, .dt-paging .dt-paging-button.disabled:hover {
+  color: #aaa !important;
+}
+.dt-paging .dt-paging-button:hover {
+  color: red !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current) {
+  position: relative;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current):hover::before {
+  position: absolute;
+  top: -5px;
+  left: 47%;
+  content: "";
+  width: 4px;
+  height: 4px;
+  background-color: red;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current):hover::after {
+  position: absolute;
+  bottom: -5px;
+  left: 0%;
+  content: "";
+  width: 100%;
+  height: 2px;
+  background-color: red;
+  transition: 0.2s;
+  animation: hover-line 0.2s linear;
+}
+.dt-paging .dt-paging-button.current {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.dt-paging .dt-paging-button.current:hover {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+}
+.dt-paging .dt-paging-button:active {
+  background: none;
+  border: none;
 }
 
 div.dt-button-collection {
@@ -4313,66 +4315,6 @@ div.dt-button-collection h3 {
   transition: 0.2s;
   animation: hover-line 0.2s linear;
 }
-.sub-contents-wrap .dt-container .dt-paging {
-  float: unset;
-  text-align: center;
-  padding-top: 1.755em;
-  padding-bottom: 1.755em;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button {
-  border: none;
-  padding: 0.25rem 0.5rem;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled, .sub-contents-wrap .dt-container .dt-paging .dt-paging-button.disabled:hover {
-  color: #aaa !important;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:hover {
-  color: red !important;
-  border: none;
-  background: none;
-  transition: 0.2s;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current) {
-  position: relative;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::before {
-  position: absolute;
-  top: -5px;
-  left: 47%;
-  content: "";
-  width: 4px;
-  height: 4px;
-  background-color: red;
-  transition: 0.2s;
-  border-radius: 50%;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:not(.previous, .next, .current):hover::after {
-  position: absolute;
-  bottom: -5px;
-  left: 0%;
-  content: "";
-  width: 100%;
-  height: 2px;
-  background-color: red;
-  transition: 0.2s;
-  animation: hover-line 0.2s linear;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current {
-  color: #fff !important;
-  background-color: red;
-  border: none;
-  padding: 0.2rem 1rem;
-  border-radius: 4px;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button.current:hover {
-  color: #fff !important;
-  background-color: red;
-  border: none;
-}
-.sub-contents-wrap .dt-container .dt-paging .dt-paging-button:active {
-  background: none;
-  border: none;
-}
 .sub-contents-wrap .dt-container table.dataTable thead tr th, .sub-contents-wrap .dt-container table.dataTable thead tr td {
   text-align: center;
 }
@@ -4506,6 +4448,67 @@ div.dt-button-collection h3 {
 }
 .db-manage-contaniner .detail.minWd .col:hover dd, .db-manage-contaniner .detail.minWd .col.active dd {
   font-weight: 900;
+}
+
+.dt-paging {
+  float: unset;
+  text-align: center;
+  padding-top: 1.755em;
+  padding-bottom: 1.755em;
+}
+.dt-paging .dt-paging-button {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+.dt-paging .dt-paging-button.disabled, .dt-paging .dt-paging-button.disabled:hover {
+  color: #aaa !important;
+}
+.dt-paging .dt-paging-button:hover {
+  color: red !important;
+  border: none;
+  background: none;
+  transition: 0.2s;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current) {
+  position: relative;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current):hover::before {
+  position: absolute;
+  top: -5px;
+  left: 47%;
+  content: "";
+  width: 4px;
+  height: 4px;
+  background-color: red;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+.dt-paging .dt-paging-button:not(.previous, .next, .current):hover::after {
+  position: absolute;
+  bottom: -5px;
+  left: 0%;
+  content: "";
+  width: 100%;
+  height: 2px;
+  background-color: red;
+  transition: 0.2s;
+  animation: hover-line 0.2s linear;
+}
+.dt-paging .dt-paging-button.current {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.dt-paging .dt-paging-button.current:hover {
+  color: #fff !important;
+  background-color: red;
+  border: none;
+}
+.dt-paging .dt-paging-button:active {
+  background: none;
+  border: none;
 }
 
 div.dt-button-collection {
