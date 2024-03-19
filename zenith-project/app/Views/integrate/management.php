@@ -722,6 +722,15 @@ $('body').on('click', '.reset-btn', function() {
     $('#sdate, #edate').val(today);
     $('#company-list button, #advertiser-list button, #media-list button, #event-list button, .statusCount dl').removeClass('active');
     $('#stx').val('');
+    tableParam.searchData = {
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'advertiser' : '',
+        'media' : '',
+        'event' : '',
+        'status' : ''
+    };
     dataTable.state.clear();
     dataTable.state.save();
     dataTable.order([12, 'desc']).draw();

@@ -1993,6 +1993,16 @@ $('body').on('click', '.reset-btn', function() {
     $('.tab-link[value="campaigns"]').addClass('active');
     $('#total td').empty();
     $('#stx').val('');
+    tableParam.searchData = {
+        'carelabs': 0,
+        'sdate': $('#sdate').val(),
+        'edate': $('#edate').val(),
+        'stx': $('#stx').val(),
+        'type': $('.tab-link.active').val(),
+        'media' : '',
+        'company' : '',
+        'account' : '',
+    };
     dataTable.state.clear();
     dataTable.state.save();
     dataTable.order([2, 'asc']).draw();
