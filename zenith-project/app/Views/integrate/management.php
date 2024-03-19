@@ -95,7 +95,7 @@
     </div>
 
     <div>
-        <div class="search-wrap my-5">
+        <div class="search-wrap my-5 status_wrap">
             <div class="statusCount detail d-flex minWd"></div>     
         </div>
 
@@ -428,8 +428,7 @@ function getList(data = []) { //리스트 세팅
             "dataType": "json",
         }
     }).on('preXhr.dt', function (e, settings, data) {
-        if(!$('.reportData').find('.zenith-loading').is(':visible')) $('.reportData').prepend('<div class="zenith-loading"/>')
-        $('.client-list:not(.media) .row').filter(function(i, el) {
+        $('.client-list .row').filter(function(i, el) {
             if(!$(el).find('.zenith-loading').is(':visible')) $(el).prepend('<div class="zenith-loading"/>')
         });
     }).on('xhr.dt', function( e, settings, data, xhr ) { //ServerSide On Load Event
@@ -438,6 +437,9 @@ function getList(data = []) { //리스트 세팅
         setStatusCount(data.buttons.status); */
         setDate();
         setSearchData();
+    }).on('draw', function() {
+        debug('draw');
+        getData('buttons');
     });
 }
 
@@ -579,7 +581,7 @@ function setMemoList(data) { //메모 리스트 생성
     
 }
 function setLeadCount(data) { //Filter Count 표시
-    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.client-list button').removeClass('on');
     $('.client-list .col .txt').empty();
     $.each(data, function(type, row) {
@@ -602,7 +604,7 @@ function setLeadCount(data) { //Filter Count 표시
 }
 
 function setStatusCount(data){ //상태 Count 표시
-    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});
     $('.statusCount').empty();
     $.each(data, function(key, value) {
         $('.statusCount').append('<dl class="col"><dt>' + key + '</dt><dd>' + value + '</dd></dl>');
@@ -638,7 +640,7 @@ $(window).resize(function() {
 });
 
 function setButtons(data) { //광고주,매체,이벤트명 버튼 세팅   
-    $('.media-advertiser').find('.zenith-loading').fadeOut(function(){$(this).remove();});    
+    $('.client-list').find('.zenith-loading').fadeOut(function(){$(this).remove();});    
     $.each(data, function(type, row) {
         if(type == 'status') return true;
         <?php if(!auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
@@ -716,6 +718,7 @@ $('body').on('click', '#company-list button, #advertiser-list button, #media-lis
     $(this).toggleClass('active');
     debug('필터링 탭 클릭');
     setTableParam();
+    getData('buttons');
     dataTable.draw();
 });
 
