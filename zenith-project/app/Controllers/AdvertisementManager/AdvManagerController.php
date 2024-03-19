@@ -55,6 +55,7 @@ class AdvManagerController extends BaseController
             default:
                 return $this->fail("잘못된 요청");
         }
+        // if(!isset($result['data'])) return $this->respond([]);
         $orderBy = [];
         if(!empty($arg['order'])) {
             foreach($arg['order'] as $row) {

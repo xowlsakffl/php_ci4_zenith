@@ -399,9 +399,6 @@ $('.tab-link[value="campaigns"]').addClass('active');
 //}
 
 getList();
-getData('report');
-getData('accounts');
-getData('mediaAccounts');
 function setTableParam() {
     tableParam.searchData = {
         'carelabs': $("#carelabs_btn").hasClass("active") ? 1 : 0,
@@ -783,6 +780,9 @@ function getList(data = []){
         }
     }).on('draw', function() {
         debug('draw');
+        getData('report');
+        getData('accounts');
+        getData('mediaAccounts');
         /*
         loadedData = true;
         setDrawData();
