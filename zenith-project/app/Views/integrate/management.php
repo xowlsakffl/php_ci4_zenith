@@ -706,7 +706,7 @@ $('body').on('click', '#company-list button, #advertiser-list button, #media-lis
 
 $('form[name="search-form"]').bind('submit', function() {
     debug('검색 전송');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
     return false;
 });
@@ -714,7 +714,7 @@ $('form[name="search-form"]').bind('submit', function() {
 $('.statusCount').on('click', 'dl', function(e) {
     debug('인정기준 필터')
     $(this).toggleClass('active');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 
