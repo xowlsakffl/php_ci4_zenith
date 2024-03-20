@@ -1,132 +1,4 @@
-function setCriteriaTime(){
-    let now = new Date();
-    now.setMinutes(now.getMinutes() + 5);
-    $('input[name=criteria_time]').daterangepicker({
-        singleDatePicker: true,
-        locale: {
-                "format": 'YYYY-MM-DD HH:mm',     // 일시 노출 포맷
-                "applyLabel": "확인",                    // 확인 버튼 텍스트
-                "cancelLabel": "취소",                   // 취소 버튼 텍스트
-                "daysOfWeek": ["일", "월", "화", "수", "목", "금", "토"],
-                "monthNames": ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-        },
-        timePicker: true,
-        timePicker24Hour: true,
-        minDate: now,
-    });
-}
-function chkSchedule(){
-    let selectedValue = $('#execType').val();
-    $('#weekdayRow, #nextDateRow, #timeRow').show();
-
-    if (selectedValue === "minute" || selectedValue === "hour") {
-        $('#criteriaTimeRow').show();
-        $('#weekdayRow, #nextDateRow, #timeRow').hide();
-        $('input[name=exec_week]').prop('checked', false);
-        $('#nextDateRow select').val('');
-        $('#timeRow select').val('');
-    } else if (selectedValue === "day") {
-        $('#weekdayRow, #nextDateRow').hide();
-        $('#criteriaTimeRow').hide();
-        $('input[name=exec_week]').prop('checked', false);
-        $('#nextDateRow select').val('');
-    } else if (selectedValue === "week") {
-        $('#nextDateRow').hide();
-        $('#criteriaTimeRow').hide();
-        $('#nextDateRow select').val('');
-    } else if (selectedValue === "month"){
-        $('#weekdayRow').hide();
-        $('#criteriaTimeRow').hide();
-        $('input[name=exec_week]').prop('checked', false);
-    }
-}
-
-function chkScheduleMonthType(){
-    let month_type = $('#monthType').val();
-    $('#nextDateRow select').show();
-    if(month_type == 'start_day' || month_type == 'end_day' ){
-        $('#nextDateRow select[name=month_day], #nextDateRow select[name=month_week]').hide();
-        $('#monthDay, #monthWeek').val('');
-    }else if(month_type == 'first' || month_type == 'last'){
-        $('#nextDateRow select[name=month_day]').hide();
-        $('#monthDay').val('');
-    }else if (month_type == 'day'){
-        $('#nextDateRow select[name=month_week]').hide();
-        $('#monthWeek').val('');
-    }
-}
-
-//좌측 탭 일정 텍스트
-function scheduleText(){
-    let type_value = $('input[name="type_value"]').val();
-    let exec_type = $('#execType').val();
-    let exec_week = $('input[name="exec_week"]:checked').siblings('label').text();
-    let month_type = $('#monthType').val();
-    let month_day = $('#monthDay').val();
-    let month_week = $('#monthWeek option:selected').text();
-    let exec_time = $('#execTime').val();
-    let scheduleTextParts= [];
-    if(type_value) {
-        switch(exec_type){
-            case "minute":
-                scheduleTextParts.push("매 "+type_value+"분 마다");
-                break;
-            case "hour":
-                scheduleTextParts.push("매 "+type_value+"시간 마다");
-                break;
-            case "day":
-                let dayTextPart_1 = type_value == 1 ? '매일 ' : '매 '+type_value+'일 마다 ';
-                let dayTextPart_2 = exec_time ? exec_time+'에' : '';
-                scheduleTextParts.push(dayTextPart_1+dayTextPart_2);
-                break;
-            case "week":
-                let weekTextPart_1 = type_value == 1 ? '매주 ' : '매 '+type_value+'주 ';
-                let weekTextPart_2 = exec_week ? exec_week+"요일 마다 " : '';
-                let weekTextPart_3 = exec_time ? exec_time+'에' : '';
-                if(exec_week){
-                    scheduleTextParts.push(weekTextPart_1+weekTextPart_2+weekTextPart_3);
-                }
-                break;
-            case "month":
-                monthTextPart_1 = type_value == 1 ? '매월 ' : type_value+'달 마다 ';
-                monthTextPart_3 = '';
-                switch (month_type) {
-                    case 'start_day':
-                        monthTextPart_2 = '첫번째 날 ';
-                        break;
-                    case 'end_day':
-                        monthTextPart_2 = '마지막 날 ';
-                        break;
-                    case 'first':
-                        monthTextPart_2 = '처음 ';                  
-                        if(month_week && month_week != '선택'){                          
-                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
-                        }
-                        break;
-                    case 'last':
-                        monthTextPart_2 = '마지막 ';
-                        if(month_week && month_week != '선택'){                          
-                            monthTextPart_3 = month_week ? month_week+"요일 마다 " : '';
-                        }
-                        break;
-                    case 'day':
-                        monthTextPart_2 = month_day ? month_day+'일째 ' : '';
-                        break;
-                    default:
-                        monthTextPart_2 = '';
-                        break;
-                }
-                monthTextPart_4 = exec_time ? exec_time+'에' : '';
-
-                scheduleTextParts.push(monthTextPart_1+monthTextPart_2+monthTextPart_3+monthTextPart_4);
-                break;
-            default:
-                break;
-        }
-    }
-    $("#scheduleText").html(scheduleTextParts.join(", "));
-} 
-
+var selectedCell = [];
 //좌측 탭 조건 텍스트
 function conditionText($this){
     let name = $this.attr('name');
@@ -263,15 +135,6 @@ function getExecAdvs(data){
 
 //유효성 검사
 function validationData(){
-    let $type_value = $('#scheduleTable input[name=type_value]').val();
-    let $criteria_time = $('#scheduleTable input[name=criteria_time]').val();
-    let $exec_type = $('#scheduleTable select[name=exec_type]').val();
-    let $exec_time = $('#scheduleTable select[name=exec_time]').val();
-    let $exec_week = $('#scheduleTable input[name=exec_week]:checked').length;
-    let $month_type = $('#scheduleTable select[name=month_type]').val();
-    let $month_week = $('#scheduleTable select[name=month_week]').val();
-    let $month_day = $('#scheduleTable select[name=month_day]').val();
-
     let $operation = $('input[name=operation]:checked').length;
     let $selectTarget = $('#targetSelectTable tbody tr').length;
     let $selectExec = $('#execSelectTable tbody tr').length;
@@ -280,72 +143,12 @@ function validationData(){
     let $slack_webhook = $('#slackSendTable input[name="slack_webhook"]').val();
     let $slack_msg = $('#slackSendTable input[name="slack_msg"]').val();
 
-    if (!$type_value) {
-        alert('시간 조건값을 입력해주세요');
+    if (!selectedCell || Object.keys(selectedCell).length === 0) {
+        alert('일정을 지정해주세요.');
         $('#schedule-tab').trigger('click');
-        $('#scheduleTable input[name=type_value]').focus();
         return false;
     }
 
-    if (($exec_type === 'minute' || $exec_type === 'hour') && !$criteria_time) {
-        alert('시작 일시를 입력해주세요.');
-        $('#schedule-tab').trigger('click');
-        $('#scheduleTable input[name=criteria_time]').focus();
-        return false;
-    }
-
-    if ($exec_type === 'day' && !$exec_time) {
-        alert('시간을 선택해주세요.');
-        $('#schedule-tab').trigger('click');
-        $('#scheduleTable select[name=exec_time]').focus();
-        return false;
-    }
-
-    if ($exec_type === 'week') {
-        if(!$exec_week > 0){
-            alert('요일을 선택해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable input[name=exec_week]').focus();
-            return false;
-        }
-
-        if(!$exec_time){
-            alert('시간을 입력해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable select[name=exec_time]').focus();
-            return false;
-        }
-    }
-
-    if ($exec_type === 'month') {
-        if(!$month_type){
-            alert('월 조건값을 선택해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable select[name=month_type]').focus();
-            return false;
-        }
-
-        if(($month_type === 'first' || $month_type === 'last') && !$month_week){
-            alert('요일을 선택해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable select[name=month_week]').focus();
-            return false;
-        }
-
-        if($month_type === 'day' && !$month_day){
-            alert('일자를 선택해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable select[name=month_day]').focus();
-            return false;
-        }
-
-        if(!$exec_time){
-            alert('시간을 입력해주세요.');
-            $('#schedule-tab').trigger('click');
-            $('#scheduleTable select[name=exec_time]').focus();
-            return false;
-        }
-    }
     //대상 선택항목이 있을경우
     if($selectTarget > 0){
         if(!$operation){
@@ -532,10 +335,6 @@ function validationData(){
     return true;
 }
 
-function onlyNumber(inputElement) {
-    inputElement.value = inputElement.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-}
-
 function onlyNumberLeadingDashAndDot(inputElement) {
     inputElement.value = inputElement.value.replace(/[^0-9.-]/g, '');
 }
@@ -545,35 +344,23 @@ function setModalData(data){
     $('#createAutomationBtn').hide();
     $('#updateAutomationBtn').show();
     $('#automationModal input[name=seq]').val(data.aa_seq);
-    $('#scheduleTable select[name=exec_type]').val(data.aas_exec_type);
-    $('#scheduleTable input[name=type_value]').val(data.aas_type_value);
-    if(data.aas_criteria_time){
-        $('#scheduleTable input[name=criteria_time]').val(data.aas_criteria_time);
+    
+    let schedule = {};
+    $.each(data.aas_schedule_value, function(index, value){
+        if(index > 0){
+            schedule[index] = $.map(value, function(num){
+                return parseFloat(num, 10);
+            });
+        }
+    });
+    selectedCell = [];
+    selectedCell = schedule;
+    $('#scheduleTable').scheduler('val', schedule);
+    if(data.aas_exec_once == '1'){
+        $('input[name=exec_once]').prop('checked', true);
     }else{
-        $('#scheduleTable input[name=criteria_time]').val('');
+        $('input[name=exec_once]').prop('checked', false);
     }
-    if(data.aas_exec_week){
-        $('#scheduleTable input[name=exec_week][value="' + data.aas_exec_week + '"]').prop('checked', true);
-    }
-    if(data.aas_month_type){
-        $('#scheduleTable select[name=month_type]').val(data.aas_month_type);
-    }
-    if(data.aas_month_day){
-        $('#scheduleTable select[name=month_day]').val(data.aas_month_day);
-    }
-    if(data.aas_month_week){
-        $('#scheduleTable select[name=month_week]').val(data.aas_month_week);
-    }
-    if(data.aas_exec_time){
-        $('#scheduleTable select[name=exec_time]').val(data.aas_exec_time);
-    }
-    if(data.aas_ignore_start_time){
-        $('#scheduleTable select[name=ignore_start_time]').val(data.aas_ignore_start_time);
-    }
-    if(data.aas_ignore_end_time){
-        $('#scheduleTable select[name=ignore_end_time]').val(data.aas_ignore_end_time);
-    }
-
     if(data.targets){
         data.targets.forEach(function(target, index) {
             let targetIndex = index+1;
@@ -681,15 +468,13 @@ function setModalData(data){
     $('#detailText #descriptionText').text(data.aa_description);
 
     conditionStatusHide();
-    chkSchedule();
-    if(data.aas_month_type){
-        chkScheduleMonthType();
-    }
-    scheduleText();
 }
 
 //모달 초기화
 function reset(){
+    selectedCell = [];
+    $('.scheduler-reset').trigger('click');
+    $('input[name=exec_once]').prop('checked', false);
     $('#automationModal input[name=seq]').val('');
     $('#conditionTable tbody tr:not(#condition-1)').remove()
     $('#targetCheckedTable tbody tr, #targetSelectTable tbody tr, #execSelectTable tbody tr').remove();
@@ -734,16 +519,8 @@ function reset(){
 }
 
 function setProcData(){
-    let $type_value = $('#scheduleTable input[name=type_value]').val();
-    let $exec_type = $('#scheduleTable select[name=exec_type]').val();
-    let $criteria_time = $('#scheduleTable input[name=criteria_time]').val();
-    let $exec_week = $('#scheduleTable input[name=exec_week]:checked').val();
-    let $month_type = $('#scheduleTable select[name=month_type]').val();
-    let $month_day = $('#scheduleTable select[name=month_day]').val();
-    let $month_week = $('#scheduleTable select[name=month_week]').val();
-    let $exec_time = $('#scheduleTable select[name=exec_time]').val();
-    let $ignore_start_time = $('#scheduleTable select[name=ignore_start_time]').val();
-    let $ignore_end_time = $('#scheduleTable select[name=ignore_end_time]').val();
+    console.log(selectedCell);
+    let $onceExecution = $('input[name=exec_once]').prop('checked');
     let $target_create_type = $('input[name=target_create_type]:checked').val();
     let $operation = $('input[name=operation]:checked').val();
 
@@ -818,16 +595,8 @@ function setProcData(){
 
     let $data = {
         'schedule': {
-            'type_value': $type_value,
-            'exec_type': $exec_type,
-            'criteria_time': $criteria_time,
-            'exec_week': $exec_week,
-            'month_type': $month_type,
-            'month_day': $month_day,
-            'month_week': $month_week,
-            'exec_time': $exec_time,
-            'ignore_start_time': $ignore_start_time,
-            'ignore_end_time': $ignore_end_time,
+            'exec_once': $onceExecution,
+            'schedule_value': selectedCell
         },
         'execution': $executions,
         'detail': {
@@ -888,7 +657,6 @@ function getTargetAdv(data){
 
 //모달 보기
 $('#automationModal').on('show.bs.modal', function(e) {
-    setCriteriaTime();
     $('#execSearchWrap').show();
     var $btn = $(e.relatedTarget);
     if ($btn.hasClass('updateBtn')) {
@@ -931,7 +699,7 @@ $('#automationModal').on('show.bs.modal', function(e) {
             };
             getTargetAdv(data);
         }
-        chkSchedule();
+
         conditionStatusHide();
         $('#automationModal #targetCreateType').show();
         $('#automationModal input[type="radio"][value="target_sum"]').prop('checked', true);
@@ -944,17 +712,22 @@ $('#automationModal').on('show.bs.modal', function(e) {
     reset();
 });
 
-//등록 부분 시작
-$('body').on('change', '#execType', function() {
-    chkSchedule();
-});
+$.fn.scheduler.locales['ko'] = {
+    AM:'오전',
+    PM:'오후',
+    TIME_TITLE:'시간',
+    WEEK_TITLE:'요일',
+    WEEK_DAYS: ['월요일','화요일','수요일','목요일','금요일','토요일','일요일'],
+    DRAG_TIP: '시간을 드래그해주세요.',
+    RESET: '초기화'
+};
 
-$('body').on('change', '#monthType', function() {
-    chkScheduleMonthType();
-});
-
-$('body').on('change', '#scheduleTable input, #scheduleTable select', function() {
-    scheduleText();
+$('#scheduleTable').scheduler({
+    accuracy: 2,
+    locale: 'ko',
+    onSelect: function (d) {
+        selectedCell = d;
+    }
 });
 
 $('form[name="search-target-form"]').bind('submit', function() {

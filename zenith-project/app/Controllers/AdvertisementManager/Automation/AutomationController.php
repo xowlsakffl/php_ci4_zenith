@@ -38,123 +38,67 @@ class AutomationController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomationList($arg);
-            foreach ($result['data'] as &$d) {
-                $d['expected_time'] = '';
-                if($d['aa_status'] != 1){continue;}
-                if(!empty($d['aas_criteria_time']) && ($d['aas_exec_type'] == 'minute' || $d['aas_exec_type'] == 'hour') && empty($d['aar_exec_timestamp_count'])){
-                    $d['expected_time'] = $d['aas_criteria_time'];
-                }else{
-                    $calTime = Time::parse($d['aar_exec_timestamp_latest'] ?? $d['aas_reg_datetime']);
-                    $currentDate = new Time('now');
 
-                    switch ($d['aas_exec_type']) {
-                        case 'minute':
-                            $type_value = (int) $d['aas_type_value'];
-                            $expectedTime = $calTime->addMinutes($type_value);
-                            if($expectedTime->isBefore($currentDate)){
-                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
-                            }else{
-                                $d['expected_time'] = $expectedTime->toDateTimeString();
-                            }
-                            break;
-                        case 'hour':
-                            $type_value = (int) $d['aas_type_value'];
-                            $expectedTime = $calTime->addHours($type_value);
-                            if($expectedTime->isBefore($currentDate)){
-                                $d['expected_time'] = $currentDate->addMinutes(1)->toDateTimeString();
-                            }else{
-                                $d['expected_time'] = $expectedTime->toDateTimeString();
-                            }
-                            break;
-                        case 'day':
-                            $type_value = (int) $d['aas_type_value'];                           
-                            $expectedTime = $calTime->addDays($type_value);
-                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
-                            $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
-                            
-                            if($expectedTime->isBefore($currentDate)){
-                                $d['expected_time'] = $expectedTime->addDays($type_value)->toDateTimeString();
-                            }else{
-                                $d['expected_time'] = $expectedTime->toDateTimeString();
-                            }
-                            break;
-                        case 'week':
-                            $type_value = (int) $d['aas_type_value'];
-                            $exec_week = (int) $d['aas_exec_week'];
+            $currentDate = new Time('now');
+            foreach ($result['data'] as &$data) {
+                $closestTime = null;
+                if($data['aa_status'] != 1){
+                    $data['expected_time'] = '';
+                    continue;
+                }
+                $schedule = $this->convertJsonToTimes($data['aas_schedule_value']);
+                $currentDay = $currentDate->format('N');
 
-                            $expectedTime = $calTime->addDays(7 * $type_value);
-                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
-                            $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
-
-                            $expectedTime = $expectedTime->setISODate($expectedTime->year, $expectedTime->weekOfYear, $exec_week-1);
-
-                            if($expectedTime->isBefore($currentDate)){
-                                $d['expected_time'] = $expectedTime->addDays(7 * $type_value)->toDateTimeString();
-                            }else{
-                                $d['expected_time'] = $expectedTime->toDateTimeString();
-                            }
-                            break;
-                        case 'month':
-                            $type_value = (int) $d['aas_type_value'];
-                            $month_type = $d['aas_month_type'];
-                            $month_day = (int) $d['aas_month_day'] ?? '';
-                            $month_week = (int) $d['aas_month_week'] ?? '';
-
-                            $expectedTime = $calTime->addMonths($type_value);
-                            [$hours, $minutes] = sscanf($d['aas_exec_time'], "%d:%d");
-                            if($month_type === 'start_day'){
-                                $expectedTime = $expectedTime->setDay(1)->setHour($hours)->setMinute($minutes)->setSecond(0);
-                                if($expectedTime->isBefore($currentDate)){
-                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
-                                }else{
-                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                $foundThisWeek = false;
+            
+                // 이번 주 스케줄 탐색
+                foreach ($schedule as $day => $times) {
+                    if(!empty($data['aar_exec_timestamp_success'])){
+                        //오늘 실행 건 있으면 무시
+                        $execTimestampSuccess = Time::parse($data['aar_exec_timestamp_success']);
+                        $execDay = $execTimestampSuccess->format('N');
+                        if(!empty($data['aas_exec_once']) && $execDay == $day){continue;}
+                    }
+                    
+                    if ($day >= $currentDay) {
+                        foreach ($times as $time) {
+                            $scheduledTime = Time::parse($time);
+                            $scheduledDateTime = $currentDate->setISODate($currentDate->year, $currentDate->weekOfYear, $day)->setTime($scheduledTime->hour, $scheduledTime->minute);
+ 
+                            if ($scheduledDateTime->isAfter($currentDate)) {
+                                if (is_null($closestTime) || $scheduledDateTime->isBefore($closestTime)) {
+                                    $closestTime = $scheduledDateTime;
+                                    $foundThisWeek = true;
                                 }
-                            }else if($month_type === 'end_day'){
-                                $lastDay = $expectedTime->format('t'); 
-                                $expectedTime = $expectedTime->setDay($lastDay)->setHour($hours)->setMinute($minutes)->setSecond(0);
-                                if($expectedTime->isBefore($currentDate)){
-                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
-                                }else{
-                                    $d['expected_time'] = $expectedTime->toDateTimeString();
-                                }
-                            }else if($month_type === 'first'){
-                                $firstDay = $expectedTime->setDay(1); 
-                                while ((int) $firstDay->dayOfWeek != $month_week) {
-                                    $firstDay = $firstDay->addDays(1);
-                                }
-                                $expectedTime = $firstDay->setHour($hours)->setMinute($minutes)->setSecond(0);
-                                if($expectedTime->isBefore($currentDate)){
-                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
-                                }else{
-                                    $d['expected_time'] = $expectedTime->toDateTimeString();
-                                }
-                            }else if($month_type === 'last'){
-                                $lastDay = $expectedTime->setDay($expectedTime->format('t')); 
-                                while ((int) $lastDay->dayOfWeek != $month_week) {
-                                    $lastDay = $lastDay->subDays(1);
-                                }
-                                $expectedTime = $lastDay->setHour($hours)->setMinute($minutes)->setSecond(0);
-                                if($expectedTime->isBefore($currentDate)){
-                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
-                                }else{
-                                    $d['expected_time'] = $expectedTime->toDateTimeString();
-                                }
-                            }else if($month_type === 'day'){
-                                $expectedTime = $expectedTime->setDay($month_day); 
-                                $expectedTime = $expectedTime->setHour($hours)->setMinute($minutes)->setSecond(0);
-                                if($expectedTime->isBefore($currentDate)){
-                                    $d['expected_time'] = $expectedTime->addMonths($type_value)->toDateTimeString();
-                                }else{
-                                    $d['expected_time'] = $expectedTime->toDateTimeString();
+                            }else if($scheduledDateTime->difference($currentDate)->getMinutes() <= 30){
+                                if (is_null($closestTime) || $scheduledDateTime->isBefore($closestTime)) {
+                                    $closestTime = $currentDate->addMinutes(1);
+                                    $foundThisWeek = true;
                                 }
                             }
-                            break;
-                        default:
-                            break;
+                        }
+                        if ($foundThisWeek) break;
                     }
                 }
+            
+                // 다음 주 스케줄 탐색
+                if (!$foundThisWeek) {
+                    $nextWeekDate = (clone $currentDate)->modify('+1 week');
+                    foreach ($schedule as $day => $times) {
+                        foreach ($times as $time) {
+                            $scheduledTime = Time::parse($time);
+                            $scheduledDateTime = $nextWeekDate->setISODate($nextWeekDate->year, $nextWeekDate->weekOfYear, $day)->setTime($scheduledTime->hour, $scheduledTime->minute);
+                            if (is_null($closestTime) || $scheduledDateTime->isBefore($closestTime)) {
+                                $closestTime = $scheduledDateTime;
+                            }
+                        }
+                    }
+                }
+            
+                if (!is_null($closestTime)) {
+                    $data['expected_time'] = $closestTime->toDateTimeString();
+                }
             }
-
             $result = [
                 'data' => $result['data'],
                 'recordsTotal' => $result['allCount'],
@@ -173,6 +117,7 @@ class AutomationController extends BaseController
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
             $arg = $this->request->getGet();
             $result = $this->automation->getAutomation($arg);
+            $result['aas_schedule_value'] = json_decode($result['aas_schedule_value']);
             if(!empty($result['targets'])){
                 foreach ($result['targets'] as &$target) {
                     switch ($target['media']) {
@@ -495,7 +440,6 @@ class AutomationController extends BaseController
     {
         if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'post'){
             $data = $this->request->getRawInput();
-            
             $validationResult = $this->validationData($data);
             if($validationResult['result'] != true){
                 return $this->failValidationErrors($validationResult);
@@ -505,6 +449,9 @@ class AutomationController extends BaseController
             $typeMapping = ['광고주' => 'advertiser', '매체광고주' => 'account', '캠페인' => 'campaign', '광고그룹' => 'adgroup', '광고' => 'ad'];
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             $execBudgetTypeMapping = ['원' => 'won', '%' => 'percent'];
+
+            $data['schedule']['schedule_value'] = json_encode($data['schedule']['schedule_value']);
+            $data['schedule']['exec_once'] = !empty($data['schedule']['exec_once']) ? 1 : 0;
 
             if(!empty($data['target'])) {
                 foreach ($data['target'] as &$target) {
@@ -590,6 +537,8 @@ class AutomationController extends BaseController
             $execTypeMapping = ['상태' => 'status', '예산' => 'budget'];
             $execBudgetTypeMapping = ['원' => 'won', '%' => 'percent'];
 
+            $data['schedule']['schedule_value'] = json_encode($data['schedule']['schedule_value']);
+            $data['schedule']['exec_once'] = $data['schedule']['exec_once'] == "true" ? 1 : 0;
             if(!empty($data['target'])) {
                 foreach ($data['target'] as &$target) {
                     $target['media'] = $mediaMapping[$target['media']] ?? $target['media'];
@@ -629,50 +578,13 @@ class AutomationController extends BaseController
     {
         $validation = \Config\Services::validation();
         $validationRules      = [
-            'schedule.type_value' => 'required',
+            'schedule.schedule_value' => 'required',
         ];
         $validationMessages   = [
-            'schedule.type_value' => [
-                'required' => '시간 조건값은 필수 항목입니다.',
+            'schedule.schedule_value' => [
+                'required' => '일정을 지정해주세요.',
             ],
         ];
-
-        if($data['schedule']['exec_type'] == 'minute' || $data['schedule']['exec_type'] == 'hour'){
-            $validationRules['schedule.criteria_time'] = 'required';
-            $validationMessages['schedule.criteria_time'] = ['required' => '시작 일시는 필수 항목입니다.'];
-        }
-
-        if($data['schedule']['exec_type'] == 'day' || $data['schedule']['exec_type'] == 'week'){
-            $validationRules['schedule.exec_time'] = 'required';
-            $validationMessages['schedule.exec_time'] = ['required' => '시간은 필수 항목입니다.'];
-        }
-    
-        if($data['schedule']['exec_type'] == 'week'){
-            $validationRules['schedule.exec_week'] = ['required'];
-            $validationMessages['schedule.exec_week'] = ['required' => "요일은 필수 항목입니다."];
-        }
-
-        if($data['schedule']['exec_type'] == 'month'){
-            $validationRules['schedule.month_type'] = ['required'];
-            $validationMessages['schedule.month_type'] = ['required' => "월 조건값은 필수 항목입니다."];
-
-            if(isset($data['schedule']['month_type'])){
-                if($data['schedule']['month_type'] == 'start_day' || $data['schedule']['month_type'] == 'end_day'){
-                    $validationRules['schedule.exec_time'] = 'required';
-                    $validationMessages['schedule.exec_time'] = ['required' => '시간은 필수 항목입니다.'];
-                }
-    
-                if($data['schedule']['month_type'] == 'first' || $data['schedule']['month_type'] == 'last'){
-                    $validationRules['schedule.month_week'] = 'required';
-                    $validationMessages['schedule.month_week'] = ['required' => '월 조건 요일은 필수 항목입니다.'];
-                }
-    
-                if($data['schedule']['month_type'] == 'day'){
-                    $validationRules['schedule.month_day'] = 'required';
-                    $validationMessages['schedule.month_day'] = ['required' => '월 조건 일자는 필수 항목입니다.'];
-                }
-            }
-        }
 
         $validation->setRules($validationRules, $validationMessages);
         if (!$validation->run($data)) {
@@ -688,14 +600,12 @@ class AutomationController extends BaseController
         if(!empty($data['target'])){
             foreach ($data['condition'] as $condition) {
                 $validationRules      = [
-                    //'order' => 'required',
                     'type' => 'required',
                     'type_value' => 'required',
                     'compare' => 'required',
                     'operation' => 'required',
                 ];
                 $validationMessages   = [
-                    //'order' => ['required' => '순서는 필수 항목입니다.'],
                     'type' => ['required' => '조건 항목은 필수 항목입니다.'],
                     'type_value' => ['required' => '조건 값은 필수 항목입니다.'],
                     'compare' => ['required' => '일치여부는 필수 항목입니다.'],
@@ -772,9 +682,9 @@ class AutomationController extends BaseController
         $total = count($automations);
         foreach ($automations as $automation) {
             $result = [];
-            //if($automation['aa_seq'] != '112'){continue;}
+            //if($automation['aa_seq'] != '199'){continue;}
             if(!empty($automation)){
-                $schedulePassData = $this->checkAutomationSchedule($automation);                
+                $schedulePassData = $this->checkAutomationSchedule($automation);           
                 $result['schedule'] = $schedulePassData;
                 
                 if(!empty($schedulePassData['result'])){
@@ -871,17 +781,44 @@ class AutomationController extends BaseController
 
     public function checkAutomationSchedule($automation)
     {
-        $resultArray = [];
-        $lastExecTime = Time::parse($automation['aar_exec_timestamp'] ?? $automation['aas_reg_datetime']);
-
-        $ignoreStartTime = $automation['aas_ignore_start_time'] ?? null;
-        $ignoreEndTime = $automation['aas_ignore_end_time'] ?? null;
-        
+        $resultArray = [
+            'result' => false,
+            'status' => 'not_execution',
+            'msg' => '설정 시간 일치하지 않음',
+            'seq' => $automation['aa_seq'],
+        ];
         $currentDate = new Time('now');
-        $currentTime = $currentDate->format('Y-m-d H:i');
+        $currentDay = $currentDate->format('N');
+        $currentTime = $currentDate->toTimeString();
+        $schedule = $this->convertJsonToTimes($automation['aas_schedule_value']);
+        
+        if (array_key_exists($currentDay, $schedule)) {
+            if(!empty($automation['aas_exec_once']) && !empty($automation['aar_exec_timestamp_success'])){
+                return $resultArray;
+            }
 
+            foreach ($schedule[$currentDay] as $time) {
+                $startTime = Time::parse($time);
+                $endTime = $startTime->addMinutes(30);
+                $now = Time::parse($currentTime);
+                if ($now->isAfter($startTime) && $now->isBefore($endTime)) {
+                    $resultArray = [
+                        'result' => true,
+                        'status' => 'success',
+                        'msg' => '설정 시간 일치',
+                        'seq' => $automation['aa_seq'],
+                    ];
+
+                    return $resultArray;
+                }else{
+                    continue;
+                }
+            }
+        }
+        
+        return $resultArray;
         //제외시간
-        if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
+        /* if(!is_null($ignoreStartTime) && !is_null($ignoreEndTime)){
             $ignoreStartTime = Time::parse($ignoreStartTime);
             $ignoreEndTime = Time::parse($ignoreEndTime);
             if ($ignoreStartTime->isAfter($ignoreEndTime)) {
@@ -896,10 +833,10 @@ class AutomationController extends BaseController
                 ];
                 return $resultArray;
             }
-        }
+        } */
 
         //매n분
-        if($automation['aas_exec_type'] === 'minute'){
+        /* if($automation['aas_exec_type'] === 'minute'){
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
@@ -938,10 +875,10 @@ class AutomationController extends BaseController
                 ];
                 return $resultArray;
             }
-        }
+        } */
 
         //매n시간 
-        if($automation['aas_exec_type'] === 'hour'){
+        /* if($automation['aas_exec_type'] === 'hour'){
             $resultCount = $this->automation->getAutomationResultCount($automation['aa_seq']);
             //설정 일시 있을시
             if(empty($resultCount)){
@@ -980,10 +917,10 @@ class AutomationController extends BaseController
                 ];
                 return $resultArray;
             }
-        }
+        } */
 
         //매n일
-        if($automation['aas_exec_type'] === 'day'){
+        /* if($automation['aas_exec_type'] === 'day'){
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTimeDay = $diffTime->getDays();
             $diffTimeMinute = $diffTime->getMinutes();
@@ -1000,10 +937,10 @@ class AutomationController extends BaseController
 
                 return $resultArray;
             }
-        }
+        } */
 
         //매n주
-        if($automation['aas_exec_type'] === 'week'){
+        /* if($automation['aas_exec_type'] === 'week'){
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTimeWeek = $diffTime->getWeeks();
             $diffTimeMinute = $diffTime->getMinutes();
@@ -1020,10 +957,10 @@ class AutomationController extends BaseController
                 ];
                 return $resultArray;
             }
-        }
+        } */
 
         //매n월
-        if($automation['aas_exec_type'] === 'month'){
+        /* if($automation['aas_exec_type'] === 'month'){
             $diffTime = $lastExecTime->difference($currentDate);
             $diffTimeMonth = $diffTime->getMonths();
             $diffTimeMinute = $diffTime->getMinutes();
@@ -1092,15 +1029,7 @@ class AutomationController extends BaseController
                     return $resultArray;
                 }
             }
-        }
-
-        $resultArray = [
-            'result' => false,
-            'status' => 'not_execution',
-            'msg' => '설정 시간 일치하지 않음',
-            'seq' => $automation['aa_seq'],
-        ];
-        return $resultArray;
+        } */
     }
 
     public function checkAutomationTarget($target)
@@ -1986,5 +1915,22 @@ class AutomationController extends BaseController
         if(!empty($data)){
             $this->automation->recodeLog($data);
         }
+    }
+
+    private function convertJsonToTimes($json) {
+        $data = json_decode($json, true);
+        $convertedTimes = [];
+        foreach ($data as $key => $times) {
+            foreach ($times as $time) {
+                // 값을 2로 나누어 시간으로 변환
+                $hour = floor($time / 2);
+                $minute = ($time % 2) * 30;
+                
+                $convertedTime = sprintf("%d:%02d", $hour, $minute);
+                $convertedTimes[$key][] = $convertedTime;
+            }
+        }
+
+        return $convertedTimes;
     }
 }
