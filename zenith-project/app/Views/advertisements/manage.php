@@ -1288,7 +1288,7 @@ $('body').on('click', '#carelabs_btn', function() {
         $('.reset-btn').trigger('click');
     }
     debug('필터링 탭 클릭');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 <?php }?>
@@ -1296,7 +1296,7 @@ $('body').on('click', '.tab-link', function() {
     $('.tab-link').removeClass('active');
     $(this).addClass('active');
     debug('tab-link 클릭');
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
 });
 
@@ -1321,7 +1321,7 @@ $('body').on('click', '#update_btn', function() {
 
 $('form[name="search-form"]').bind('submit', function() {
     debug('검색 전송')
-    dataTable.state.save();
+    setTableParam();
     dataTable.draw();
     return false;
 });
@@ -2009,7 +2009,7 @@ $('body').on('click', '.reset-btn', function() {
         'account' : '',
     };
     dataTable.state.clear();
-    dataTable.state.save();
+    setTableParam();
     dataTable.order([2, 'asc']).draw();
 });
 

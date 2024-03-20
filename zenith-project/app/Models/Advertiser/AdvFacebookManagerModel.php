@@ -99,7 +99,8 @@ class AdvFacebookManagerModel extends Model
 			}
         }
 		$builder->groupBy('E.ad_account_id');
-		
+		$builder->groupBy('G.id');
+		// dd($builder->getCompiledSelect());
         return $builder;
 	}
 
