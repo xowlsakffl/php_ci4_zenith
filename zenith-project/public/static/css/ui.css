@@ -1864,6 +1864,9 @@ div.dt-processing > div:last-child > div {
   margin: 0 0 0 10px;
   font-size: 13px;
 }
+.table-modal td input[type=text] {
+  height: 25px;
+}
 
 .table-left-header {
   font-size: 13px;
@@ -2001,6 +2004,15 @@ table thead #total td {
 }
 .modal .sm-txt .modal-header .modal-title .bi {
   font-size: 15px;
+}
+.modal .search-wrap {
+  margin: 0 0 30px;
+}
+.modal .search-wrap .search {
+  padding: 35px 20px;
+}
+.modal .table-default {
+  width: 100%;
 }
 
 .sorting {

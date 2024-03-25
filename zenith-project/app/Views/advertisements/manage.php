@@ -219,13 +219,13 @@
                                 </div>
                             </form>
                         </div>
-                        <table class="table tbl-dark" id="dbCountTable" style="width: 100%;">
+                        <table class="table table-modal" id="dbCountTable" style="width: 100%;">
                             <colgroup>
                                 <col style="width:5%;">
                                 <col style="width:75%;">
                                 <col style="width:20%;">
                             </colgroup>
-                            <thead class="table-dark">
+                            <thead>
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">제목</th>
@@ -1144,7 +1144,7 @@ function setManualUpdate(data){
 function getOnlyAdAccount(){
     dbCountTable = $('#dbCountTable').DataTable({
         "destroy": true,
-        "autoWidth": false,
+        "autoWidth": true,
         "processing" : true,
         "serverSide" : true,
         "responsive": true,
@@ -1153,7 +1153,7 @@ function getOnlyAdAccount(){
         "order": [[0,'desc']],
         "deferRender": false,
         'lengthChange': false,
-        "scrollY": "70vh",
+        "scrollY": "50vh",
         "scrollCollapse": true,
         "paging": false,
         "info": false,

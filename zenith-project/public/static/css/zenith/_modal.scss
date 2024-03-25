@@ -42,7 +42,11 @@
                 .bi{font-size:15px;}
             }
         }
-    }   
+    }
+    .search-wrap{margin:0 0 30px;
+        .search{padding:35px 20px;}
+    }
+    .table-default{width:100%;}
 }
 .sorting{margin:0 0 20px;
     button{width:135px; height:40px; margin:0 8px 0 0; font-size:20px; text-align:center; border:1px solid $color-dark; border-radius:20px;

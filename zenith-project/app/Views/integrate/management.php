@@ -10,7 +10,7 @@
 <link href="/static/css/datatables.css" rel="stylesheet">
 <script src="/static/node_modules/datatables.net/js/dataTables.min.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-<script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/node_modules/datatables.net-buttons/js/buttons.html5.js"></script>
 <script src="/static/node_modules/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <script src="/static/node_modules/datatables.net-staterestore/js/dataTables.stateRestore.min.js"></script>
 <script src="/static/node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
@@ -30,7 +30,7 @@
 <script src="/static/node_modules/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
 <script src="/static/node_modules/datatables.net-keytable-bs5/js/keyTable.bootstrap5.min.js"></script>
 <script src="/static/js/jquery.number.min.js"></script>
-<script src="/static/js/jszip.min.js"></script>
+<script src="/static/node_modules/jszip/dist/jszip.min.js"></script>
 <script src="/static/js/pdfmake/pdfmake.min.js"></script>
 <script src="/static/js/pdfmake/vfs_fonts.js"></script>
 <style>
@@ -164,6 +164,8 @@
 <script>
 var lead_status = {"1":"인정", "2":"중복", "3":"성별불량", "4":"나이불량", "5":"콜불량", "6":"번호불량", "7":"테스트", "8":"이름불량", "9":"지역불량", "10":"업체불량", "11":"미성년자", "12":"본인아님", "13":"쿠키중복", "99":"확인"};
 var exportCommon = {
+    'header': true,
+    'footer': false,
     'exportOptions': { //{'columns': 'th:not(:last-child)'},
         'modifier': {'page':'all'},
     }
@@ -180,6 +182,7 @@ function setTableParam() {
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
         'stx': $('#stx').val(),
+        'company' : $('#company-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'advertiser' : $('#advertiser-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'media' : $('#media-list button.active').map(function(){return $(this).val();}).get().join('|'),
         'event' : $('#event-list button.active').map(function(){return $(this).val();}).get().join('|'),
@@ -239,15 +242,47 @@ $.fn.DataTable.Api.register('buttons.exportData()', function (options) { //Serve
         },
         "async": false
     });
-    let headerArray = [];
+    let headerArray = [], headerStructure = [];
     <?php if(getenv('MY_SERVER_NAME') === 'resta' && auth()->user()->inGroup('superadmin', 'admin', 'developer', 'user')){?>
         headerArray = ["#","분류","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+        headerStructure = [
+            [{title:"#", colSpan:1, rowSpan:1},
+            {title:"분류", colSpan:1, rowSpan:1},
+            {title:"이벤트", colSpan:1, rowSpan:1},
+            {title:"광고주", colSpan:1, rowSpan:1},
+            {title:"매체", colSpan:1, rowSpan:1},
+            {title:"이벤트 구분", colSpan:1, rowSpan:1},
+            {title:"이름", colSpan:1, rowSpan:1},
+            {title:"전화번호", colSpan:1, rowSpan:1},
+            {title:"나이", colSpan:1, rowSpan:1},
+            {title:"성별", colSpan:1, rowSpan:1},
+            {title:"기타", colSpan:1, rowSpan:1},
+            {title:"사이트", colSpan:1, rowSpan:1},
+            {title:"등록일시", colSpan:1, rowSpan:1},
+            {title:"메모", colSpan:1, rowSpan:1},
+            {title:"인정기준", colSpan:1, rowSpan:1}],
+        ];
     <?php }else{?>
         headerArray = ["#","이벤트","광고주","매체","이벤트 구분","이름","전화번호","나이","성별","기타","사이트","등록일시","메모","인정기준"];
+        headerStructure = [
+            [{title:"#", colSpan:1, rowSpan:1},
+            {title:"이벤트", colSpan:1, rowSpan:1},
+            {title:"광고주", colSpan:1, rowSpan:1},
+            {title:"매체", colSpan:1, rowSpan:1},
+            {title:"이벤트 구분", colSpan:1, rowSpan:1},
+            {title:"이름", colSpan:1, rowSpan:1},
+            {title:"전화번호", colSpan:1, rowSpan:1},
+            {title:"나이", colSpan:1, rowSpan:1},
+            {title:"성별", colSpan:1, rowSpan:1},
+            {title:"기타", colSpan:1, rowSpan:1},
+            {title:"사이트", colSpan:1, rowSpan:1},
+            {title:"등록일시", colSpan:1, rowSpan:1},
+            {title:"메모", colSpan:1, rowSpan:1},
+            {title:"인정기준", colSpan:1, rowSpan:1}],
+        ];
     <?php }?>
-    
     // return {body: arr , header: $("#deviceTable thead tr th").map(function() { return $(this).text(); }).get()};
-    return {body: arr , header: headerArray};
+    return {body: arr , header: headerArray, headerStructure: headerStructure, 'footerStructure': []};
 } );
 function getList(data = []) { //리스트 세팅
     $.fn.DataTable.ext.pager.numbers_length = 10;
@@ -734,6 +769,7 @@ $('body').on('click', '.reset-btn', function() {
         'sdate': $('#sdate').val(),
         'edate': $('#edate').val(),
         'stx': $('#stx').val(),
+        'company' : '',
         'advertiser' : '',
         'media' : '',
         'event' : '',

@@ -80,13 +80,7 @@
                     </form>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-default" id="logTable" style="width: 100%;">
-                        <colgroup>
-                            <col>
-                            <col style="width:22%;">
-                            <col style="width:18%;">
-                            <col style="width:22%;">
-                        </colgroup>
+                    <table class="table table-striped table-hover table-default" id="logTable">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">제목</th>
@@ -363,7 +357,7 @@ function getLogs($seq = null){
     $.fn.DataTable.ext.pager.numbers_length = 10;
     logTable = $('#logTable').DataTable({
         "destroy": true,
-        "autoWidth": true,
+        "autoWidth": false,
         "processing" : true,
         "serverSide" : true,
         "responsive": false,
@@ -390,9 +384,10 @@ function getLogs($seq = null){
         },
         "columns": [
             { "data": "subject"},
-            { "data": "nickname"},
+            { "data": "nickname", width:"15%"},
             { 
                 "data": "result",
+                "width": "15%",
                 "render": function(data, type, row){
                     let result;
                     if(data == '실행됨'){
@@ -406,7 +401,7 @@ function getLogs($seq = null){
                     return result;
                 }
             },
-            { "data": "exec_timestamp"},
+            { "data": "exec_timestamp", "width":"15%"},
         ],
         "createdRow": function(row, data, dataIndex) {
             $(row).attr("data-id", data.id);

@@ -75,6 +75,9 @@ div.dt-processing>div:last-child>div{background-color:var(--bs-red) !important;}
         th{text-align:center; background:#f7f7f7;}
     }
     .btn{margin:0 0 0 10px; font-size:13px;}
+    td{
+        input[type="text"]{height:25px;}
+    }
 }
 .table-left-header{font-size:13px; vertical-align:middle;
     th{text-align:center; background:#f7f7f7;}

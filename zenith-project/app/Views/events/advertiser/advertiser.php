@@ -130,6 +130,10 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th scope="row" class="text-end">홈페이지 주소</th>
+                                <td><input type="text" class="form-control" name="homepage_url" placeholder="홈페이지 주소를 입력하세요." title="홈페이지 주소"></td>
+                            </tr>
+                            <tr>
                                 <th scope="row" class="text-end">외부연동 주소</th>
                                 <td><input type="text" class="form-control" name="interlock_url" placeholder="외부연동 주소를 입력하세요." title="외부연동 주소"></td>
                             </tr>
@@ -404,6 +408,7 @@ function setAdv(data){
     $('input[name="checkname"]').val(data.advertiser.seq);
     $('input[name="name"]').val(data.advertiser.name);
     $('input[name="agent"]').val(data.advertiser.agent);
+    $('input[name="homepage_url"]').val(data.advertiser.homepage_url);
     $('input[name="interlock_url"]').val(data.advertiser.interlock_url);
     $('input[name="agreement_url"]').val(data.advertiser.agreement_url);
     $('input[name="account_balance"]').val(data.advertiser.account_balance);
