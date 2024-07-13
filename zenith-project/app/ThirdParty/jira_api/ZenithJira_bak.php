@@ -14,14 +14,14 @@ class ZenithJiraBack
 {
     //jira api 패키지
     private $iss;
-    private $jiraHost = "https://carelabs-dm.atlassian.net";
+    private $jiraHost = "";
 
     private $clientId, $clientSecret, $callbackUrl, $scopes, $accessToken, $refreshToken, $db;
 
     public function __construct()
     {
-        $this->clientId = 'iiisb2fVWfvBNxfazgJhsPxDkgGKldQy';
-        $this->clientSecret = 'ATOAEa7qX_LpMrJnt-rj3SQsQcGU4Ejg6skpynqWqnOoUnihyvAOi4C_Ur_h-1HahQFp08E74721';
+        $this->clientId = '';
+        $this->clientSecret = '';
         $this->callbackUrl = 'https://carezenith.co.kr/jira/callback'; 
         $this->scopes = 'manage:jira-project write:jira-work read:jira-work offline_access';
 
