@@ -13,9 +13,9 @@ class ZenithKM
     //// private $app_id = '243424';
     //// private $app_key = '500a99d34478a54c7c4fbfc04ff90512';
     //// private $client_secret = 'V1lTM4d4FrLoxVhnISLqGaLdhwsvcGTT';
-    private $app_id = '887002';
-    private $app_key = '0cc29f3733642f5860974385add9855e';
-    private $client_secret = 'PvAXnDxpbO9mQxKXYrCVkTxI4z3eAyb5';
+    private $app_id = '';
+    private $app_key = '';
+    private $client_secret = '';
     private $oauth_url = 'https://kauth.kakao.com/oauth';
     private $code;
     private $host = 'https://apis.moment.kakao.com';

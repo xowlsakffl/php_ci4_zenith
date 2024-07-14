@@ -8,7 +8,7 @@ ini_set('memory_limit', '-1');
 use CodeIgniter\CLI\CLI;
 class ChainsawKMBF
 {
-    private $bizformId = '6590', $api_key = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456', $db;
+    private $bizformId = '', $api_key = '', $db;
     public function __construct()
     {
         $this->db = new KMDB();

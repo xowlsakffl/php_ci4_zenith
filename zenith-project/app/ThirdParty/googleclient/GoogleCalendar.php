@@ -13,7 +13,7 @@ use Google\Service\Calendar\EventDateTime;
 class GoogleCalendar
 {
     protected $client, $redirect_uri, $accessToken;
-    protected $calendarId = '7fa4832dd987be8a4c7aed61bb3c3ab641d347659e9c192c4405a9a0cff1476d@group.calendar.google.com';
+    protected $calendarId = '';
 
     public function __construct()
     {

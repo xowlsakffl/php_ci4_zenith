@@ -24,12 +24,12 @@ class ChatBot extends BaseController {
     private $botman;
     private $conversation;
     private $credentials = [
-        'app_id' => 'A057ZJSCU5A',
-        'client_id' => '633137239556.5271638436180',
-        'client_secret' => 'b5f4688cc4b85ad81a34bfcf6fb07348',
+        'app_id' => '',
+        'client_id' => '',
+        'client_secret' => '',
     ];
     
-    private $token = 'xoxb-633137239556-5358898316181-xwEUhVz6wE99kINHlrvZY9Qs';
+    private $token = '';
     private $redirectUrl = 'https://local.carezenith.co.kr/auth/slack/callback';
 
     public function __construct() 

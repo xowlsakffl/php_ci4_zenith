@@ -12,14 +12,14 @@ use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 class ChatBot {
     private $botman;
     private $credentials = [
-        'app_id' => 'A057ZJSCU5A',
-        'client_id' => '633137239556.5271638436180',
-        'client_secret' => 'b5f4688cc4b85ad81a34bfcf6fb07348',
+        'app_id' => '',
+        'client_id' => '',
+        'client_secret' => '',
     ];
     function __construct() {
         $config = [
             'slack' => [
-                'token' => 'xoxb-633137239556-5358898316181-35WkFFREOK5IRnIznq4dib4H'
+                'token' => ''
             ]
         ];
         $this->load->driver('cache');

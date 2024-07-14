@@ -16,8 +16,8 @@ class ZenithJira
 {
     //jira api 패키지
     private $iss;
-    private $accessToken = "ATATT3xFfGF0Gh6USmXkCmBDSx-1bQ6rfv0j47LdsmFfTw3XjSyBdVPMbk3H5ahoqLbC5lBcrxs__c6W10eZ1aFIpOuSnqUC5WdkMGQ0GtZjIPsS-sZyo9IXzAt2_OikJoP7DaaouGhxdaC1wLrce6uuuyxDtoCLVBG-yotCEnCgQAQAHM0ZcMw=8526015D";
-    private $jiraHost = "https://carelabs-dm.atlassian.net";
+    private $accessToken = "";
+    private $jiraHost = "";
     private $db;
     
     public function __construct()
@@ -26,7 +26,7 @@ class ZenithJira
         $this->iss = new ArrayConfiguration(
             [
                 'jiraHost' => $this->jiraHost,
-                'jiraUser' => 'jaybe@carelabs.co.kr',
+                'jiraUser' => '',
                 'jiraPassword' => $this->accessToken,
                 /* 'useTokenBasedAuth' => true,
                 'personalAccessToken' => $this->accessToken, */
