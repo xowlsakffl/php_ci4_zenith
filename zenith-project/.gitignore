@@ -129,11 +129,8 @@ nb-configuration.xml
 /public/static/node_modules
 node_modules/
 
-ThirdParty/*/config.php
-ThirdParty/*/google_ads_php.ini
-ThirdParty/*/carelabs-ams-c10d78f8d141.json
-ThirdParty/*/ZenithJira.php
-ThirdParty/*/ZenithKM.php
-ThirdParty/*/ChatBot.php
-ThirdParty/botman/core.php
+app/ThirdParty/*/config.php
+app/ThirdParty/*/google_ads_php.ini
+app/ThirdParty/*/carelabs-ams-c10d78f8d141.json
+
 examples
