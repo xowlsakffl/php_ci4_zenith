@@ -132,5 +132,9 @@ node_modules/
 app/ThirdParty/*/config.php
 app/ThirdParty/*/google_ads_php.ini
 app/ThirdParty/*/carelabs-ams-c10d78f8d141.json
+<<<<<<< HEAD
 
 examples
+=======
+examples
+>>>>>>> c75b51b89d8b45a03bde17e79c7a2e7270152a95
