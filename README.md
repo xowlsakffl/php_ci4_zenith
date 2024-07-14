@@ -35,3 +35,6 @@ kakao, facebook, google, jira, slack
 
 ## 소요기간 ⏱️
 1년
+
+## 개발인원 ⏱️
+2명
