@@ -1,8 +1,4 @@
 # 제니스 프로젝트
-![local vrzenith com_advertisements (1)](https://github.com/user-attachments/assets/3c25000c-1c37-428b-881e-c9c994f04bab)
-![local vrzenith com_automation](https://github.com/user-attachments/assets/3219ec2c-8329-4161-8850-08522cfbc356)
-![carezenith co kr_automation](https://github.com/user-attachments/assets/bfcf369b-ab95-4441-b5e6-741a349fee33)
-![local vrzenith com_integrate (2)](https://github.com/user-attachments/assets/b5e496f8-5e8a-4276-8379-bdfe3f1ec424)
 
 ## 개요 📌
 광고 관리 프로그램<br>
