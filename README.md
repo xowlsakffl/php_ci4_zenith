@@ -26,7 +26,8 @@
   ![local vrzenith](https://github.com/user-attachments/assets/8655dce2-334a-4258-b783-edaceccfdfff)
 - **자동 광고 조정**: 특정 조건(예: 예산, cpc, cpa 등)및 일정에 따라 광고 상태를 자동으로 조정합니다. 이를 통해 광고 효율성을 극대화하고 불필요한 비용을 절감할 수 있습니다.
 - ![1](https://github.com/user-attachments/assets/4fc2d973-1ecf-4e64-877e-56ed0fd97fee)
-  
+  ![123123](https://github.com/user-attachments/assets/ac62d0c2-a963-4830-aa96-3bc48fedc1ca)
+
 - **이벤트 관리**: 다양한 광고 이벤트를 생성하고 관리합니다. 이벤트의 성과를 분석하여 다음 캠페인에 반영할 수 있습니다.
   
 - **광고주 관리**: 여러 광고주의 계정을 체계적으로 관리하고, 각 광고주의 요구사항에 맞춰 광고 전략을 조정할 수 있습니다.
