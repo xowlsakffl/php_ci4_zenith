@@ -42,7 +42,7 @@
 
 ## 사용 기술 ⚒️
 
-이 시스템은 다음과 같은 기술 스택을 사용하여 개발되었습니다:
+이 시스템은 다음과 같은 기술 스택을 사용하여 개발되었습니다.<br>
 <img src="https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=PHP&logoColor=white"/> <img src="https://img.shields.io/badge/Codeigniter-EF4223?style=flat-square&logo=Codeigniter&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/> 
 
 ## 기대 효과
