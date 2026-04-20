@@ -10,15 +10,18 @@ use CodeIgniter\API\ResponseTrait;
 class HomeController extends BaseController
 {
     use ResponseTrait;
-    
+
     public function index()
     {
-        $data = [];
-        $data['password_check'] = false;
-        $password_check = auth()->user()->getEmailIdentity()->password_changed_at;
+        $data = [
+            'password_check' => false,
+        ];
 
-        if(!empty($password_check) && (strtotime($password_check) < strtotime('-90 days'))){
-            $data['password_check'] = true;
+        $user = auth()->user();
+        if ($user !== null) {
+            $identity       = $user->getEmailIdentity();
+            $passwordChange = $identity->password_changed_at ?? null;
+            $data['password_check'] = $this->isPasswordChangeRequired($passwordChange);
         }
 
         return view('pages/home', $data);
@@ -26,22 +29,43 @@ class HomeController extends BaseController
 
     public function getReports()
     {
-        if($this->request->isAJAX() && strtolower($this->request->getMethod()) === 'get'){
-            $facebookDB = \Config\Database::connect('facebook');
-            $googleDB = \Config\Database::connect('google');
-            $kakaoDB = \Config\Database::connect('kakao');
-
-            $result = [];
-            $facebook = new AdvFacebookManagerController;
-            $result['facebookReport'] = $facebook->getReport();
-
-            $google = new AdvGoogleManagerController;
-            $result['googleReport'] = $google->getReport();
-
-            $kakao = new AdvKakaoManagerController;
-            $result['kakaoReport'] = $kakao->getReport();
-
-            return $this->respond($result);
+        if (! $this->request->isAJAX()) {
+            return $this->failForbidden('AJAX 요청만 허용됩니다.');
         }
+
+        if (strtolower($this->request->getMethod()) !== 'get') {
+            return $this->fail('허용되지 않은 요청 메서드입니다.', 405);
+        }
+
+        try {
+            return $this->respond($this->collectReports());
+        } catch (\Throwable $exception) {
+            log_message('error', '[HomeController::getReports] {message}', ['message' => $exception->getMessage()]);
+
+            return $this->failServerError('리포트를 불러오지 못했습니다.');
+        }
+    }
+
+    private function isPasswordChangeRequired(?string $passwordChange): bool
+    {
+        if ($passwordChange === null || $passwordChange === '') {
+            return false;
+        }
+
+        $changedAt = strtotime($passwordChange);
+        if ($changedAt === false) {
+            return false;
+        }
+
+        return $changedAt < strtotime('-90 days');
+    }
+
+    private function collectReports(): array
+    {
+        return [
+            'facebookReport' => (new AdvFacebookManagerController())->getReport(),
+            'googleReport'   => (new AdvGoogleManagerController())->getReport(),
+            'kakaoReport'    => (new AdvKakaoManagerController())->getReport(),
+        ];
     }
 }
