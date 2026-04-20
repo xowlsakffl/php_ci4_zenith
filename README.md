@@ -1,61 +1,103 @@
-# 제니스 프로젝트
+# Zenith Project
 
-이 프로젝트는 다양한 광고 플랫폼과의 통합을 통해 광고 관리와 고객 데이터를 효율적으로 관리할 수 있는 강력한 솔루션을 제공합니다. 페이스북, 카카오, 구글 광고 API를 활용하여 광고 상태를 실시간으로 모니터링하고, 조건에 따라 자동으로 광고 상태를 조정하는 기능을 포함하고 있습니다. 이를 통해 광고 캠페인의 효율성을 극대화하고, 비용을 절감할 수 있습니다. 
-<br><br>
-**단순히 참고, 포트폴리오용이므로 대부분의 코드 및 SQL은 보안상의 이유로 공개하지 않습니다.**
+광고 운영 실무에서 자주 필요한 기능을 한 화면으로 통합한 관리 시스템입니다.  
+Facebook, Google, Kakao 광고 연동, 고객 데이터 관리, 자동화 조건 실행, 이벤트 운영 업무를 한 번에 처리하도록 구성했습니다.
 
-## 프로젝트 개요
+> 포트폴리오 공개 버전 기준으로 보안상 민감한 코드/SQL 일부는 제외되어 있습니다.
 
-### 배경
+## 프로젝트 한눈에 보기
 
-디지털 마케팅의 중요성이 날로 증가함에 따라, 여러 광고 플랫폼을 동시에 관리하는 프로그램. 각 플랫폼마다 다른 인터페이스와 관리 도구를 사용해야 하는 불편함 극복. 이를 해결하기 위해 본 시스템은 하나의 통합된 인터페이스에서 여러 광고 플랫폼을 관리할 수 있는 기능을 제공합니다.
+| 항목 | 내용 |
+| --- | --- |
+| 프로젝트 성격 | 광고 운영/고객 데이터 통합 관리 웹 서비스 |
+| 핵심 목표 | 광고 효율 최적화, 운영 자동화, 데이터 기반 의사결정 |
+| 개발 기간 | 1년 |
+| 개발 인원 | 2명 |
+| 백엔드 | PHP, CodeIgniter4 |
+| 데이터베이스 | MySQL |
 
-### 목적
+## 주요 기능
 
-이 시스템의 주요 목적은 다음과 같습니다:
+1. 광고 플랫폼 통합 관리
+- Facebook, Google, Kakao 광고 상태 확인
+- 예산/성과 기준으로 운영 항목 점검
 
-1. **광고 캠페인 최적화**: 광고 상태를 실시간으로 모니터링하고, 설정된 조건에 따라 자동으로 조정하여 최적의 광고 성과를 달성합니다.
-2. **효율적인 고객 관리**: 고객 데이터를 체계적으로 관리하고 분석하여 마케팅 전략을 개선합니다.
-3. **통합 관리 플랫폼 제공**: 다양한 광고 플랫폼을 하나의 인터페이스에서 관리할 수 있도록 하여 업무 효율성을 높입니다.
+2. 고객 DB 관리
+- 고객 데이터 수집/저장/활용 기반 마련
+- 운영 의사결정을 위한 데이터 조회 구조
 
-### 주요 기능
+3. 자동 광고 조정
+- 예산, CPC, CPA, 스케줄 조건 기반 자동화
+- 반복 작업 축소 및 반응 속도 향상
 
-- **광고 관리**: 페이스북, 카카오, 구글 광고 API를 사용하여 광고 상태를 실시간으로 확인하고 관리합니다. 광고 예산, 타겟팅, 일정 등을 설정하고 조정할 수 있습니다.
-  ![1111 (1)](https://github.com/user-attachments/assets/8036d236-f2e3-4f7d-8153-5a18ab03fee3)
-- **고객 DB 관리**: 고객 데이터를 수집하고 저장하여 다양한 분석을 수행합니다. 이를 통해 고객의 행동 패턴을 이해하고, 맞춤형 마케팅 전략을 수립할 수 있습니다.
-  ![local vrzenith](https://github.com/user-attachments/assets/8655dce2-334a-4258-b783-edaceccfdfff)
-- **자동 광고 조정**: 특정 조건(예: 예산, cpc, cpa 등)및 일정에 따라 광고 상태를 자동으로 조정합니다. 이를 통해 광고 효율성을 극대화하고 불필요한 비용을 절감할 수 있습니다.
-- ![1](https://github.com/user-attachments/assets/4fc2d973-1ecf-4e64-877e-56ed0fd97fee)
-  ![123123](https://github.com/user-attachments/assets/ac62d0c2-a963-4830-aa96-3bc48fedc1ca)
+4. 운영 업무 기능
+- 이벤트/광고주/회원/블랙리스트 관리
+- 엑셀 업로드 처리
+- JIRA, Slack API 연동 알림
 
-- **이벤트 관리**: 다양한 광고 이벤트를 생성하고 관리합니다. 이벤트의 성과를 분석하여 다음 캠페인에 반영할 수 있습니다.
-  
-- **광고주 관리**: 여러 광고주의 계정을 체계적으로 관리하고, 각 광고주의 요구사항에 맞춰 광고 전략을 조정할 수 있습니다.
-  
-- **회원 관리**: 사용자 계정을 생성하고, 각 사용자에게 적절한 권한을 부여하여 시스템을 안전하게 운영합니다.
-  
-- **블랙리스트 관리**: 블랙리스트에 등록된 사용자나 광고주를 관리하여 시스템의 신뢰성을 유지합니다.
-  
-- **엑셀 업로드**: 데이터를 엑셀 파일로 업로드하여 대량의 데이터를 손쉽게 처리할 수 있습니다.
-  
-- **JIRA, SLACK API 연동**: JIRA 소프트웨어와 연동하여 JIRA 사용자, SLACK 사용자에게 알림 기능을 제공합니다.
+## 화면 예시
 
-## 사용 기술 ⚒️
+기존 문서의 스크린샷은 그대로 유지했습니다.
 
-이 시스템은 다음과 같은 기술 스택을 사용하여 개발되었습니다.<br>
-<img src="https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=PHP&logoColor=white"/> <img src="https://img.shields.io/badge/Codeigniter-EF4223?style=flat-square&logo=Codeigniter&logoColor=white"> <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/> 
+![1111 (1)](https://github.com/user-attachments/assets/8036d236-f2e3-4f7d-8153-5a18ab03fee3)
+![local vrzenith](https://github.com/user-attachments/assets/8655dce2-334a-4258-b783-edaceccfdfff)
+![1](https://github.com/user-attachments/assets/4fc2d973-1ecf-4e64-877e-56ed0fd97fee)
+![123123](https://github.com/user-attachments/assets/ac62d0c2-a963-4830-aa96-3bc48fedc1ca)
 
-## 기대 효과
+## 기술 스택
 
-- **광고 성과 향상**: 광고를 실시간으로 모니터링하고 자동으로 조정함으로써 최적의 광고 성과를 달성할 수 있습니다.
-- **비용 절감**: 불필요한 광고 비용을 절감하고, 예산을 효율적으로 활용할 수 있습니다.
-- **업무 효율성 증대**: 여러 광고 플랫폼을 통합 관리함으로써 업무의 효율성을 높일 수 있습니다.
-- **데이터 기반 의사결정**: 고객 데이터를 분석하여 데이터에 기반한 마케팅 전략을 수립할 수 있습니다.
+<img src="https://img.shields.io/badge/PHP-777BB4?style=flat-square&logo=PHP&logoColor=white"/>
+<img src="https://img.shields.io/badge/CodeIgniter-EF4223?style=flat-square&logo=Codeigniter&logoColor=white"/>
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>
 
-이 시스템은 디지털 마케팅의 복잡성을 줄이고, 효율적인 광고 관리와 고객 관리를 통해 비즈니스의 성과를 극대화하는 데 중점을 두고 있습니다. 다양한 기능과 통합된 관리 인터페이스를 통해 광고 캠페인을 더욱 효과적으로 운영하기 위한 프로그램입니다.
+## 디렉터리 구조
 
-## 개발 기간
-- 1년
+```text
+php_ci4_zenith-my-commits/
+├─ README.md
+└─ zenith-project/
+   ├─ app/
+   │  ├─ Controllers/
+   │  └─ Views/
+   ├─ public/
+   │  ├─ static/
+   │  └─ health.php
+   ├─ composer.json
+   └─ spark
+```
 
-## 개발 인원
-- 2명
+## 실행 방법
+
+```bash
+cd zenith-project
+composer install
+php spark serve
+```
+
+PowerShell:
+
+```powershell
+Set-Location .\zenith-project
+composer install
+php .\spark serve
+```
+
+## 운영/개발 개선 사항
+
+- Git 규칙 파일 추가: `.editorconfig`, `.gitattributes`
+- 협업 템플릿 추가: `.github/pull_request_template.md`, `.github/COMMIT_CONVENTION.md`
+- 최소 CI 추가: `.github/workflows/php-lint.yml`
+- 컨트롤러 안정성 리팩터링:
+  - AJAX/HTTP 메서드 검증
+  - 예외 처리 및 실패 응답 일관화
+  - 예제 뷰 경로 입력값 검증
+- 운영 확인용 헬스체크 추가: `zenith-project/public/health.php`
+
+## 커밋 컨벤션
+
+```text
+feat: 기능 추가
+refactor: 구조 개선(동작 동일)
+infra: 개발환경/CI/저장소 운영 규칙
+docs: 문서 변경
+```
