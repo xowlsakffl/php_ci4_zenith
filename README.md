@@ -1,170 +1,144 @@
-# 제니스 프로젝트
+# Zenith | 광고 운영 통합 백오피스
 
-광고 운영, 이벤트 관리, 내부 협업 업무를 하나의 백오피스에서 처리하기 위한 CodeIgniter 4 기반 사내 운영 도구입니다.
+Facebook, Google, Kakao 등 여러 광고 매체의 성과와 캠페인 상태를 한곳에서 관리하고, 조건에 따라 예산과 집행 상태를 자동 제어하기 위해 개발한 CodeIgniter 4 기반 사내 운영 시스템입니다.
 
-이 저장소는 공개 가능한 범위만 정리한 스냅샷입니다. 민감한 SQL, 외부 연동 키, 일부 설정 파일, 모델/라이브러리의 세부 구현은 제외되어 있습니다.
+광고 운영뿐 아니라 광고주·이벤트·신청 데이터, 블랙리스트, 회계·인사·캘린더와 내부 협업 기능까지 실제 운영 흐름을 기준으로 통합했습니다.
 
-## 프로젝트 소개
-### 화면 예시
+> 이 저장소는 공개 가능한 컨트롤러, 화면과 정적 자산을 중심으로 구성한 포트폴리오용 스냅샷입니다. 운영 DB 모델, 광고 매체 인증 정보와 일부 내부 라이브러리는 제외되어 단독 실행을 지원하지 않습니다.
 
-![1111 (1)](https://github.com/user-attachments/assets/8036d236-f2e3-4f7d-8153-5a18ab03fee3)
-![local vrzenith](https://github.com/user-attachments/assets/8655dce2-334a-4258-b783-edaceccfdfff)
-![1](https://github.com/user-attachments/assets/4fc2d973-1ecf-4e64-877e-56ed0fd97fee)
-![123123](https://github.com/user-attachments/assets/ac62d0c2-a963-4830-aa96-3bc48fedc1ca)
+## 화면
 
-제니스 프로젝트는 광고 운영, 이벤트 관리, 사용자 관리, 내부 협업 업무를 하나의 관리자 시스템에서 처리할 수 있도록 구성한 CodeIgniter 4 기반 백오피스입니다. 여러 광고 매체의 운영 현황 확인, 조건 기반 자동화, 이벤트 실무 처리, 협업 알림 기능을 한곳에 모아 운영 효율을 높이는 데 초점을 두었습니다.
+| 통합 광고 관리 | 광고 운영 상세 |
+| --- | --- |
+| ![통합 광고 관리](https://github.com/user-attachments/assets/8036d236-f2e3-4f7d-8153-5a18ab03fee3) | ![광고 운영 상세](https://github.com/user-attachments/assets/8655dce2-334a-4258-b783-edaceccfdfff) |
 
-서비스 구조는 광고 매체 관리 기능만 따로 분리하지 않고, 운영자가 실제로 함께 사용하는 업무 흐름을 기준으로 구성했습니다. 광고 리포트 확인, 상태 변경, 자동화 실행 결과 조회, 이벤트 업무, 사용자 인증, 외부 협업 도구 연동이 하나의 서비스 안에서 이어지도록 설계되어 있습니다.
+| 자동화 목록 | 자동화 조건 설정 |
+| --- | --- |
+| ![자동화 목록](https://github.com/user-attachments/assets/4fc2d973-1ecf-4e64-877e-56ed0fd97fee) | ![자동화 조건 설정](https://github.com/user-attachments/assets/ac62d0c2-a963-4830-aa96-3bc48fedc1ca) |
 
-이 저장소는 공개 가능한 범위만 정리한 버전으로, 민감한 연동 설정과 일부 내부 구현은 제외되어 있습니다. 다만 현재 포함된 컨트롤러, 뷰, 정적 자산 구조만으로도 프로젝트의 전반적인 기능 구성과 운영 방향을 확인할 수 있습니다.
+## 개발 배경과 문제
 
-## 프로젝트 성격
+기존 광고 운영 도구는 PHP 5.x 환경에서 오랫동안 기능이 누적되어 목록과 리포트 조회가 느렸고, 수정 영향 범위를 파악하기 어려웠습니다. 일부 매체 업무와 신청 데이터 처리는 수작업으로 이어져 운영자가 여러 화면과 절차를 반복해야 했습니다.
 
-- 목적: 광고 매체 운영, 이벤트 업무, 내부 관리 기능을 한곳에서 통합 운영
-- 성격: 사내 운영용 관리자 시스템
-- 기반 프레임워크: PHP + CodeIgniter 4
-- 인증 계층: CodeIgniter Shield
-- 데이터/외부 연동: MySQL, Slack, Jira, 광고 매체 API
+매체마다 캠페인 계층, 상태값과 성과 지표가 달라 같은 기준으로 비교하기 어려웠고, 자동 제어가 실패했을 때 어떤 조건과 작업이 실행됐는지 추적하는 구조도 필요했습니다. 이를 해결하기 위해 기존 운영 흐름을 분석하고 CodeIgniter 4 기반의 통합 백오피스로 개편했습니다.
 
-## 공개본 기능 범위
+## 시스템 구성
 
-코드 기준으로 현재 확인되는 영역은 아래와 같습니다.
+```text
+Facebook / Google / Kakao 광고 API
+                  |
+                  v
+      매체별 데이터 수집·변환
+                  |
+        +---------+----------+
+        |                    |
+        v                    v
+통합 리포트·캠페인 관리   조건·시간 기반 자동화
+        |                    |
+        |                    v
+        |             상태·예산 변경 및 로그
+        |
+        v
+광고주·이벤트·신청 데이터 운영
+                  |
+                  v
+       Zenith 랜딩 운영 모듈
+```
 
-- 광고 운영 관리
-  - Facebook, Google, Kakao, Naver, 기타 매체용 컨트롤러 구성
-  - 홈 화면에서 매체별 리포트 수집
-  - 광고 상태/예산 조정 자동화 로직 존재
-- 자동화 운영
-  - 조건 기반 실행 스케줄 관리
-  - 실행 결과/로그 조회
-  - 매체별 상태 변경 및 예산 제어 처리
-- 이벤트/운영 업무
-  - 광고주 관리
-  - 블랙리스트 관리
-  - 변경 이력 관리
-  - 엑셀 업로드 처리
-  - 매체 관리 화면
-- 내부 협업 연동
-  - Jira 이슈 상태 변화 연동
-  - Slack 사용자 알림 발송
-- 계정/인증
-  - 로그인 및 인증 화면
-  - 매직 링크 관련 화면/컨트롤러
-  - 비밀번호 변경 및 변경 주기 체크
-- 공통 관리자 기능
-  - 회계(`Accounting`)
-  - 인사(`HumanResource`)
-  - 회사 정보(`Company`)
-  - 캘린더(`Calendar`)
-  - 사용자 관리(`User`)
-  - 통합 관리(`Integrate`)
-- 헬스체크
-  - `zenith-project/public/health.php` 에서 JSON 상태 응답 제공
+백오피스는 운영 기준과 광고 제어를 관리하고, 별도 랜딩 모듈은 실제 방문 요청의 수집·검증·저장과 외부 제휴 전송을 담당합니다.
 
-## 코드베이스 요약
+## 설계 및 구현
 
-- PHP 컨트롤러: 36개
-- View 템플릿: 87개
-- 주요 컨트롤러 도메인
-  - `Accounting`
-  - `Advertisement`
-  - `AdvertisementManager`
-  - `Api`
-  - `Auth`
-  - `Calendar`
-  - `Company`
-  - `EventManage`
-  - `HumanResource`
-  - `Integrate`
-  - `User`
+### 1. 매체별 광고 데이터를 하나의 운영 화면으로 통합
 
+- Facebook, Google, Kakao 광고 계정과 캠페인·광고그룹·광고 데이터를 매체별 API로 조회
+- 서로 다른 상태값과 성과 지표를 공통 화면에서 비교할 수 있도록 변환
+- 노출, 클릭, 광고비, 신청 수, 매출, 마진, CPA와 CPC 등 운영 지표 집계
+- 캠페인·광고그룹·광고의 활성 상태, 예산과 심사 거절 상태 확인
+- 광고주와 매체 계정을 연결해 계정 단위 운영 현황 제공
 
-- `HomeController`
-  - 로그인 사용자의 비밀번호 변경 시점 확인
-  - AJAX 요청에서만 리포트 응답
-  - 예외 발생 시 API 에러 응답 처리
-- `ExampleController`
-  - 뷰 이름 화이트리스트 패턴 검증
-  - 존재하지 않는 뷰 접근 차단
-- `PasswordChangeController`
-  - Shield 비밀번호 정책 사용
-  - 비밀번호 변경 후 강제 재설정 해제 처리
-- `public/health.php`
-  - 애플리케이션 상태를 별도 JSON 엔드포인트로 제공
+### 2. 조건과 시간에 따른 광고 제어 자동화
+
+- 요일·시간 조합으로 실행 일정을 설정하고 다음 실행 예정 시각 계산
+- 광고주, 계정, 캠페인, 광고그룹과 광고를 자동화 대상으로 구성
+- 광고비, 신청 수, 전환율, 마진과 상태값을 실행 조건으로 비교
+- 조건 충족 시 Facebook, Google, Kakao의 상태 또는 예산 변경
+- 정액·비율 방식의 예산 조정과 변경 전 원본 값 기록
+- 실행 결과와 대상·조건·작업 내용을 저장하고 실패 시 원상 복구 흐름 제공
+
+### 3. 이벤트와 신청 데이터 운영 기능 통합
+
+- 광고주, 이벤트, 매체와 신청 데이터 관리
+- 블랙리스트와 변경 이력 관리
+- 엑셀 업로드를 통한 운영 데이터 일괄 처리
+- 광고 운영 데이터와 이벤트 신청 데이터를 연결해 성과 지표로 활용
+- 랜딩 모듈에서 수집한 신청 상태와 외부 전송 결과 확인
+
+### 4. 인증과 내부 협업 흐름 보강
+
+- CodeIgniter Shield 기반 로그인과 사용자 인증
+- 비밀번호 변경 주기 확인과 강제 변경 처리
+- 매직 링크 기반 인증 화면과 처리 흐름
+- Jira 이슈 상태 변경과 Slack 사용자 알림 연동
+- 회계, 인사, 회사 정보, 캘린더와 사용자 관리 기능 구성
+
+## 주요 결과
+
+- 여러 광고 매체의 성과와 집행 상태를 하나의 관리자 화면에서 확인할 수 있도록 통합
+- 반복하던 상태·예산 변경을 조건 기반 자동화로 전환
+- 자동화 실행 조건, 변경 전 값과 처리 결과를 기록해 운영 이슈 추적 가능
+- 광고주·이벤트·신청 데이터와 광고 성과를 연결해 운영 흐름 단순화
+- 인증과 비밀번호 정책을 적용하고 내부 협업 알림을 시스템 흐름에 연결
+
+## 담당 범위
+
+- 기존 PHP 운영 도구와 광고 실무 흐름 분석
+- CodeIgniter 4 기반 백오피스 기능 개발과 유지보수
+- Facebook, Google, Kakao 광고 데이터 조회 및 제어 기능 연동
+- 광고 자동화 조건·일정·실행 결과 관리 기능 구현
+- 광고주·이벤트·신청 데이터 운영 기능 개발
+- Jira·Slack 연동과 인증·보안 기능 개선
+- 랜딩 운영 모듈의 신청 검증, 외부 전송과 개인정보 보호 처리
 
 ## 기술 스택
 
-### Backend
-
-![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![CodeIgniter 4](https://img.shields.io/badge/CodeIgniter-4-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![CodeIgniter Shield](https://img.shields.io/badge/CodeIgniter%20Shield-Auth-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![CodeIgniter Settings](https://img.shields.io/badge/CodeIgniter%20Settings-2.1-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![CodeIgniter Tasks](https://img.shields.io/badge/CodeIgniter%20Tasks-dev-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Composer](https://img.shields.io/badge/Composer-Package%20Manager-885630?style=for-the-badge&logo=composer&logoColor=white)
-
-### Frontend / Static Assets
-
-`public/static/package.json` 기준:
-
-![Bootstrap 5](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![Bootstrap Icons](https://img.shields.io/badge/Bootstrap%20Icons-1-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
-![jQuery](https://img.shields.io/badge/jQuery-3-0769AD?style=for-the-badge&logo=jquery&logoColor=white)
-![jQuery UI](https://img.shields.io/badge/jQuery%20UI-1.13-0769AD?style=for-the-badge&logo=jquery&logoColor=white)
-![DateRangePicker](https://img.shields.io/badge/DateRangePicker-UI-0F172A?style=for-the-badge)
-![DataTables](https://img.shields.io/badge/DataTables-1.13%2B-1F6FEB?style=for-the-badge&logo=datatables&logoColor=white)
-![JSZip](https://img.shields.io/badge/JSZip-3.10-DC382D?style=for-the-badge)
-![pdfmake](https://img.shields.io/badge/pdfmake-0.2-8B5CF6?style=for-the-badge)
-
-정적 에셋은 이미 `public/static` 아래에 포함되어 있어, 단순 확인 목적이면 별도 프런트엔드 빌드 없이도 구조 파악이 가능합니다.
+| 영역 | 기술 |
+| --- | --- |
+| Backend | PHP 8, CodeIgniter 4, CodeIgniter Shield |
+| Database | MySQL |
+| Advertising | Facebook Marketing API, Google Ads API, Kakao Moment API |
+| Frontend | Bootstrap 5, jQuery, DataTables, JavaScript |
+| Integration | Slack API, Jira API, cURL |
+| Tooling | Composer, PHPUnit, GitHub Actions |
 
 ## 저장소 구조
 
 ```text
-php_ci4_zenith-my-commits/
-|-- README.md
-`-- zenith-project/
-    |-- .github/
-    |   |-- COMMIT_CONVENTION.md
-    |   |-- pull_request_template.md
-    |   `-- workflows/php-lint.yml
-    |-- app/
-    |   |-- Controllers/
-    |   `-- Views/
-    |-- public/
-    |   |-- health.php
-    |   `-- static/
-    |-- composer.json
-    `-- spark
+zenith-project/
+├── app/
+│   ├── Controllers/
+│   │   ├── Advertisement/          # 매체 API 수집·제어
+│   │   ├── AdvertisementManager/   # 통합 광고 관리·자동화
+│   │   ├── EventManage/            # 광고주·이벤트·신청 데이터
+│   │   ├── Api/                    # Jira 등 외부 연동
+│   │   ├── Auth/                   # 인증·비밀번호 정책
+│   │   └── Accounting/             # 회계·인사·공통 운영
+│   └── Views/                       # 관리자 화면
+├── public/static/                   # CSS·JavaScript·관리자 자산
+├── composer.json
+└── spark
 ```
 
-- 공개본에는 전체 서비스 구동에 필요한 일부 내부 설정/구현이 빠져 있습니다.
-- 특히 민감한 연동 설정, 일부 모델/라이브러리, 환경 파일은 저장소에 포함되지 않습니다.
+## 공개 범위
 
+공개 저장소에서는 서비스 구조와 화면, 컨트롤러 중심의 처리 흐름을 확인할 수 있습니다. 아래 항목은 보안과 회사 데이터 보호를 위해 포함하지 않았습니다.
 
-## 개발 규칙 및 보조 문서
+- 운영 환경변수와 광고 매체 인증 정보
+- 실제 광고주·사용자·신청 데이터
+- 내부 SQL과 일부 모델·서비스·외부 연동 라이브러리
+- 운영 서버와 배포 설정
 
-- 커밋 규칙: `zenith-project/.github/COMMIT_CONVENTION.md`
-- PR 템플릿: `zenith-project/.github/pull_request_template.md`
-- CI: `zenith-project/.github/workflows/php-lint.yml`
+## 관련 저장소
 
-현재 CI는 아래 범위를 점검합니다.
-
-- `app/Controllers` PHP 문법 검사
-- `app/Common.php`
-- `public/index.php`
-
-## 보안 및 공개 범위
-
-`.gitignore` 기준으로 아래 항목은 버전 관리에서 제외되도록 구성되어 있습니다.
-
-- `.env`
-- `vendor/`
-- 로그/세션/업로드 파일
-- `node_modules/`
-- 외부 API 설정 파일
-- 광고 연동용 비공개 키/설정 파일
-
-따라서 이 저장소만으로 내부 운영 환경을 그대로 재현하는 것이 목적은 아닙니다. 공개 가능한 구조, 화면, 컨트롤러 설계, 운영 도메인 구성을 보여주는 용도의 저장소입니다.
-
+- 랜딩 운영 모듈: [xowlsakffl/php_zenith_operate](https://github.com/xowlsakffl/php_zenith_operate)
+- 포트폴리오: [xowlsakffl/portfolio](https://github.com/xowlsakffl/portfolio)
